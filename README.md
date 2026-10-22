@@ -2,658 +2,450 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Star Hunter</title>
-
+<title>جنگ جهانی</title>
 <style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#050817;color:white;
- font-family:Tahoma,Arial,sans-serif
-}
-header{
- position:sticky;top:0;z-index:10;
- background:#0b1025;border-bottom:1px solid #30416d;
- padding:12px;display:flex;align-items:center;
- justify-content:space-between;gap:10px;flex-wrap:wrap
-}
-.logo{font-weight:bold;color:#75f4ff;font-size:19px}
-nav{display:flex;gap:6px}
-button{
- font-family:inherit;color:white;cursor:pointer;
- background:#172447;border:1px solid #3b548e;
- padding:10px 13px;border-radius:9px
-}
-button:hover{background:#2c447b}
-nav button.active{background:#3159a7}
-.stats{font-size:12px;color:#c5d4ff}
-main{max-width:1000px;margin:auto;padding:15px}
-.page{display:none}
-.page.active{display:block}
-.card{
- background:linear-gradient(145deg,#121a35,#090e20);
- border:1px solid #293963;border-radius:15px;
- padding:16px;margin-bottom:14px
-}
-h2{color:#8cf4ff;margin-top:0}
-.muted{color:#a8b8dd;font-size:13px;line-height:1.8}
-.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.row>*{flex:1}
-canvas{
- display:block;width:100%;height:440px;
- border-radius:12px;background:#030611;
- touch-action:none
-}
-#hud{
- display:flex;justify-content:space-between;
- gap:8px;margin-bottom:10px;font-size:13px
-}
-#touchControls{
- display:flex;justify-content:space-between;
- align-items:center;gap:20px;margin-top:14px;
- direction:ltr
-}
-.movePad{
- display:flex;gap:9px;align-items:center
-}
-.control{
- width:65px;height:65px;border-radius:50%;
- font-size:25px;touch-action:none;
- background:#182c57;border:2px solid #5e91e9;
- box-shadow:0 0 18px #397dff33
-}
-.fireButton{
- width:85px;height:85px;border-radius:50%;
- font-size:28px;background:#5c1839;
- border:2px solid #ff69a8;
- box-shadow:0 0 22px #ff3b8333
-}
-.control:active,.fireButton:active{transform:scale(.94)}
-#shopGrid{
- display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
- gap:12px
-}
-.skin{
- text-align:center;padding:16px;background:#0e1630;
- border:1px solid #344777;border-radius:14px
-}
-.preview{font-size:45px;margin:12px}
-.skin button{width:100%;margin-top:10px}
-.danger{background:#601c35;border-color:#e05b82}
-@media(max-width:600px){
- header{justify-content:center}
- main{padding:9px}
- canvas{height:55vh;min-height:300px;max-height:440px}
- .control{width:58px;height:58px}
- .fireButton{width:76px;height:76px}
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Tahoma, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .container {
+    background: rgba(0,0,0,0.6);
+    border: 2px solid #e94560;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 0 40px rgba(233,69,96,0.5);
+  }
+  h1 { color: #e94560; text-align: center; margin-bottom: 20px; }
+  h2 { color: #f9c74f; text-align: center; margin-bottom: 15px; }
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    margin-bottom: 15px;
+    background: #0f3460;
+    color: #fff;
+  }
+  button {
+    background: #e94560;
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  button:hover { background: #c92c48; transform: scale(1.02); }
+  .slots {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .slot {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px dashed #e94560;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    text-align: center;
+    flex-direction: column;
+    padding: 5px;
+  }
+  .slot.filled {
+    border: 3px solid #4ade80;
+    background: rgba(74,222,128,0.15);
+  }
+  .slot .player-name { font-weight: bold; font-size: 13px; }
+  .slot .player-country { font-size: 20px; }
+  .hidden { display: none; }
+
+  .game-area { display: flex; gap: 20px; flex-wrap: wrap; }
+  .map {
+    flex: 2;
+    min-width: 320px;
+    background: #0a1929;
+    border-radius: 15px;
+    padding: 10px;
+    min-height: 400px;
+  }
+  .map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+  }
+  .country {
+    background: #1e3a5f;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    font-size: 11px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+    position: relative;
+  }
+  .country:hover { border-color: #f9c74f; transform: scale(1.05); }
+  .country .flag { font-size: 24px; }
+  .country .name { margin: 4px 0; font-weight: bold; }
+  .country .soldiers { color: #4ade80; font-size: 10px; }
+  .country.owned-p1 { border-color: #00d4ff; background: rgba(0,212,255,0.2); }
+  .country.owned-p2 { border-color: #ff6b6b; background: rgba(255,107,107,0.2); }
+  .country.owned-p3 { border-color: #f9c74f; background: rgba(249,199,79,0.2); }
+  .country.owned-bot { border-color: #a855f7; background: rgba(168,85,247,0.2); }
+
+  .sidebar {
+    flex: 1;
+    min-width: 250px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 15px;
+    padding: 15px;
+  }
+  .player-info {
+    background: #0f3460;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+  .player-info strong { color: #f9c74f; }
+  .log {
+    background: #0a1929;
+    border-radius: 10px;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  .log div { margin-bottom: 5px; padding: 3px; border-right: 3px solid #e94560; padding-right: 8px; }
+
+  #leaderboard { margin-top: 20px; }
+  #leaderboard h2 { color: #e94560; }
+  .lb-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: #0f3460;
+    margin-bottom: 5px;
+    border-radius: 8px;
+  }
+  .lb-row.top { background: linear-gradient(90deg, #e94560, #0f3460); }
 </style>
 </head>
-
 <body>
+<div class="container">
 
-<header>
- <div class="logo">🚀 STAR HUNTER</div>
-
- <nav>
-  <button class="active" data-tab="game">🎮 گیم</button>
-  <button data-tab="leader">🏆 لیدربرد</button>
-  <button data-tab="shop">🛒 فروشگاه</button>
- </nav>
-
- <div class="stats">
-  👤 <b id="username">بازیکن</b> |
-  🪙 <b id="coins">0</b>
- </div>
-</header>
-
-<main>
-
-<!-- GAME -->
-<section id="game" class="page active">
-
- <div class="card">
-  <div class="row">
-   <div>
-    <h2>نبرد کهکشانی</h2>
-    <p class="muted">دشمن‌ها را نابود کن، امتیاز بگیر و سکه جمع کن!</p>
-   </div>
-   <button id="startBtn">شروع بازی</button>
-  </div>
- </div>
-
- <div class="card">
-  <div id="hud">
-   <span>امتیاز: <b id="score">0</b></span>
-   <span>رکورد: <b id="record">0</b></span>
-   <span>جان: <b id="lives">3</b></span>
+  <!-- مرحله ۱: صفحه ورود -->
+  <div id="login-screen">
+    <h1>🌍 جنگ جهانی</h1>
+    <h2>اسم بازیکن رو وارد کن</h2>
+    <input id="player-name" type="text" placeholder="مثلا: ناپلئون" maxlength="15" />
+    <button onclick="startGame()">⚔️ شروع بازی</button>
   </div>
 
-  <canvas id="gameCanvas"></canvas>
-
-  <!-- حرکت در سمت چپ، شلیک در سمت راست -->
-  <div id="touchControls">
-   <div class="movePad">
-    <button class="control" id="moveLeft">◀</button>
-    <button class="control" id="moveRight">▶</button>
-   </div>
-   <button class="fireButton" id="fireButton">🔥</button>
+  <!-- مرحله ۲: لابی و انتخاب کشور -->
+  <div id="lobby-screen" class="hidden">
+    <h1>در انتظار بازیکن‌ها...</h1>
+    <div class="slots">
+      <div class="slot" id="slot-1">بازیکن ۱</div>
+      <div class="slot" id="slot-2">بازیکن ۲</div>
+      <div class="slot" id="slot-3">بازیکن ۳</div>
+    </div>
+    <p style="text-align:center;color:#aaa;margin-bottom:15px;">
+      اگر دایره‌ای پر نشود، ربات جایگزین می‌شود.
+    </p>
+    <button onclick="enterGame()">▶️ ورود به میدان نبرد</button>
   </div>
 
-  <p id="status" class="muted">
-   برای شروع بازی، دکمه شروع را بزن.
-  </p>
- </div>
+  <!-- مرحله ۳: بازی -->
+  <div id="game-screen" class="hidden">
+    <h1>🗺️ میدان نبرد جهانی</h1>
+    <div class="game-area">
+      <div class="map">
+        <div class="map-grid" id="map-grid"></div>
+      </div>
+      <div class="sidebar">
+        <div id="players-status"></div>
+        <div class="log" id="log"></div>
+        <button style="margin-top:10px;background:#4ade80;color:#000;" onclick="resetGame()">🔄 بازی جدید</button>
+      </div>
+    </div>
+  </div>
 
-</section>
+  <!-- لیدربرد -->
+  <div id="leaderboard">
+    <h2>🏆 لیدربرد</h2>
+    <div id="lb-list"></div>
+  </div>
 
-<!-- LEADERBOARD -->
-<section id="leader" class="page">
- <div class="card">
-  <h2>🏆 لیدربرد</h2>
-  <p class="muted">بازیکنان بر اساس بالاترین رکورد مرتب می‌شوند.</p>
-  <div id="leaderList"></div>
- </div>
-
- <div class="card">
-  <h2>⚙️ پنل سازنده</h2>
-  <p class="muted">
-   ریست، اطلاعات ذخیره‌شده در این مرورگر را پاک می‌کند.
-   برای ریست جهانی باید از سرور و پنل مدیریت امن استفاده شود.
-  </p>
-  <button class="danger" id="resetBtn">🗑 ریست همه اطلاعات محلی</button>
- </div>
-</section>
-
-<!-- SHOP -->
-<section id="shop" class="page">
- <div class="card">
-  <h2>🛒 فروشگاه سفینه‌ها</h2>
-  <p class="muted">با سکه‌هایی که در نبرد به دست می‌آوری اسکین بخر.</p>
-  موجودی: 🪙 <b id="shopCoins">0</b>
- </div>
- <div id="shopGrid"></div>
-</section>
-
-</main>
+</div>
 
 <script>
-// ========================
-// اطلاعات بازیکن و فروشگاه
-// ========================
-
-const $=id=>document.getElementById(id);
-
-const skins=[
- {id:"blue",name:"سفینه آبی",price:0,color:"#53eaff",emoji:"🚀"},
- {id:"pink",name:"پینک فانتوم",price:100,color:"#ff55d9",emoji:"🛸"},
- {id:"green",name:"نوا سبز",price:250,color:"#8cff67",emoji:"🚀"},
- {id:"gold",name:"طلایی خورشیدی",price:600,color:"#ffd15b",emoji:"🌟"},
- {id:"purple",name:"سایه بنفش",price:1200,color:"#b28aff",emoji:"💜"},
- {id:"cosmic",name:"کیهانی افسانه‌ای",price:2500,color:"#ffffff",emoji:"🌌"}
+// ============ داده‌های کشورها ============
+const COUNTRIES = [
+  { flag: "🇮🇷", name: "ایران" },
+  { flag: "🇺🇸", name: "آمریکا" },
+  { flag: "🇷🇺", name: "روسیه" },
+  { flag: "🇨🇳", name: "چین" },
+  { flag: "🇩🇪", name: "آلمان" },
+  { flag: "🇫🇷", name: "فرانسه" },
+  { flag: "🇬🇧", name: "انگلیس" },
+  { flag: "🇯🇵", name: "ژاپن" },
+  { flag: "🇮🇳", name: "هند" },
+  { flag: "🇧🇷", name: "برزیل" },
+  { flag: "🇹🇷", name: "ترکیه" },
+  { flag: "🇪🇬", name: "مصر" },
+  { flag: "🇸🇦", name: "عربستان" },
+  { flag: "🇮🇹", name: "ایتالیا" },
+  { flag: "🇪🇸", name: "اسپانیا" },
+  { flag: "🇰🇷", name: "کره جنوبی" }
 ];
 
-function readDB(){
- try{return JSON.parse(localStorage.getItem("starHunterDB"))||{}}
- catch{return {}}
-}
-let db=readDB();
-
-let username=localStorage.getItem("starHunterName");
-if(!username){
- username=(prompt("اسم بازیکنت رو وارد کن:")||"بازیکن").trim().slice(0,18);
- if(!username)username="بازیکن";
- localStorage.setItem("starHunterName",username);
-}
-
-if(!db[username]){
- db[username]={
-  coins:0,record:0,owned:["blue"],equipped:"blue"
- };
-}
-let profile=db[username];
-
-function save(){
- db[username]=profile;
- localStorage.setItem("starHunterDB",JSON.stringify(db));
-}
-
-function refreshUI(){
- $("username").textContent=username;
- $("coins").textContent=profile.coins;
- $("shopCoins").textContent=profile.coins;
- $("record").textContent=profile.record;
- renderLeaderboard();
- renderShop();
-}
-
-function renderLeaderboard(){
- let list=Object.entries(readDB())
-  .sort((a,b)=>b[1].record-a[1].record)
-  .slice(0,10);
-
- $("leaderList").innerHTML=list.length?
- list.map(([name,p],i)=>
- `<div class="card">🏅 ${i+1}. ${escapeHTML(name)}
- <span style="float:left">⭐ ${p.record}</span></div>`
- ).join(""):"هنوز رکوردی ثبت نشده.";
-}
-
-function escapeHTML(text){
- return text.replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-
-function renderShop(){
- $("shopGrid").innerHTML=skins.map(s=>{
- let owned=profile.owned.includes(s.id);
- let equipped=profile.equipped===s.id;
-
- return `<div class="skin">
- <div class="preview" style="filter:drop-shadow(0 0 12px ${s.color})">${s.emoji}</div>
- <b>${s.name}</b>
- <p style="color:${s.color}">🪙 ${s.price} سکه</p>
- ${equipped?
- '<button disabled>اسکین فعلی</button>':
- owned?
- `<button onclick="equipSkin('${s.id}')">انتخاب اسکین</button>`:
- `<button onclick="buySkin('${s.id}')">خرید اسکین</button>`}
- </div>`;
- }).join("");
-}
-
-function buySkin(id){
- const s=skins.find(x=>x.id===id);
- if(!s||profile.owned.includes(id))return;
-
- if(profile.coins<s.price){
-  alert("سکه کافی نداری!");
-  return;
- }
-
- profile.coins-=s.price;
- profile.owned.push(id);
- save();
- refreshUI();
-}
-
-function equipSkin(id){
- if(!profile.owned.includes(id))return;
- profile.equipped=id;
- save();
- refreshUI();
-}
-
-window.buySkin=buySkin;
-window.equipSkin=equipSkin;
-
-// تب‌ها
-document.querySelectorAll("nav button").forEach(btn=>{
- btn.onclick=()=>{
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active");
-  $(btn.dataset.tab).classList.add("active");
-  if(btn.dataset.tab==="game")resizeCanvas();
- };
-});
-
-// ریست اطلاعات محلی
-$("resetBtn").onclick=()=>{
- if(!confirm("رکورد، سکه و اسکین‌های تمام بازیکنان ذخیره‌شده در این مرورگر پاک شوند؟"))return;
-
- localStorage.removeItem("starHunterDB");
- db={};
- profile={coins:0,record:0,owned:["blue"],equipped:"blue"};
- db[username]=profile;
- save();
- refreshUI();
- alert("اطلاعات محلی ریست شد.");
+// ============ وضعیت بازی ============
+let gameState = {
+  players: [],   // { name, isBot, color, soldiers, countries: [] }
+  countries: [], // { ...country, owner: index, soldiers }
+  turn: 0,
+  playerName: ""
 };
 
-// ========================
-// موتور بازی فضایی
-// ========================
-
-const canvas=$("gameCanvas");
-const ctx=canvas.getContext("2d");
-
-let W=canvas.clientWidth,H=canvas.clientHeight;
-let stars=[],bullets=[],enemies=[],particles=[];
-let player,score=0,lives=3,frame=0;
-let running=false,lastShot=0;
-let keys={};
-let touch={left:false,right:false,fire:false};
-
-function resizeCanvas(){
- const dpr=window.devicePixelRatio||1;
- W=canvas.clientWidth;
- H=canvas.clientHeight;
- canvas.width=W*dpr;
- canvas.height=H*dpr;
- ctx.setTransform(dpr,0,0,dpr,0,0);
-
- stars=Array.from({length:130},()=>({
-  x:Math.random()*W,
-  y:Math.random()*H,
-  speed:Math.random()*2+0.4,
-  size:Math.random()*2+0.5
- }));
-}
-window.addEventListener("resize",resizeCanvas);
-resizeCanvas();
-
-// رسم سفینه بازیکن
-function drawPlayer(){
- const s=skins.find(x=>x.id===profile.equipped)||skins[0];
- const color=s.color;
-
- ctx.save();
- ctx.translate(player.x,player.y);
- ctx.shadowBlur=22;
- ctx.shadowColor=color;
-
- // شعله موتور
- ctx.fillStyle="#ff9a45";
- ctx.beginPath();
- ctx.moveTo(-7,12);
- ctx.lineTo(0,29+Math.random()*7);
- ctx.lineTo(7,12);
- ctx.fill();
-
- // بدنه سفینه
- ctx.fillStyle=color;
- ctx.beginPath();
- ctx.moveTo(0,-25);
- ctx.lineTo(19,17);
- ctx.lineTo(5,11);
- ctx.lineTo(0,17);
- ctx.lineTo(-5,11);
- ctx.lineTo(-19,17);
- ctx.closePath();
- ctx.fill();
-
- // شیشه کابین
- ctx.fillStyle="#eaffff";
- ctx.beginPath();
- ctx.ellipse(0,-5,5,9,0,0,Math.PI*2);
- ctx.fill();
-
- ctx.restore();
+// ============ مرحله ۱ ============
+function startGame() {
+  const name = document.getElementById("player-name").value.trim();
+  if (!name) { alert("لطفا اسم وارد کن!"); return; }
+  gameState.playerName = name;
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("lobby-screen").classList.remove("hidden");
+  setupLobby();
 }
 
-// رسم دشمن‌ها
-function drawEnemy(e){
- ctx.save();
- ctx.translate(e.x,e.y);
- ctx.shadowBlur=18;
- ctx.shadowColor=e.color;
- ctx.fillStyle=e.color;
+// ============ مرحله ۲: لابی ============
+function setupLobby() {
+  // بازیکن اصلی
+  gameState.players = [
+    { name: gameState.playerName, isBot: false, color: "owned-p1", soldiers: 100000 },
+  ];
+  // ۲ ربات (شبیه‌سازی بازیکن آنلاین)
+  gameState.players.push({ name: "ربات آلفا", isBot: true, color: "owned-p2", soldiers: 100000 });
+  gameState.players.push({ name: "ربات براوو", isBot: true, color: "owned-p3", soldiers: 100000 });
 
- ctx.beginPath();
- ctx.moveTo(-23,-8);
- ctx.lineTo(-9,-16);
- ctx.lineTo(0,-10);
- ctx.lineTo(9,-16);
- ctx.lineTo(23,-8);
- ctx.lineTo(15,11);
- ctx.lineTo(0,17);
- ctx.lineTo(-15,11);
- ctx.closePath();
- ctx.fill();
-
- ctx.fillStyle="#fff";
- ctx.fillRect(-8,-5,5,4);
- ctx.fillRect(4,-5,5,4);
-
- ctx.restore();
+  // نمایش اسلات‌ها
+  document.getElementById("slot-1").classList.add("filled");
+  document.getElementById("slot-1").innerHTML = `<div class="player-name">${gameState.playerName}</div><div class="player-country">👤</div>`;
+  document.getElementById("slot-2").classList.add("filled");
+  document.getElementById("slot-2").innerHTML = `<div class="player-name">ربات آلفا</div><div class="player-country">🤖</div>`;
+  document.getElementById("slot-3").classList.add("filled");
+  document.getElementById("slot-3").innerHTML = `<div class="player-name">ربات براوو</div><div class="player-country">🤖</div>`;
 }
 
-// افکت انفجار
-function explosion(x,y,color){
- for(let i=0;i<22;i++){
-  const a=Math.random()*Math.PI*2;
-  const speed=Math.random()*4+1;
+// ============ مرحله ۳: شروع بازی ============
+function enterGame() {
+  document.getElementById("lobby-screen").classList.add("hidden");
+  document.getElementById("game-screen").classList.remove("hidden");
 
-  particles.push({
-   x,y,
-   vx:Math.cos(a)*speed,
-   vy:Math.sin(a)*speed,
-   life:30,
-   color
+  // ساخت کشورها
+  gameState.countries = COUNTRIES.map(c => ({ ...c, owner: null, soldiers: 0 }));
+
+  // انتخاب کشور تصادفی برای هر بازیکن
+  const shuffled = [...gameState.countries].sort(() => Math.random() - 0.5);
+  gameState.players.forEach((p, i) => {
+    const c = shuffled[i];
+    c.owner = i;
+    c.soldiers = 100000;
+    p.soldiers = 100000;
+    p.countries = [c];
   });
- }
+
+  // کشورهای باقی‌مانده (بی‌صاحب) با سرباز تصادفی
+  gameState.countries.forEach(c => {
+    if (c.owner === null) c.soldiers = Math.floor(Math.random() * 30000) + 10000;
+  });
+
+  gameState.turn = 0;
+  logMessage("⚔️ جنگ آغاز شد!");
+  logMessage(`🌍 ${gameState.playerName} وارد میدان شد!`);
+  render();
 }
 
-// شروع دست
-function startGame(){
- score=0;
- lives=3;
- frame=0;
- bullets=[];
- enemies=[];
- particles=[];
+// ============ رندر ============
+function render() {
+  // نقشه
+  const grid = document.getElementById("map-grid");
+  grid.innerHTML = "";
+  gameState.countries.forEach((c, idx) => {
+    const div = document.createElement("div");
+    div.className = "country";
+    if (c.owner !== null) div.classList.add(gameState.players[c.owner].color);
+    div.innerHTML = `
+      <div class="flag">${c.flag}</div>
+      <div class="name">${c.name}</div>
+      <div class="soldiers">🪖 ${formatNum(c.soldiers)}</div>
+    `;
+    div.onclick = () => attackCountry(idx);
+    grid.appendChild(div);
+  });
 
- player={x:W/2,y:H-65};
- running=true;
-
- $("score").textContent=score;
- $("lives").textContent=lives;
- $("status").textContent="دشمن‌ها را نابود کن!";
- $("startBtn").textContent="شروع دوباره";
-}
-$("startBtn").onclick=startGame;
-
-// پایان دست
-function gameOver(){
- running=false;
-
- const reward=Math.floor(score/10);
- profile.coins+=reward;
- profile.record=Math.max(profile.record,score);
- save();
- refreshUI();
-
- $("status").textContent=
- `پایان بازی! امتیاز: ${score} | جایزه: ${reward} سکه`;
-
- $("startBtn").textContent="دوباره بازی کن";
+  // پنل بازیکن‌ها
+  const status = document.getElementById("players-status");
+  status.innerHTML = gameState.players.map((p, i) => `
+    <div class="player-info" style="border-right: 4px solid ${
+      p.color === "owned-p1" ? "#00d4ff" : p.color === "owned-p2" ? "#ff6b6b" : "#f9c74f"
+    }">
+      <strong>${p.name}</strong> ${p.isBot ? "🤖" : "👤"}<br>
+      🪖 سرباز: ${formatNum(p.soldiers)}<br>
+      🌍 کشورها: ${p.countries.length}
+    </div>
+  `).join("");
 }
 
-// شلیک
-function shoot(){
- if(frame-lastShot<10)return;
+// ============ حمله ============
+function attackCountry(targetIdx) {
+  const target = gameState.countries[targetIdx];
+  const playerIdx = 0; // بازیکن اصلی همیشه 0
+  const player = gameState.players[playerIdx];
 
- lastShot=frame;
- bullets.push({
-  x:player.x,
-  y:player.y-25,
-  speed:9
- });
-
- // درخشش لیزر
- particles.push({
-  x:player.x,y:player.y-20,
-  vx:0,vy:-2,life:8,color:"#a8ffff"
- });
-}
-
-// ساخت دشمن
-function spawnEnemy(){
- const boss=score>0&&score%500<15&&Math.random()<0.25;
-
- enemies.push({
-  x:30+Math.random()*(W-60),
-  y:-30,
-  speed:boss?1:1.7+Math.min(score/1000,3),
-  hp:boss?5:1,
-  boss,
-  color:boss?"#ff32a0":
-   ["#ff4c72","#ffad42","#b56aff"][Math.floor(Math.random()*3)]
- });
-}
-
-// حلقه بازی
-function loop(){
- requestAnimationFrame(loop);
-
- ctx.clearRect(0,0,W,H);
-
- // پس‌زمینه
- const bg=ctx.createLinearGradient(0,0,0,H);
- bg.addColorStop(0,"#080c25");
- bg.addColorStop(1,"#02040b");
- ctx.fillStyle=bg;
- ctx.fillRect(0,0,W,H);
-
- // ستاره‌ها
- for(const s of stars){
-  s.y+=s.speed;
-  if(s.y>H){
-   s.y=0;
-   s.x=Math.random()*W;
+  if (target.owner === playerIdx) {
+    logMessage("⚠️ این کشور خودت است!");
+    return;
   }
 
-  ctx.fillStyle="#d7edff";
-  ctx.globalAlpha=0.3+s.speed/4;
-  ctx.fillRect(s.x,s.y,s.size,s.size);
- }
- ctx.globalAlpha=1;
+  const myCountries = player.countries;
+  const mySoldiers = myCountries.reduce((s, c) => s + c.soldiers, 0);
 
- if(!running)return;
+  if (mySoldiers < 5000) {
+    logMessage("❌ سرباز کافی نداری! (حداقل 5000)");
+    return;
+  }
 
- frame++;
+  // محاسبه تاکتیک: هرچه سرباز بیشتر، شانس بیشتر
+  const attackPower = mySoldiers * (0.5 + Math.random());
+  const defensePower = target.soldiers * (0.6 + Math.random() * 0.8);
 
- // حرکت سفینه
- if(keys.ArrowLeft||keys.a||touch.left)player.x-=5;
- if(keys.ArrowRight||keys.d||touch.right)player.x+=5;
- if(keys.ArrowUp||keys.w)player.y-=4;
- if(keys.ArrowDown||keys.s)player.y+=4;
+  logMessage(`⚔️ حمله به ${target.name}...`);
 
- player.x=Math.max(22,Math.min(W-22,player.x));
- player.y=Math.max(H*0.45,Math.min(H-35,player.y));
-
- drawPlayer();
-
- // شلیک با Space یا دکمه لمسی
- if(keys.Space||touch.fire)shoot();
-
- bullets=bullets.filter(b=>{
-  b.y-=b.speed;
-
-  ctx.shadowBlur=15;
-  ctx.shadowColor="#63ffff";
-  ctx.fillStyle="#d6ffff";
-  ctx.fillRect(b.x-2,b.y,4,17);
-  ctx.shadowBlur=0;
-
-  return b.y>-20;
- });
-
- // موج دشمن
- if(frame%42===0)spawnEnemy();
-
- enemies=enemies.filter(e=>{
-  e.y+=e.speed;
-  drawEnemy(e);
-
-  // برخورد تیر با دشمن
-  for(const b of bullets){
-   if(Math.abs(b.x-e.x)<24&&Math.abs(b.y-e.y)<23){
-    b.y=-100;
-    e.hp--;
-    explosion(e.x,e.y,e.color);
-
-    if(e.hp<=0){
-     score+=e.boss?100:10;
-     return false;
+  if (attackPower > defensePower) {
+    // فتح!
+    const enemy = target.owner !== null ? gameState.players[target.owner] : null;
+    if (enemy) {
+      enemy.countries = enemy.countries.filter(c => c !== target);
     }
-   }
+    target.owner = playerIdx;
+    target.soldiers = Math.max(20000, Math.floor(target.soldiers * 0.5));
+    player.countries.push(target);
+    player.soldiers += 20000; // پاداش فتح
+    logMessage(`✅ ${target.name} فتح شد! +20000 سرباز`);
+  } else {
+    // شکست
+    const lost = Math.floor(mySoldiers * 0.2);
+    myCountries[0].soldiers = Math.max(1000, myCountries[0].soldiers - lost);
+    logMessage(`❌ حمله به ${target.name} شکست خورد! -${formatNum(lost)} سرباز`);
   }
 
-  // برخورد دشمن با سفینه
-  if(Math.abs(player.x-e.x)<28&&Math.abs(player.y-e.y)<28){
-   explosion(player.x,player.y,"#ff5387");
-   lives--;
-   $("lives").textContent=lives;
-
-   if(lives<=0){
-    gameOver();
-   }else{
-    player.x=W/2;
-    player.y=H-65;
-   }
-   return false;
-  }
-
-  // دشمن رد شده
-  if(e.y>H+40){
-   lives--;
-   $("lives").textContent=lives;
-   if(lives<=0)gameOver();
-   return false;
-  }
-
-  return true;
- });
-
- // ذرات انفجار
- particles=particles.filter(p=>{
-  p.x+=p.vx;
-  p.y+=p.vy;
-  p.life--;
-
-  ctx.globalAlpha=Math.max(0,p.life/30);
-  ctx.fillStyle=p.color;
-  ctx.fillRect(p.x,p.y,4,4);
-  ctx.globalAlpha=1;
-
-  return p.life>0;
- });
-
- $("score").textContent=score;
-}
-loop();
-
-// کنترل کیبورد
-window.addEventListener("keydown",e=>{
- keys[e.key]=true;
- if(e.code==="Space"){
-  keys.Space=true;
-  e.preventDefault();
- }
-});
-window.addEventListener("keyup",e=>{
- keys[e.key]=false;
- if(e.code==="Space")keys.Space=false;
-});
-
-// کنترل لمسی
-function bindTouch(id,property){
- const el=$(id);
-
- el.addEventListener("pointerdown",e=>{
-  e.preventDefault();
-  touch[property]=true;
-  el.setPointerCapture(e.pointerId);
- });
-
- function release(){
-  touch[property]=false;
- }
-
- el.addEventListener("pointerup",release);
- el.addEventListener("pointercancel",release);
- el.addEventListener("lostpointercapture",release);
+  render();
+  checkWin();
+  nextTurn();
 }
 
-bindTouch("moveLeft","left");
-bindTouch("moveRight","right");
-bindTouch("fireButton","fire");
+// ============ نوبت ربات‌ها ============
+function nextTurn() {
+  gameState.turn++;
+  setTimeout(botTurn, 1200);
+}
 
-refreshUI();
+function botTurn() {
+  gameState.players.forEach((p, i) => {
+    if (!p.isBot) return;
+    if (p.countries.length === 0) return;
+
+    // ربات هوشمند: ضعیف‌ترین کشور دشمن رو هدف می‌گیره
+    const enemies = gameState.countries.filter(c => c.owner !== i);
+    if (enemies.length === 0) return;
+    const target = enemies.sort((a, b) => a.soldiers - b.soldiers)[0];
+    const myPower = p.countries.reduce((s, c) => s + c.soldiers, 0);
+
+    if (myPower < 5000) return;
+
+    const attackPower = myPower * (0.5 + Math.random());
+    const defensePower = target.soldiers * (0.6 + Math.random() * 0.8);
+
+    if (attackPower > defensePower) {
+      if (target.owner !== null) {
+        gameState.players[target.owner].countries = 
+          gameState.players[target.owner].countries.filter(c => c !== target);
+      }
+      target.owner = i;
+      target.soldiers = Math.max(20000, Math.floor(target.soldiers * 0.5));
+      p.countries.push(target);
+      p.soldiers += 20000;
+      logMessage(`🤖 ${p.name} کشور ${target.name} را فتح کرد!`);
+    } else {
+      logMessage(`🤖 ${p.name} در حمله به ${target.name} شکست خورد.`);
+    }
+  });
+
+  render();
+  checkWin();
+}
+
+// ============ شرط برد ============
+function checkWin() {
+  const total = gameState.countries.length;
+  for (let i = 0; i < gameState.players.length; i++) {
+    if (gameState.players[i].countries.length === total) {
+      logMessage(`🏆 ${gameState.players[i].name} تمام جهان را فتح کرد!`);
+      updateLeaderboard(i);
+      setTimeout(() => alert(`🏆 ${gameState.players[i].name} برنده شد!`), 500);
+    }
+  }
+  updateLeaderboard();
+}
+
+// ============ لیدربرد ============
+function updateLeaderboard(winnerIdx = null) {
+  const list = document.getElementById("lb-list");
+  const sorted = [...gameState.players].sort((a, b) => b.countries.length - a.countries.length);
+  list.innerHTML = sorted.map((p, i) => `
+    <div class="lb-row ${i === 0 ? "top" : ""}">
+      <span>${i + 1}. ${p.name} ${p.isBot ? "🤖" : "👤"}</span>
+      <span>${p.countries.length} کشور</span>
+    </div>
+  `).join("");
+}
+
+// ============ ابزارها ============
+function logMessage(msg) {
+  const log = document.getElementById("log");
+  const div = document.createElement("div");
+  div.textContent = msg;
+  log.prepend(div);
+  if (log.children.length > 30) log.removeChild(log.lastChild);
+}
+
+function formatNum(n) {
+  if (n >= 1000) return (n / 1000).toFixed(0) + "K";
+  return n;
+}
+
+function resetGame() {
+  location.reload();
+}
 </script>
-
 </body>
 </html>
