@@ -2,1557 +2,1166 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#030711">
-<title>تیراندازی فضایی 🚀</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>تیرباز فضایی 🚀</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
-
 :root {
-    --bg: #030711;
-    --panel: #07151e;
-    --panel2: #091c27;
-    --cyan: #00f5f0;
-    --pink: #ed4bcb;
-    --purple: #a855f7;
-    --green: #00ff9d;
-    --yellow: #ffe600;
-    --text: #eafaff;
-    --muted: #8ca9ba;
-    --border: rgba(0,245,240,.22);
+  --bg: #030610;
+  --panel: #06151d;
+  --line: #073b45;
+  --cyan: #00f0e5;
+  --pink: #e84bd7;
+  --gold: #ffd91a;
+  --text: #e9f7ff;
+  --muted: #8aa9b8;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Vazirmatn', Tahoma, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
+  margin: 0;
+  background: radial-gradient(ellipse at 50% 0, #091b2a 0, #030610 55%);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
 }
 
-button, input {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-button:active {
-    transform: scale(.97);
-}
-
-.app {
-    max-width: 720px;
-    min-height: 100vh;
-    margin: auto;
-    position: relative;
-    padding-bottom: 35px;
-    background:
-        radial-gradient(ellipse at 50% 0%, rgba(0,245,240,.055), transparent 45%),
-        var(--bg);
-}
-
-/* Header */
-
-.header {
-    height: 76px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    background: #101114;
-    border-bottom: 1px solid #242830;
+header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #030610ed;
+  border-bottom: 1px solid #12323e;
+  padding: 12px 10px 0;
 }
 
 .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 22px;
+  background: linear-gradient(90deg, #69eaff, #e77aff);
+  -webkit-background-clip: text;
+  color: transparent;
+  padding: 4px;
 }
 
-.brand-icon {
-    font-size: 32px;
+nav {
+  display: flex;
+  gap: 4px;
+  justify-content: space-around;
+  margin-top: 8px;
 }
 
-.brand-title {
-    font-weight: 800;
-    font-size: 17px;
+nav button {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: #7e9ba9;
+  font-weight: 800;
+  padding: 12px 3px;
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
 }
 
-.brand-sub {
-    font-size: 12px;
-    color: #9aa4b1;
-    direction: ltr;
-    text-align: right;
+nav button.active {
+  color: #8ffaff;
+  border-bottom: 3px solid var(--cyan);
+  text-shadow: 0 0 12px #00ffff55;
 }
 
-.header-button {
-    background: none;
-    color: white;
-    border: none;
-    font-size: 24px;
+main {
+  max-width: 760px;
+  margin: auto;
+  padding: 14px 12px 35px;
 }
 
-/* Navigation */
-
-.tabs {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: #030711;
-    border-bottom: 1px solid var(--border);
+.view {
+  display: none;
 }
 
-.tab {
-    min-height: 62px;
-    color: #718b9e;
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    font-size: 13px;
-    font-weight: 700;
-    transition: .2s;
+.view.active {
+  display: block;
 }
 
-.tab.active {
-    color: var(--cyan);
-    border-bottom-color: var(--pink);
-    text-shadow: 0 0 14px var(--cyan);
+h2 {
+  text-align: center;
+  margin: 12px 0 18px;
+  font-size: 25px;
+  background: linear-gradient(90deg, #7cecff, #d58bff);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-.tab span {
-    display: block;
-    font-size: 21px;
-    margin-bottom: 2px;
+.panel {
+  background: linear-gradient(145deg, #06171d, #030911);
+  border: 1px solid #0a4147;
+  border-radius: 22px;
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: 0 0 16px #00e5e510;
 }
 
-/* Page */
-
-.page {
-    display: none;
-    padding: 22px 20px 30px;
-    animation: appear .25s ease;
+.btn {
+  border: 1px solid var(--cyan);
+  border-radius: 30px;
+  background: #03191e;
+  color: var(--cyan);
+  padding: 11px 17px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 12px #00e5e51a;
 }
 
-.page.active {
-    display: block;
+.btn.primary {
+  background: var(--cyan);
+  color: #001419;
+  box-shadow: 0 0 18px #00e5e555;
 }
 
-@keyframes appear {
-    from { opacity: 0; transform: translateY(7px); }
-    to { opacity: 1; transform: translateY(0); }
+.btn:disabled {
+  opacity: 0.4;
 }
 
-.title {
-    text-align: center;
-    font-size: 26px;
-    font-weight: 800;
-    margin: 10px 0 24px;
-    background: linear-gradient(90deg, #8ffaff, #e3aaff);
-    color: transparent;
-    background-clip: text;
+.pills {
+  display: flex;
+  gap: 8px;
 }
 
-/* Profile */
-
-.profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
+.pills button {
+  flex: 1;
 }
 
-.box {
-    background: linear-gradient(145deg, #061923, #030a12);
-    border: 1px solid var(--border);
-    border-radius: 25px;
-    padding: 17px;
-    box-shadow: inset 0 0 18px rgba(0,245,240,.025);
+.pills button.selected {
+  background: var(--cyan);
+  color: #001;
 }
 
-.avatar-card {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 220px;
+/* محیط بازی */
+
+#gamebox {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #10414b;
+  border-radius: 18px;
+  background: #01040b;
+  height: min(68vh, 590px);
+  min-height: 390px;
 }
 
-.avatar-large {
-    font-size: 66px;
-    filter: drop-shadow(0 0 15px var(--cyan));
+#gamecanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
 }
 
-.commander-name {
-    font-size: 24px;
-    font-weight: 800;
-    direction: ltr;
-    margin-top: 4px;
+.hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 900;
+  text-shadow: 0 0 8px #00eaff;
+  font-size: 14px;
+  pointer-events: none;
 }
 
-.commander-rank {
-    font-size: 12px;
-    color: var(--cyan);
-    letter-spacing: 1px;
-    margin-top: 7px;
+.gamehint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 9px;
 }
 
-.points {
-    border-top: 1px solid var(--border);
-    margin-top: 17px;
-    padding-top: 12px;
-    color: var(--yellow);
-    font-weight: 800;
+/* فروشگاه */
+
+.item {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #12482a;
+  background: #03120d;
+  border-radius: 20px;
+  padding: 13px;
+  margin: 12px 0;
 }
 
-.music-box {
-    min-height: 220px;
+.item .art {
+  width: 78px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  font-size: 45px;
+  background: #07141c;
+  border-radius: 15px;
 }
 
-.music-label {
-    color: var(--cyan);
-    font-size: 13px;
-    font-weight: 700;
-    margin: 15px 0;
+.item h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
 }
 
-.music-file {
-    width: 100%;
-    color: var(--cyan);
-    background: transparent;
-    border: 2px dashed var(--cyan);
-    border-radius: 15px;
-    padding: 13px 5px;
-    font-size: 13px;
+.item p {
+  margin: 3px 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
-.music-controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
+.item .actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 9px;
 }
 
-.music-controls button {
-    flex: 1;
-    padding: 14px 0;
-    border-radius: 16px;
-    border: 1px solid var(--cyan);
-    background: var(--cyan);
-    color: #001316;
-    font-weight: 800;
+.price {
+  color: #ffe34c;
+  font-weight: 900;
 }
 
-.music-controls .pause {
-    color: #ff6b9c;
-    background: #140914;
-    border-color: #ff6b9c;
+/* رتبه‌بندی */
+
+.rankrow {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 13px;
+  border: 1px solid #10414b;
+  border-radius: 17px;
+  margin: 9px 0;
+  background: #04121a;
 }
 
-.label {
-    color: var(--muted);
-    font-weight: 700;
-    font-size: 14px;
-    margin: 24px 0 10px;
+.ranknum {
+  border-radius: 50%;
+  background: #07313a;
+  color: #8ffaff;
+  text-align: center;
+  padding: 8px;
+  font-weight: 900;
 }
 
-.input {
-    width: 100%;
-    padding: 15px;
-    background: #020810;
-    border: 1px solid var(--border);
-    color: white;
-    border-radius: 17px;
-    outline: none;
+.ranknum.top {
+  background: #ffd329;
+  color: #211900;
 }
 
-.input:focus {
-    border-color: var(--cyan);
-    box-shadow: 0 0 15px #00f5f022;
+.avatar {
+  font-size: 32px;
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 13px;
+  background: #0a101b;
 }
 
-.avatar-list {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 9px;
+/* پروفایل */
+
+.profilegrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.avatar-option {
-    background: #0a101b;
-    border: 1px solid transparent;
-    border-radius: 15px;
-    padding: 10px 0;
-    font-size: 25px;
+.profilecard {
+  text-align: center;
 }
 
-.avatar-option.selected {
-    border-color: var(--cyan);
-    box-shadow: 0 0 14px #00f5f055;
-    background: #09242c;
+.bigavatar {
+  font-size: 55px;
+  filter: drop-shadow(0 0 12px #00eaff);
+  margin: 6px;
 }
 
-.sound-setting {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 15px;
-    margin-top: 22px;
+input {
+  width: 100%;
+  background: #020a12;
+  border: 1px solid #12505a;
+  border-radius: 14px;
+  color: white;
+  padding: 13px;
+  font-size: 16px;
+  margin: 7px 0;
+}
+
+.avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.avatars button {
+  font-size: 25px;
+  background: #0b111c;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  padding: 8px;
+}
+
+.avatars button.chosen {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px #00ffff66;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .toggle {
-    width: 58px;
-    height: 30px;
-    border: none;
-    border-radius: 30px;
-    background: #263544;
-    padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.toggle::after {
-    content: "";
-    display: block;
-    width: 22px;
-    height: 22px;
-    background: white;
-    border-radius: 50%;
-    transition: .2s;
+.switch {
+  accent-color: var(--cyan);
+  width: 22px;
+  height: 22px;
 }
 
-.toggle.on {
-    background: var(--cyan);
-    box-shadow: 0 0 15px #00f5f055;
+.notice {
+  color: #9db5c2;
+  font-size: 12px;
+  line-height: 1.8;
 }
 
-.toggle.on::after {
-    transform: translateX(-28px);
-    background: #001316;
-}
+@media (max-width: 420px) {
+  .brand {
+    font-size: 19px;
+  }
 
-.save-code {
-    margin-top: 20px;
-    border: 1px dashed var(--yellow);
-    border-radius: 20px;
-    padding: 18px;
-    text-align: center;
-    background: #17160b;
-}
-
-.save-code h3 {
-    color: var(--yellow);
-    font-size: 14px;
-}
-
-.save-code strong {
-    display: block;
-    direction: ltr;
-    font-size: 23px;
-    letter-spacing: 2px;
-    margin: 10px;
-}
-
-.save-code small {
-    color: #b6a96d;
-    font-size: 11px;
-}
-
-.primary-button {
-    width: 100%;
-    border: none;
-    background: linear-gradient(90deg, #00e6ee, #00baff);
-    color: #001419;
-    border-radius: 35px;
-    padding: 15px;
-    font-weight: 800;
-    margin-top: 20px;
-    box-shadow: 0 0 20px #00e6ee22;
-}
-
-/* Rankings */
-
-.refresh {
-    display: block;
-    margin: 0 auto 24px;
-    border: 1px solid var(--cyan);
-    background: #071820;
-    color: var(--cyan);
-    border-radius: 30px;
-    padding: 12px 28px;
-}
-
-.rank-list {
-    display: grid;
-    gap: 12px;
-}
-
-.rank-row {
-    min-height: 85px;
-    background: #06141d;
-    border: 1px solid var(--border);
-    border-radius: 21px;
-    padding: 15px;
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    align-items: center;
-    gap: 10px;
-}
-
-.rank-score {
-    font-size: 23px;
-    font-weight: 800;
-    direction: ltr;
-    text-align: left;
-}
-
-.rank-name {
-    font-size: 13px;
-    color: #a7bdca;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.rank-icon {
-    font-size: 23px;
-}
-
-.rank-number {
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: #082b33;
-    color: #75faff;
-    font-weight: 800;
-}
-
-/* Store */
-
-.wallet {
-    text-align: center;
-    color: var(--yellow);
-    font-size: 23px;
-    font-weight: 800;
-    margin-bottom: 24px;
-    text-shadow: 0 0 12px #ffe60030;
-}
-
-.store-switch {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-}
-
-.store-switch button {
-    flex: 1;
-    padding: 17px 8px;
-    border-radius: 19px;
-    border: 1px solid var(--border);
-    color: var(--cyan);
-    background: #071820;
-    font-weight: 700;
-}
-
-.store-switch button.active {
-    color: #001418;
-    background: var(--cyan);
-    box-shadow: 0 0 20px #00f5f044;
-}
-
-.weapon-list {
-    display: grid;
-    gap: 17px;
-}
-
-.weapon-card {
-    display: grid;
-    grid-template-columns: 115px 1fr;
-    gap: 15px;
-    align-items: center;
-    padding: 15px;
-    background: linear-gradient(135deg, #06120c, #030a12);
-    border: 1px solid #16472b;
-    border-radius: 24px;
-}
-
-.weapon-image {
-    width: 115px;
-    height: 115px;
-    border-radius: 17px;
-    background: radial-gradient(circle, #16372b, #06100e);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
-}
-
-.weapon-image svg {
-    width: 100%;
-    height: 100%;
-}
-
-.weapon-info h3 {
-    font-size: 18px;
-    margin-bottom: 6px;
-}
-
-.weapon-info p {
-    color: var(--muted);
+  nav button {
     font-size: 12px;
-    margin-bottom: 12px;
-}
+  }
 
-.weapon-price {
-    display: block;
-    color: #ffdbe5;
-    background: #770c23;
-    border: 1px solid #a91e3c;
-    border-radius: 13px;
-    padding: 9px 6px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 800;
-}
+  .item {
+    grid-template-columns: 68px 1fr;
+  }
 
-.weapon-action {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: var(--cyan);
-    background: transparent;
-    border: 1px solid var(--cyan);
-    border-radius: 30px;
-    font-weight: 700;
-}
-
-.weapon-action.equipped {
-    background: #00f5f019;
-    color: var(--green);
-    border-color: var(--green);
-}
-
-/* Game */
-
-.game-area {
-    position: relative;
-    min-height: 580px;
-    height: 70vh;
-    max-height: 760px;
-    overflow: hidden;
-    background:
-        radial-gradient(ellipse at 50% 25%, #25104c, transparent 40%),
-        linear-gradient(#02050e, #050a1b);
-    border: 1px solid #17253e;
-    border-radius: 22px;
-}
-
-.game-hud {
-    position: absolute;
-    top: 18px;
-    left: 15px;
-    right: 15px;
-    display: flex;
-    justify-content: space-between;
-    color: #87faff;
-    font-weight: 800;
-    z-index: 3;
-}
-
-.game-star {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: white;
-    animation: twinkle 2s infinite alternate;
-}
-
-@keyframes twinkle {
-    from { opacity: .15; }
-    to { opacity: 1; }
-}
-
-.ship {
-    position: absolute;
-    width: 65px;
-    height: 75px;
-    bottom: 45px;
-    left: calc(50% - 32px);
-    font-size: 53px;
-    text-align: center;
-    filter: drop-shadow(0 0 14px #db35ff);
-    transition: left .08s;
-}
-
-.game-message {
-    position: absolute;
-    top: 40%;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: #dcaaff;
-    font-weight: 800;
-    font-size: 18px;
-    padding: 20px;
-}
-
-.game-controls {
-    display: flex;
-    gap: 12px;
-    margin-top: 15px;
-}
-
-.game-controls button {
-    flex: 1;
-    background: #091b29;
-    color: var(--cyan);
-    border: 1px solid var(--cyan);
-    border-radius: 18px;
-    padding: 14px;
-    font-weight: 800;
-}
-
-.game-controls .start {
-    background: var(--cyan);
-    color: #001316;
-}
-
-/* Toast */
-
-.toast {
-    position: fixed;
-    z-index: 20;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #10232d;
-    color: white;
-    border: 1px solid var(--cyan);
-    box-shadow: 0 0 20px #00f5f044;
-    border-radius: 30px;
-    padding: 12px 20px;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s;
-}
-
-.toast.show {
-    opacity: 1;
-}
-
-/* Mobile */
-
-@media (max-width: 430px) {
-    .page {
-        padding: 17px 14px 25px;
-    }
-
-    .title {
-        font-size: 23px;
-    }
-
-    .profile-grid {
-        gap: 10px;
-    }
-
-    .box {
-        padding: 12px;
-    }
-
-    .avatar-large {
-        font-size: 52px;
-    }
-
-    .commander-name {
-        font-size: 20px;
-    }
-
-    .music-label {
-        font-size: 12px;
-    }
-
-    .weapon-card {
-        grid-template-columns: 95px 1fr;
-        padding: 12px;
-        gap: 12px;
-    }
-
-    .weapon-image {
-        width: 95px;
-        height: 105px;
-    }
-
-    .weapon-info h3 {
-        font-size: 16px;
-    }
-
-    .rank-row {
-        padding: 12px;
-    }
-
-    .rank-score {
-        font-size: 20px;
-    }
+  .item .art {
+    width: 66px;
+    height: 66px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<header>
+  <div class="brand">تیرباز فضایی 🚀</div>
 
-    <header class="header">
-        <button class="header-button" onclick="showToast('به پایگاه فضایی خوش آمدی!')">☰</button>
+  <nav>
+    <button class="active" data-tab="game">🎮 بازی</button>
+    <button data-tab="store">🛍 فروشگاه</button>
+    <button data-tab="ranks">🏆 رتبه‌ها</button>
+    <button data-tab="profile">👤 پروفایل</button>
+  </nav>
+</header>
 
-        <div class="brand">
-            <div>
-                <div class="brand-title">تیراندازی فضایی 🚀</div>
-                <div class="brand-sub">SPACE COMMANDER</div>
-            </div>
-            <div class="brand-icon">🚀</div>
-        </div>
+<main>
 
-        <button class="header-button" onclick="showToast('نسخه آزمایشی بازی')">⋮</button>
-    </header>
+<!-- بازی -->
+<section id="game" class="view active">
 
-    <nav class="tabs">
-        <button class="tab active" data-page="profile">
-            <span>♙</span>پروفایل
-        </button>
+  <h2>ماموریت فضایی</h2>
 
-        <button class="tab" data-page="ranks">
-            <span>♜</span>رتبه‌ها
-        </button>
+  <div id="gamebox">
+    <canvas id="gamecanvas"></canvas>
 
-        <button class="tab" data-page="store">
-            <span>♧</span>فروشگاه
-        </button>
+    <div class="hud">
+      <span>⭐ <b id="score">0</b></span>
+      <span>🪙 <b id="coins">250</b></span>
+      <span id="lives">❤️❤️❤️</span>
+    </div>
+  </div>
 
-        <button class="tab" data-page="game">
-            <span>🎮</span>بازی
-        </button>
-    </nav>
+  <div class="gamehint">
+    برای جابه‌جایی سفینه روی صفحه بکش؛ شلیک خودکار است.
+    با نابودی دشمن‌ها سکه و امتیاز بگیر!
+  </div>
 
-    <!-- PROFILE -->
+  <div style="display:flex;gap:8px;justify-content:center">
+    <button class="btn" id="pause">⏸ توقف</button>
+    <button class="btn primary" id="restart">شروع دوباره</button>
+  </div>
 
-    <section class="page active" id="profile">
+</section>
 
-        <h1 class="title">👤 پروفایل شما</h1>
+<!-- فروشگاه -->
+<section id="store" class="view">
 
-        <div class="profile-grid">
+  <h2>🛒 فروشگاه</h2>
 
-            <div class="box music-box">
-                <div class="music-label">🎵 موزیک دلخواه:</div>
+  <div class="panel" style="text-align:center;color:var(--gold);font-size:20px;font-weight:900">
+    موجودی شما: <span id="storecoins">250</span> 🪙
+  </div>
 
-                <label class="music-file">
-                    📁 انتخاب آهنگ
-                    <input type="file" id="musicFile"
-                           accept="audio/*" hidden>
-                </label>
+  <div class="pills">
+    <button class="btn selected" data-kind="weapons">🔫 سلاح‌ها</button>
+    <button class="btn" data-kind="ships">🚀 سفینه‌ها</button>
+  </div>
 
-                <div class="music-controls">
-                    <button class="pause" onclick="pauseMusic()">Ⅱ</button>
-                    <button onclick="playMusic()">▶</button>
-                </div>
-            </div>
+  <div id="storeitems"></div>
 
-            <div class="box avatar-card">
-                <div class="avatar-large" id="profileAvatar">👾</div>
-                <div class="commander-name" id="profileName">APACHI</div>
-                <div class="commander-rank">SPACE COMMANDER</div>
-                <div class="points">🌟 امتیاز: <span id="points">15950</span></div>
-            </div>
+</section>
 
-        </div>
+<!-- رتبه‌بندی -->
+<section id="ranks" class="view">
 
-        <div class="label">اسم شما (نام فرمانده):</div>
+  <h2>🏆 رتبه‌بندی آنلاین</h2>
 
-        <input class="input" id="nameInput"
-               maxlength="20" value="APACHI"
-               placeholder="اسم فرمانده">
+  <div style="text-align:center">
+    <button class="btn" id="refreshRanks">🔄 بروزرسانی لیست</button>
+  </div>
 
-        <div class="label">انتخاب آواتار (نشان فرماندهی):</div>
+  <div id="ranklist"></div>
 
-        <div class="avatar-list" id="avatarList">
-            <button class="avatar-option" data-avatar="💎">💎</button>
-            <button class="avatar-option" data-avatar="👹">👹</button>
-            <button class="avatar-option" data-avatar="🟨">🟨</button>
-            <button class="avatar-option" data-avatar="🔵">🔵</button>
-            <button class="avatar-option" data-avatar="👽">👽</button>
-            <button class="avatar-option" data-avatar="🔺">🔺</button>
-            <button class="avatar-option" data-avatar="🌟">🌟</button>
-            <button class="avatar-option" data-avatar="👾">👾</button>
-        </div>
+  <p class="notice">
+    این نسخه جدول امتیاز را روی همین دستگاه ذخیره می‌کند.
+    برای جدول آنلاین مشترک بین همه بازیکنان باید به سرور یا دیتابیس متصل شود.
+  </p>
 
-        <div class="sound-setting">
-            <strong>🔊 افکت‌های صوتی</strong>
-            <button class="toggle on" id="soundToggle"
-                    onclick="toggleSound()"></button>
-        </div>
+</section>
 
-        <div class="save-code">
-            <h3>کد بازیابی اختصاصی شما:</h3>
-            <strong id="saveCode">SEPI-AP01</strong>
-            <small>این کد را نگه دار تا اطلاعات بازی را بازیابی کنی.</small>
-        </div>
+<!-- پروفایل -->
+<section id="profile" class="view">
 
-        <button class="primary-button" onclick="saveProfile()">
-            ذخیره پروفایل (سیو بازی)
-        </button>
+  <h2>👤 پروفایل شما</h2>
 
-    </section>
+  <div class="panel profilegrid">
 
-    <!-- RANKS -->
+    <div class="profilecard">
 
-    <section class="page" id="ranks">
+      <div class="bigavatar" id="profileavatar">👻</div>
 
-        <h1 class="title">🏆 رتبه‌بندی آنلاین</h1>
+      <b id="profilename">خلبان ۱۹۷۲</b>
 
-        <button class="refresh" onclick="renderRanks()">
-            🔄 بروزرسانی لیست
-        </button>
+      <p class="small">SPACE COMMANDER</p>
 
-        <div class="rank-list" id="rankList"></div>
+      <hr style="border-color:#10343c">
 
-    </section>
+      <b style="color:var(--gold)">
+        امتیاز: <span id="profilescore">0</span> ⭐
+      </b>
 
-    <!-- STORE -->
+    </div>
 
-    <section class="page" id="store">
+    <div>
 
-        <h1 class="title">🛒 فروشگاه</h1>
+      <label>نام خلبان:</label>
 
-        <div class="wallet">
-            💰 موجودی شما: <span id="coins">604</span> سکه
-        </div>
+      <input id="nameinput" maxlength="20" placeholder="نام دلخواه">
 
-        <div class="store-switch">
-            <button class="active" data-store="weapons">🔫 سلاح‌ها</button>
-            <button data-store="ships">🚀 اسکین سفینه</button>
-        </div>
+      <label class="small">انتخاب آواتار:</label>
 
-        <div class="weapon-list" id="weaponList"></div>
+      <div class="avatars" id="avatars"></div>
 
-    </section>
+    </div>
 
-    <!-- GAME -->
+  </div>
 
-    <section class="page" id="game">
+  <div class="panel toggle">
+    <b>🔊 افکت‌های صوتی</b>
+    <input class="switch" type="checkbox" id="sound" checked>
+  </div>
 
-        <h1 class="title">🚀 میدان نبرد</h1>
+  <div class="panel">
 
-        <div class="game-area" id="gameArea">
+    <div style="color:var(--gold);font-weight:900">
+      کد اختصاصی بازیکن شما
+    </div>
 
-            <div class="game-hud">
-                <span>⭐ امتیاز: <span id="gameScore">0</span></span>
-                <span>❤️ <span id="lives">3</span></span>
-            </div>
+    <h2 id="playercode" style="color:#fff;margin:8px">
+      SPC-000000
+    </h2>
 
-            <div class="game-message" id="gameMessage">
-                آماده‌ای فرمانده؟<br>
-                برای شروع بازی دکمه پایین را بزن!
-            </div>
+    <p class="notice">
+      این کد در این نسخه برای شناسایی پروفایل ساخته می‌شود.
+    </p>
 
-            <div class="ship" id="ship">🚀</div>
+  </div>
 
-        </div>
+  <div style="text-align:center">
+    <button class="btn primary" id="saveprofile">
+      ذخیره پروفایل
+    </button>
+  </div>
 
-        <div class="game-controls">
-            <button onclick="moveShip(-1)">◀ حرکت</button>
-            <button class="start" id="startButton"
-                    onclick="startGame()">شروع بازی 🚀</button>
-            <button onclick="moveShip(1)">حرکت ▶</button>
-        </div>
+</section>
 
-        <p style="color:var(--muted);font-size:12px;text-align:center;margin-top:12px">
-            با حرکت سفینه و لمس ستاره‌ها امتیاز جمع کن.
-        </p>
-
-    </section>
-
-</div>
-
-<div class="toast" id="toast"></div>
+</main>
 
 <script>
+(() => {
 
-/* -----------------------------------
-   ذخیره‌سازی اطلاعات
------------------------------------ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-const defaultState = {
-    name: "APACHI",
-    avatar: "👾",
-    points: 15950,
-    coins: 604,
-    sound: true,
-    purchased: [],
-    equipped: "laser1",
-    saveCode: "SEPI-AP01"
-};
-
-let state;
-
-try {
-    state = {
-        ...defaultState,
-        ...JSON.parse(localStorage.getItem("spaceCommanderSave") || "{}")
-    };
-} catch {
-    state = {...defaultState};
-}
-
-function saveState() {
-    localStorage.setItem("spaceCommanderSave", JSON.stringify(state));
-}
-
-function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-
-    clearTimeout(window.toastTimer);
-
-    window.toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2200);
-}
-
-/* -----------------------------------
-   تب‌ها
------------------------------------ */
-
-document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-
-        document.querySelectorAll(".tab").forEach(t =>
-            t.classList.remove("active")
-        );
-
-        document.querySelectorAll(".page").forEach(p =>
-            p.classList.remove("active")
-        );
-
-        tab.classList.add("active");
-
-        document.getElementById(tab.dataset.page)
-                .classList.add("active");
-
-        if (tab.dataset.page === "ranks") renderRanks();
-        if (tab.dataset.page === "store") renderStore();
-    });
-});
-
-/* -----------------------------------
-   پروفایل
------------------------------------ */
-
-function updateProfile() {
-    document.getElementById("profileName").textContent = state.name;
-    document.getElementById("nameInput").value = state.name;
-    document.getElementById("profileAvatar").textContent = state.avatar;
-    document.getElementById("points").textContent =
-        state.points.toLocaleString("fa-IR");
-
-    document.getElementById("coins").textContent =
-        state.coins.toLocaleString("fa-IR");
-
-    document.getElementById("saveCode").textContent = state.saveCode;
-
-    document.querySelectorAll(".avatar-option").forEach(button => {
-        button.classList.toggle(
-            "selected",
-            button.dataset.avatar === state.avatar
-        );
-    });
-
-    document.getElementById("soundToggle")
-            .classList.toggle("on", state.sound);
-}
-
-document.querySelectorAll(".avatar-option").forEach(button => {
-    button.addEventListener("click", () => {
-        state.avatar = button.dataset.avatar;
-        updateProfile();
-    });
-});
-
-function saveProfile() {
-    state.name =
-        document.getElementById("nameInput").value.trim() || "APACHI";
-
-    saveState();
-    updateProfile();
-
-    showToast("پروفایل با موفقیت ذخیره شد! ✨");
-}
-
-function toggleSound() {
-    state.sound = !state.sound;
-    saveState();
-    updateProfile();
-}
-
-let audioObject = null;
-
-document.getElementById("musicFile").addEventListener("change", event => {
-    const file = event.target.files[0];
-
-    if (!file) return;
-
-    if (audioObject) audioObject.pause();
-
-    audioObject = new Audio(URL.createObjectURL(file));
-
-    showToast("آهنگ انتخاب شد 🎵");
-});
-
-function playMusic() {
-    if (!audioObject) {
-        showToast("اول یک آهنگ انتخاب کن!");
-        return;
-    }
-
-    audioObject.play().catch(() => {
-        showToast("برای پخش آهنگ دوباره لمس کن.");
-    });
-}
-
-function pauseMusic() {
-    if (audioObject) audioObject.pause();
-}
-
-/* -----------------------------------
-   رتبه‌بندی
------------------------------------ */
-
-const samplePlayers = [
-    {name: "M3D", score: 94980, avatar: "👹"},
-    {name: "فضانورد 8362", score: 76890, avatar: "💎"},
-    {name: "Ferguson", score: 56070, avatar: "🌟"},
-    {name: "SEPEHR", score: 47710, avatar: "👹"},
-    {name: "N", score: 38070, avatar: "🔺"},
-    {name: "Feshari", score: 30460, avatar: "👾"},
-    {name: "مبر3952", score: 26980, avatar: "👾"},
-    {name: "فضانورد 6721", score: 22440, avatar: "🔺"}
+const emojis = [
+  '🔷','👾','🟨','🔵','🟣',
+  '🔺','🌟','👻','🚀','🛸'
 ];
 
-function renderRanks() {
+let data = JSON.parse(localStorage.getItem('space_save') || 'null') || {
+  score: 0,
+  coins: 250,
+  lives: 3,
+  name: '',
+  avatar: '👻',
+  sound: true,
+  ship: 0,
+  weapon: 0,
+  ownedShips: [0],
+  ownedWeapons: [0],
+  code: 'SPC-' + Math.random().toString(36).slice(2,8).toUpperCase()
+};
 
-    const players = [
-        ...samplePlayers,
-        {
-            name: state.name,
-            score: state.points,
-            avatar: state.avatar
-        }
-    ];
-
-    players.sort((a, b) => b.score - a.score);
-
-    document.getElementById("rankList").innerHTML =
-        players.slice(0, 20).map((player, index) => `
-            <div class="rank-row">
-                <div class="rank-score">
-                    ${player.score.toLocaleString("fa-IR")}
-                </div>
-
-                <div class="rank-name">
-                    ${escapeHTML(player.name)}
-                    <span class="rank-icon">${player.avatar}</span>
-                </div>
-
-                <div class="rank-number">
-                    ${index + 1}
-                </div>
-            </div>
-        `).join("");
+function save() {
+  localStorage.setItem('space_save', JSON.stringify(data));
+  updateHUD();
 }
 
-function escapeHTML(text) {
-    return String(text).replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[char]);
+function displayName() {
+  return data.name.trim() ||
+    ('خلبان ' + (1972 + Math.floor(Math.random() * 8000)));
 }
 
-/* -----------------------------------
-   فروشگاه و تصاویر سلاح‌ها
------------------------------------ */
+function updateHUD() {
+  $('#score').textContent = data.score;
+  $('#coins').textContent = data.coins;
+  $('#storecoins').textContent = data.coins;
+  $('#profilescore').textContent = data.score;
+  $('#lives').textContent = '❤️'.repeat(Math.max(0, data.lives));
+  $('#profilename').textContent = displayName();
+  $('#profileavatar').textContent = data.avatar;
+  $('#playercode').textContent = data.code;
+}
 
-/*
-  تصاویر سلاح‌ها با SVG طراحی شده‌اند.
-  بنابراین سایت برای نمایش آن‌ها به عکس خارجی نیاز ندارد.
-*/
+/* جابه‌جایی بین صفحات */
+
+$$('nav button').forEach(button => {
+
+  button.onclick = () => {
+
+    $$('nav button').forEach(b =>
+      b.classList.toggle('active', b === button)
+    );
+
+    $$('.view').forEach(view =>
+      view.classList.toggle('active', view.id === button.dataset.tab)
+    );
+
+    if (button.dataset.tab === 'store') renderStore();
+    if (button.dataset.tab === 'ranks') renderRanks();
+    if (button.dataset.tab === 'profile') renderProfile();
+    if (button.dataset.tab === 'game') resize();
+  };
+
+});
+
+/* اطلاعات فروشگاه */
+
+let kind = 'weapons';
 
 const weapons = [
-    {
-        id: "laser1",
-        name: "لیزر ساده",
-        price: 200,
-        damage: 1,
-        color: "#00f5f0",
-        description: "دمیج: 1 | تعداد تیر: 1",
-        shape: "laser"
-    },
-    {
-        id: "double",
-        name: "شلیک دوقلو",
-        price: 350,
-        damage: 2,
-        color: "#ffe600",
-        description: "دمیج: 1 | تعداد تیر: 2",
-        shape: "double"
-    },
-    {
-        id: "redlaser",
-        name: "لیزر سرخ",
-        price: 500,
-        damage: 2,
-        color: "#ff285d",
-        description: "دمیج: 2 | تعداد تیر: 1",
-        shape: "red"
-    },
-    {
-        id: "plasma",
-        name: "پلاسما",
-        price: 750,
-        damage: 3,
-        color: "#bb59ff",
-        description: "دمیج: 3 | تعداد تیر: 2",
-        shape: "plasma"
-    },
-    {
-        id: "blaster",
-        name: "بلاستر فضایی",
-        price: 1000,
-        damage: 4,
-        color: "#00ff9d",
-        description: "دمیج: 4 | تعداد تیر: 3",
-        shape: "blaster"
-    }
+  ['لیزر ساده','🔴',200,'تک‌تیر، آسیب پایه'],
+  ['شلیک دوقلو','🟣',450,'دو پرتابه هم‌زمان'],
+  ['لیزر سریع','⚡',700,'سرعت شلیک بیشتر'],
+  ['پرتاب پلاسما','💠',1100,'پرتابه قدرتمند']
 ];
 
 const ships = [
-    {
-        id: "ship1",
-        name: "سفینه نئون",
-        price: 300,
-        color: "#00f5f0",
-        shape: "ship"
-    },
-    {
-        id: "ship2",
-        name: "سفینه بنفش",
-        price: 500,
-        color: "#bb59ff",
-        shape: "ship"
-    },
-    {
-        id: "ship3",
-        name: "سفینه طلایی",
-        price: 900,
-        color: "#ffe600",
-        shape: "ship"
-    }
+  ['سفینه پیش‌فرض','🚀',0,'متعادل و چابک'],
+  ['شبح نئونی','👻',500,'حرکت سریع'],
+  ['شکارچی ستاره','🛸',900,'سفینه مقاوم'],
+  ['بال طلایی','🌟',1500,'سفینه ویژه']
 ];
 
-let currentStore = "weapons";
+$$('[data-kind]').forEach(button => {
 
-function weaponSVG(item) {
+  button.onclick = () => {
 
-    const color = item.color;
+    kind = button.dataset.kind;
 
-    if (item.shape === "ship") {
-        return `
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <filter id="glow">
-                    <feGaussianBlur stdDeviation="4"/>
-                </filter>
-            </defs>
+    $$('[data-kind]').forEach(b =>
+      b.classList.toggle('selected', b === button)
+    );
 
-            <path d="M60 15 L82 85 L60 74 L38 85 Z"
-                  fill="${color}" opacity=".25"
-                  filter="url(#glow)"/>
+    renderStore();
+  };
 
-            <path d="M60 15 L82 85 L60 74 L38 85 Z"
-                  fill="${color}"/>
-
-            <path d="M60 30 L70 72 L60 64 L50 72 Z"
-                  fill="#f5ffff"/>
-
-            <path d="M43 70 L20 94 L48 84 Z"
-                  fill="${color}"/>
-
-            <path d="M77 70 L100 94 L72 84 Z"
-                  fill="${color}"/>
-
-            <circle cx="60" cy="52" r="5" fill="#06121c"/>
-
-            <path d="M49 89 L60 110 L71 89 Z"
-                  fill="#ff7b32"/>
-        </svg>`;
-    }
-
-    if (item.shape === "double") {
-        return `
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            <g fill="${color}" stroke="#fff3a0" stroke-width="2">
-                <rect x="25" y="28" width="19" height="65" rx="7"/>
-                <rect x="76" y="28" width="19" height="65" rx="7"/>
-                <rect x="29" y="15" width="11" height="25" rx="5"/>
-                <rect x="80" y="15" width="11" height="25" rx="5"/>
-            </g>
-            <path d="M35 96 L35 108 M85 96 L85 108"
-                  stroke="${color}" stroke-width="5"/>
-        </svg>`;
-    }
-
-    if (item.shape === "plasma") {
-        return `
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="60" cy="60" r="38" fill="${color}" opacity=".12"/>
-            <circle cx="60" cy="60" r="27" fill="${color}" opacity=".2"/>
-            <path d="M60 17 L72 46 L103 60 L72 74
-                     L60 103 L48 74 L17 60 L48 46 Z"
-                  fill="${color}"/>
-            <circle cx="60" cy="60" r="12" fill="#fff"/>
-            <circle cx="60" cy="60" r="6" fill="${color}"/>
-        </svg>`;
-    }
-
-    if (item.shape === "blaster") {
-        return `
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17 48 L103 48 L92 72 L28 72 Z"
-                  fill="${color}"/>
-            <rect x="48" y="30" width="24" height="58" rx="5"
-                  fill="#d9fff1"/>
-            <rect x="53" y="20" width="14" height="25" rx="5"
-                  fill="${color}"/>
-            <path d="M48 80 L35 102 L55 93 Z"
-                  fill="#ff8033"/>
-            <path d="M72 80 L85 102 L65 93 Z"
-                  fill="#ff8033"/>
-        </svg>`;
-    }
-
-    if (item.shape === "red") {
-        return `
-        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-            <path d="M60 12 L73 42 L103 60 L73 78
-                     L60 108 L47 78 L17 60 L47 42 Z"
-                  fill="${color}" opacity=".25"/>
-            <path d="M60 22 L70 50 L98 60 L70 70
-                     L60 98 L50 70 L22 60 L50 50 Z"
-                  fill="${color}"/>
-            <circle cx="60" cy="60" r="13" fill="#fff"/>
-            <circle cx="60" cy="60" r="7" fill="${color}"/>
-        </svg>`;
-    }
-
-    return `
-    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <path d="M60 12 L76 83 L60 73 L44 83 Z"
-              fill="${color}" opacity=".3"/>
-        <path d="M60 18 L74 83 L60 73 L46 83 Z"
-              fill="${color}"/>
-        <rect x="54" y="31" width="12" height="33" rx="6"
-              fill="#f4ffff"/>
-        <path d="M46 77 L26 96 L50 88 Z"
-              fill="${color}"/>
-        <path d="M74 77 L94 96 L70 88 Z"
-              fill="${color}"/>
-        <path d="M54 87 L60 107 L66 87 Z"
-              fill="#ff7937"/>
-    </svg>`;
-}
+});
 
 function renderStore() {
 
-    const list = currentStore === "weapons" ? weapons : ships;
+  const list = kind === 'weapons' ? weapons : ships;
 
-    document.getElementById("weaponList").innerHTML =
-        list.map(item => {
+  const owned = kind === 'weapons'
+    ? data.ownedWeapons
+    : data.ownedShips;
 
-            const owned = state.purchased.includes(item.id);
-            const equipped = state.equipped === item.id;
+  const current = kind === 'weapons'
+    ? data.weapon
+    : data.ship;
 
-            let actionText = "خرید و تجهیز";
-            let actionClass = "weapon-action";
+  $('#storeitems').innerHTML = list.map((item, i) => `
 
-            if (equipped) {
-                actionText = "✓ مجهز شده";
-                actionClass += " equipped";
-            } else if (owned) {
-                actionText = "تجهیز کردن";
-            }
+    <div class="item">
 
-            return `
-                <div class="weapon-card">
+      <div class="art">${item[1]}</div>
 
-                    <div class="weapon-image">
-                        ${weaponSVG(item)}
-                    </div>
+      <div>
 
-                    <div class="weapon-info">
+        <h3>${item[0]}</h3>
 
-                        <h3>${item.name}</h3>
+        <p>${item[3]}</p>
 
-                        <p>
-                            ${item.description || "سفینه ویژه فرمانده"}
-                        </p>
+        <p>
+          ${owned.includes(i)
+            ? (i === current ? 'مجهز' : 'خریداری‌شده')
+            : 'قابل خرید'}
+        </p>
 
-                        <button class="${actionClass}"
-                                onclick="buyOrEquip('${item.id}')">
-                            ${actionText}
-                        </button>
+        <div class="actions">
 
-                        <span class="weapon-price">
-                            ⚡ ${owned ? "خریداری شده" :
-                                "ارتقا 💰 " + item.price + " سکه"}
-                        </span>
+          <span class="price">${item[2] || 'رایگان'} 🪙</span>
 
-                    </div>
-                </div>
-            `;
-        }).join("");
-}
+          <button class="btn ${i === current ? 'primary' : ''}"
+                  data-buy="${i}">
 
-document.querySelectorAll(".store-switch button").forEach(button => {
+            ${i === current
+              ? 'مجهز'
+              : owned.includes(i)
+                ? 'تجهیز کردن'
+                : 'خرید'}
 
-    button.addEventListener("click", () => {
+          </button>
 
-        document.querySelectorAll(".store-switch button")
-                .forEach(b => b.classList.remove("active"));
+        </div>
 
-        button.classList.add("active");
+      </div>
 
-        currentStore = button.dataset.store;
+    </div>
 
-        renderStore();
-    });
-});
+  `).join('');
 
-function buyOrEquip(id) {
+  $$('[data-buy]').forEach(button => {
 
-    const item = [...weapons, ...ships].find(w => w.id === id);
+    button.onclick = () => {
 
-    if (!item) return;
+      const i = Number(button.dataset.buy);
 
-    const owned = state.purchased.includes(id);
+      const owned = kind === 'weapons'
+        ? data.ownedWeapons
+        : data.ownedShips;
 
-    if (!owned) {
+      const price = list[i][2];
 
-        if (state.coins < item.price) {
-            showToast("سکه کافی نداری! 💰");
-            return;
+      if (!owned.includes(i)) {
+
+        if (data.coins < price) {
+          alert('سکه کافی نیست!');
+          return;
         }
 
-        state.coins -= item.price;
-        state.purchased.push(id);
+        data.coins -= price;
+        owned.push(i);
 
-        showToast(item.name + " خریداری شد! 🚀");
+      }
+
+      if (kind === 'weapons') {
+        data.weapon = i;
+      } else {
+        data.ship = i;
+      }
+
+      save();
+      renderStore();
+      sound(660);
+
+    };
+
+  });
+
+}
+
+/* پروفایل */
+
+function renderProfile() {
+
+  $('#nameinput').value = data.name;
+  $('#sound').checked = data.sound;
+
+  $('#avatars').innerHTML = emojis.map(emoji => `
+
+    <button class="${emoji === data.avatar ? 'chosen' : ''}"
+            data-avatar="${emoji}">
+
+      ${emoji}
+
+    </button>
+
+  `).join('');
+
+  $$('[data-avatar]').forEach(button => {
+
+    button.onclick = () => {
+
+      data.avatar = button.dataset.avatar;
+
+      renderProfile();
+      updateHUD();
+
+    };
+
+  });
+
+  updateHUD();
+
+}
+
+$('#saveprofile').onclick = () => {
+
+  data.name = $('#nameinput').value.trim();
+  data.sound = $('#sound').checked;
+
+  save();
+  renderProfile();
+  sound(500);
+
+};
+
+/* رتبه‌بندی محلی */
+
+function renderRanks() {
+
+  let rows = JSON.parse(localStorage.getItem('space_ranks') || '[]');
+
+  rows = rows.filter(row => row.code !== data.code);
+
+  rows.push({
+    name: displayName(),
+    score: data.score,
+    avatar: data.avatar,
+    code: data.code
+  });
+
+  rows.sort((a, b) => b.score - a.score);
+
+  rows = rows.slice(0, 50);
+
+  localStorage.setItem('space_ranks', JSON.stringify(rows));
+
+  $('#ranklist').innerHTML = rows.map((row, i) => `
+
+    <div class="rankrow">
+
+      <div class="ranknum ${i < 3 ? 'top' : ''}">
+        ${i + 1}
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px">
+
+        <span class="avatar">${row.avatar}</span>
+
+        <span>
+
+          <b>${escapeHTML(row.name)}</b>
+
+          <div class="small">
+            ${row.code === data.code ? 'شما' : 'خلبان فضایی'}
+          </div>
+
+        </span>
+
+      </div>
+
+      <b>${row.score} ⭐</b>
+
+    </div>
+
+  `).join('');
+
+}
+
+function escapeHTML(text) {
+
+  return text.replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+
+}
+
+$('#refreshRanks').onclick = renderRanks;
+
+/* افکت صوتی */
+
+function sound(frequency) {
+
+  if (!data.sound) return;
+
+  try {
+
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+
+    oscillator.frequency.value = frequency;
+    gain.gain.value = 0.025;
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+
+    oscillator.start();
+    oscillator.stop(audio.currentTime + 0.07);
+
+    oscillator.onended = () => audio.close();
+
+  } catch (error) {}
+
+}
+
+/* بازی */
+
+const canvas = $('#gamecanvas');
+const ctx = canvas.getContext('2d');
+
+let W = 0;
+let H = 0;
+
+let shipX = 0;
+let shipY = 0;
+
+let bullets = [];
+let enemies = [];
+let stars = [];
+
+let running = true;
+let last = 0;
+let spawn = 0;
+
+function resize() {
+
+  const rect = canvas.getBoundingClientRect();
+
+  W = canvas.width = Math.max(1, rect.width * devicePixelRatio);
+  H = canvas.height = Math.max(1, rect.height * devicePixelRatio);
+
+  shipX = W / 2;
+  shipY = H * 0.86;
+
+  stars = Array.from({length: 90}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    s: Math.random() * 1.7 + 0.3,
+    v: Math.random() * 1.2 + 0.3
+  }));
+
+}
+
+function addEnemy() {
+
+  const x = Math.random() * (W - 35) + 17;
+
+  enemies.push({
+    x,
+    y: -20,
+    r: 10 + Math.random() * 5,
+    v: 1.1 + Math.random() * 1.2,
+    hp: 1
+  });
+
+}
+
+function drawShip(x, y) {
+
+  ctx.save();
+
+  ctx.translate(x, y);
+
+  ctx.shadowBlur = 18;
+  ctx.shadowColor = '#00ffe7';
+
+  ctx.fillStyle = '#00d9d2';
+
+  ctx.beginPath();
+
+  ctx.moveTo(0, -20);
+  ctx.lineTo(15, 15);
+  ctx.lineTo(0, 8);
+  ctx.lineTo(-15, 15);
+
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#f58bff';
+  ctx.fillRect(-3, 10, 6, 9);
+
+  ctx.restore();
+
+}
+
+function frame(time) {
+
+  requestAnimationFrame(frame);
+
+  if (!W) return;
+
+  const dt = Math.min(2, (time - last) / 16 || 1);
+
+  last = time;
+
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.fillStyle = '#01040b';
+  ctx.fillRect(0, 0, W, H);
+
+  /* ستاره‌های پس‌زمینه */
+
+  stars.forEach(star => {
+
+    star.y += star.v * dt;
+
+    if (star.y > H) star.y = 0;
+
+    ctx.fillStyle = `rgba(130,230,255,${0.25 + star.s / 3})`;
+
+    ctx.fillRect(star.x, star.y, star.s, star.s);
+
+  });
+
+  if (running && data.lives > 0) {
+
+    spawn += dt;
+
+    if (spawn > 38) {
+      spawn = 0;
+      addEnemy();
     }
 
-    state.equipped = id;
+    /* شلیک خودکار */
 
-    saveState();
-    updateProfile();
-    renderStore();
-}
+    if (Math.random() < 0.13) {
 
-/* -----------------------------------
-   بازی فضایی
------------------------------------ */
+      bullets.push({
+        x: shipX,
+        y: shipY - 20,
+        v: 7
+      });
 
-const gameArea = document.getElementById("gameArea");
-const ship = document.getElementById("ship");
-
-let gameRunning = false;
-let gameScore = 0;
-let shipPosition = 50;
-let gameTimer = null;
-let starTimer = null;
-
-function createStars() {
-
-    for (let i = 0; i < 60; i++) {
-
-        const star = document.createElement("div");
-
-        star.className = "game-star";
-
-        star.style.left = Math.random() * 100 + "%";
-        star.style.top = Math.random() * 100 + "%";
-
-        star.style.animationDelay = Math.random() * 2 + "s";
-
-        gameArea.appendChild(star);
     }
-}
 
-function moveShip(direction) {
-
-    shipPosition += direction * 8;
-
-    shipPosition = Math.max(5, Math.min(95, shipPosition));
-
-    ship.style.left = `calc(${shipPosition}% - 32px)`;
-}
-
-function startGame() {
-
-    if (gameRunning) return;
-
-    gameRunning = true;
-    gameScore = 0;
-    shipPosition = 50;
-
-    document.getElementById("gameScore").textContent = "0";
-
-    document.getElementById("gameMessage").style.display = "none";
-
-    document.getElementById("startButton").textContent = "بازی در حال اجراست";
-
-    gameTimer = setInterval(() => {
-
-        gameScore += 10;
-
-        document.getElementById("gameScore").textContent =
-            gameScore.toLocaleString("fa-IR");
-
-        if (Math.random() < .3) {
-            createGameTarget();
-        }
-
-    }, 700);
-
-    starTimer = setTimeout(endGame, 20000);
-
-    showToast("بازی شروع شد! ⭐");
-}
-
-function createGameTarget() {
-
-    const target = document.createElement("div");
-
-    target.textContent = "⭐";
-
-    target.style.position = "absolute";
-    target.style.left = Math.random() * 90 + "%";
-    target.style.top = "0";
-    target.style.fontSize = "25px";
-    target.style.cursor = "pointer";
-    target.style.zIndex = "2";
-
-    gameArea.appendChild(target);
-
-    let top = 0;
-
-    const falling = setInterval(() => {
-
-        if (!gameRunning) {
-            clearInterval(falling);
-            target.remove();
-            return;
-        }
-
-        top += 3;
-
-        target.style.top = top + "px";
-
-        if (top > gameArea.clientHeight) {
-            clearInterval(falling);
-            target.remove();
-        }
-
-    }, 40);
-
-    target.addEventListener("click", () => {
-
-        gameScore += 100;
-
-        document.getElementById("gameScore").textContent =
-            gameScore.toLocaleString("fa-IR");
-
-        target.remove();
-
-        clearInterval(falling);
+    bullets.forEach(bullet => {
+      bullet.y -= bullet.v * dt;
     });
-}
 
-function endGame() {
+    bullets = bullets.filter(bullet => bullet.y > -10);
 
-    gameRunning = false;
+    /* حرکت دشمن‌ها */
 
-    clearInterval(gameTimer);
-    clearTimeout(starTimer);
+    enemies.forEach(enemy => {
+      enemy.y += enemy.v * dt;
+    });
 
-    const earnedCoins = Math.floor(gameScore / 100);
+    /* برخورد گلوله و دشمن */
 
-    state.points += gameScore;
-    state.coins += earnedCoins;
+    for (const enemy of enemies) {
 
-    saveState();
-    updateProfile();
+      for (const bullet of bullets) {
 
-    document.getElementById("gameMessage").innerHTML =
-        `بازی تمام شد! 🚀<br>
-         امتیاز: ${gameScore}<br>
-         سکه جایزه: ${earnedCoins}`;
+        if (
+          Math.hypot(enemy.x - bullet.x, enemy.y - bullet.y)
+          < enemy.r + 4
+        ) {
 
-    document.getElementById("gameMessage").style.display = "block";
+          enemy.hp = 0;
+          bullet.y = -99;
 
-    document.getElementById("startButton").textContent =
-        "دوباره بازی کن";
+          data.score += 100;
+          data.coins += 5;
 
-    renderRanks();
+          sound(820);
 
-    showToast("امتیاز و سکه به حسابت اضافه شد!");
-}
+          break;
 
-gameArea.addEventListener("touchstart", event => {
+        }
 
-    if (!gameRunning) return;
+      }
 
-    const touch = event.touches[0];
+      /* برخورد دشمن با سفینه */
 
-    const rect = gameArea.getBoundingClientRect();
+      if (
+        enemy.y > shipY - 15 &&
+        Math.abs(enemy.x - shipX) < 24
+      ) {
 
-    const x = touch.clientX - rect.left;
+        enemy.hp = 0;
+        data.lives--;
 
-    shipPosition = Math.max(
-        5,
-        Math.min(95, (x / rect.width) * 100)
+        sound(180);
+
+      }
+
+    }
+
+    enemies = enemies.filter(enemy =>
+      enemy.hp > 0 && enemy.y < H + 30
     );
 
-    ship.style.left = `calc(${shipPosition}% - 32px)`;
+    if (data.lives <= 0) {
 
-}, {passive: true});
+      running = false;
 
-/* -----------------------------------
-   شروع سایت
------------------------------------ */
+      ctx.fillStyle = '#ff5b7d';
+      ctx.font = 'bold 28px sans-serif';
+      ctx.textAlign = 'center';
 
-createStars();
-updateProfile();
+      ctx.fillText('پایان ماموریت', W / 2, H / 2);
+
+    }
+
+    if (time % 1000 < 20) save();
+
+  }
+
+  /* رسم گلوله‌ها */
+
+  bullets.forEach(bullet => {
+
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#00ffff';
+
+    ctx.fillStyle = '#8fffff';
+
+    ctx.fillRect(
+      bullet.x - 2,
+      bullet.y - 8,
+      4,
+      12
+    );
+
+  });
+
+  /* رسم دشمن‌ها */
+
+  enemies.forEach(enemy => {
+
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = '#ff9b18';
+
+    ctx.fillStyle = '#ff9b18';
+
+    ctx.beginPath();
+
+    ctx.arc(
+      enemy.x,
+      enemy.y,
+      enemy.r,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle = '#77410d';
+
+    ctx.fillRect(
+      enemy.x - 3,
+      enemy.y + enemy.r,
+      6,
+      12
+    );
+
+  });
+
+  drawShip(shipX, shipY);
+
+  updateHUD();
+
+}
+
+/* کنترل سفینه با لمس یا ماوس */
+
+function pointer(event) {
+
+  const rect = canvas.getBoundingClientRect();
+
+  shipX = Math.max(
+    18,
+    Math.min(
+      W - 18,
+      (event.clientX - rect.left) * devicePixelRatio
+    )
+  );
+
+}
+
+canvas.addEventListener('pointerdown', event => {
+
+  canvas.setPointerCapture(event.pointerId);
+  pointer(event);
+
+});
+
+canvas.addEventListener('pointermove', event => {
+
+  if (event.buttons) pointer(event);
+
+});
+
+/* توقف و شروع دوباره */
+
+$('#pause').onclick = () => {
+
+  running = !running;
+
+  $('#pause').textContent =
+    running ? '⏸ توقف' : '▶ ادامه';
+
+};
+
+$('#restart').onclick = () => {
+
+  data.lives = 3;
+  data.score = 0;
+
+  bullets = [];
+  enemies = [];
+
+  running = true;
+  spawn = 0;
+
+  save();
+
+};
+
+/* شروع */
+
+resize();
+
+window.addEventListener('resize', resize);
+
+updateHUD();
 renderStore();
-renderRanks();
+renderProfile();
 
+requestAnimationFrame(frame);
+
+})();
 </script>
 
 </body>
