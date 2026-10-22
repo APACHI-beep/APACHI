@@ -7,349 +7,355 @@
 
 <style>
 :root {
-  --bg: #030610;
-  --panel: #06151d;
-  --line: #073b45;
-  --cyan: #00f0e5;
-  --pink: #e84bd7;
-  --gold: #ffd91a;
-  --text: #e9f7ff;
-  --muted: #8aa9b8;
+  --bg:#030610;
+  --panel:#06151d;
+  --line:#10404b;
+  --cyan:#00f0e5;
+  --pink:#e84bd7;
+  --gold:#ffd91a;
+  --text:#e9f7ff;
+  --muted:#8aa9b8;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing:border-box; }
 
 body {
-  margin: 0;
-  background: radial-gradient(ellipse at 50% 0, #091b2a 0, #030610 55%);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  margin:0;
+  background:radial-gradient(ellipse at top,#0a1b2a,#030610 65%);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
 }
 
 header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #030610ed;
-  border-bottom: 1px solid #12323e;
-  padding: 12px 10px 0;
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#030610ee;
+  border-bottom:1px solid #12323e;
+  padding:10px 8px 0;
 }
 
 .brand {
-  text-align: center;
-  font-weight: 900;
-  font-size: 22px;
-  background: linear-gradient(90deg, #69eaff, #e77aff);
-  -webkit-background-clip: text;
-  color: transparent;
-  padding: 4px;
+  text-align:center;
+  font-weight:900;
+  font-size:23px;
+  padding:5px;
+  background:linear-gradient(90deg,#65eaff,#e77aff);
+  -webkit-background-clip:text;
+  color:transparent;
 }
 
 nav {
-  display: flex;
-  gap: 4px;
-  justify-content: space-around;
-  margin-top: 8px;
+  display:flex;
+  justify-content:space-around;
+  gap:3px;
+  margin-top:8px;
 }
 
 nav button {
-  flex: 1;
-  background: transparent;
-  border: 0;
-  color: #7e9ba9;
-  font-weight: 800;
-  padding: 12px 3px;
-  border-bottom: 3px solid transparent;
-  font-size: 14px;
+  flex:1;
+  padding:12px 2px;
+  border:0;
+  border-bottom:3px solid transparent;
+  background:transparent;
+  color:#7895a5;
+  font-weight:800;
+  font-size:13px;
 }
 
 nav button.active {
-  color: #8ffaff;
-  border-bottom: 3px solid var(--cyan);
-  text-shadow: 0 0 12px #00ffff55;
+  color:#8ffaff;
+  border-bottom-color:var(--cyan);
+  text-shadow:0 0 12px #00ffff77;
 }
 
 main {
-  max-width: 760px;
-  margin: auto;
-  padding: 14px 12px 35px;
+  width:100%;
+  max-width:760px;
+  margin:auto;
+  padding:12px;
 }
 
-.view {
-  display: none;
-}
-
-.view.active {
-  display: block;
-}
+.view { display:none; }
+.view.active { display:block; }
 
 h2 {
-  text-align: center;
-  margin: 12px 0 18px;
-  font-size: 25px;
-  background: linear-gradient(90deg, #7cecff, #d58bff);
-  -webkit-background-clip: text;
-  color: transparent;
+  text-align:center;
+  font-size:25px;
+  margin:15px 0 20px;
+  color:#9ceaff;
+  text-shadow:0 0 15px #00ffff22;
 }
 
 .panel {
-  background: linear-gradient(145deg, #06171d, #030911);
-  border: 1px solid #0a4147;
-  border-radius: 22px;
-  padding: 16px;
-  margin: 12px 0;
-  box-shadow: 0 0 16px #00e5e510;
+  background:linear-gradient(145deg,#06171d,#030911);
+  border:1px solid #0c4149;
+  border-radius:22px;
+  padding:15px;
+  margin:13px 0;
+  box-shadow:0 0 15px #00e5e508;
 }
 
+button { cursor:pointer; }
+
 .btn {
-  border: 1px solid var(--cyan);
-  border-radius: 30px;
-  background: #03191e;
-  color: var(--cyan);
-  padding: 11px 17px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 0 12px #00e5e51a;
+  border:1px solid var(--cyan);
+  border-radius:30px;
+  background:#03191e;
+  color:var(--cyan);
+  padding:11px 17px;
+  font-weight:800;
+  font-size:14px;
 }
 
 .btn.primary {
-  background: var(--cyan);
-  color: #001419;
-  box-shadow: 0 0 18px #00e5e555;
+  background:var(--cyan);
+  color:#001419;
+  box-shadow:0 0 18px #00e5e544;
 }
 
 .btn:disabled {
-  opacity: 0.4;
+  opacity:.4;
+  cursor:not-allowed;
 }
 
 .pills {
-  display: flex;
-  gap: 8px;
+  display:flex;
+  gap:8px;
 }
 
-.pills button {
-  flex: 1;
+.pills button { flex:1; }
+
+.pills .selected {
+  background:var(--cyan);
+  color:#001419;
 }
 
-.pills button.selected {
-  background: var(--cyan);
-  color: #001;
+.small {
+  font-size:12px;
+  color:var(--muted);
 }
 
-/* محیط بازی */
+.notice {
+  font-size:12px;
+  line-height:1.9;
+  color:var(--muted);
+}
+
+input {
+  width:100%;
+  padding:12px;
+  margin:7px 0;
+  color:white;
+  background:#020a12;
+  border:1px solid #12505a;
+  border-radius:13px;
+  font-size:16px;
+}
+
+/* بازی */
 
 #gamebox {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #10414b;
-  border-radius: 18px;
-  background: #01040b;
-  height: min(68vh, 590px);
-  min-height: 390px;
+  position:relative;
+  width:100%;
+  height:min(72vh,650px);
+  min-height:420px;
+  background:#01040b;
+  border:1px solid #14505a;
+  border-radius:25px;
+  overflow:hidden;
+  box-shadow:0 0 22px #00ffff0b;
 }
 
 #gamecanvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: none;
+  width:100%;
+  height:100%;
+  display:block;
+  touch-action:none;
 }
 
 .hud {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 900;
-  text-shadow: 0 0 8px #00eaff;
-  font-size: 14px;
-  pointer-events: none;
+  position:absolute;
+  top:12px;
+  left:12px;
+  right:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:5px;
+  font-size:14px;
+  font-weight:900;
+  color:#9cffff;
+  text-shadow:0 0 10px #00eaff;
+  pointer-events:none;
 }
 
 .gamehint {
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  margin: 9px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  line-height:1.8;
+  padding:8px 4px;
+}
+
+.gamebuttons {
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 /* فروشگاه */
 
 .item {
-  display: grid;
-  grid-template-columns: 82px 1fr;
-  gap: 12px;
-  align-items: center;
-  border: 1px solid #12482a;
-  background: #03120d;
-  border-radius: 20px;
-  padding: 13px;
-  margin: 12px 0;
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:12px;
+  align-items:center;
+  padding:13px;
+  margin:12px 0;
+  background:linear-gradient(140deg,#03130f,#030911);
+  border:1px solid #15552c;
+  border-radius:20px;
 }
 
-.item .art {
-  width: 78px;
-  height: 78px;
-  display: grid;
-  place-items: center;
-  font-size: 45px;
-  background: #07141c;
-  border-radius: 15px;
+.item-art {
+  width:95px;
+  height:95px;
+  display:grid;
+  place-items:center;
+  border-radius:17px;
+  background:#07141d;
+  border:1px solid #14343e;
+  font-size:52px;
+  filter:drop-shadow(0 0 8px #00eaff33);
 }
 
 .item h3 {
-  margin: 0 0 4px;
-  font-size: 18px;
+  margin:0 0 5px;
+  font-size:17px;
 }
 
 .item p {
-  margin: 3px 0;
-  color: var(--muted);
-  font-size: 13px;
+  margin:4px 0;
+  font-size:12px;
+  color:var(--muted);
 }
 
-.item .actions {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin-top: 9px;
+.item-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:9px;
 }
 
 .price {
-  color: #ffe34c;
-  font-weight: 900;
+  color:var(--gold);
+  font-weight:900;
 }
 
 /* رتبه‌بندی */
 
 .rankrow {
-  display: grid;
-  grid-template-columns: 42px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 13px;
-  border: 1px solid #10414b;
-  border-radius: 17px;
-  margin: 9px 0;
-  background: #04121a;
+  display:grid;
+  grid-template-columns:40px 1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  margin:9px 0;
+  border:1px solid #10404b;
+  border-radius:17px;
+  background:#04121a;
 }
 
 .ranknum {
-  border-radius: 50%;
-  background: #07313a;
-  color: #8ffaff;
-  text-align: center;
-  padding: 8px;
-  font-weight: 900;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#07313a;
+  color:#8ffaff;
+  font-weight:900;
 }
 
 .ranknum.top {
-  background: #ffd329;
-  color: #211900;
+  background:var(--gold);
+  color:#251900;
 }
 
-.avatar {
-  font-size: 32px;
-  display: grid;
-  place-items: center;
-  width: 45px;
-  height: 45px;
-  border-radius: 13px;
-  background: #0a101b;
+.rankplayer {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+
+.rankavatar {
+  font-size:25px;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  background:#0a101b;
+  border-radius:12px;
 }
 
 /* پروفایل */
 
 .profilegrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
 .profilecard {
-  text-align: center;
+  text-align:center;
 }
 
 .bigavatar {
-  font-size: 55px;
-  filter: drop-shadow(0 0 12px #00eaff);
-  margin: 6px;
-}
-
-input {
-  width: 100%;
-  background: #020a12;
-  border: 1px solid #12505a;
-  border-radius: 14px;
-  color: white;
-  padding: 13px;
-  font-size: 16px;
-  margin: 7px 0;
+  font-size:60px;
+  margin:8px;
+  filter:drop-shadow(0 0 13px #00eaff66);
 }
 
 .avatars {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:8px;
 }
 
 .avatars button {
-  font-size: 25px;
-  background: #0b111c;
-  border: 1px solid transparent;
-  border-radius: 13px;
-  padding: 8px;
+  font-size:24px;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:#0b111c;
+  padding:7px;
 }
 
 .avatars button.chosen {
-  border-color: var(--cyan);
-  box-shadow: 0 0 12px #00ffff66;
-}
-
-.small {
-  font-size: 12px;
-  color: var(--muted);
+  border-color:var(--cyan);
+  box-shadow:0 0 12px #00ffff55;
 }
 
 .toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-.switch {
-  accent-color: var(--cyan);
-  width: 22px;
-  height: 22px;
+.toggle input {
+  width:22px;
+  height:22px;
+  accent-color:var(--cyan);
 }
 
-.notice {
-  color: #9db5c2;
-  font-size: 12px;
-  line-height: 1.8;
-}
-
-@media (max-width: 420px) {
-  .brand {
-    font-size: 19px;
-  }
-
-  nav button {
-    font-size: 12px;
-  }
-
-  .item {
-    grid-template-columns: 68px 1fr;
-  }
-
-  .item .art {
-    width: 66px;
-    height: 66px;
-  }
+@media(max-width:420px) {
+  nav button { font-size:12px; }
+  .item { grid-template-columns:75px 1fr; }
+  .item-art { width:72px;height:72px;font-size:40px; }
+  .profilegrid { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -357,8 +363,7 @@ input {
 <body>
 
 <header>
-  <div class="brand">تیرباز فضایی 🚀</div>
-
+  <div class="brand">🚀 تیرباز فضایی</div>
   <nav>
     <button class="active" data-tab="game">🎮 بازی</button>
     <button data-tab="store">🛍 فروشگاه</button>
@@ -369,40 +374,44 @@ input {
 
 <main>
 
-<!-- بازی -->
+<!-- ================= بازی ================= -->
+
 <section id="game" class="view active">
 
   <h2>ماموریت فضایی</h2>
 
   <div id="gamebox">
+
     <canvas id="gamecanvas"></canvas>
 
     <div class="hud">
+      <span>❤️ <b id="lives">3</b></span>
+      <span>🪙 <b id="coins">100</b></span>
       <span>⭐ <b id="score">0</b></span>
-      <span>🪙 <b id="coins">250</b></span>
-      <span id="lives">❤️❤️❤️</span>
     </div>
+
   </div>
 
   <div class="gamehint">
-    برای جابه‌جایی سفینه روی صفحه بکش؛ شلیک خودکار است.
-    با نابودی دشمن‌ها سکه و امتیاز بگیر!
+    سفینه را روی صفحه حرکت بده. شلیک خودکار است.
+    دشمن‌ها را نابود کن تا امتیاز و سکه بگیری.
   </div>
 
-  <div style="display:flex;gap:8px;justify-content:center">
+  <div class="gamebuttons">
     <button class="btn" id="pause">⏸ توقف</button>
     <button class="btn primary" id="restart">شروع دوباره</button>
   </div>
 
 </section>
 
-<!-- فروشگاه -->
+<!-- ================= فروشگاه ================= -->
+
 <section id="store" class="view">
 
   <h2>🛒 فروشگاه</h2>
 
-  <div class="panel" style="text-align:center;color:var(--gold);font-size:20px;font-weight:900">
-    موجودی شما: <span id="storecoins">250</span> 🪙
+  <div class="panel" style="text-align:center;color:var(--gold);font-weight:900">
+    موجودی شما: <span id="storecoins">100</span> 🪙
   </div>
 
   <div class="pills">
@@ -414,28 +423,33 @@ input {
 
 </section>
 
-<!-- رتبه‌بندی -->
+<!-- ================= رتبه‌بندی ================= -->
+
 <section id="ranks" class="view">
 
-  <h2>🏆 رتبه‌بندی آنلاین</h2>
+  <h2>🏆 رتبه‌بندی بازیکنان</h2>
 
   <div style="text-align:center">
-    <button class="btn" id="refreshRanks">🔄 بروزرسانی لیست</button>
+    <button class="btn" id="refreshRanks">🔄 بروزرسانی</button>
   </div>
 
   <div id="ranklist"></div>
 
-  <p class="notice">
-    این نسخه جدول امتیاز را روی همین دستگاه ذخیره می‌کند.
-    برای جدول آنلاین مشترک بین همه بازیکنان باید به سرور یا دیتابیس متصل شود.
-  </p>
+  <div class="panel">
+    <p class="notice">
+      بازیکنان با امتیاز بیشتر در رتبه‌های بالاتر قرار می‌گیرند.
+      این نمونه رتبه‌ها را در همین مرورگر نگه می‌دارد.
+      برای جدول مشترک بین همه بازیکنان، اتصال به سرور لازم است.
+    </p>
+  </div>
 
 </section>
 
-<!-- پروفایل -->
+<!-- ================= پروفایل ================= -->
+
 <section id="profile" class="view">
 
-  <h2>👤 پروفایل شما</h2>
+  <h2>👤 پروفایل خلبان</h2>
 
   <div class="panel profilegrid">
 
@@ -443,7 +457,7 @@ input {
 
       <div class="bigavatar" id="profileavatar">👻</div>
 
-      <b id="profilename">خلبان ۱۹۷۲</b>
+      <b id="profilename">خلبان</b>
 
       <p class="small">SPACE COMMANDER</p>
 
@@ -471,29 +485,37 @@ input {
 
   <div class="panel toggle">
     <b>🔊 افکت‌های صوتی</b>
-    <input class="switch" type="checkbox" id="sound" checked>
+    <input type="checkbox" id="sound" checked>
   </div>
 
   <div class="panel">
 
-    <div style="color:var(--gold);font-weight:900">
-      کد اختصاصی بازیکن شما
-    </div>
+    <b style="color:var(--gold)">کد اختصاصی اکانت</b>
 
-    <h2 id="playercode" style="color:#fff;margin:8px">
-      SPC-000000
-    </h2>
+    <h2 id="playercode" style="color:white">SPC-000000</h2>
 
     <p class="notice">
-      این کد در این نسخه برای شناسایی پروفایل ساخته می‌شود.
+      کد خودت را نگه دار تا بتوانی پروفایلت را در این مرورگر پیدا کنی.
     </p>
 
   </div>
 
-  <div style="text-align:center">
-    <button class="btn primary" id="saveprofile">
-      ذخیره پروفایل
+  <div class="panel">
+
+    <h3>🔎 یافتن اکانت با کد</h3>
+
+    <input id="lookupcode" placeholder="کد بازیکن، مثلاً SPC-AB12CD">
+
+    <button class="btn primary" id="lookupbutton">
+      یافتن اکانت
     </button>
+
+    <div id="lookupresult" class="notice"></div>
+
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn primary" id="saveprofile">ذخیره پروفایل</button>
   </div>
 
 </section>
@@ -503,53 +525,103 @@ input {
 <script>
 (() => {
 
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
 
-const emojis = [
+const AVATARS = [
   '🔷','👾','🟨','🔵','🟣',
   '🔺','🌟','👻','🚀','🛸'
 ];
 
-let data = JSON.parse(localStorage.getItem('space_save') || 'null') || {
-  score: 0,
-  coins: 250,
-  lives: 3,
-  name: '',
-  avatar: '👻',
-  sound: true,
-  ship: 0,
-  weapon: 0,
-  ownedShips: [0],
-  ownedWeapons: [0],
-  code: 'SPC-' + Math.random().toString(36).slice(2,8).toUpperCase()
-};
+const SAVE_KEY = 'space_game_accounts_v2';
+const CURRENT_KEY = 'space_game_current_v2';
+
+function readAccounts() {
+  try {
+    return JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function writeAccounts(accounts) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(accounts));
+}
+
+function makeCode() {
+  return 'SPC-' + Math.random().toString(36).slice(2,8).toUpperCase();
+}
+
+function newAccount() {
+  const code = makeCode();
+
+  return {
+    code,
+    name: '',
+    avatar: '👻',
+    score: 0,
+    coins: 100,
+    lives: 3,
+    sound: true,
+    ship: 0,
+    weapon: 0,
+    ownedShips: [0],
+    ownedWeapons: [0]
+  };
+}
+
+let accounts = readAccounts();
+let currentCode = localStorage.getItem(CURRENT_KEY);
+
+if (!currentCode || !accounts[currentCode]) {
+  const account = newAccount();
+  currentCode = account.code;
+  accounts[currentCode] = account;
+  localStorage.setItem(CURRENT_KEY, currentCode);
+  writeAccounts(accounts);
+}
+
+let data = accounts[currentCode];
 
 function save() {
-  localStorage.setItem('space_save', JSON.stringify(data));
+  accounts[currentCode] = data;
+  writeAccounts(accounts);
+  localStorage.setItem(CURRENT_KEY, currentCode);
   updateHUD();
 }
 
-function displayName() {
-  return data.name.trim() ||
-    ('خلبان ' + (1972 + Math.floor(Math.random() * 8000)));
+function safeName(account) {
+  if (account.name && account.name.trim()) {
+    return account.name.trim();
+  }
+
+  return 'خلبان ' + account.code.slice(-4);
+}
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[c]));
 }
 
 function updateHUD() {
   $('#score').textContent = data.score;
   $('#coins').textContent = data.coins;
   $('#storecoins').textContent = data.coins;
+  $('#lives').textContent = data.lives;
   $('#profilescore').textContent = data.score;
-  $('#lives').textContent = '❤️'.repeat(Math.max(0, data.lives));
-  $('#profilename').textContent = displayName();
+  $('#profilename').textContent = safeName(data);
   $('#profileavatar').textContent = data.avatar;
   $('#playercode').textContent = data.code;
 }
 
-/* جابه‌جایی بین صفحات */
+/* پیمایش تب‌ها */
 
 $$('nav button').forEach(button => {
-
   button.onclick = () => {
 
     $$('nav button').forEach(b =>
@@ -563,34 +635,43 @@ $$('nav button').forEach(button => {
     if (button.dataset.tab === 'store') renderStore();
     if (button.dataset.tab === 'ranks') renderRanks();
     if (button.dataset.tab === 'profile') renderProfile();
-    if (button.dataset.tab === 'game') resize();
+    if (button.dataset.tab === 'game') resizeCanvas();
   };
-
 });
 
-/* اطلاعات فروشگاه */
-
-let kind = 'weapons';
+/* داده‌های ۱۰ سلاح و ۱۰ سفینه */
 
 const weapons = [
-  ['لیزر ساده','🔴',200,'تک‌تیر، آسیب پایه'],
-  ['شلیک دوقلو','🟣',450,'دو پرتابه هم‌زمان'],
-  ['لیزر سریع','⚡',700,'سرعت شلیک بیشتر'],
-  ['پرتاب پلاسما','💠',1100,'پرتابه قدرتمند']
+  ['لیزر ساده','🔴',200,'شلیک معمولی'],
+  ['لیزر دوقلو','🔫',450,'دو گلوله در هر نوبت'],
+  ['لیزر سریع','⚡',650,'سرعت شلیک بیشتر'],
+  ['پلاسما','💠',850,'قدرت ضربه بیشتر'],
+  ['پرتابگر موشک','🚀',1100,'موشک‌های قدرتمند'],
+  ['لیزر سه‌گانه','🔱',1400,'سه مسیر شلیک'],
+  ['توپ انرژی','🟣',1750,'پرتابه انرژی'],
+  ['شلیک انفجاری','💥',2200,'آسیب ناحیه‌ای'],
+  ['لیزر یخی','❄️',2700,'کند کردن دشمن'],
+  ['سلاح کهکشانی','🌌',3500,'سلاح نهایی']
 ];
 
 const ships = [
-  ['سفینه پیش‌فرض','🚀',0,'متعادل و چابک'],
-  ['شبح نئونی','👻',500,'حرکت سریع'],
-  ['شکارچی ستاره','🛸',900,'سفینه مقاوم'],
-  ['بال طلایی','🌟',1500,'سفینه ویژه']
+  ['سفینه پایه','🚀',0,'متعادل'],
+  ['شبح نئونی','👻',350,'چابک'],
+  ['شکارچی ستاره','🛸',600,'سرعت بالا'],
+  ['بال طلایی','🌟',850,'مقاومت بیشتر'],
+  ['سفینه الماسی','💎',1100,'حرکت دقیق'],
+  ['سفینه آذرخش','⚡',1450,'سرعت زیاد'],
+  ['سفینه پلاسما','🔮',1800,'بدنه مقاوم'],
+  ['سفینه سایه','🌑',2300,'جنگنده پیشرفته'],
+  ['سفینه ققنوس','🔥',2900,'سفینه ویژه'],
+  ['ناو کهکشانی','🌌',4000,'ناو نهایی']
 ];
 
+let storeKind = 'weapons';
+
 $$('[data-kind]').forEach(button => {
-
   button.onclick = () => {
-
-    kind = button.dataset.kind;
+    storeKind = button.dataset.kind;
 
     $$('[data-kind]').forEach(b =>
       b.classList.toggle('selected', b === button)
@@ -598,69 +679,64 @@ $$('[data-kind]').forEach(button => {
 
     renderStore();
   };
-
 });
 
 function renderStore() {
 
-  const list = kind === 'weapons' ? weapons : ships;
-
-  const owned = kind === 'weapons'
+  const list = storeKind === 'weapons' ? weapons : ships;
+  const owned = storeKind === 'weapons'
     ? data.ownedWeapons
     : data.ownedShips;
 
-  const current = kind === 'weapons'
+  const selected = storeKind === 'weapons'
     ? data.weapon
     : data.ship;
 
-  $('#storeitems').innerHTML = list.map((item, i) => `
+  $('#storeitems').innerHTML = list.map((item, i) => {
 
-    <div class="item">
+    const has = owned.includes(i);
+    const equipped = selected === i;
 
-      <div class="art">${item[1]}</div>
+    return `
+      <div class="item">
 
-      <div>
+        <div class="item-art">${item[1]}</div>
 
-        <h3>${item[0]}</h3>
+        <div>
 
-        <p>${item[3]}</p>
+          <h3>${item[0]}</h3>
 
-        <p>
-          ${owned.includes(i)
-            ? (i === current ? 'مجهز' : 'خریداری‌شده')
-            : 'قابل خرید'}
-        </p>
+          <p>${item[3]}</p>
 
-        <div class="actions">
+          <p>
+            ${equipped ? 'مجهز' : has ? 'خریداری‌شده' : 'قابل خرید'}
+          </p>
 
-          <span class="price">${item[2] || 'رایگان'} 🪙</span>
+          <div class="item-actions">
 
-          <button class="btn ${i === current ? 'primary' : ''}"
-                  data-buy="${i}">
+            <span class="price">${item[2] || 'رایگان'} 🪙</span>
 
-            ${i === current
-              ? 'مجهز'
-              : owned.includes(i)
-                ? 'تجهیز کردن'
-                : 'خرید'}
+            <button class="btn ${equipped ? 'primary' : ''}"
+                    data-purchase="${i}">
 
-          </button>
+              ${equipped ? 'مجهز' : has ? 'تجهیز' : 'خرید'}
+
+            </button>
+
+          </div>
 
         </div>
 
       </div>
+    `;
+  }).join('');
 
-    </div>
-
-  `).join('');
-
-  $$('[data-buy]').forEach(button => {
+  $$('[data-purchase]').forEach(button => {
 
     button.onclick = () => {
 
-      const i = Number(button.dataset.buy);
-
-      const owned = kind === 'weapons'
+      const i = Number(button.dataset.purchase);
+      const owned = storeKind === 'weapons'
         ? data.ownedWeapons
         : data.ownedShips;
 
@@ -675,10 +751,9 @@ function renderStore() {
 
         data.coins -= price;
         owned.push(i);
-
       }
 
-      if (kind === 'weapons') {
+      if (storeKind === 'weapons') {
         data.weapon = i;
       } else {
         data.ship = i;
@@ -686,47 +761,34 @@ function renderStore() {
 
       save();
       renderStore();
-      sound(660);
-
+      playTone(600);
     };
-
   });
-
 }
 
-/* پروفایل */
+/* پروفایل و آواتار */
 
 function renderProfile() {
 
   $('#nameinput').value = data.name;
   $('#sound').checked = data.sound;
 
-  $('#avatars').innerHTML = emojis.map(emoji => `
-
-    <button class="${emoji === data.avatar ? 'chosen' : ''}"
-            data-avatar="${emoji}">
-
-      ${emoji}
-
+  $('#avatars').innerHTML = AVATARS.map(avatar => `
+    <button class="${avatar === data.avatar ? 'chosen' : ''}"
+            data-avatar="${avatar}">
+      ${avatar}
     </button>
-
   `).join('');
 
   $$('[data-avatar]').forEach(button => {
-
     button.onclick = () => {
-
       data.avatar = button.dataset.avatar;
-
       renderProfile();
       updateHUD();
-
     };
-
   });
 
   updateHUD();
-
 }
 
 $('#saveprofile').onclick = () => {
@@ -736,125 +798,124 @@ $('#saveprofile').onclick = () => {
 
   save();
   renderProfile();
-  sound(500);
-
 };
 
-/* رتبه‌بندی محلی */
+/* پیدا کردن حساب با کد */
+
+$('#lookupbutton').onclick = () => {
+
+  const code = $('#lookupcode').value.trim().toUpperCase();
+  const account = accounts[code];
+
+  if (!account) {
+    $('#lookupresult').innerHTML =
+      'اکانتی با این کد در این مرورگر پیدا نشد.';
+    return;
+  }
+
+  $('#lookupresult').innerHTML = `
+    <div class="panel">
+      <div style="font-size:35px">${account.avatar}</div>
+      <b>${escapeHTML(safeName(account))}</b>
+      <p>امتیاز: ${account.score} ⭐</p>
+      <p>کد: ${escapeHTML(account.code)}</p>
+      <button class="btn" id="switchaccount">ورود به این اکانت</button>
+    </div>
+  `;
+
+  $('#switchaccount').onclick = () => {
+
+    currentCode = account.code;
+    data = accounts[currentCode];
+
+    localStorage.setItem(CURRENT_KEY, currentCode);
+
+    updateHUD();
+    renderProfile();
+    renderStore();
+
+    $('#lookupresult').textContent =
+      'اکانت انتخاب‌شده در همین مرورگر فعال شد.';
+  };
+};
+
+/* رتبه‌بندی */
 
 function renderRanks() {
 
-  let rows = JSON.parse(localStorage.getItem('space_ranks') || '[]');
+  const rows = Object.values(accounts)
+    .sort((a,b) => b.score - a.score)
+    .slice(0,50);
 
-  rows = rows.filter(row => row.code !== data.code);
-
-  rows.push({
-    name: displayName(),
-    score: data.score,
-    avatar: data.avatar,
-    code: data.code
-  });
-
-  rows.sort((a, b) => b.score - a.score);
-
-  rows = rows.slice(0, 50);
-
-  localStorage.setItem('space_ranks', JSON.stringify(rows));
-
-  $('#ranklist').innerHTML = rows.map((row, i) => `
-
+  $('#ranklist').innerHTML = rows.map((account, i) => `
     <div class="rankrow">
 
       <div class="ranknum ${i < 3 ? 'top' : ''}">
         ${i + 1}
       </div>
 
-      <div style="display:flex;align-items:center;gap:10px">
+      <div class="rankplayer">
 
-        <span class="avatar">${row.avatar}</span>
+        <span class="rankavatar">${account.avatar}</span>
 
         <span>
-
-          <b>${escapeHTML(row.name)}</b>
-
-          <div class="small">
-            ${row.code === data.code ? 'شما' : 'خلبان فضایی'}
-          </div>
-
+          <b>${escapeHTML(safeName(account))}</b>
+          <div class="small">${account.code === currentCode ? 'شما' : 'خلبان فضایی'}</div>
         </span>
 
       </div>
 
-      <b>${row.score} ⭐</b>
+      <b>${account.score} ⭐</b>
 
     </div>
-
   `).join('');
-
-}
-
-function escapeHTML(text) {
-
-  return text.replace(/[&<>"']/g, char => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  }[char]));
-
 }
 
 $('#refreshRanks').onclick = renderRanks;
 
-/* افکت صوتی */
+/* صدا */
 
-function sound(frequency) {
+function playTone(freq) {
 
   if (!data.sound) return;
 
   try {
-
     const audio = new (window.AudioContext || window.webkitAudioContext)();
-
     const oscillator = audio.createOscillator();
     const gain = audio.createGain();
 
-    oscillator.frequency.value = frequency;
+    oscillator.frequency.value = freq;
     gain.gain.value = 0.025;
 
     oscillator.connect(gain);
     gain.connect(audio.destination);
 
     oscillator.start();
-    oscillator.stop(audio.currentTime + 0.07);
+    oscillator.stop(audio.currentTime + 0.06);
 
     oscillator.onended = () => audio.close();
-
-  } catch (error) {}
-
+  } catch(e) {}
 }
 
-/* بازی */
+/* موتور بازی */
 
 const canvas = $('#gamecanvas');
 const ctx = canvas.getContext('2d');
 
-let W = 0;
-let H = 0;
-
-let shipX = 0;
-let shipY = 0;
+let W = 0, H = 0;
+let shipX = 0, shipY = 0;
 
 let bullets = [];
 let enemies = [];
 let stars = [];
 
 let running = true;
-let last = 0;
-let spawn = 0;
+let lastTime = 0;
+let spawnTimer = 0;
+let shotTimer = 0;
+let saveTimer = 0;
 
-function resize() {
+function resizeCanvas() {
 
   const rect = canvas.getBoundingClientRect();
 
@@ -864,266 +925,345 @@ function resize() {
   shipX = W / 2;
   shipY = H * 0.86;
 
-  stars = Array.from({length: 90}, () => ({
-    x: Math.random() * W,
-    y: Math.random() * H,
-    s: Math.random() * 1.7 + 0.3,
-    v: Math.random() * 1.2 + 0.3
+  stars = Array.from({length:100}, () => ({
+    x:Math.random()*W,
+    y:Math.random()*H,
+    size:Math.random()*2+0.4,
+    speed:Math.random()*1.1+0.3
   }));
-
 }
 
-function addEnemy() {
+function spawnEnemy() {
 
-  const x = Math.random() * (W - 35) + 17;
+  const size = (20 + Math.random()*10) * devicePixelRatio;
 
   enemies.push({
-    x,
-    y: -20,
-    r: 10 + Math.random() * 5,
-    v: 1.1 + Math.random() * 1.2,
-    hp: 1
+    x:size + Math.random()*(W-size*2),
+    y:-size,
+    size,
+    speed:(0.65+Math.random()*0.65)*devicePixelRatio,
+    hp:3 + Math.floor(data.score/1500),
+    maxHp:3 + Math.floor(data.score/1500),
+    phase:Math.random()*Math.PI*2
   });
-
 }
 
-function drawShip(x, y) {
+/* سفینه بزرگ‌تر */
+
+function drawShip(x,y) {
+
+  const size = 1.6 * devicePixelRatio;
 
   ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(size,size);
 
-  ctx.translate(x, y);
+  ctx.shadowBlur = 24;
+  ctx.shadowColor = '#00fff0';
 
-  ctx.shadowBlur = 18;
-  ctx.shadowColor = '#00ffe7';
-
-  ctx.fillStyle = '#00d9d2';
+  ctx.fillStyle = '#00e7d8';
 
   ctx.beginPath();
-
-  ctx.moveTo(0, -20);
-  ctx.lineTo(15, 15);
-  ctx.lineTo(0, 8);
-  ctx.lineTo(-15, 15);
-
+  ctx.moveTo(0,-25);
+  ctx.lineTo(19,17);
+  ctx.lineTo(0,9);
+  ctx.lineTo(-19,17);
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = '#f58bff';
-  ctx.fillRect(-3, 10, 6, 9);
+  ctx.fillStyle = '#b4ffff';
+  ctx.beginPath();
+  ctx.ellipse(0,-5,5,10,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ff65ed';
+  ctx.fillRect(-5,16,10,13);
 
   ctx.restore();
-
 }
 
-function frame(time) {
+/* دشمن شش‌ضلعی با چشم */
 
-  requestAnimationFrame(frame);
+function drawEnemy(enemy) {
 
-  if (!W) return;
+  const r = enemy.size;
 
-  const dt = Math.min(2, (time - last) / 16 || 1);
+  ctx.save();
+  ctx.translate(enemy.x,enemy.y);
 
-  last = time;
+  ctx.shadowBlur = 22;
+  ctx.shadowColor = '#ff8b18';
 
-  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#ff941d';
+  ctx.strokeStyle = '#ffd16b';
+  ctx.lineWidth = 2*devicePixelRatio;
+
+  ctx.beginPath();
+
+  for (let i=0;i<6;i++) {
+
+    const angle = Math.PI/3*i - Math.PI/6;
+    const x = Math.cos(angle)*r;
+    const y = Math.sin(angle)*r;
+
+    if (i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  }
+
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  /* چشم‌ها */
+
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#ff2525';
+  ctx.fillStyle = '#2a0710';
+
+  ctx.beginPath();
+  ctx.ellipse(-r*.28,-r*.08,r*.18,r*.25,0,0,Math.PI*2);
+  ctx.ellipse(r*.28,-r*.08,r*.18,r*.25,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ff3131';
+
+  ctx.beginPath();
+  ctx.arc(-r*.28,-r*.08,r*.07,0,Math.PI*2);
+  ctx.arc(r*.28,-r*.08,r*.07,0,Math.PI*2);
+  ctx.fill();
+
+  /* نوار سلامتی */
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#280c0c';
+  ctx.fillRect(-r,-r-8*devicePixelRatio,r*2,4*devicePixelRatio);
+
+  ctx.fillStyle = '#00f5bc';
+  ctx.fillRect(
+    -r,
+    -r-8*devicePixelRatio,
+    r*2*(enemy.hp/enemy.maxHp),
+    4*devicePixelRatio
+  );
+
+  ctx.restore();
+}
+
+/* شلیک */
+
+function shoot() {
+
+  const level = data.weapon;
+
+  if (level === 1 || level === 5) {
+
+    bullets.push({x:shipX-8*devicePixelRatio,y:shipY-20*devicePixelRatio,damage:1});
+    bullets.push({x:shipX+8*devicePixelRatio,y:shipY-20*devicePixelRatio,damage:1});
+
+  } else if (level === 2 || level === 6) {
+
+    bullets.push({x:shipX,y:shipY-20*devicePixelRatio,damage:2});
+
+  } else if (level === 7) {
+
+    bullets.push({x:shipX,y:shipY-20*devicePixelRatio,damage:3,radius:10*devicePixelRatio});
+
+  } else {
+
+    bullets.push({x:shipX,y:shipY-20*devicePixelRatio,damage:1});
+  }
+}
+
+/* برخورد گلوله و دشمن */
+
+function collide() {
+
+  for (const enemy of enemies) {
+
+    for (const bullet of bullets) {
+
+      if (bullet.dead) continue;
+
+      const distance = Math.hypot(
+        enemy.x-bullet.x,
+        enemy.y-bullet.y
+      );
+
+      if (distance < enemy.size + 5*devicePixelRatio) {
+
+        bullet.dead = true;
+        enemy.hp -= bullet.damage || 1;
+
+        if (enemy.hp <= 0) {
+
+          enemy.dead = true;
+
+          /* امتیاز و سکه آهسته‌تر */
+
+          data.score += 25;
+          data.coins += 1;
+
+          playTone(700);
+        }
+
+        break;
+      }
+    }
+
+    /* برخورد دشمن با سفینه */
+
+    if (
+      !enemy.dead &&
+      enemy.y + enemy.size > shipY - 20*devicePixelRatio &&
+      Math.abs(enemy.x-shipX) < enemy.size + 15*devicePixelRatio
+    ) {
+
+      enemy.dead = true;
+      data.lives--;
+
+      playTone(150);
+
+      if (data.lives <= 0) {
+        running = false;
+      }
+    }
+  }
+
+  bullets = bullets.filter(b => !b.dead && b.y > -20);
+  enemies = enemies.filter(e => !e.dead && e.y < H + 50);
+}
+
+/* حلقه اصلی */
+
+function gameLoop(time) {
+
+  requestAnimationFrame(gameLoop);
+
+  if (!W || !H) return;
+
+  const dt = Math.min(2,(time-lastTime)/16 || 1);
+
+  lastTime = time;
+
+  ctx.clearRect(0,0,W,H);
 
   ctx.fillStyle = '#01040b';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(0,0,W,H);
 
-  /* ستاره‌های پس‌زمینه */
+  /* ستاره‌ها */
 
-  stars.forEach(star => {
+  for (const star of stars) {
 
-    star.y += star.v * dt;
+    star.y += star.speed*dt;
 
     if (star.y > H) star.y = 0;
 
-    ctx.fillStyle = `rgba(130,230,255,${0.25 + star.s / 3})`;
+    ctx.fillStyle = `rgba(130,230,255,${0.25+star.size/3})`;
 
-    ctx.fillRect(star.x, star.y, star.s, star.s);
-
-  });
+    ctx.fillRect(star.x,star.y,star.size,star.size);
+  }
 
   if (running && data.lives > 0) {
 
-    spawn += dt;
+    spawnTimer += dt;
+    shotTimer += dt;
+    saveTimer += dt;
 
-    if (spawn > 38) {
-      spawn = 0;
-      addEnemy();
+    /* دشمن‌ها کمی دیرتر ظاهر می‌شوند */
+
+    if (spawnTimer > 65) {
+      spawnTimer = 0;
+      spawnEnemy();
     }
 
     /* شلیک خودکار */
 
-    if (Math.random() < 0.13) {
+    const fireRate = data.weapon >= 2 ? 18 : 28;
 
-      bullets.push({
-        x: shipX,
-        y: shipY - 20,
-        v: 7
-      });
-
+    if (shotTimer > fireRate) {
+      shotTimer = 0;
+      shoot();
     }
 
     bullets.forEach(bullet => {
-      bullet.y -= bullet.v * dt;
+      bullet.y -= 7*devicePixelRatio*dt;
     });
-
-    bullets = bullets.filter(bullet => bullet.y > -10);
-
-    /* حرکت دشمن‌ها */
 
     enemies.forEach(enemy => {
-      enemy.y += enemy.v * dt;
+      enemy.y += enemy.speed*dt;
+      enemy.x += Math.sin(time/600+enemy.phase)*0.35*devicePixelRatio;
     });
 
-    /* برخورد گلوله و دشمن */
+    collide();
 
-    for (const enemy of enemies) {
-
-      for (const bullet of bullets) {
-
-        if (
-          Math.hypot(enemy.x - bullet.x, enemy.y - bullet.y)
-          < enemy.r + 4
-        ) {
-
-          enemy.hp = 0;
-          bullet.y = -99;
-
-          data.score += 100;
-          data.coins += 5;
-
-          sound(820);
-
-          break;
-
-        }
-
-      }
-
-      /* برخورد دشمن با سفینه */
-
-      if (
-        enemy.y > shipY - 15 &&
-        Math.abs(enemy.x - shipX) < 24
-      ) {
-
-        enemy.hp = 0;
-        data.lives--;
-
-        sound(180);
-
-      }
-
+    if (saveTimer > 120) {
+      saveTimer = 0;
+      save();
     }
-
-    enemies = enemies.filter(enemy =>
-      enemy.hp > 0 && enemy.y < H + 30
-    );
-
-    if (data.lives <= 0) {
-
-      running = false;
-
-      ctx.fillStyle = '#ff5b7d';
-      ctx.font = 'bold 28px sans-serif';
-      ctx.textAlign = 'center';
-
-      ctx.fillText('پایان ماموریت', W / 2, H / 2);
-
-    }
-
-    if (time % 1000 < 20) save();
-
   }
 
-  /* رسم گلوله‌ها */
+  /* گلوله‌های نورانی */
 
-  bullets.forEach(bullet => {
+  for (const bullet of bullets) {
 
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#00ffff';
+    ctx.shadowBlur = 13;
+    ctx.shadowColor = '#00fff0';
 
-    ctx.fillStyle = '#8fffff';
-
-    ctx.fillRect(
-      bullet.x - 2,
-      bullet.y - 8,
-      4,
-      12
-    );
-
-  });
-
-  /* رسم دشمن‌ها */
-
-  enemies.forEach(enemy => {
-
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = '#ff9b18';
-
-    ctx.fillStyle = '#ff9b18';
-
-    ctx.beginPath();
-
-    ctx.arc(
-      enemy.x,
-      enemy.y,
-      enemy.r,
-      0,
-      Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.fillStyle = '#77410d';
+    ctx.fillStyle = '#9fffff';
 
     ctx.fillRect(
-      enemy.x - 3,
-      enemy.y + enemy.r,
-      6,
-      12
+      bullet.x-2*devicePixelRatio,
+      bullet.y-12*devicePixelRatio,
+      4*devicePixelRatio,
+      16*devicePixelRatio
     );
+  }
 
-  });
+  enemies.forEach(drawEnemy);
 
-  drawShip(shipX, shipY);
+  drawShip(shipX,shipY);
 
   updateHUD();
 
+  if (!running || data.lives <= 0) {
+
+    ctx.fillStyle = '#ff5b7d';
+    ctx.font = `bold ${28*devicePixelRatio}px sans-serif`;
+    ctx.textAlign = 'center';
+
+    ctx.fillText(
+      'پایان ماموریت',
+      W/2,
+      H/2
+    );
+  }
 }
 
-/* کنترل سفینه با لمس یا ماوس */
+/* کنترل لمسی */
 
-function pointer(event) {
+function moveShip(event) {
 
   const rect = canvas.getBoundingClientRect();
 
   shipX = Math.max(
-    18,
+    25*devicePixelRatio,
     Math.min(
-      W - 18,
-      (event.clientX - rect.left) * devicePixelRatio
+      W-25*devicePixelRatio,
+      (event.clientX-rect.left)*devicePixelRatio
     )
   );
-
 }
 
 canvas.addEventListener('pointerdown', event => {
-
   canvas.setPointerCapture(event.pointerId);
-  pointer(event);
-
+  moveShip(event);
 });
 
 canvas.addEventListener('pointermove', event => {
-
-  if (event.buttons) pointer(event);
-
+  if (event.buttons) moveShip(event);
 });
 
-/* توقف و شروع دوباره */
+/* توقف و شروع مجدد */
 
 $('#pause').onclick = () => {
 
@@ -1131,7 +1271,6 @@ $('#pause').onclick = () => {
 
   $('#pause').textContent =
     running ? '⏸ توقف' : '▶ ادامه';
-
 };
 
 $('#restart').onclick = () => {
@@ -1142,24 +1281,24 @@ $('#restart').onclick = () => {
   bullets = [];
   enemies = [];
 
+  spawnTimer = 0;
+  shotTimer = 0;
   running = true;
-  spawn = 0;
 
   save();
-
 };
 
-/* شروع */
+/* راه‌اندازی */
 
-resize();
+resizeCanvas();
 
-window.addEventListener('resize', resize);
+window.addEventListener('resize',resizeCanvas);
 
 updateHUD();
 renderStore();
 renderProfile();
 
-requestAnimationFrame(frame);
+requestAnimationFrame(gameLoop);
 
 })();
 </script>
