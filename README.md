@@ -20,6 +20,7 @@
     font-size: 16px; font-weight: bold;
     pointer-events: none; z-index: 10;
   }
+  #hud .right { text-align: right; }
   #controls {
     position: fixed; bottom: 20px; left: 0; right: 0;
     padding: 0 20px; display: flex; justify-content: space-between;
@@ -51,14 +52,34 @@
   }
   #overlay.hidden { display: none; }
   #overlay h1 { color: #0ff; font-size: 34px; margin-bottom: 15px; text-shadow: 0 0 25px #0ff; }
-  #overlay p { color: #fff; font-size: 16px; margin-bottom: 25px; line-height: 1.8; }
+  #overlay p { color: #fff; font-size: 16px; margin-bottom: 20px; line-height: 1.8; }
   #startBtn {
     padding: 15px 45px; font-size: 20px; font-family: Tahoma, sans-serif;
     background: transparent; border: 2px solid #0ff; color: #0ff;
     border-radius: 50px; box-shadow: 0 0 20px rgba(0,255,255,0.5); cursor: pointer;
   }
   #startBtn:active { background: rgba(0,255,255,0.2); }
-  .finalScore { color: #ff0; font-size: 24px; margin: 15px 0 25px; text-shadow: 0 0 15px #ff0; }
+  .finalScore { color: #ff0; font-size: 22px; margin: 10px 0; text-shadow: 0 0 15px #ff0; }
+  .recordLine { color: #0ff; font-size: 20px; margin: 5px 0 20px; text-shadow: 0 0 15px #0ff; }
+  .newRecord {
+    color: #ff0; font-size: 20px; margin: 10px 0;
+    animation: pulse 0.8s infinite alternate;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); text-shadow: 0 0 10px #ff0; }
+    to { transform: scale(1.15); text-shadow: 0 0 30px #ff0; }
+  }
+  #resetRecord {
+    margin-top: 15px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-family: Tahoma, sans-serif;
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    border-radius: 20px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -67,7 +88,7 @@
 
 <div id="hud">
   <div>امتیاز: <span id="score">0</span></div>
-  <div>جان: <span id="lives">3</span></div>
+  <div class="right">رکورد: <span id="highScore">0</span><br>جان: <span id="lives">3</span></div>
 </div>
 
 <div id="controls">
@@ -83,6 +104,7 @@
 <div id="overlay">
   <h1>🚀 سفینه فضایی</h1>
   <p>با دکمه‌ها حرکت کن و شلیک کن<br>از برخورد با دشمن‌ها دوری کن!</p>
+  <div class="recordLine" id="startRecord">🏆 رکورد فعلی: 0</div>
   <button id="startBtn">شروع بازی</button>
 </div>
 
@@ -94,6 +116,25 @@
   const ctx = canvas.getContext('2d');
   let W = 0, H = 0;
 
+  // ========== ذخیره رکورد ==========
+  const RECORD_KEY = 'spaceship_highscore_v1';
+  function getHighScore() {
+    try {
+      const v = localStorage.getItem(RECORD_KEY);
+      return v ? parseInt(v, 10) || 0 : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+  function setHighScore(v) {
+    try {
+      localStorage.setItem(RECORD_KEY, String(v));
+    } catch (e) {}
+  }
+  function resetHighScore() {
+    try { localStorage.removeItem(RECORD_KEY); } catch (e) {}
+  }
+
   const ship = { x: 0, y: 0, speed: 7 };
   const stars = [];
   let lasers = [];
@@ -101,12 +142,17 @@
   let particles = [];
   let score = 0;
   let lives = 3;
+  let highScore = getHighScore();
   let running = false;
   let lastTime = 0;
   let enemyTimer = 0;
   let shootTimer = 0;
 
   const input = { left: false, right: false, fire: false };
+
+  // نمایش رکورد اولیه در HUD و صفحه شروع
+  document.getElementById('highScore').textContent = highScore;
+  document.getElementById('startRecord').textContent = '🏆 رکورد فعلی: ' + highScore;
 
   function resize() {
     W = canvas.width = window.innerWidth;
@@ -221,6 +267,13 @@
           lasers.splice(j, 1);
           score += 10;
           document.getElementById('score').textContent = score;
+
+          // آپدیت زنده رکورد در HUD اگه رکورد شکسته
+          if (score > highScore) {
+            highScore = score;
+            setHighScore(highScore);
+            document.getElementById('highScore').textContent = highScore;
+          }
           break;
         }
       }
@@ -337,6 +390,7 @@
     ship.x = W / 2; ship.y = H - 110;
     document.getElementById('score').textContent = '0';
     document.getElementById('lives').textContent = '3';
+    document.getElementById('highScore').textContent = highScore;
     document.getElementById('overlay').classList.add('hidden');
     running = true;
     initStars();
@@ -345,13 +399,40 @@
 
   function gameOver() {
     running = false;
+    const isNewRecord = score > 0 && score >= highScore && score > 0;
+    if (score > highScore) {
+      highScore = score;
+      setHighScore(highScore);
+    }
+    document.getElementById('highScore').textContent = highScore;
+
     const overlay = document.getElementById('overlay');
     overlay.innerHTML =
       '<h1>💥 Game Over</h1>' +
-      '<div class="finalScore">امتیاز نهایی: ' + score + '</div>' +
-      '<button id="startBtn">دوباره بازی کن</button>';
+      '<div class="finalScore">امتیاز شما: ' + score + '</div>' +
+      (isNewRecord
+        ? '<div class="newRecord">🎉 رکورد جدید!</div>'
+        : '<div class="recordLine">🏆 رکورد: ' + highScore + '</div>') +
+      '<button id="startBtn">دوباره بازی کن</button>' +
+      '<button id="resetRecord">پاک کردن رکورد</button>';
     overlay.classList.remove('hidden');
+
     document.getElementById('startBtn').addEventListener('click', startGame);
+    document.getElementById('resetRecord').addEventListener('click', function() {
+      if (confirm('مطمئنی می‌خوای رکورد رو پاک کنی؟')) {
+        resetHighScore();
+        highScore = 0;
+        document.getElementById('highScore').textContent = '0';
+        document.getElementById('startRecord').textContent = '🏆 رکورد فعلی: 0';
+        // برگرد به صفحه شروع
+        overlay.innerHTML =
+          '<h1>🚀 سفینه فضایی</h1>' +
+          '<p>با دکمه‌ها حرکت کن و شلیک کن<br>از برخورد با دشمن‌ها دوری کن!</p>' +
+          '<div class="recordLine" id="startRecord">🏆 رکورد فعلی: 0</div>' +
+          '<button id="startBtn">شروع بازی</button>';
+        document.getElementById('startBtn').addEventListener('click', startGame);
+      }
+    });
   }
 
   resize();
@@ -369,7 +450,7 @@
 })();
 </script>
 </body>
-</html>
+</html><!DOCTYPE html>
 <html lang="fa">
 <head>
 <meta charset="UTF-8">
