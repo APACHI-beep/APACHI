@@ -370,3 +370,404 @@
 </script>
 </body>
 </html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>رکورد</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #0a0a1a;
+    font-family: Tahoma, sans-serif;
+    color: #fff;
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== تب‌ها ===== */
+  .tabs {
+    display: flex;
+    background: #14142a;
+    border-bottom: 2px solid #0ff;
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+  }
+  .tab.active {
+    color: #0ff;
+    border-bottom-color: #0ff;
+    background: #1a1a35;
+    text-shadow: 0 0 10px #0ff;
+  }
+
+  /* ===== محتوا ===== */
+  .page {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: none;
+  }
+  .page.active { display: block; }
+
+  /* ===== صفحه گیم ===== */
+  .box {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #14142a;
+    border: 1px solid #0ff4;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 0 20px #0ff2;
+  }
+  .box h2 {
+    color: #0ff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    text-shadow: 0 0 15px #0ff;
+  }
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #aaa;
+  }
+  .field input {
+    width: 100%;
+    padding: 14px;
+    background: #0a0a1a;
+    border: 2px solid #0ff4;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-family: Tahoma, sans-serif;
+    outline: none;
+    text-align: center;
+  }
+  .field input:focus {
+    border-color: #0ff;
+    box-shadow: 0 0 15px #0ff4;
+  }
+  .field input::placeholder { color: #555; }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    background: #0ff;
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Tahoma, sans-serif;
+    cursor: pointer;
+    box-shadow: 0 0 20px #0ff6;
+    transition: transform 0.1s;
+  }
+  .btn:active { transform: scale(0.97); }
+
+  .msg {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 15px;
+    display: none;
+  }
+  .msg.ok { display: block; background: #0f04; color: #0f0; border: 1px solid #0f06; }
+  .msg.err { display: block; background: #f004; color: #f66; border: 1px solid #f606; }
+
+  /* ===== لیدربورد ===== */
+  .leaderboard {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .leaderboard h2 {
+    color: #ff0;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-shadow: 0 0 15px #ff0;
+  }
+  .record-item {
+    display: flex;
+    align-items: center;
+    background: #14142a;
+    border: 1px solid #ff02;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+  }
+  .record-item.rank-1 { border-color: #ffd700; box-shadow: 0 0 15px #ffd70055; background: #1f1f10; }
+  .record-item.rank-2 { border-color: #c0c0c0; background: #1f1f1f; }
+  .record-item.rank-3 { border-color: #cd7f32; background: #1f150d; }
+
+  .rank {
+    font-size: 22px;
+    font-weight: bold;
+    width: 45px;
+    text-align: center;
+    color: #888;
+    flex-shrink: 0;
+  }
+  .rank-1 .rank { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+  .rank-2 .rank { color: #c0c0c0; }
+  .rank-3 .rank { color: #cd7f32; }
+
+  .name {
+    flex: 1;
+    font-size: 16px;
+    padding: 0 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .points {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+    flex-shrink: 0;
+  }
+
+  .empty {
+    text-align: center;
+    color: #666;
+    padding: 40px 20px;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .clear-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 25px;
+    background: transparent;
+    border: 1px solid #f66;
+    color: #f66;
+    border-radius: 25px;
+    font-size: 13px;
+    font-family: Tahoma, sans-serif;
+    cursor: pointer;
+  }
+  .clear-btn:active { background: #f662; }
+
+  @media (max-width: 400px) {
+    .tab { font-size: 14px; padding: 14px; }
+    .box { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- تب‌ها -->
+<div class="tabs">
+  <div class="tab active" data-tab="game">🎮 گیم</div>
+  <div class="tab" data-tab="leaderboard">🏆 لیدربورد</div>
+</div>
+
+<!-- تب گیم -->
+<div class="page active" id="page-game">
+  <div class="box">
+    <h2>ثبت رکورد</h2>
+    <div class="field">
+      <label>اسمت چیه؟</label>
+      <input type="text" id="nameInput" placeholder="اسمت رو بنویس..." maxlength="20" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>امتیازت چقدره؟</label>
+      <input type="number" id="scoreInput" placeholder="مثلاً 850" min="1" max="999999" inputmode="numeric">
+    </div>
+    <button class="btn" id="submitBtn">ثبت رکورد</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<!-- تب لیدربورد -->
+<div class="page" id="page-leaderboard">
+  <div class="leaderboard">
+    <h2>🏆 ۱۰ نفر برتر</h2>
+    <div id="list"></div>
+    <button class="clear-btn" id="clearBtn">پاک کردن همه رکوردها</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  const STORAGE_KEY = 'top10_leaderboard_v1';
+  const MAX_RECORDS = 10;
+
+  // ===== خواندن و ذخیره =====
+  function loadRecords() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveRecords(records) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    } catch (e) {}
+  }
+
+  // ===== تب‌ها =====
+  const tabs = document.querySelectorAll('.tab');
+  const pages = document.querySelectorAll('.page');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      pages.forEach(p => {
+        p.classList.toggle('active', p.id === 'page-' + target);
+      });
+      if (target === 'leaderboard') renderLeaderboard();
+    });
+  });
+
+  // ===== ثبت رکورد =====
+  const nameInput = document.getElementById('nameInput');
+  const scoreInput = document.getElementById('scoreInput');
+  const submitBtn = document.getElementById('submitBtn');
+  const msg = document.getElementById('msg');
+
+  function showMsg(text, type) {
+    msg.textContent = text;
+    msg.className = 'msg ' + type;
+    clearTimeout(showMsg._t);
+    showMsg._t = setTimeout(() => {
+      msg.className = 'msg';
+    }, 3000);
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    const score = parseInt(scoreInput.value, 10);
+
+    if (!name) {
+      showMsg('❌ اسمت رو وارد کن!', 'err');
+      nameInput.focus();
+      return;
+    }
+    if (name.length > 20) {
+      showMsg('❌ اسم حداکثر ۲۰ حرف!', 'err');
+      return;
+    }
+    if (isNaN(score) || score < 1) {
+      showMsg('❌ یه امتیاز معتبر وارد کن!', 'err');
+      scoreInput.focus();
+      return;
+    }
+
+    let records = loadRecords();
+    records.push({
+      name: name,
+      score: score,
+      time: Date.now()
+    });
+
+    // مرتب‌سازی نزولی بر اساس امتیاز
+    records.sort((a, b) => b.score - a.score);
+    // فقط ۱۰ نفر اول
+    records = records.slice(0, MAX_RECORDS);
+    saveRecords(records);
+
+    // بررسی آیا این رکورد جزو ۱۰ نفر برتره
+    const isInTop = records.some(r => r.name === name && r.score === score && r.time === records.find(x => x.name === name && x.score === score)?.time);
+    const rank = records.findIndex(r => r.name === name && r.score === score);
+
+    if (rank !== -1) {
+      showMsg('🎉 رکوردت ثبت شد! رتبه ' + (rank + 1), 'ok');
+    } else {
+      showMsg('😕 امتیازت به ۱۰ نفر برتر نرسید!', 'err');
+    }
+
+    // پاک کردن فرم
+    nameInput.value = '';
+    scoreInput.value = '';
+
+    // بعد از ۱.۵ ثانیه برو به لیدربورد
+    setTimeout(() => {
+      document.querySelector('.tab[data-tab="leaderboard"]').click();
+    }, 1200);
+  });
+
+  // Enter برای ثبت
+  scoreInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitBtn.click();
+  });
+
+  // ===== نمایش لیدربورد =====
+  const list = document.getElementById('list');
+
+  function renderLeaderboard() {
+    const records = loadRecords();
+
+    if (records.length === 0) {
+      list.innerHTML = '<div class="empty">هنوز هیچ رکوردی ثبت نشده<br>برو به تب گیم و اولین رکورد رو بزن! 🎮</div>';
+      return;
+    }
+
+    let html = '';
+    records.forEach((r, i) => {
+      const rank = i + 1;
+      const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+      const cls = rank <= 3 ? 'rank-' + rank : '';
+      html +=
+        '<div class="record-item ' + cls + '">' +
+          '<div class="rank">' + medal + '</div>' +
+          '<div class="name">' + escapeHtml(r.name) + '</div>' +
+          '<div class="points">' + r.score + '</div>' +
+        '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // ===== پاک کردن همه =====
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if (confirm('مطمئنی می‌خوای همه رکوردها رو پاک کنی؟')) {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      renderLeaderboard();
+    }
+  });
+
+  // ===== شروع =====
+  renderLeaderboard();
+
+})();
+</script>
+</body>
+</html>
