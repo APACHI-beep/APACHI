@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>تیراندازی فضایی 🚀</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* استفاده از 100dvh برای پر کردن دقیق صفحه در موبایل و جلوگیری از باگ صفحه سیاه */
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh; 
+            overflow: hidden;
+            background-color: #05050a;
+            color: #fff;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-around;
+            background: #0a0a15;
+            border-bottom: 1px solid #1a1a2e;
+            z-index: 100;
+            flex-shrink: 0;
+            height: 45px; /* کمی ارتفاع بیشتر برای خوانایی بهتر */
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #6a6a8a;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-btn.active {
+            color: #00f0ff;
+            text-shadow: 0 0 10px #00f0ff;
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #game-tab {
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-ui {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            left: 15px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .hearts { color: #ff2a2a; font-size: 22px; letter-spacing: 2px; text-shadow: 0 0 10px #ff2a2a; }
+        .score-board { text-align: left; color: #00f0ff; font-weight: bold; text-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
+        .score-board div { margin-bottom: 5px; font-size: 15px; }
+        .coins-text { color: #ffd700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        /* --- فروشگاه --- */
+        .shop-container { max-width: 600px; margin: 0 auto; padding-bottom: 30px; }
+        .shop-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        
+        .shop-tab-btn {
+            background: #111122;
+            border: 1px solid #333355;
+            color: #aaa;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .shop-tab-btn.active { border-color: #00f0ff; color: #00f0ff; box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+
+        .card {
+            background: #080812;
+            border: 1px solid #1a3a2a;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card.purchased { border-color: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .item-title { font-size: 18px; font-weight: 900; }
+        .item-desc { font-size: 12px; color: #888; margin-top: 5px; line-height: 1.6; }
+
+        .icon-box {
+            width: 70px; height: 70px; border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            background: #000; border: 1px solid #222;
+        }
+
+        .btn {
+            display: block; width: 100%; padding: 12px; border-radius: 10px;
+            border: none; font-weight: bold; font-size: 14px; cursor: pointer;
+            text-align: center; margin-top: 10px; transition: 0.2s; font-family: inherit;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-equipped { background: #00f0ff; color: #000; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+        .btn-equip { background: transparent; border: 1px solid #00f0ff; color: #00f0ff; }
+        .btn-buy { background: #ffcc00; color: #000; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
+        
+        .btn-upgrade {
+            background: linear-gradient(90deg, #ff007f, #b300ff);
+            color: #fff; display: flex; justify-content: space-between; padding: 12px 20px;
+        }
+        .cost-tag { color: #ffcc00; font-weight: bold; }
+
+        .profile-container { max-width: 600px; margin: 0 auto; text-align: center; padding-bottom: 30px; }
+        
+        .avatar-preview {
+            width: 100px; height: 100px; margin: 20px auto;
+            background: #0a0a15; border: 2px solid #00f0ff; border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 50px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .input-group { text-align: right; margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #aaa; font-size: 14px; }
+        
+        .input-group input {
+            width: 100%; padding: 12px; background: #000;
+            border: 1px solid #333; border-radius: 10px;
+            color: #fff; font-family: inherit; font-size: 16px; outline: none;
+        }
+        .input-group input:focus { border-color: #00f0ff; }
+
+        .avatars-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        
+        .avatar-option {
+            width: 50px; height: 50px; background: #0a0a15; border: 1px solid #333;
+            border-radius: 12px; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; cursor: pointer;
+        }
+        .avatar-option.selected {
+            border-color: #00f0ff; box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .code-box {
+            border: 1px dashed #ffd700; border-radius: 10px;
+            padding: 15px; background: rgba(255, 215, 0, 0.05); margin-bottom: 20px;
+        }
+        .code-box span { color: #ffd700; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
+
+        .game-over-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 50;
+        }
+        .game-over-overlay.show { display: flex; }
+        
+        .wave-announce {
+            position: absolute; top: 40%; left: 0; width: 100%;
+            text-align: center; font-size: 30px; font-weight: 900;
+            color: #ffd700; text-shadow: 0 0 20px #ffd700;
+            pointer-events: none; z-index: 20; opacity: 0; transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <button class="nav-btn active" id="btn-game" onclick="switchTab('game')">بازی 🎮</button>
+        <button class="nav-btn" id="btn-shop" onclick="switchTab('shop')">فروشگاه 🛒</button>
+        <button class="nav-btn" id="btn-profile" onclick="switchTab('profile')">پروفایل 👤</button>
+        <button class="nav-btn" id="btn-leaderboard" onclick="switchTab('leaderboard')">رتبه‌ها 🏆</button>
+    </div>
+
+    <div class="main-content">
+        <div id="game-tab" class="tab-content active">
+            <div class="game-ui">
+                <div class="score-board">
+                    <div>امتیاز این دست: <span id="ui-score">0</span></div>
+                    <div class="coins-text">💰 <span id="ui-coins">0</span></div>
+                </div>
+                <div class="hearts" id="ui-hearts">❤️❤️❤️</div>
+            </div>
+            
+            <div id="wave-announce" class="wave-announce">موج بعدی!</div>
+            
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="game-over-overlay" id="gameOverScreen">
+                <h1 style="color: #ff2a2a; text-shadow: 0 0 20px #ff2a2a; margin-bottom: 20px;">پایان بازی!</h1>
+                <p style="font-size: 20px; margin-bottom: 30px;">امتیاز شما: <span id="final-score" style="color:#00f0ff">0</span></p>
+                <button class="btn btn-equipped" style="width: 200px;" onclick="startGame()">شروع مجدد</button>
+            </div>
+        </div>
+
+        <div id="shop-tab" class="tab-content">
+            <div class="shop-container">
+                <div class="shop-tabs">
+                    <button class="shop-tab-btn active" onclick="switchShopTab('weapons', this)">اسلحه‌ها</button>
+                    <button class="shop-tab-btn" onclick="switchShopTab('ships', this)">سفینه‌ها</button>
+                </div>
+                <div id="weapons-list"></div>
+                <div id="ships-list" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div id="profile-tab" class="tab-content">
+            <div class="profile-container">
+                <h2 style="color: #00f0ff; margin-bottom: 10px;">پروفایل شما 👤</h2>
+                
+                <div class="avatar-preview" id="profile-avatar-preview">👻</div>
+                <div style="font-weight: bold; font-size: 20px;" id="profile-name-display">خلبان 2785</div>
+
+                <div class="input-group" style="margin-top: 20px;">
+                    <label>نام شما (نام فرمانده):</label>
+                    <input type="text" id="profile-name-input" placeholder="نام خود را وارد کنید..." maxlength="15">
+                </div>
+
+                <div class="input-group">
+                    <label>انتخاب آواتار (نشان فرماندهی):</label>
+                    <div class="avatars-grid" id="avatar-list"></div>
+                </div>
+
+                <div class="code-box">
+                    <div style="color: #aaa; margin-bottom: 5px; font-size: 14px;">کد بازیابی اختصاصی شما:</div>
+                    <span id="profile-code">SPC-XXXX-XXXX</span>
+                    <div style="color: #888; font-size: 12px; margin-top: 10px;">(این کد را جای امنی ذخیره کنید. برای انتقال اکانت به آن نیاز دارید)</div>
+                </div>
+
+                <div class="input-group">
+                    <label>وارد کردن کد بازیابی:</label>
+                    <input type="text" id="restore-input" placeholder="کد را وارد کنید...">
+                </div>
+
+                <button class="btn btn-equipped" onclick="saveProfile()">ذخیره پروفایل</button>
+            </div>
+        </div>
+
+        <div id="leaderboard-tab" class="tab-content">
+            <div class="shop-container" style="text-align: center;">
+                <h2 style="color: #ffd700; text-shadow: 0 0 10px #ffd700; margin-top: 20px;">🏆 رتبه‌بندی</h2>
+                <p style="margin-top: 20px; color: #888;">این بخش به زودی فعال می‌شود...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const weaponsData = {
+            laser: { name: 'لیزر ساده', damage: 1, bullets: 1, buyCost: 0, upgCost: 200, icon: '🔫' },
+            twin: { name: 'شلیک دوقلو', damage: 1, bullets: 2, buyCost: 100, upgCost: 200, icon: '⚡' },
+            red: { name: 'لیزر سرخ', damage: 2, bullets: 1, buyCost: 300, upgCost: 200, icon: '🔴' },
+            triple: { name: 'سه‌گانه', damage: 1, bullets: 3, buyCost: 500, upgCost: 200, icon: '🔱' },
+            plasma: { name: 'پلاسما', damage: 4, bullets: 1, buyCost: 1000, upgCost: 200, icon: '🟣' }
+        };
+
+        const shipsData = {
+            redwing: { name: 'بال قرمز', cost: 0, color: '#ff2a2a', icon: '🔻' },
+            hawk: { name: 'شاهین کهکشانی', cost: 500, color: '#00f0ff', icon: '🔺' },
+            ghost: { name: 'شبح بنفش', cost: 1000, color: '#b300ff', icon: '👻' },
+            gold: { name: 'سپر طلایی', cost: 2000, color: '#ffd700', icon: '🛡️' },
+            crystal: { name: 'ستاره کریستالی', cost: 5000, color: '#00ffaa', icon: '⭐' }
+        };
+
+        const avatarsList = ['👻', '🚀', '👽', '🤖', '🦊', '🐉', '💀', '🛸'];
+        const SAVE_KEY = 'spaceShooterSave_v3';
+
+        function getDefaultPlayer() {
+            return {
+                coins: 0, name: '', avatar: '👻',
+                code: 'SPC-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase(),
+                ownedWeapons: ['laser'], equippedWeapon: 'laser',
+                weaponLevels: { laser: 0, twin: 0, red: 0, triple: 0, plasma: 0 },
+                ownedShips: ['redwing'], equippedShip: 'redwing'
+            };
+        }
+
+        let player = getDefaultPlayer();
+        try {
+            const saved = localStorage.getItem(SAVE_KEY);
+            if (saved) player = Object.assign(player, JSON.parse(saved));
+        } catch(e) { console.log('خطا در لود سیو'); }
+
+        if (!player.name) player.name = 'خلبان ' + Math.floor(Math.random() * 9000 + 1000);
+
+        function saveGame() {
+            try { localStorage.setItem(SAVE_KEY, JSON.stringify(player)); } catch(e) {}
+            updateUI();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId + '-tab').classList.add('active');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) activeBtn.classList.add('active');
+
+            if (tabId === 'game') {
+                document.body.style.overflow = 'hidden';
+                isGamePaused = false;
+                setTimeout(resizeCanvas, 50); 
+                if (!gameState.isPlaying && !gameState.isGameOver) startGame();
+            } else {
+                document.body.style.overflow = 'auto';
+                isGamePaused = true;
+            }
+            updateUI();
+        }
+
+        function switchShopTab(tab, btn) {
+            document.querySelectorAll('.shop-tab-btn').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('weapons-list').style.display = tab === 'weapons' ? 'block' : 'none';
+            document.getElementById('ships-list').style.display = tab === 'ships' ? 'block' : 'none';
+        }
+
+        function updateUI() {
+            document.getElementById('ui-coins').innerText = player.coins;
+            document.getElementById('ui-score').innerText = gameState.score;
+            
+            let heartsHTML = '';
+            for(let i=0; i<3; i++) heartsHTML += i < gameState.lives ? '❤️' : '🖤';
+            document.getElementById('ui-hearts').innerHTML = heartsHTML;
+
+            let weaponsHTML = '';
+            for (const [key, data] of Object.entries(weaponsData)) {
+                const isOwned = player.ownedWeapons.includes(key);
+                const isEquipped = player.equippedWeapon === key;
+                const level = player.weaponLevels[key] || 0;
+                const currentDamage = data.damage + level;
+
+                weaponsHTML += `
+                    <div class="card ${isEquipped ? 'purchased' : ''}">
+                        <div class="card-header">
+                            <div>
+                                <div class="item-title">${data.name}</div>
+                                <div class="item-desc">دمیج: ${currentDamage} | تعداد تیر: ${data.bullets}</div>
+                            </div>
+                            <div class="icon-box" style="color: #ff007f; font-size: 30px;">${data.icon}</div>
+                        </div>
+                        ${isEquipped 
+                            ? `<button class="btn btn-equipped">مجهز شده</button>` 
+                            : isOwned 
+                                ? `<button class="btn btn-equip" onclick="equipWeapon('${key}')">مجهز کردن</button>`
+                                : `<button class="btn btn-buy" onclick="buyWeapon('${key}')">خرید (${data.buyCost} 💰)</button>`
+                        }
+                        ${isOwned ? `
+                            <button class="btn btn-upgrade" onclick="upgradeWeapon('${key}')">
+                                <span>⚡ ارتقا - Lvl ${level}</span>
+                                <span class="cost-tag">${data.upgCost} 💰</span>
+                            </button>
+                        ` : ''}
+                    </div>`;
+            }
+            document.getElementById('weapons-list').innerHTML = weaponsHTML;
+
+            let shipsHTML = '';
+            for (const [key, data] of Object.entries(shipsData)) {
+                const isOwned = player.ownedShips.includes(key);
+                const isEquipped = player.equippedShip === key;
+                
+                shipsHTML += `
+                    <div class="card ${isEquipped ? 'purchased' : ''}">
+                        <div class="card-header">
+                            <div><div class="item-title">${data.name}</div></div>
+                            <div class="icon-box" style="color: ${data.color}; font-size: 30px;">${data.icon}</div>
+                        </div>
+                        ${isEquipped 
+                            ? `<button class="btn btn-equipped">مجهز شده</button>` 
+                            : isOwned 
+                                ? `<button class="btn btn-equip" onclick="equipShip('${key}')">مجهز کردن</button>`
+                                : `<button class="btn btn-buy" onclick="buyShip('${key}')">خرید (${data.cost} 💰)</button>`
+                        }
+                    </div>`;
+            }
+            document.getElementById('ships-list').innerHTML = shipsHTML;
+
+            document.getElementById('profile-avatar-preview').innerText = player.avatar;
+            document.getElementById('profile-name-display').innerText = player.name;
+            if(document.activeElement !== document.getElementById('profile-name-input')) {
+                document.getElementById('profile-name-input').value = player.name;
+            }
+            document.getElementById('profile-code').innerText = player.code;
+            
+            let avatarsHTML = '';
+            avatarsList.forEach(av => {
+                avatarsHTML += `<div class="avatar-option ${player.avatar === av ? 'selected' : ''}" onclick="selectAvatar('${av}')">${av}</div>`;
+            });
+            document.getElementById('avatar-list').innerHTML = avatarsHTML;
+        }
+
+        function buyWeapon(key) {
+            if (player.coins >= weaponsData[key].buyCost) {
+                player.coins -= weaponsData[key].buyCost;
+                player.ownedWeapons.push(key);
+                saveGame();
+            } else { alert('سکه کافی نیست!'); }
+        }
+        function equipWeapon(key) {
+            if (player.ownedWeapons.includes(key)) {
+                player.equippedWeapon = key;
+                saveGame();
+            }
+        }
+        function upgradeWeapon(key) {
+            if (player.coins >= weaponsData[key].upgCost) {
+                player.coins -= weaponsData[key].upgCost;
+                player.weaponLevels[key] += 1;
+                saveGame();
+            } else { alert('سکه کافی نیست!'); }
+        }
+        function buyShip(key) {
+            if (player.coins >= shipsData[key].cost) {
+                player.coins -= shipsData[key].cost;
+                player.ownedShips.push(key);
+                saveGame();
+            } else { alert('سکه کافی نیست!'); }
+        }
+        function equipShip(key) {
+            if (player.ownedShips.includes(key)) {
+                player.equippedShip = key;
+                ship.color = shipsData[key].color;
+                saveGame();
+            }
+        }
+
+        function selectAvatar(av) {
+            player.avatar = av;
+            updateUI();
+        }
+        function saveProfile() {
+            const newName = document.getElementById('profile-name-input').value.trim();
+            if (newName) player.name = newName;
+            saveGame();
+            alert('پروفایل با موفقیت ذخیره شد! ✅');
+        }
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let isGamePaused = true;
+        
+        const gameState = {
+            score: 0, lives: 3, isPlaying: false, isGameOver: false,
+            bullets: [], enemies: [], particles: [],
+            lastShot: 0, spawnTimer: 0, spawnInterval: 1000, speedMultiplier: 1,
+            bossActive: false, bossDefeatedCount: 0, nextBossScore: 500
+        };
+
+        const ship = {
+            x: 0, y: 0, width: 40, height: 50,
+            color: shipsData[player.equippedShip].color,
+            isDragging: false, targetX: 0, targetY: 0
+        };
+
+        function resizeCanvas() {
+            const tab = document.getElementById('game-tab');
+            if (tab.classList.contains('active')) {
+                // تنظیم دقیق سایز کانواس با توجه به محیط
+                canvas.width = tab.clientWidth;
+                canvas.height = tab.clientHeight;
+                
+                if (!gameState.isPlaying) {
+                    ship.x = canvas.width / 2;
+                    ship.y = canvas.height - 60; 
+                    ship.targetX = ship.x;
+                    ship.targetY = ship.y;
+                }
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        // اضافه کردن رویداد برای وقتی صفحه کامل لود شد
+        window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 100));
+
+        function handleMove(e) {
+            if (isGamePaused || !gameState.isPlaying) return;
+            let clientX = e.clientX, clientY = e.clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+            const rect = canvas.getBoundingClientRect();
+            ship.targetX = Math.max(ship.width/2, Math.min(canvas.width - ship.width/2, clientX - rect.left));
+            ship.targetY = Math.max(ship.height/2, Math.min(canvas.height - ship.height/2, clientY - rect.top));
+        }
+
+        canvas.addEventListener('mousedown', (e) => { ship.isDragging = true; handleMove(e); });
+        canvas.addEventListener('mousemove', (e) => { if(ship.isDragging) handleMove(e); });
+        window.addEventListener('mouseup', () => { ship.isDragging = false; });
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); ship.isDragging = true; handleMove(e); }, {passive: false});
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if(ship.isDragging) handleMove(e); }, {passive: false});
+        window.addEventListener('touchend', () => { ship.isDragging = false; });
+
+        function startGame() {
+            resizeCanvas();
+            gameState.score = 0; gameState.lives = 3; gameState.isPlaying = true;
+            gameState.isGameOver = false; gameState.bullets = []; gameState.enemies = [];
+            gameState.particles = []; gameState.speedMultiplier = 1; gameState.spawnInterval = 1000;
+            gameState.bossActive = false; gameState.bossDefeatedCount = 0; gameState.nextBossScore = 500;
+            
+            ship.x = canvas.width / 2; 
+            ship.y = canvas.height - 60;
+            ship.targetX = ship.x; ship.targetY = ship.y;
+            ship.color = shipsData[player.equippedShip].color;
+            
+            document.getElementById('gameOverScreen').classList.remove('show');
+            document.getElementById('wave-announce').style.opacity = 0;
+            isGamePaused = false;
+            updateUI();
+        }
+
+        function showWaveText(text) {
+            const el = document.getElementById('wave-announce');
+            el.innerText = text;
+            el.style.opacity = 1;
+            setTimeout(() => { el.style.opacity = 0; }, 2000);
+        }
+
+        function drawShip() {
+            ctx.save();
+            ctx.translate(ship.x, ship.y);
+            ctx.shadowBlur = 15; ctx.shadowColor = ship.color;
+            ctx.fillStyle = ship.color;
+            ctx.beginPath();
+            ctx.moveTo(0, -ship.height/2);
+            ctx.lineTo(ship.width/2, ship.height/2);
+            ctx.lineTo(0, ship.height/3);
+            ctx.lineTo(-ship.width/2, ship.height/2);
+            ctx.closePath(); ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+
+        function drawEnemy(enemy) {
+            ctx.save();
+            ctx.translate(enemy.x, enemy.y);
+            
+            if (enemy.isBoss) {
+                ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.2)'; ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 4;
+            } else {
+                ctx.shadowBlur = 10; ctx.shadowColor = '#ff2a2a';
+                ctx.fillStyle = 'rgba(255, 42, 42, 0.2)'; ctx.strokeStyle = '#ff2a2a'; ctx.lineWidth = 2;
+            }
+            
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                const x = enemy.radius * Math.cos(angle);
+                const y = enemy.radius * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            
+            if (enemy.isBoss) {
+                ctx.fillStyle = '#000'; ctx.fillRect(-enemy.radius, -enemy.radius - 20, enemy.radius*2, 8);
+                ctx.fillStyle = '#ff00ff'; 
+                ctx.fillRect(-enemy.radius, -enemy.radius - 20, (enemy.hp / enemy.maxHp) * enemy.radius * 2, 8);
+            }
+            
+            ctx.restore();
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 8; i++) {
+                gameState.particles.push({
+                    x: x, y: y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, life: 1, color: color
+                });
+            }
+        }
+
+        function gameLoop(timestamp) {
+            requestAnimationFrame(gameLoop);
+            
+            if (isGamePaused || !gameState.isPlaying) {
+                if (document.getElementById('game-tab').classList.contains('active')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawShip();
+                }
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ship.x += (ship.targetX - ship.x) * 0.2;
+            ship.y += (ship.targetY - ship.y) * 0.2;
+            drawShip();
+
+            if (ship.isDragging && timestamp - gameState.lastShot > 250) {
+                const weapon = weaponsData[player.equippedWeapon];
+                const dmg = weapon.damage + (player.weaponLevels[player.equippedWeapon] || 0);
+                const bCount = weapon.bullets;
+                for (let i = 0; i < bCount; i++) {
+                    let offsetX = 0;
+                    if (bCount === 2) offsetX = i === 0 ? -10 : 10;
+                    if (bCount === 3) offsetX = (i - 1) * 10;
+                    gameState.bullets.push({
+                        x: ship.x + offsetX, y: ship.y - 20, damage: dmg,
+                        color: player.equippedWeapon === 'red' ? '#ff0000' : (player.equippedWeapon === 'plasma' ? '#b300ff' : '#00f0ff')
+                    });
+                }
+                gameState.lastShot = timestamp;
+            }
+
+            for (let i = gameState.bullets.length - 1; i >= 0; i--) {
+                let b = gameState.bullets[i];
+                b.y -= 10;
+                ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = b.color;
+                ctx.fillStyle = b.color; ctx.fillRect(b.x - 2, b.y, 4, 15); ctx.restore();
+                if (b.y < 0) gameState.bullets.splice(i, 1);
+            }
+
+            if (!gameState.bossActive && gameState.score >= gameState.nextBossScore) {
+                gameState.bossActive = true;
+                gameState.enemies.push({
+                    x: canvas.width / 2, y: -60, radius: 40,
+                    hp: 30 + (gameState.bossDefeatedCount * 15), maxHp: 30 + (gameState.bossDefeatedCount * 15),
+                    speed: 1, isBoss: true
+                });
+                showWaveText("⚠️ باس وارد شد! ⚠️");
+            }
+
+            if (!gameState.bossActive) {
+                gameState.spawnTimer += 16;
+                if (gameState.spawnTimer > gameState.spawnInterval) {
+                    gameState.spawnTimer = 0;
+                    gameState.enemies.push({
+                        x: Math.random() * (canvas.width - 60) + 30, y: -30,
+                        radius: 15 + Math.random() * 10, speed: 2 * gameState.speedMultiplier, hp: 1
+                    });
+                }
+            }
+
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                let e = gameState.enemies[i];
+                
+                if (e.isBoss) {
+                    if (e.y < 100) e.y += e.speed;
+                } else {
+                    e.y += e.speed;
+                }
+                
+                drawEnemy(e);
+                
+                let dx = e.x - ship.x, dy = e.y - ship.y;
+                if (Math.sqrt(dx*dx + dy*dy) < e.radius + 15) {
+                    createParticles(e.x, e.y, '#ff2a2a');
+                    gameState.enemies.splice(i, 1); loseLife(); continue;
+                }
+                
+                if (!e.isBoss && e.y > canvas.height + 30) {
+                    gameState.enemies.splice(i, 1); loseLife(); continue;
+                }
+                
+                for (let j = gameState.bullets.length - 1; j >= 0; j--) {
+                    let b = gameState.bullets[j];
+                    let bdx = e.x - b.x, bdy = e.y - b.y;
+                    if (Math.sqrt(bdx*bdx + bdy*bdy) < e.radius + 5) {
+                        e.hp -= b.damage;
+                        gameState.bullets.splice(j, 1);
+                        
+                        if (e.hp <= 0) {
+                            createParticles(e.x, e.y, e.isBoss ? '#ff00ff' : '#ff2a2a');
+                            gameState.enemies.splice(i, 1);
+                            
+                            if (e.isBoss) {
+                                gameState.score += 100; player.coins += 20;
+                                gameState.bossActive = false;
+                                gameState.bossDefeatedCount++;
+                                gameState.nextBossScore += 600;
+                                gameState.speedMultiplier += 0.5;
+                                gameState.spawnInterval = Math.max(150, gameState.spawnInterval - 200);
+                                showWaveText("موج بعدی!");
+                            } else {
+                                gameState.score += 20; player.coins += 2;
+                                gameState.speedMultiplier += 0.01;
+                                gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
+                            }
+                            updateUI();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            for (let i = gameState.particles.length - 1; i >= 0; i--) {
+                let p = gameState.particles[i];
+                p.x += p.vx; p.y += p.vy; p.life -= 0.05;
+                if (p.life <= 0) { gameState.particles.splice(i, 1); continue; }
+                ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function loseLife() {
+            gameState.lives--;
+            updateUI();
+            if (gameState.lives <= 0) {
+                gameState.isPlaying = false; gameState.isGameOver = true;
+                saveGame();
+                document.getElementById('final-score').innerText = gameState.score;
+                document.getElementById('gameOverScreen').classList.add('show');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            updateUI();
+            // یک تاخیر کوتاه برای اطمینان از لود کامل استایل‌ها در مرورگرهای موبایل و وب‌ویوها
+            setTimeout(() => {
+                resizeCanvas();
+                startGame();
+                requestAnimationFrame(gameLoop);
+            }, 100);
+        });
+    </script>
+</body>
+                                      </html￼Enter
