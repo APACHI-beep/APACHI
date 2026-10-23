@@ -2,671 +2,923 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>سفینه فضایی</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>جنگجویان کهکشانی</title>
+
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { height:100%; overflow:hidden; font-family:tahoma, sans-serif; background:#050510; color:#fff; user-select:none; -webkit-user-select:none; }
-  #app { display:flex; flex-direction:column; height:100vh; height:100dvh; width:100%; }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-  /* نوار بالا */
-  #topbar { display:flex; height:46px; flex:0 0 46px; background:#101028; border-bottom:2px solid #2a2a5a; z-index:10; }
-  #topbar button { flex:1; background:transparent; border:none; color:#8899ff; font-size:15px; font-weight:bold; cursor:pointer; }
-  #topbar button.active { color:#fff; background:#1e1e4a; box-shadow:inset 0 -3px 0 #5566ff; }
+body {
+  margin: 0;
+  background: #070b19;
+  color: white;
+  font-family: Tahoma, Arial, sans-serif;
+  overflow-x: hidden;
+}
 
-  /* HUD */
-  #hud { display:flex; justify-content:space-between; align-items:flex-start; padding:5px 10px; flex:0 0 auto; background:#0a0a1e; font-size:12px; border-bottom:1px solid #1a1a3a; }
-  #hud .left div { margin-bottom:3px; }
-  #hud .right { color:#ff5566; font-size:18px; letter-spacing:1px; white-space:nowrap; }
+button, input {
+  font-family: inherit;
+}
 
-  /* بازی */
-  #gameWrap { flex:1 1 auto; position:relative; overflow:hidden; min-height:0; }
-  canvas { display:block; width:100%; height:100%; background:#000; touch-action:none; }
+header {
+  display: flex;
+  width: 100%;
+  background: #111a32;
+  border-bottom: 2px solid #27385c;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
 
-  /* فروشگاه */
-  #shop { display:none; flex:1 1 auto; overflow-y:auto; overflow-x:hidden; padding:10px; padding-bottom:40px; -webkit-overflow-scrolling:touch; min-height:0; }
-  .shopSection { margin-bottom:18px; }
-  .shopTitle { font-size:15px; color:#8899ff; margin-bottom:8px; border-bottom:1px solid #2a2a5a; padding-bottom:5px; }
-  .card { background:#12122a; border:1px solid #2a2a5a; border-radius:10px; padding:11px; margin-bottom:9px; }
-  .card.equipped { border-color:#55ff88; box-shadow:0 0 10px #55ff8855; }
-  .card .name { font-size:14px; font-weight:bold; color:#fff; margin-bottom:5px; }
-  .card .stats { font-size:11px; color:#aab; margin-bottom:7px; line-height:1.6; }
-  .card .badge { color:#55ff88; font-size:11px; margin-bottom:6px; display:inline-block; }
-  .card button { background:#2a2a6a; color:#fff; border:none; border-radius:6px; padding:7px 12px; font-size:12px; margin-left:5px; margin-top:4px; cursor:pointer; }
-  .card button.buy { background:#2a6a3a; }
-  .card button.equip { background:#5a2a6a; }
-  .card button:disabled { opacity:0.4; }
+header button {
+  flex: 1;
+  padding: 15px 3px;
+  color: white;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: bold;
+}
 
-  #toast { position:fixed; bottom:25px; left:50%; transform:translateX(-50%); background:#1e1e4a; color:#fff; padding:9px 18px; border-radius:20px; font-size:12px; opacity:0; transition:opacity .3s; pointer-events:none; z-index:99; white-space:nowrap; }
-  #toast.show { opacity:1; }
+header button.active {
+  background: #263c70;
+  color: #69e8ff;
+  border-bottom: 3px solid #69e8ff;
+}
+
+#hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px;
+  background: #0b1225;
+  font-size: 13px;
+  gap: 8px;
+}
+
+#hud span {
+  color: #ffe16b;
+}
+
+#game {
+  width: 100%;
+  height: min(68vh, 620px);
+  display: block;
+  background: #030611;
+  touch-action: none;
+}
+
+.panel {
+  padding: 14px;
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+h2 {
+  color: #69e8ff;
+  font-size: 19px;
+}
+
+.card {
+  background: #121c34;
+  border: 1px solid #2a3c60;
+  border-radius: 12px;
+  padding: 13px;
+  margin: 10px 0;
+}
+
+.card h3 {
+  margin: 0 0 9px;
+  color: #ffe16b;
+}
+
+.card p {
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 5px 0;
+}
+
+button.action {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #176eaa;
+  color: white;
+  margin: 5px 3px;
+  font-weight: bold;
+}
+
+button.action:disabled {
+  background: #444c5d;
+  color: #aaa;
+}
+
+input {
+  background: #080e20;
+  color: white;
+  border: 1px solid #42557b;
+  padding: 11px;
+  border-radius: 8px;
+  width: 100%;
+  margin: 7px 0;
+}
+
+.note {
+  color: #a6b5d6;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+#gameOver {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  top: 40%;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+#gameOver h2 {
+  color: #ff657d;
+  font-size: 27px;
+  text-shadow: 0 0 12px #f00;
+}
+
+#gameOver p {
+  color: white;
+}
+
+#stage {
+  position: relative;
+}
+
+#creator {
+  color: #b7c5e4;
+  font-size: 11px;
+  text-align: center;
+  padding: 12px;
+}
 </style>
 </head>
+
 <body>
-<div id="app">
 
-  <div id="topbar">
-    <button id="btnGame" class="active">بازی</button>
-    <button id="btnShop">فروشگاه</button>
-  </div>
+<header>
+  <button class="active" onclick="showPanel('gamePanel',this)">🚀 بازی</button>
+  <button onclick="showPanel('shopPanel',this)">🛒 فروشگاه</button>
+  <button onclick="showPanel('profilePanel',this)">👤 پروفایل</button>
+</header>
 
-  <div id="hud">
-    <div class="left">
-      <div>امتیاز این دست: <b id="score">0</b></div>
-      <div>💰 <b id="coins">0</b></div>
-      <div>🏆 رکورد: <b id="record">0</b></div>
-    </div>
-    <div class="right" id="lives">❤️❤️❤️</div>
-  </div>
-
-  <div id="gameWrap">
-    <canvas id="canvas"></canvas>
-  </div>
-
-  <div id="shop"></div>
-
+<div id="hud">
+  <div>امتیاز این دست: <span id="score">0</span></div>
+  <div>💰 <span id="coins">0</span></div>
+  <div>❤️ <span id="lives">3</span></div>
+  <div>رکورد: <span id="record">0</span></div>
 </div>
-<div id="toast"></div>
+
+<div id="gamePanel" class="panel active" style="padding:0">
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="gameOver">
+      <h2>سفینه نابود شد!</h2>
+      <p>برای شروع دوباره لمس کن</p>
+    </div>
+  </div>
+
+  <div class="note" style="padding:10px">
+    انگشتت را روی صفحه بکش تا سفینه حرکت کند.
+    با نگه‌داشتن انگشت شلیک می‌کنی.
+  </div>
+</div>
+
+<div id="shopPanel" class="panel">
+  <h2>🛒 فروشگاه کهکشانی</h2>
+
+  <h3>🔫 اسلحه‌ها</h3>
+  <div id="weaponList"></div>
+
+  <h3>🛸 سفینه‌ها</h3>
+  <div id="shipList"></div>
+</div>
+
+<div id="profilePanel" class="panel">
+  <h2>👤 پروفایل خلبان</h2>
+
+  <div class="card">
+    <p>نام خلبان:</p>
+    <input id="nameInput" maxlength="20" placeholder="نام دلخواهت را بنویس">
+
+    <button class="action" onclick="saveName()">ذخیره نام</button>
+
+    <p>کد اختصاصی حساب:</p>
+    <p id="accountCode" style="color:#69e8ff;direction:ltr"></p>
+
+    <button class="action" onclick="copyCode()">کپی کد حساب</button>
+  </div>
+
+  <div class="card">
+    <h3>بازیابی حساب</h3>
+    <p class="note">
+      کد حساب قبلی را وارد کن. اگر اطلاعات آن حساب در همین مرورگر
+      ذخیره شده باشد، می‌توانی آن را بازیابی کنی.
+    </p>
+
+    <input id="restoreInput" placeholder="کد حساب قبلی">
+    <button class="action" onclick="restoreAccount()">بازیابی</button>
+  </div>
+
+  <div class="card">
+    <p>رکورد شخصی: <span id="profileRecord">0</span></p>
+    <p>مجموع سکه‌ها: <span id="profileCoins">0</span></p>
+  </div>
+</div>
+
+<div id="creator">جنگجویان کهکشانی | نسخه آزمایشی</div>
 
 <script>
-/* ============ ذخیره‌سازی ============ */
-const DB = {
-  coins: 0, record: 0,
-  ownedWeapons: ['simple'],
-  equippedWeapon: 'simple',
-  weaponLevel: { simple:1, twin:1, red:1, triple:1, plasma:1 },
-  ownedShips: ['redwing'],
-  equippedShip: 'redwing',
-  load() {
-    try {
-      const s = JSON.parse(localStorage.getItem('spacegame') || '{}');
-      if(s.coins!==undefined) this.coins = s.coins;
-      if(s.record!==undefined) this.record = s.record;
-      if(Array.isArray(s.ownedWeapons) && s.ownedWeapons.length) this.ownedWeapons = s.ownedWeapons;
-      if(s.equippedWeapon) this.equippedWeapon = s.equippedWeapon;
-      if(s.weaponLevel) this.weaponLevel = s.weaponLevel;
-      if(Array.isArray(s.ownedShips) && s.ownedShips.length) this.ownedShips = s.ownedShips;
-      if(s.equippedShip) this.equippedShip = s.equippedShip;
-      // اطمینان از وجود همه کلیدها
-      for(const k of ['simple','twin','red','triple','plasma']){
-        if(!this.weaponLevel[k]) this.weaponLevel[k] = 1;
-      }
-    } catch(e){ console.error(e); }
-  },
-  save() {
-    try {
-      localStorage.setItem('spacegame', JSON.stringify({
-        coins:this.coins, record:this.record,
-        ownedWeapons:this.ownedWeapons, equippedWeapon:this.equippedWeapon,
-        weaponLevel:this.weaponLevel,
-        ownedShips:this.ownedShips, equippedShip:this.equippedShip
-      }));
-    } catch(e){}
-  }
-};
-DB.load();
+// ==============================
+// تنظیمات سازنده
+// ==============================
 
-/* ============ داده‌ها ============ */
-const WEAPONS = {
-  simple: { name:'لیزر ساده', dmg:1, bullets:1, buyCost:0,   upCost:200 },
-  twin:   { name:'شلیک دوقلو', dmg:1, bullets:2, buyCost:100, upCost:200 },
-  red:    { name:'لیزر سرخ',  dmg:2, bullets:1, buyCost:300, upCost:200 },
-  triple: { name:'سه گانه',   dmg:1, bullets:3, buyCost:500, upCost:200 },
-  plasma: { name:'پلاسما',    dmg:4, bullets:1, buyCost:1000,upCost:200 },
-};
-const WEAPON_ORDER = ['simple','twin','red','triple','plasma'];
+// در نسخه آزمایشی، اگر true باشد، حساب فعلی سکه نامحدود دارد.
+// برای بازی عمومی این گزینه را false بگذار.
+const CREATOR_MODE = false;
 
-const SHIPS = {
-  redwing:    { name:'بال قرمز',       cost:0,    color:'#ff4466', style:'arrow' },
-  hawk:       { name:'شاهین کهکشانی',  cost:500,  color:'#44aaff', style:'hawk' },
-  purple:     { name:'شبح بنفش',       cost:1000, color:'#aa44ff', style:'ghost' },
-  goldshield: { name:'سپر طلایی',      cost:2000, color:'#ffcc33', style:'shield' },
-  crystal:    { name:'ستاره کریستالی', cost:5000, color:'#66ffdd', style:'star' },
-};
-const SHIP_ORDER = ['redwing','hawk','purple','goldshield','crystal'];
+// ==============================
+// ذخیره اطلاعات
+// ==============================
 
-function weaponStats(key){
-  const base = WEAPONS[key];
-  const lvl = DB.weaponLevel[key] || 1;
-  return { dmg: base.dmg * lvl, bullets: base.bullets, name: base.name, lvl };
+const SAVE_KEY = "galaxy_game_save_v1";
+const ACCOUNTS_KEY = "galaxy_accounts_v1";
+
+function makeCode() {
+  return "PILOT-" + Math.random().toString(36).slice(2, 10).toUpperCase();
 }
 
-/* ============ کانواس ============ */
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let W=0,H=0;
-
-function resizeCanvas(){
-  const r = canvas.parentElement.getBoundingClientRect();
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
-  W = r.width;
-  H = r.height;
-  canvas.width = Math.floor(W * dpr);
-  canvas.height = Math.floor(H * dpr);
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-}
-window.addEventListener('resize', ()=>{ resizeCanvas(); if(game) clampShip(); });
-
-/* ============ وضعیت بازی ============ */
-let game = null;
-let running = false;
-let lastTime = 0;
-let rafId = null;
-
-function clampShip(){
-  if(!game) return;
-  game.ship.x = Math.max(20, Math.min(W-20, game.ship.x));
-  game.ship.y = Math.max(20, Math.min(H-20, game.ship.y));
-  game.ship.targetX = Math.max(20, Math.min(W-20, game.ship.targetX));
-  game.ship.targetY = Math.max(20, Math.min(H-20, game.ship.targetY));
-}
-
-function initGame(){
-  resizeCanvas();
-  game = {
-    ship: { x: W/2, y: H-70, r: 18, targetX: W/2, targetY: H-70 },
-    bullets: [], enemies: [], particles: [],
-    score: 0, lives: 3, coinsThisRun: 0,
-    spawnTimer: 0, spawnInterval: 1000,
-    shootTimer: 0, shootCooldown: 240,
-    maxLives: 3,
+function defaultData() {
+  return {
+    name: "خلبان " + (Math.floor(Math.random() * 7000) + 1000),
+    code: makeCode(),
+    coins: 0,
+    record: 0,
+    weapon: 0,
+    weaponLevels: [0, 0, 0, 0, 0],
+    ownedWeapons: [true, false, false, false, false],
+    ship: 0,
+    ownedShips: [true, false, false, false, false]
   };
-  document.getElementById('score').textContent = '0';
-  updateLives();
 }
 
-function updateLives(){
-  const el = document.getElementById('lives');
-  let s='';
-  for(let i=0;i<game.maxLives;i++) s += i < game.lives ? '❤️' : '🖤';
-  el.textContent = s;
+let data;
+
+try {
+  data = JSON.parse(localStorage.getItem(SAVE_KEY)) || defaultData();
+} catch {
+  data = defaultData();
 }
 
-/* ============ حلقه ============ */
-function loop(t){
-  if(!running) return;
-  const dt = Math.min(50, t - lastTime || 16);
-  lastTime = t;
-  update(dt);
-  draw();
-  rafId = requestAnimationFrame(loop);
-}
-
-function update(dt){
-  const g = game;
-  g.ship.x += (g.ship.targetX - g.ship.x) * 0.28;
-  g.ship.y += (g.ship.targetY - g.ship.y) * 0.28;
-  clampShip();
-
-  g.shootTimer -= dt;
-  if(g.shootTimer <= 0){ shoot(); g.shootTimer = g.shootCooldown; }
-
-  g.spawnTimer -= dt;
-  if(g.spawnTimer <= 0){
-    spawnEnemy();
-    g.spawnTimer = Math.max(300, g.spawnInterval - g.score*0.5);
+function save() {
+  if (CREATOR_MODE) {
+    data.coins = Infinity;
   }
 
-  for(let i=g.bullets.length-1;i>=0;i--){
-    const b = g.bullets[i];
-    b.x += b.vx*dt; b.y += b.vy*dt;
-    if(b.x<-20||b.x>W+20||b.y<-20||b.y>H+20) g.bullets.splice(i,1);
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+
+  // ذخیره محلی حساب برای بازیابی
+  let accounts = {};
+
+  try {
+    accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {};
+  } catch {}
+
+  accounts[data.code] = data;
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+}
+
+if (CREATOR_MODE) data.coins = Infinity;
+
+save();
+
+// ==============================
+// اطلاعات اسلحه‌ها
+// ==============================
+
+const weapons = [
+  {
+    name: "لیزر ساده",
+    damage: 1,
+    shots: 1,
+    price: 0
+  },
+  {
+    name: "شلیک دوقلو",
+    damage: 1,
+    shots: 2,
+    price: 100
+  },
+  {
+    name: "لیزر سرخ",
+    damage: 2,
+    shots: 1,
+    price: 300
+  },
+  {
+    name: "سه‌گانه",
+    damage: 1,
+    shots: 3,
+    price: 500
+  },
+  {
+    name: "پلاسما",
+    damage: 4,
+    shots: 1,
+    price: 1000
   }
+];
 
-  for(let i=g.enemies.length-1;i>=0;i--){
-    const e = g.enemies[i];
-    e.x += e.vx*dt; e.y += e.vy*dt;
-    e.rot += dt*0.002;
+const ships = [
+  { name: "بال قرمز", price: 0, color: "#ff405e" },
+  { name: "شاهین کهکشانی", price: 500, color: "#40caff" },
+  { name: "شبح بنفش", price: 1000, color: "#b65cff" },
+  { name: "سپر طلایی", price: 2000, color: "#ffce43" },
+  { name: "ستاره کریستالی", price: 5000, color: "#b8fff9" }
+];
 
-    const dx = e.x-g.ship.x, dy = e.y-g.ship.y;
-    if(Math.sqrt(dx*dx+dy*dy) < e.r + g.ship.r){
-      g.enemies.splice(i,1);
-      explode(e.x,e.y,e.color);
-      loseLife();
-      continue;
+// ==============================
+// رابط کاربری
+// ==============================
+
+function updateHUD() {
+  document.getElementById("score").textContent = score;
+  document.getElementById("coins").textContent =
+    CREATOR_MODE ? "∞" : data.coins;
+  document.getElementById("lives").textContent = lives;
+  document.getElementById("record").textContent = data.record;
+
+  document.getElementById("profileRecord").textContent = data.record;
+  document.getElementById("profileCoins").textContent =
+    CREATOR_MODE ? "∞" : data.coins;
+
+  document.getElementById("nameInput").value = data.name;
+  document.getElementById("accountCode").textContent = data.code;
+}
+
+function showPanel(id, button) {
+  document.querySelectorAll(".panel").forEach(p => {
+    p.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll("header button").forEach(b => {
+    b.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  // بازی فقط در بخش بازی اجرا می‌شود
+  playing = id === "gamePanel" && lives > 0;
+
+  if (id === "shopPanel") renderShop();
+  if (id === "profilePanel") updateHUD();
+}
+
+function saveName() {
+  const name = document.getElementById("nameInput").value.trim();
+
+  if (name.length > 0) {
+    data.name = name;
+    save();
+    updateHUD();
+    alert("نام خلبان ذخیره شد!");
+  }
+}
+
+function copyCode() {
+  const text = data.code;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert("کد حساب کپی شد!"))
+      .catch(() => prompt("کد حساب:", text));
+  } else {
+    prompt("کد حساب:", text);
+  }
+}
+
+function restoreAccount() {
+  const code = document.getElementById("restoreInput")
+    .value.trim().toUpperCase();
+
+  let accounts = {};
+
+  try {
+    accounts = JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {};
+  } catch {}
+
+  if (accounts[code]) {
+    data = accounts[code];
+    save();
+    updateHUD();
+    renderShop();
+    alert("حساب بازیابی شد!");
+  } else {
+    alert("این کد در حافظه این مرورگر پیدا نشد.");
+  }
+}
+
+// ==============================
+// فروشگاه اسلحه
+// ==============================
+
+function renderShop() {
+  const weaponList = document.getElementById("weaponList");
+  const shipList = document.getElementById("shipList");
+
+  weaponList.innerHTML = "";
+
+  weapons.forEach((w, i) => {
+    const owned = data.ownedWeapons[i];
+    const equipped = data.weapon === i;
+    const level = data.weaponLevels[i];
+
+    const currentDamage = w.damage + level;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    let html = `
+      <h3>${w.name}</h3>
+      <p>دمیج: ${currentDamage}</p>
+      <p>تعداد تیر: ${w.shots}</p>
+    `;
+
+    if (equipped) {
+      html += `<p style="color:#69ffab">مجهز شده ✓</p>`;
+    } else if (owned) {
+      html += `<button class="action" onclick="equipWeapon(${i})">مجهز کردن</button>`;
+    } else {
+      html += `<p>هزینه خرید: ${w.price} سکه</p>`;
+      html += `<button class="action" onclick="buyWeapon(${i})">خرید اسلحه</button>`;
     }
-    if(e.y > H + 30){
-      g.enemies.splice(i,1);
-      loseLife();
-    }
-  }
 
-  for(let i=g.bullets.length-1;i>=0;i--){
-    const b = g.bullets[i];
-    let hit = false;
-    for(let j=g.enemies.length-1;j>=0;j--){
-      const e = g.enemies[j];
-      const dx=b.x-e.x, dy=b.y-e.y;
-      if(Math.sqrt(dx*dx+dy*dy) < e.r + 5){
-        e.hp -= b.dmg;
-        hit = true;
-        if(e.hp <= 0){
-          g.enemies.splice(j,1);
-          g.score += 10;
-          g.coinsThisRun += 2;
-          DB.coins += 2;
-          explode(e.x,e.y,e.color);
-          document.getElementById('score').textContent = g.score;
-          document.getElementById('coins').textContent = DB.coins;
-          DB.save();
-        }
-        break;
+    if (owned) {
+      html += `
+        <p>هزینه ارتقا: 200 سکه</p>
+        <button class="action" onclick="upgradeWeapon(${i})">ارتقا</button>
+      `;
+    }
+
+    card.innerHTML = html;
+    weaponList.appendChild(card);
+  });
+
+  // ==============================
+  // فروشگاه سفینه
+  // ==============================
+
+  shipList.innerHTML = "";
+
+  ships.forEach((s, i) => {
+    const owned = data.ownedShips[i];
+    const equipped = data.ship === i;
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <h3>${s.name}</h3>
+      <p>هزینه خرید: ${s.price} سکه</p>
+      <p style="color:${s.color}">رنگ سفینه: ${s.color}</p>
+      ${
+        equipped
+          ? '<p style="color:#69ffab">مجهز شده ✓</p>'
+          : owned
+            ? `<button class="action" onclick="equipShip(${i})">مجهز کردن</button>`
+            : `<button class="action" onclick="buyShip(${i})">خرید سفینه</button>`
       }
-    }
-    if(hit) g.bullets.splice(i,1);
-  }
+    `;
 
-  for(let i=g.particles.length-1;i>=0;i--){
-    const p=g.particles[i];
-    p.x+=p.vx*dt; p.y+=p.vy*dt; p.life-=dt;
-    if(p.life<=0) g.particles.splice(i,1);
-  }
-}
-
-function spawnEnemy(){
-  const r = 12 + Math.random()*8;
-  const x = r + Math.random()*(W-2*r);
-  game.enemies.push({
-    x, y: -r-10, r,
-    vx: (Math.random()-0.5)*0.04,
-    vy: 0.055 + Math.random()*0.05 + game.score*0.000015,
-    hp: 1, rot: Math.random()*Math.PI,
-    color: ['#ff5566','#ffaa44','#aa66ff','#44ddff'][Math.floor(Math.random()*4)]
+    shipList.appendChild(card);
   });
 }
 
-function shoot(){
-  const g = game;
-  const st = weaponStats(DB.equippedWeapon);
-  const n = st.bullets;
-  for(let i=0;i<n;i++){
-    const off = n===1?0:(i-(n-1)/2)*14;
-    g.bullets.push({
-      x: g.ship.x + off, y: g.ship.y-18,
-      vx: n===1?0:((i-(n-1)/2))*0.05,
-      vy: -0.8,
-      dmg: st.dmg
-    });
-  }
+function canPay(price) {
+  return CREATOR_MODE || data.coins >= price;
 }
 
-function loseLife(){
-  const g = game;
-  g.lives--;
-  updateLives();
-  if(g.lives <= 0) gameOver();
+function pay(price) {
+  if (!CREATOR_MODE) data.coins -= price;
 }
 
-function gameOver(){
-  running = false;
-  cancelAnimationFrame(rafId);
-  const g = game;
-  if(g.score > DB.record){
-    DB.record = g.score;
-    document.getElementById('record').textContent = DB.record;
+function buyWeapon(i) {
+  if (data.ownedWeapons[i]) return;
+
+  if (!canPay(weapons[i].price)) {
+    alert("سکه کافی نداری!");
+    return;
   }
-  DB.save();
-  setTimeout(()=>{
-    alert('بازی تمام شد!\nامتیاز: '+g.score+'\nسکه‌های این دست: '+g.coinsThisRun);
-    initGame();
-    running = true;
-    lastTime = performance.now();
-    rafId = requestAnimationFrame(loop);
-  }, 80);
+
+  pay(weapons[i].price);
+  data.ownedWeapons[i] = true;
+
+  save();
+  renderShop();
+  updateHUD();
 }
 
-/* ============ رسم ============ */
-let starSeed = [];
-function initStars(){
-  starSeed = [];
-  for(let i=0;i<50;i++) starSeed.push({x:Math.random(),y:Math.random(),s:Math.random()*1.5+0.5});
+function equipWeapon(i) {
+  if (!data.ownedWeapons[i]) return;
+
+  data.weapon = i;
+
+  save();
+  renderShop();
 }
-initStars();
 
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  // ستاره‌ها
-  const now = Date.now();
-  ctx.fillStyle='#ffffff55';
-  for(const st of starSeed){
-    const y = (st.y*H + now*0.03) % H;
-    ctx.fillRect(st.x*W, y, st.s, st.s);
+function upgradeWeapon(i) {
+  if (!data.ownedWeapons[i]) return;
+
+  if (!canPay(200)) {
+    alert("برای ارتقا ۲۰۰ سکه نیاز داری!");
+    return;
   }
 
-  const g = game;
+  pay(200);
+  data.weaponLevels[i]++;
 
-  // گلوله‌ها
-  ctx.shadowBlur = 8;
-  ctx.shadowColor = '#66ddff';
-  ctx.fillStyle='#66ddff';
-  for(const b of g.bullets){
-    ctx.beginPath();
-    ctx.arc(b.x,b.y,3,0,Math.PI*2);
-    ctx.fill();
-  }
-  ctx.shadowBlur = 0;
+  save();
+  renderShop();
+  updateHUD();
+}
 
-  // دشمن‌ها
-  for(const e of g.enemies){
-    ctx.save();
-    ctx.translate(e.x,e.y);
-    ctx.rotate(e.rot);
-    ctx.beginPath();
-    for(let i=0;i<6;i++){
-      const a = Math.PI/3*i;
-      const px = Math.cos(a)*e.r, py = Math.sin(a)*e.r;
-      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-    }
-    ctx.closePath();
-    ctx.fillStyle = e.color;
-    ctx.shadowColor = e.color;
-    ctx.shadowBlur = 10;
-    ctx.fill();
-    ctx.restore();
-  }
-  ctx.shadowBlur = 0;
+function buyShip(i) {
+  if (data.ownedShips[i]) return;
 
-  // ذرات
-  for(const p of g.particles){
-    ctx.globalAlpha = Math.max(0, p.life/400);
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
+  if (!canPay(ships[i].price)) {
+    alert("سکه کافی نداری!");
+    return;
   }
+
+  pay(ships[i].price);
+  data.ownedShips[i] = true;
+
+  save();
+  renderShop();
+  updateHUD();
+}
+
+function equipShip(i) {
+  if (!data.ownedShips[i]) return;
+
+  data.ship = i;
+
+  save();
+  renderShop();
+}
+
+// ==============================
+// موتور بازی
+// ==============================
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let W, H;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+
+  W = canvas.width = rect.width * devicePixelRatio;
+  H = canvas.height = rect.height * devicePixelRatio;
+
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+let score = 0;
+let lives = 3;
+let playing = true;
+
+let player = {
+  x: 0,
+  y: 0,
+  size: 24
+};
+
+let bullets = [];
+let enemies = [];
+let lastShot = 0;
+let lastEnemy = 0;
+let lastFrame = 0;
+
+const stars = Array.from({ length: 75 }, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  speed: 0.2 + Math.random() * 0.8
+}));
+
+function drawStars(dt) {
+  ctx.fillStyle = "#030611";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = "#fff";
+
+  stars.forEach(s => {
+    s.y += s.speed * dt / 1000;
+
+    if (s.y > 1) s.y = 0;
+
+    ctx.globalAlpha = 0.3 + Math.random() * 0.6;
+
+    ctx.fillRect(
+      s.x * (W / devicePixelRatio),
+      s.y * (H / devicePixelRatio),
+      1.5,
+      1.5
+    );
+  });
+
   ctx.globalAlpha = 1;
-
-  // سفینه
-  const shipDef = SHIPS[DB.equippedShip] || SHIPS.redwing;
-  drawShip(g.ship.x, g.ship.y, shipDef.color, shipDef.style);
 }
 
-function drawShip(x,y,color,style){
+function drawPlayer() {
+  const color = ships[data.ship].color;
+  const x = player.x;
+  const y = player.y;
+
   ctx.save();
-  ctx.translate(x,y);
-  ctx.shadowColor = color;
-  ctx.shadowBlur = 14;
+  ctx.translate(x, y);
+
+  // جنگنده مثل B-2، با بال‌های متفاوت
   ctx.fillStyle = color;
 
-  if(style === 'arrow'){
-    // بال قرمز - B2 مثلثی
-    ctx.beginPath();
-    ctx.moveTo(0,-22); ctx.lineTo(8,-6); ctx.lineTo(26,6);
-    ctx.lineTo(10,4); ctx.lineTo(6,10); ctx.lineTo(0,6);
-    ctx.lineTo(-6,10); ctx.lineTo(-10,4); ctx.lineTo(-26,6);
-    ctx.lineTo(-8,-6); ctx.closePath(); ctx.fill();
-  } else if(style === 'hawk'){
-    // شاهین - بال‌های بلند
-    ctx.beginPath();
-    ctx.moveTo(0,-24); ctx.lineTo(6,-4); ctx.lineTo(30,2);
-    ctx.lineTo(12,6); ctx.lineTo(8,12); ctx.lineTo(0,8);
-    ctx.lineTo(-8,12); ctx.lineTo(-12,6); ctx.lineTo(-30,2);
-    ctx.lineTo(-6,-4); ctx.closePath(); ctx.fill();
-  } else if(style === 'ghost'){
-    // شبح - بدنه باریک
-    ctx.beginPath();
-    ctx.moveTo(0,-26); ctx.lineTo(5,-8); ctx.lineTo(20,0);
-    ctx.lineTo(8,3); ctx.lineTo(5,8); ctx.lineTo(0,5);
-    ctx.lineTo(-5,8); ctx.lineTo(-8,3); ctx.lineTo(-20,0);
-    ctx.lineTo(-5,-8); ctx.closePath(); ctx.fill();
-  } else if(style === 'shield'){
-    // سپر - پهن و گرد
-    ctx.beginPath();
-    ctx.moveTo(0,-20); ctx.lineTo(10,-8); ctx.lineTo(28,4);
-    ctx.lineTo(14,8); ctx.lineTo(8,14); ctx.lineTo(0,10);
-    ctx.lineTo(-8,14); ctx.lineTo(-14,8); ctx.lineTo(-28,4);
-    ctx.lineTo(-10,-8); ctx.closePath(); ctx.fill();
-    // خط سپر
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = '#ffffffaa'; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(-18,2); ctx.lineTo(0,-14); ctx.lineTo(18,2);
-    ctx.stroke();
-  } else if(style === 'star'){
-    // ستاره کریستالی
-    ctx.beginPath();
-    ctx.moveTo(0,-26); ctx.lineTo(7,-10); ctx.lineTo(24,-6);
-    ctx.lineTo(12,3); ctx.lineTo(16,16); ctx.lineTo(0,9);
-    ctx.lineTo(-16,16); ctx.lineTo(-12,3); ctx.lineTo(-24,-6);
-    ctx.lineTo(-7,-10); ctx.closePath(); ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#ffffff88';
-    ctx.beginPath();
-    ctx.moveTo(0,-16); ctx.lineTo(4,0); ctx.lineTo(0,10); ctx.lineTo(-4,0);
-    ctx.closePath(); ctx.fill();
-  }
-
-  // نور موتور
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#ffffffaa';
   ctx.beginPath();
-  ctx.arc(0,4,2.5,0,Math.PI*2);
+  ctx.moveTo(-player.size, -player.size * 0.35);
+  ctx.lineTo(-player.size * 0.25, -player.size * 0.15);
+  ctx.lineTo(0, -player.size);
+  ctx.lineTo(player.size * 0.25, -player.size * 0.15);
+  ctx.lineTo(player.size, -player.size * 0.35);
+  ctx.lineTo(player.size * 0.65, player.size * 0.5);
+  ctx.lineTo(0, player.size * 0.2);
+  ctx.lineTo(-player.size * 0.65, player.size * 0.5);
+  ctx.closePath();
   ctx.fill();
+
+  ctx.fillStyle = "#9cecff";
+  ctx.fillRect(-3, -5, 6, 9);
+
   ctx.restore();
 }
 
-function explode(x,y,color){
-  for(let i=0;i<10;i++){
-    game.particles.push({
-      x,y,
-      vx:(Math.random()-0.5)*0.4,
-      vy:(Math.random()-0.5)*0.4,
-      r:2+Math.random()*3,
-      life:300+Math.random()*200,
-      color
+function shoot() {
+  const weapon = weapons[data.weapon];
+  const count = weapon.shots;
+
+  for (let i = 0; i < count; i++) {
+    let offset = (i - (count - 1) / 2) * 13;
+
+    bullets.push({
+      x: player.x + offset,
+      y: player.y - 20,
+      damage: weapon.damage + data.weaponLevels[data.weapon],
+      speed: 430
     });
   }
 }
 
-/* ============ کنترل لمسی ============ */
-let touchActive = false;
-function setTarget(clientX, clientY){
-  const r = canvas.getBoundingClientRect();
-  game.ship.targetX = Math.max(20, Math.min(W-20, clientX - r.left));
-  game.ship.targetY = Math.max(20, Math.min(H-20, clientY - r.top - 40));
-}
+function spawnEnemy() {
+  const width = W / devicePixelRatio;
 
-canvas.addEventListener('touchstart', e=>{
-  e.preventDefault();
-  if(!game) return;
-  const t = e.touches[0];
-  setTarget(t.clientX, t.clientY);
-  touchActive = true;
-}, {passive:false});
-
-canvas.addEventListener('touchmove', e=>{
-  e.preventDefault();
-  if(!touchActive || !game) return;
-  const t = e.touches[0];
-  setTarget(t.clientX, t.clientY);
-}, {passive:false});
-
-canvas.addEventListener('touchend', e=>{
-  e.preventDefault();
-  touchActive = false;
-}, {passive:false});
-
-canvas.addEventListener('touchcancel', e=>{ touchActive = false; }, {passive:false});
-
-canvas.addEventListener('mousedown', e=>{
-  if(!game) return;
-  setTarget(e.clientX, e.clientY);
-  touchActive = true;
-});
-canvas.addEventListener('mousemove', e=>{
-  if(!touchActive || !game) return;
-  setTarget(e.clientX, e.clientY);
-});
-window.addEventListener('mouseup', ()=>{ touchActive = false; });
-
-/* ============ تب‌ها ============ */
-const btnGame = document.getElementById('btnGame');
-const btnShop = document.getElementById('btnShop');
-const shopEl = document.getElementById('shop');
-const gameWrap = document.getElementById('gameWrap');
-const hud = document.getElementById('hud');
-
-function showGame(){
-  btnGame.classList.add('active');
-  btnShop.classList.remove('active');
-  gameWrap.style.display='block';
-  hud.style.display='flex';
-  shopEl.style.display='none';
-  // بعد از تغییر دیسپلی، کانواس را سایز بده
-  requestAnimationFrame(()=>{
-    resizeCanvas();
-    if(!game){
-      initGame();
-    } else {
-      game.ship.x = W/2;
-      game.ship.y = H-70;
-      game.ship.targetX = W/2;
-      game.ship.targetY = H-70;
-    }
-    if(!running){
-      running = true;
-      lastTime = performance.now();
-      rafId = requestAnimationFrame(loop);
-    }
+  enemies.push({
+    x: 20 + Math.random() * (width - 40),
+    y: -20,
+    size: 15,
+    speed: 75 + Math.random() * 60,
+    hp: 1
   });
 }
 
-function showShop(){
-  btnShop.classList.add('active');
-  btnGame.classList.remove('active');
-  gameWrap.style.display='none';
-  hud.style.display='flex';
-  shopEl.style.display='block';
-  shopEl.scrollTop = 0;
-  running = false;
-  cancelAnimationFrame(rafId);
-  renderShop();
-}
+function drawHexagon(e) {
+  ctx.fillStyle = "#ff4e72";
+  ctx.strokeStyle = "#ffb2c4";
+  ctx.lineWidth = 2;
 
-btnGame.onclick = showGame;
-btnShop.onclick = showShop;
+  ctx.beginPath();
 
-/* ============ فروشگاه ============ */
-function renderShop(){
-  document.getElementById('coins').textContent = DB.coins;
-  document.getElementById('record').textContent = DB.record;
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.PI / 3 * i;
 
-  let html = '';
+    const x = e.x + Math.cos(angle) * e.size;
+    const y = e.y + Math.sin(angle) * e.size;
 
-  // بخش اسلحه
-  html += '<div class="shopSection"><div class="shopTitle">🔫 اسلحه‌ها</div>';
-  for(const key of WEAPON_ORDER){
-    const w = WEAPONS[key];
-    const owned = DB.ownedWeapons.includes(key);
-    const equipped = DB.equippedWeapon === key;
-    const lvl = DB.weaponLevel[key] || 1;
-    const st = weaponStats(key);
-
-    html += `<div class="card ${equipped?'equipped':''}">
-      <div class="name">${w.name}</div>
-      <div class="stats">دمیج: ${st.dmg} &nbsp;|&nbsp; تعداد تیر: ${w.bullets} &nbsp;|&nbsp; سطح: ${lvl}</div>`;
-
-    if(owned){
-      if(equipped) html += `<div class="badge">✔ مجهز شده</div>`;
-      else html += `<button class="equip" onclick="equipWeapon('${key}')">مجهز کردن</button>`;
-      const upCost = w.upCost;
-      html += `<button class="buy" onclick="upgradeWeapon('${key}')" ${DB.coins<upCost?'disabled':''}>ارتقا (${upCost} سکه)</button>`;
-    } else {
-      html += `<button class="buy" onclick="buyWeapon('${key}')" ${DB.coins<w.buyCost?'disabled':''}>خرید (${w.buyCost} سکه)</button>`;
-    }
-    html += '</div>';
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
   }
-  html += '</div>';
 
-  // بخش سفینه
-  html += '<div class="shopSection"><div class="shopTitle">🚀 سفینه‌ها</div>';
-  for(const key of SHIP_ORDER){
-    const s = SHIPS[key];
-    const owned = DB.ownedShips.includes(key);
-    const equipped = DB.equippedShip === key;
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
 
-    html += `<div class="card ${equipped?'equipped':''}">
-      <div class="name">${s.name}</div>`;
+function loseLife() {
+  lives--;
 
-    if(owned){
-      if(equipped) html += `<div class="badge">✔ مجهز شده</div>`;
-      else html += `<button class="equip" onclick="equipShip('${key}')">مجهز کردن</button>`;
-    } else {
-      html += `<button class="buy" onclick="buyShip('${key}')" ${DB.coins<s.cost?'disabled':''}>خرید (${s.cost} سکه)</button>`;
+  updateHUD();
+
+  if (lives <= 0) {
+    playing = false;
+
+    if (score > data.record) {
+      data.record = score;
     }
-    html += '</div>';
+
+    save();
+
+    document.getElementById("gameOver").style.display = "block";
   }
-  html += '</div>';
-
-  shopEl.innerHTML = html;
 }
 
-window.buyWeapon = function(key){
-  const w = WEAPONS[key];
-  if(DB.coins < w.buyCost) return toast('سکه کافی نیست');
-  DB.coins -= w.buyCost;
-  if(!DB.ownedWeapons.includes(key)) DB.ownedWeapons.push(key);
-  if(!DB.weaponLevel[key]) DB.weaponLevel[key] = 1;
-  DB.save();
-  renderShop();
-  document.getElementById('coins').textContent = DB.coins;
-  toast('خرید موفق!');
-};
+function resetGame() {
+  score = 0;
+  lives = 3;
 
-window.upgradeWeapon = function(key){
-  const w = WEAPONS[key];
-  if(!DB.ownedWeapons.includes(key)) return;
-  if(DB.coins < w.upCost) return toast('سکه کافی نیست');
-  DB.coins -= w.upCost;
-  DB.weaponLevel[key] = (DB.weaponLevel[key]||1) + 1;
-  DB.save();
-  renderShop();
-  document.getElementById('coins').textContent = DB.coins;
-  toast('ارتقا یافت! سطح ' + DB.weaponLevel[key]);
-};
+  bullets = [];
+  enemies = [];
 
-window.equipWeapon = function(key){
-  if(!DB.ownedWeapons.includes(key)) return;
-  DB.equippedWeapon = key;
-  DB.save();
-  renderShop();
-  toast('مجهز شد: ' + WEAPONS[key].name);
-};
+  player.x = W / devicePixelRatio / 2;
+  player.y = H / devicePixelRatio - 65;
 
-window.buyShip = function(key){
-  const s = SHIPS[key];
-  if(DB.coins < s.cost) return toast('سکه کافی نیست');
-  DB.coins -= s.cost;
-  if(!DB.ownedShips.includes(key)) DB.ownedShips.push(key);
-  DB.save();
-  renderShop();
-  document.getElementById('coins').textContent = DB.coins;
-  toast('سفینه خریداری شد!');
-};
+  document.getElementById("gameOver").style.display = "none";
 
-window.equipShip = function(key){
-  if(!DB.ownedShips.includes(key)) return;
-  DB.equippedShip = key;
-  DB.save();
-  renderShop();
-  toast('مجهز شد: ' + SHIPS[key].name);
-};
-
-/* ============ Toast ============ */
-let toastTimer=null;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),1500);
+  updateHUD();
 }
 
-/* ============ شروع ============ */
-document.getElementById('coins').textContent = DB.coins;
-document.getElementById('record').textContent = DB.record;
+function gameLoop(time) {
+  const dt = Math.min(time - lastFrame, 40);
+  lastFrame = time;
 
-// شروع با بازی
-showGame();
+  drawStars(dt);
+
+  if (playing && document.getElementById("gamePanel").classList.contains("active")) {
+    const width = W / devicePixelRatio;
+    const height = H / devicePixelRatio;
+
+    // شلیک خودکار هنگام نگه‌داشتن انگشت
+    if (touching && time - lastShot > 250) {
+      shoot();
+      lastShot = time;
+    }
+
+    if (time - lastEnemy > 850) {
+      spawnEnemy();
+      lastEnemy = time;
+    }
+
+    // گلوله‌ها
+    bullets.forEach(b => {
+      b.y -= b.speed * dt / 1000;
+
+      ctx.fillStyle = "#69e8ff";
+      ctx.fillRect(b.x - 2, b.y, 4, 12);
+    });
+
+    bullets = bullets.filter(b => b.y > -20);
+
+    // دشمن‌ها
+    enemies.forEach(e => {
+      e.y += e.speed * dt / 1000;
+
+      drawHexagon(e);
+
+      // برخورد دشمن با سفینه
+      const dx = e.x - player.x;
+      const dy = e.y - player.y;
+
+      if (Math.hypot(dx, dy) < e.size + player.size * 0.6) {
+        e.dead = true;
+        loseLife();
+      }
+
+      // عبور دشمن از پایین صفحه
+      if (e.y > height + 20) {
+        e.dead = true;
+        loseLife();
+      }
+
+      // برخورد گلوله به دشمن
+      bullets.forEach(b => {
+        if (!e.dead && Math.hypot(e.x - b.x, e.y - b.y) < e.size + 6) {
+          e.hp -= b.damage;
+          b.dead = true;
+
+          if (e.hp <= 0) {
+            e.dead = true;
+
+            score += 10;
+
+            if (!CREATOR_MODE) data.coins += 2;
+
+            if (score > data.record) {
+              data.record = score;
+            }
+
+            save();
+            updateHUD();
+          }
+        }
+      });
+    });
+
+    enemies = enemies.filter(e => !e.dead);
+    bullets = bullets.filter(b => !b.dead);
+
+    drawPlayer();
+  } else {
+    drawPlayer();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ==============================
+// کنترل لمسی
+// ==============================
+
+let touching = false;
+
+function getPointerPosition(event) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+canvas.addEventListener("pointerdown", event => {
+  event.preventDefault();
+
+  if (lives <= 0) {
+    resetGame();
+    playing = true;
+  }
+
+  touching = true;
+
+  const p = getPointerPosition(event);
+
+  player.x = p.x;
+  player.y = p.y;
+
+  canvas.setPointerCapture(event.pointerId);
+});
+
+canvas.addEventListener("pointermove", event => {
+  if (!touching) return;
+
+  event.preventDefault();
+
+  const p = getPointerPosition(event);
+
+  const width = W / devicePixelRatio;
+  const height = H / devicePixelRatio;
+
+  player.x = Math.max(20, Math.min(width - 20, p.x));
+  player.y = Math.max(35, Math.min(height - 30, p.y));
+});
+
+canvas.addEventListener("pointerup", () => {
+  touching = false;
+});
+
+canvas.addEventListener("pointercancel", () => {
+  touching = false;
+});
+
+// ==============================
+// شروع
+// ==============================
+
+resetGame();
+updateHUD();
+renderShop();
+
+requestAnimationFrame(gameLoop);
+
 </script>
+
 </body>
 </html>
