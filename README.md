@@ -26,25 +26,27 @@
             overflow: hidden; 
         }
 
-        /* --- هدر (فشرده‌تر شد تا فضای بیشتری به بازی بده) --- */
+        /* --- هدر (باریک‌تر از قبل تا فضای بیشتری به بازی بده) --- */
         .header {
             display: flex;
             justify-content: space-around;
             background: #0a0a15;
-            padding: 5px 0; 
-            border-bottom: 2px solid #1a1a2e;
+            padding: 2px 0; /* خیلی باریک شد */
+            border-bottom: 1px solid #1a1a2e;
             z-index: 100;
             flex-shrink: 0;
+            height: 40px; /* ارتفاع ثابت و کم */
+            align-items: center;
         }
 
         .nav-btn {
             background: transparent;
             border: none;
             color: #6a6a8a;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 6px 12px;
-            border-radius: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
             transition: 0.3s;
             cursor: pointer;
         }
@@ -73,16 +75,18 @@
             display: block;
         }
 
-        /* --- تب بازی --- */
+        /* --- تب بازی (بزرگترین بخش) --- */
         #game-tab {
             padding: 0;
             overflow: hidden;
             position: relative;
+            height: 100%;
+            width: 100%;
         }
 
         .game-ui {
             position: absolute;
-            top: 5px;
+            top: 10px;
             right: 15px;
             left: 15px;
             display: flex;
@@ -350,7 +354,8 @@
             if (tabId === 'game') {
                 document.body.style.overflow = 'hidden';
                 isGamePaused = false;
-                resizeCanvas(); 
+                // با یک تاخیر کوتاه سایز کانواس رو تنظیم میکنیم تا تب کاملا باز بشه
+                setTimeout(resizeCanvas, 50); 
                 if (!gameState.isPlaying && !gameState.isGameOver) startGame();
             } else {
                 document.body.style.overflow = 'auto';
@@ -514,8 +519,10 @@
         function resizeCanvas() {
             const tab = document.getElementById('game-tab');
             if (tab.classList.contains('active')) {
+                // این خطوط باعث میشن کانواس دقیقا اندازه ی صفحه بشه
                 canvas.width = tab.clientWidth;
                 canvas.height = tab.clientHeight;
+                
                 if (!gameState.isPlaying) {
                     ship.x = canvas.width / 2;
                     ship.y = canvas.height - 70;
@@ -676,7 +683,7 @@
                 showWaveText("⚠️ باس وارد شد! ⚠️");
             }
 
-            // تولید دشمن (اگر باس فعال نباشه)
+            // تولید دشمن
             if (!gameState.bossActive) {
                 gameState.spawnTimer += 16;
                 if (gameState.spawnTimer > gameState.spawnInterval) {
@@ -691,7 +698,6 @@
             for (let i = gameState.enemies.length - 1; i >= 0; i--) {
                 let e = gameState.enemies[i];
                 
-                // حرکت باس (آروم میاد پایین و می ایسته)
                 if (e.isBoss) {
                     if (e.y < 100) e.y += e.speed;
                 } else {
@@ -710,7 +716,6 @@
                     gameState.enemies.splice(i, 1); loseLife(); continue;
                 }
                 
-                // برخورد تیر با دشمن
                 for (let j = gameState.bullets.length - 1; j >= 0; j--) {
                     let b = gameState.bullets[j];
                     let bdx = e.x - b.x, bdy = e.y - b.y;
@@ -723,21 +728,15 @@
                             gameState.enemies.splice(i, 1);
                             
                             if (e.isBoss) {
-                                gameState.score += 100;
-                                player.coins += 20;
+                                gameState.score += 100; player.coins += 20;
                                 gameState.bossActive = false;
                                 gameState.bossDefeatedCount++;
                                 gameState.nextBossScore += 600;
-                                
-                                // افزایش شدید سختی بعد از باس
                                 gameState.speedMultiplier += 0.5;
                                 gameState.spawnInterval = Math.max(150, gameState.spawnInterval - 200);
                                 showWaveText("موج بعدی!");
                             } else {
-                                gameState.score += 10; 
-                                player.coins += 2;
-                                
-                                // افزایش تدریجی سختی
+                                gameState.score += 10; player.coins += 2;
                                 gameState.speedMultiplier += 0.01;
                                 gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
                             }
