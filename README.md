@@ -17,9 +17,11 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* استفاده از 100dvh برای پر کردن دقیق صفحه در موبایل و جلوگیری از باگ صفحه سیاه */
         html, body {
             width: 100%;
             height: 100%;
+            height: 100dvh; 
             overflow: hidden;
             background-color: #05050a;
             color: #fff;
@@ -37,7 +39,7 @@
             border-bottom: 1px solid #1a1a2e;
             z-index: 100;
             flex-shrink: 0;
-            height: 35px;
+            height: 45px; /* کمی ارتفاع بیشتر برای خوانایی بهتر */
             align-items: center;
         }
 
@@ -45,9 +47,9 @@
             background: transparent;
             border: none;
             color: #6a6a8a;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: bold;
-            padding: 2px 8px;
+            padding: 4px 10px;
             border-radius: 8px;
             transition: 0.3s;
             cursor: pointer;
@@ -86,22 +88,24 @@
             height: 100%;
             width: 100%;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .game-ui {
             position: absolute;
-            top: 5px;
-            right: 10px;
-            left: 10px;
+            top: 10px;
+            right: 15px;
+            left: 15px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
             z-index: 10;
         }
 
-        .hearts { color: #ff2a2a; font-size: 18px; letter-spacing: 1px; text-shadow: 0 0 10px #ff2a2a; }
+        .hearts { color: #ff2a2a; font-size: 22px; letter-spacing: 2px; text-shadow: 0 0 10px #ff2a2a; }
         .score-board { text-align: left; color: #00f0ff; font-weight: bold; text-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
-        .score-board div { margin-bottom: 2px; font-size: 13px; }
+        .score-board div { margin-bottom: 5px; font-size: 15px; }
         .coins-text { color: #ffd700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
 
         canvas {
@@ -109,9 +113,9 @@
             width: 100%;
             height: 100%;
             touch-action: none;
-            padding-bottom: env(safe-area-inset-bottom, 0px); 
         }
 
+        /* --- فروشگاه --- */
         .shop-container { max-width: 600px; margin: 0 auto; padding-bottom: 30px; }
         .shop-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         
@@ -507,18 +511,21 @@
         function resizeCanvas() {
             const tab = document.getElementById('game-tab');
             if (tab.classList.contains('active')) {
+                // تنظیم دقیق سایز کانواس با توجه به محیط
                 canvas.width = tab.clientWidth;
                 canvas.height = tab.clientHeight;
                 
                 if (!gameState.isPlaying) {
                     ship.x = canvas.width / 2;
-                    ship.y = canvas.height - 50; 
+                    ship.y = canvas.height - 60; 
                     ship.targetX = ship.x;
                     ship.targetY = ship.y;
                 }
             }
         }
         window.addEventListener('resize', resizeCanvas);
+        // اضافه کردن رویداد برای وقتی صفحه کامل لود شد
+        window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 100));
 
         function handleMove(e) {
             if (isGamePaused || !gameState.isPlaying) return;
@@ -547,7 +554,7 @@
             gameState.bossActive = false; gameState.bossDefeatedCount = 0; gameState.nextBossScore = 500;
             
             ship.x = canvas.width / 2; 
-            ship.y = canvas.height - 50;
+            ship.y = canvas.height - 60;
             ship.targetX = ship.x; ship.targetY = ship.y;
             ship.color = shipsData[player.equippedShip].color;
             
@@ -720,7 +727,6 @@
                                 gameState.spawnInterval = Math.max(150, gameState.spawnInterval - 200);
                                 showWaveText("موج بعدی!");
                             } else {
-                                // ✨ امتیاز دشمن معمولی از ۱۰ به ۲۰ تغییر کرد ✨
                                 gameState.score += 20; player.coins += 2;
                                 gameState.speedMultiplier += 0.01;
                                 gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
@@ -755,9 +761,12 @@
 
         window.addEventListener('load', () => {
             updateUI();
-            resizeCanvas();
-            startGame();
-            requestAnimationFrame(gameLoop);
+            // یک تاخیر کوتاه برای اطمینان از لود کامل استایل‌ها در مرورگرهای موبایل و وب‌ویوها
+            setTimeout(() => {
+                resizeCanvas();
+                startGame();
+                requestAnimationFrame(gameLoop);
+            }, 100);
         });
     </script>
 </body>
