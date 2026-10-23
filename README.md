@@ -1004,4 +1004,40 @@
 
     </script>
 </body>
-</html>
+</html>// ==========================================
+// 7. اصلاح مشکل اسکرول در تب‌های فروشگاه و پروفایل
+// ==========================================
+
+// به‌روزرسانی تابع switchTab برای مدیریت اسکرول
+const originalSwitchTab = switchTab;
+switchTab = function(tabId) {
+    // اجرای کدهای قبلی
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId + '-tab').classList.add('active');
+    
+    // پیدا کردن دکمه‌ای که کلیک شده (چون event.target ممکنه تغییر کنه)
+    const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.innerText.includes(
+        tabId === 'game' ? 'بازی' : 
+        tabId === 'shop' ? 'فروشگاه' : 
+        tabId === 'profile' ? 'پروفایل' : 'رتبه‌ها'
+    ));
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // مدیریت اسکرول
+    if (tabId === 'game') {
+        document.body.style.overflow = 'hidden'; // قفل کردن اسکرول در بازی
+        if (!gameState.isPlaying && gameState.isGameOver) {
+            startGame();
+        }
+        isGamePaused = false;
+    } else {
+        document.body.style.overflow = 'auto'; // اجازه اسکرول در فروشگاه و پروفایل
+        isGamePaused = true;
+    }
+    updateUI();
+};
+
+// تنظیم اولیه اسکرول
+document.body.style.overflow = 'hidden'; // بازی که باز میشه، اسکرول قفل باشه
