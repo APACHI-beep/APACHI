@@ -23,15 +23,15 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* پیش‌فرض قفل */
+            overflow: hidden; 
         }
 
-        /* --- هدر --- */
+        /* --- هدر (فشرده‌تر شد تا فضای بیشتری به بازی بده) --- */
         .header {
             display: flex;
             justify-content: space-around;
             background: #0a0a15;
-            padding: 10px 0;
+            padding: 5px 0; 
             border-bottom: 2px solid #1a1a2e;
             z-index: 100;
             flex-shrink: 0;
@@ -41,9 +41,9 @@
             background: transparent;
             border: none;
             color: #6a6a8a;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 10px;
             transition: 0.3s;
             cursor: pointer;
@@ -55,7 +55,6 @@
             background: rgba(0, 240, 255, 0.1);
         }
 
-        /* --- محتوا --- */
         .main-content {
             flex: 1;
             position: relative;
@@ -83,7 +82,7 @@
 
         .game-ui {
             position: absolute;
-            top: 10px;
+            top: 5px;
             right: 15px;
             left: 15px;
             display: flex;
@@ -92,16 +91,16 @@
             z-index: 10;
         }
 
-        .hearts { color: #ff2a2a; font-size: 22px; letter-spacing: 2px; text-shadow: 0 0 10px #ff2a2a; }
+        .hearts { color: #ff2a2a; font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 10px #ff2a2a; }
         .score-board { text-align: left; color: #00f0ff; font-weight: bold; text-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
-        .score-board div { margin-bottom: 5px; }
+        .score-board div { margin-bottom: 3px; font-size: 14px; }
         .coins-text { color: #ffd700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
 
         canvas {
             display: block;
             width: 100%;
             height: 100%;
-            touch-action: none; /* جلوگیری از اسکرول موقع بازی */
+            touch-action: none;
         }
 
         /* --- فروشگاه --- */
@@ -193,13 +192,20 @@
         }
         .code-box span { color: #ffd700; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
 
-        /* --- Game Over --- */
+        /* --- Game Over & Wave Text --- */
         .game-over-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none;
             flex-direction: column; justify-content: center; align-items: center; z-index: 50;
         }
         .game-over-overlay.show { display: flex; }
+        
+        .wave-announce {
+            position: absolute; top: 40%; left: 0; width: 100%;
+            text-align: center; font-size: 30px; font-weight: 900;
+            color: #ffd700; text-shadow: 0 0 20px #ffd700;
+            pointer-events: none; z-index: 20; opacity: 0; transition: opacity 0.5s;
+        }
     </style>
 </head>
 <body>
@@ -221,6 +227,9 @@
                 </div>
                 <div class="hearts" id="ui-hearts">❤️❤️❤️</div>
             </div>
+            
+            <div id="wave-announce" class="wave-announce">موج بعدی!</div>
+            
             <canvas id="gameCanvas"></canvas>
             
             <div class="game-over-overlay" id="gameOverScreen">
@@ -492,7 +501,8 @@
         const gameState = {
             score: 0, lives: 3, isPlaying: false, isGameOver: false,
             bullets: [], enemies: [], particles: [],
-            lastShot: 0, spawnTimer: 0, spawnInterval: 1000, speedMultiplier: 1
+            lastShot: 0, spawnTimer: 0, spawnInterval: 1000, speedMultiplier: 1,
+            bossActive: false, bossDefeatedCount: 0, nextBossScore: 500
         };
 
         const ship = {
@@ -540,14 +550,23 @@
             gameState.score = 0; gameState.lives = 3; gameState.isPlaying = true;
             gameState.isGameOver = false; gameState.bullets = []; gameState.enemies = [];
             gameState.particles = []; gameState.speedMultiplier = 1; gameState.spawnInterval = 1000;
+            gameState.bossActive = false; gameState.bossDefeatedCount = 0; gameState.nextBossScore = 500;
             
             ship.x = canvas.width / 2; ship.y = canvas.height - 70;
             ship.targetX = ship.x; ship.targetY = ship.y;
             ship.color = shipsData[player.equippedShip].color;
             
             document.getElementById('gameOverScreen').classList.remove('show');
+            document.getElementById('wave-announce').style.opacity = 0;
             isGamePaused = false;
             updateUI();
+        }
+
+        function showWaveText(text) {
+            const el = document.getElementById('wave-announce');
+            el.innerText = text;
+            el.style.opacity = 1;
+            setTimeout(() => { el.style.opacity = 0; }, 2000);
         }
 
         function drawShip() {
@@ -569,8 +588,15 @@
         function drawEnemy(enemy) {
             ctx.save();
             ctx.translate(enemy.x, enemy.y);
-            ctx.shadowBlur = 10; ctx.shadowColor = '#ff2a2a';
-            ctx.fillStyle = 'rgba(255, 42, 42, 0.2)'; ctx.strokeStyle = '#ff2a2a'; ctx.lineWidth = 2;
+            
+            if (enemy.isBoss) {
+                ctx.shadowBlur = 20; ctx.shadowColor = '#ff00ff';
+                ctx.fillStyle = 'rgba(255, 0, 255, 0.2)'; ctx.strokeStyle = '#ff00ff'; ctx.lineWidth = 4;
+            } else {
+                ctx.shadowBlur = 10; ctx.shadowColor = '#ff2a2a';
+                ctx.fillStyle = 'rgba(255, 42, 42, 0.2)'; ctx.strokeStyle = '#ff2a2a'; ctx.lineWidth = 2;
+            }
+            
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
                 const angle = (Math.PI / 3) * i;
@@ -579,6 +605,14 @@
                 if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             }
             ctx.closePath(); ctx.fill(); ctx.stroke();
+            
+            // نوار خون باس
+            if (enemy.isBoss) {
+                ctx.fillStyle = '#000'; ctx.fillRect(-enemy.radius, -enemy.radius - 20, enemy.radius*2, 8);
+                ctx.fillStyle = '#ff00ff'; 
+                ctx.fillRect(-enemy.radius, -enemy.radius - 20, (enemy.hp / enemy.maxHp) * enemy.radius * 2, 8);
+            }
+            
             ctx.restore();
         }
 
@@ -606,6 +640,7 @@
             ship.y += (ship.targetY - ship.y) * 0.2;
             drawShip();
 
+            // شلیک
             if (ship.isDragging && timestamp - gameState.lastShot > 250) {
                 const weapon = weaponsData[player.equippedWeapon];
                 const dmg = weapon.damage + (player.weaponLevels[player.equippedWeapon] || 0);
@@ -630,40 +665,83 @@
                 if (b.y < 0) gameState.bullets.splice(i, 1);
             }
 
-            gameState.spawnTimer += 16;
-            if (gameState.spawnTimer > gameState.spawnInterval) {
-                gameState.spawnTimer = 0;
-                gameState.speedMultiplier += 0.02;
-                gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
+            // بررسی ظاهر شدن باس
+            if (!gameState.bossActive && gameState.score >= gameState.nextBossScore) {
+                gameState.bossActive = true;
                 gameState.enemies.push({
-                    x: Math.random() * (canvas.width - 60) + 30, y: -30,
-                    radius: 15 + Math.random() * 10, speed: 2 * gameState.speedMultiplier, hp: 1
+                    x: canvas.width / 2, y: -60, radius: 40,
+                    hp: 30 + (gameState.bossDefeatedCount * 15), maxHp: 30 + (gameState.bossDefeatedCount * 15),
+                    speed: 1, isBoss: true
                 });
+                showWaveText("⚠️ باس وارد شد! ⚠️");
+            }
+
+            // تولید دشمن (اگر باس فعال نباشه)
+            if (!gameState.bossActive) {
+                gameState.spawnTimer += 16;
+                if (gameState.spawnTimer > gameState.spawnInterval) {
+                    gameState.spawnTimer = 0;
+                    gameState.enemies.push({
+                        x: Math.random() * (canvas.width - 60) + 30, y: -30,
+                        radius: 15 + Math.random() * 10, speed: 2 * gameState.speedMultiplier, hp: 1
+                    });
+                }
             }
 
             for (let i = gameState.enemies.length - 1; i >= 0; i--) {
                 let e = gameState.enemies[i];
-                e.y += e.speed;
-                drawEnemy(e);
-                let dx = e.x - ship.x, dy = e.y - ship.y;
                 
+                // حرکت باس (آروم میاد پایین و می ایسته)
+                if (e.isBoss) {
+                    if (e.y < 100) e.y += e.speed;
+                } else {
+                    e.y += e.speed;
+                }
+                
+                drawEnemy(e);
+                
+                let dx = e.x - ship.x, dy = e.y - ship.y;
                 if (Math.sqrt(dx*dx + dy*dy) < e.radius + 15) {
                     createParticles(e.x, e.y, '#ff2a2a');
                     gameState.enemies.splice(i, 1); loseLife(); continue;
                 }
-                if (e.y > canvas.height + 30) {
+                
+                if (!e.isBoss && e.y > canvas.height + 30) {
                     gameState.enemies.splice(i, 1); loseLife(); continue;
                 }
+                
+                // برخورد تیر با دشمن
                 for (let j = gameState.bullets.length - 1; j >= 0; j--) {
                     let b = gameState.bullets[j];
                     let bdx = e.x - b.x, bdy = e.y - b.y;
                     if (Math.sqrt(bdx*bdx + bdy*bdy) < e.radius + 5) {
                         e.hp -= b.damage;
                         gameState.bullets.splice(j, 1);
+                        
                         if (e.hp <= 0) {
-                            createParticles(e.x, e.y, '#ff2a2a');
+                            createParticles(e.x, e.y, e.isBoss ? '#ff00ff' : '#ff2a2a');
                             gameState.enemies.splice(i, 1);
-                            gameState.score += 10; player.coins += 2; updateUI();
+                            
+                            if (e.isBoss) {
+                                gameState.score += 100;
+                                player.coins += 20;
+                                gameState.bossActive = false;
+                                gameState.bossDefeatedCount++;
+                                gameState.nextBossScore += 600;
+                                
+                                // افزایش شدید سختی بعد از باس
+                                gameState.speedMultiplier += 0.5;
+                                gameState.spawnInterval = Math.max(150, gameState.spawnInterval - 200);
+                                showWaveText("موج بعدی!");
+                            } else {
+                                gameState.score += 10; 
+                                player.coins += 2;
+                                
+                                // افزایش تدریجی سختی
+                                gameState.speedMultiplier += 0.01;
+                                gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
+                            }
+                            updateUI();
                         }
                         break;
                     }
