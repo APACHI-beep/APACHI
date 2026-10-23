@@ -20,10 +20,12 @@
         body {
             background-color: #05050a;
             color: #fff;
-            overflow: hidden;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            /* اسکرول در فروشگاه و پروفایل آزاد باشد */
+            overflow-y: auto; 
+            touch-action: pan-y; 
         }
 
         /* --- هدر بالای صفحه --- */
@@ -34,6 +36,8 @@
             padding: 10px 0;
             border-bottom: 2px solid #1a1a2e;
             z-index: 100;
+            position: sticky;
+            top: 0;
         }
 
         .nav-btn {
@@ -48,6 +52,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
         }
 
         .nav-btn.active {
@@ -60,14 +65,13 @@
         .main-content {
             flex: 1;
             position: relative;
-            overflow: hidden;
+            /* بدون overflow تا اسکرول به بدنه منتقل شود */
         }
 
         .tab-content {
             display: none;
             width: 100%;
-            height: 100%;
-            overflow-y: auto;
+            min-height: 100%;
             padding: 15px;
         }
 
@@ -78,6 +82,9 @@
         /* --- بخش بازی (Canvas) --- */
         #game-tab {
             padding: 0;
+            height: calc(100vh - 60px); /* پر کردن کل صفحه */
+            position: relative;
+            overflow: hidden;
         }
 
         .game-ui {
@@ -118,6 +125,8 @@
             display: block;
             width: 100%;
             height: 100%;
+            /* جلوگیری از اسکرول صفحه موقع کشیدن سفینه */
+            touch-action: none; 
         }
 
         /* --- استایل کارت‌های فروشگاه --- */
@@ -141,6 +150,7 @@
             padding: 8px 20px;
             border-radius: 20px;
             font-weight: bold;
+            cursor: pointer;
         }
         
         .shop-tab-btn.active {
@@ -182,7 +192,6 @@
             line-height: 1.6;
         }
 
-        /* آیکون‌های هندسی داخل فروشگاه */
         .icon-box {
             width: 70px;
             height: 70px;
@@ -194,7 +203,6 @@
             border: 1px solid #222;
         }
 
-        /* دکمه‌ها */
         .btn {
             display: block;
             width: 100%;
@@ -207,11 +215,10 @@
             text-align: center;
             margin-top: 10px;
             transition: 0.2s;
+            font-family: inherit;
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
+        .btn:active { transform: scale(0.98); }
 
         .btn-equipped {
             background: #00f0ff;
@@ -249,6 +256,7 @@
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
+            padding-bottom: 30px;
         }
 
         .avatar-preview {
@@ -356,10 +364,10 @@
 
     <!-- هدر اصلی -->
     <div class="header">
-        <button class="nav-btn active" onclick="switchTab('game')">بازی 🎮</button>
-        <button class="nav-btn" onclick="switchTab('shop')">فروشگاه 🛒</button>
-        <button class="nav-btn" onclick="switchTab('profile')">پروفایل 👤</button>
-        <button class="nav-btn" onclick="switchTab('leaderboard')">رتبه‌ها 🏆</button>
+        <button class="nav-btn active" id="btn-game" onclick="switchTab('game')">بازی 🎮</button>
+        <button class="nav-btn" id="btn-shop" onclick="switchTab('shop')">فروشگاه 🛒</button>
+        <button class="nav-btn" id="btn-profile" onclick="switchTab('profile')">پروفایل 👤</button>
+        <button class="nav-btn" id="btn-leaderboard" onclick="switchTab('leaderboard')">رتبه‌ها 🏆</button>
     </div>
 
     <div class="main-content">
@@ -408,9 +416,7 @@
 
                 <div class="input-group">
                     <label>انتخاب آواتار (نشان فرماندهی):</label>
-                    <div class="avatars-grid" id="avatar-list">
-                        <!-- با جاوااسکریپت پر می‌شود -->
-                    </div>
+                    <div class="avatars-grid" id="avatar-list"></div>
                 </div>
 
                 <div class="code-box">
@@ -439,7 +445,7 @@
 
     <script>
         // ==========================================
-        // 1. تنظیمات و دیتای بازی (دیتابیس محلی)
+        // 1. تنظیمات و دیتای بازی
         // ==========================================
         
         const weaponsData = {
@@ -460,7 +466,6 @@
 
         const avatarsList = ['👻', '🚀', '👽', '🤖', '🦊', '🐉', '💀', '🛸'];
 
-        // لود کردن سیو یا ساخت پیش‌فرض
         let player = JSON.parse(localStorage.getItem('spaceShooterSave')) || {
             coins: 0,
             name: '',
@@ -485,19 +490,26 @@
         // ==========================================
 
         function switchTab(tabId) {
+            // مخفی کردن همه
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             
+            // نمایش تب انتخاب شده
             document.getElementById(tabId + '-tab').classList.add('active');
-            event.target.classList.add('active');
+            document.getElementById('btn-' + tabId).classList.add('active');
 
+            // مدیریت اسکرول و بازی
             if (tabId === 'game') {
-                // اگه بازی متوقف بود دوباره شروع نشه، مگر اینکه گیم اور شده باشه
+                document.body.style.overflow = 'hidden'; // قفل اسکرول کل صفحه
                 if (!gameState.isPlaying && gameState.isGameOver) {
-                    startGame(); // فقط وقتی که قبلا باخته
+                    startGame();
+                } else if (!gameState.isPlaying && !gameState.isGameOver) {
+                    startGame(); // شروع اولیه
                 }
                 isGamePaused = false;
+                resizeCanvas(); // تنظیم مجدد سایز کانواس
             } else {
+                document.body.style.overflow = 'auto'; // آزاد کردن اسکرول
                 isGamePaused = true;
             }
             updateUI();
@@ -517,22 +529,19 @@
         }
 
         function updateUI() {
-            // آپدیت اعداد بالای صفحه بازی
             document.getElementById('ui-coins').innerText = player.coins;
             document.getElementById('ui-score').innerText = gameState.score;
             
-            // آپدیت قلب‌ها
             let heartsHTML = '';
             for(let i=0; i<3; i++) heartsHTML += i < gameState.lives ? '❤️' : '🖤';
             document.getElementById('ui-hearts').innerHTML = heartsHTML;
 
-            // آپدیت فروشگاه اسلحه‌ها
             let weaponsHTML = '';
             for (const [key, data] of Object.entries(weaponsData)) {
                 const isOwned = player.ownedWeapons.includes(key);
                 const isEquipped = player.equippedWeapon === key;
                 const level = player.weaponLevels[key];
-                const currentDamage = data.damage + (level * 1); // هر لول 1 دمیج اضافه میکنه
+                const currentDamage = data.damage + (level * 1);
 
                 weaponsHTML += `
                     <div class="card ${isEquipped ? 'purchased' : ''}">
@@ -560,7 +569,6 @@
             }
             document.getElementById('weapons-list').innerHTML = weaponsHTML;
 
-            // آپدیت فروشگاه سفینه‌ها
             let shipsHTML = '';
             for (const [key, data] of Object.entries(shipsData)) {
                 const isOwned = player.ownedShips.includes(key);
@@ -585,7 +593,6 @@
             }
             document.getElementById('ships-list').innerHTML = shipsHTML;
 
-            // آپدیت پروفایل
             document.getElementById('profile-avatar-preview').innerText = player.avatar;
             document.getElementById('profile-name-display').innerText = player.name;
             document.getElementById('profile-name-input').value = player.name;
@@ -608,9 +615,7 @@
                 player.coins -= cost;
                 player.ownedWeapons.push(key);
                 saveGame();
-            } else {
-                alert('سکه کافی نیست!');
-            }
+            } else { alert('سکه کافی نیست!'); }
         }
 
         function equipWeapon(key) {
@@ -626,9 +631,7 @@
                 player.coins -= cost;
                 player.weaponLevels[key] += 1;
                 saveGame();
-            } else {
-                alert('سکه کافی نیست!');
-            }
+            } else { alert('سکه کافی نیست!'); }
         }
 
         function buyShip(key) {
@@ -637,16 +640,13 @@
                 player.coins -= cost;
                 player.ownedShips.push(key);
                 saveGame();
-            } else {
-                alert('سکه کافی نیست!');
-            }
+            } else { alert('سکه کافی نیست!'); }
         }
 
         function equipShip(key) {
             if (player.ownedShips.includes(key)) {
                 player.equippedShip = key;
                 saveGame();
-                // تغییر رنگ سفینه در بازی
                 ship.color = shipsData[key].color;
             }
         }
@@ -670,7 +670,7 @@
         }
 
         // ==========================================
-        // 5. موتور بازی (Canvas)
+        // 5. موتور بازی
         // ==========================================
 
         const canvas = document.getElementById('gameCanvas');
@@ -679,43 +679,30 @@
         let isGamePaused = true;
         
         const gameState = {
-            score: 0,
-            lives: 3,
-            isPlaying: false,
-            isGameOver: false,
-            bullets: [],
-            enemies: [],
-            particles: [],
-            lastShot: 0,
-            spawnTimer: 0,
-            spawnInterval: 1000, // هر 1 ثانیه یک دشمن
-            speedMultiplier: 1
+            score: 0, lives: 3, isPlaying: false, isGameOver: false,
+            bullets: [], enemies: [], particles: [],
+            lastShot: 0, spawnTimer: 0, spawnInterval: 1000, speedMultiplier: 1
         };
 
         const ship = {
-            x: 0,
-            y: 0,
-            width: 40,
-            height: 50,
+            x: 0, y: 0, width: 40, height: 50,
             color: shipsData[player.equippedShip].color,
-            isDragging: false,
-            targetX: 0,
-            targetY: 0
+            isDragging: false, targetX: 0, targetY: 0
         };
 
-        // تغییر سایز کانواس با تغییر سایز صفحه
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 60; // منهای ارتفاع هدر
-            if (!gameState.isPlaying) {
-                ship.x = canvas.width / 2;
-                ship.y = canvas.height - 70;
+            if (document.getElementById('game-tab').classList.contains('active')) {
+                canvas.width = window.innerWidth;
+                canvas.height = document.getElementById('game-tab').offsetHeight;
+                if (!gameState.isPlaying) {
+                    ship.x = canvas.width / 2;
+                    ship.y = canvas.height - 70;
+                }
             }
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
-        // کنترلر لمس و موس
+        // کنترل لمس و موس
         function handleMove(e) {
             if (isGamePaused || !gameState.isPlaying) return;
             
@@ -731,7 +718,6 @@
             ship.targetX = clientX - rect.left;
             ship.targetY = clientY - rect.top;
             
-            // محدود کردن سفینه داخل کادر
             ship.targetX = Math.max(ship.width/2, Math.min(canvas.width - ship.width/2, ship.targetX));
             ship.targetY = Math.max(ship.height/2, Math.min(canvas.height - ship.height/2, ship.targetY));
         }
@@ -755,10 +741,12 @@
             gameState.speedMultiplier = 1;
             gameState.spawnInterval = 1000;
             
+            resizeCanvas(); // اطمینان از سایز درست
             ship.x = canvas.width / 2;
             ship.y = canvas.height - 70;
             ship.targetX = ship.x;
             ship.targetY = ship.y;
+            ship.color = shipsData[player.equippedShip].color;
             
             document.getElementById('gameOverScreen').classList.remove('show');
             isGamePaused = false;
@@ -768,13 +756,10 @@
         function drawShip() {
             ctx.save();
             ctx.translate(ship.x, ship.y);
-            
-            // رنگ و درخشش
             ctx.shadowBlur = 15;
             ctx.shadowColor = ship.color;
             ctx.fillStyle = ship.color;
             
-            // رسم سفینه (مثلث/شکل هندسی)
             ctx.beginPath();
             ctx.moveTo(0, -ship.height/2);
             ctx.lineTo(ship.width/2, ship.height/2);
@@ -783,12 +768,10 @@
             ctx.closePath();
             ctx.fill();
             
-            // هسته سفینه
             ctx.fillStyle = '#fff';
             ctx.beginPath();
             ctx.arc(0, 0, 5, 0, Math.PI * 2);
             ctx.fill();
-            
             ctx.restore();
         }
 
@@ -801,7 +784,6 @@
             ctx.strokeStyle = '#ff2a2a';
             ctx.lineWidth = 2;
             
-            // رسم شش ضلعی
             ctx.beginPath();
             for (let i = 0; i < 6; i++) {
                 const angle = (Math.PI / 3) * i;
@@ -822,8 +804,7 @@
                     x: x, y: y,
                     vx: (Math.random() - 0.5) * 8,
                     vy: (Math.random() - 0.5) * 8,
-                    life: 1,
-                    color: color
+                    life: 1, color: color
                 });
             }
         }
@@ -832,21 +813,19 @@
             requestAnimationFrame(gameLoop);
             
             if (isGamePaused || !gameState.isPlaying) {
-                // اگه متوقف بود فقط صفحه رو پاک کن و سفینه رو بکش
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawShip();
+                if (document.getElementById('game-tab').classList.contains('active')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    drawShip();
+                }
                 return;
             }
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 1. حرکت سفینه به سمت انگشت
             ship.x += (ship.targetX - ship.x) * 0.2;
             ship.y += (ship.targetY - ship.y) * 0.2;
             drawShip();
 
-            // 2. شلیک خودکار وقتی درگ می‌کنیم
-            if (ship.isDragging && timestamp - gameState.lastShot > 250) { // هر 250 میلی‌ثانیه
+            if (ship.isDragging && timestamp - gameState.lastShot > 250) {
                 const weapon = weaponsData[player.equippedWeapon];
                 const lvl = player.weaponLevels[player.equippedWeapon];
                 const dmg = weapon.damage + lvl;
@@ -858,82 +837,64 @@
                     if (bCount === 3) offsetX = (i - 1) * 10;
                     
                     gameState.bullets.push({
-                        x: ship.x + offsetX,
-                        y: ship.y - 20,
-                        damage: dmg,
+                        x: ship.x + offsetX, y: ship.y - 20, damage: dmg,
                         color: player.equippedWeapon === 'red' ? '#ff0000' : (player.equippedWeapon === 'plasma' ? '#b300ff' : '#00f0ff')
                     });
                 }
                 gameState.lastShot = timestamp;
             }
 
-            // 3. آپدیت تیرها
             for (let i = gameState.bullets.length - 1; i >= 0; i--) {
                 let b = gameState.bullets[i];
                 b.y -= 10;
-                
                 ctx.save();
                 ctx.shadowBlur = 10;
                 ctx.shadowColor = b.color;
                 ctx.fillStyle = b.color;
                 ctx.fillRect(b.x - 2, b.y, 4, 15);
                 ctx.restore();
-
                 if (b.y < 0) gameState.bullets.splice(i, 1);
             }
 
-            // 4. تولید دشمن
-            gameState.spawnTimer += 16; // حدودا 60fps
+            gameState.spawnTimer += 16;
             if (gameState.spawnTimer > gameState.spawnInterval) {
                 gameState.spawnTimer = 0;
-                gameState.speedMultiplier += 0.02; // هر بار سخت‌تر بشه
+                gameState.speedMultiplier += 0.02;
                 gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
                 
                 gameState.enemies.push({
-                    x: Math.random() * (canvas.width - 60) + 30,
-                    y: -30,
-                    radius: 15 + Math.random() * 10,
-                    speed: 2 * gameState.speedMultiplier,
-                    hp: 1
+                    x: Math.random() * (canvas.width - 60) + 30, y: -30,
+                    radius: 15 + Math.random() * 10, speed: 2 * gameState.speedMultiplier, hp: 1
                 });
             }
 
-            // 5. آپدیت دشمن‌ها
             for (let i = gameState.enemies.length - 1; i >= 0; i--) {
                 let e = gameState.enemies[i];
                 e.y += e.speed;
                 drawEnemy(e);
 
-                // برخورد با سفینه
                 let dx = e.x - ship.x;
                 let dy = e.y - ship.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                
-                if (dist < e.radius + 15) {
-                    // دشمن به سفینه خورد
+                if (Math.sqrt(dx*dx + dy*dy) < e.radius + 15) {
                     createParticles(e.x, e.y, '#ff2a2a');
                     gameState.enemies.splice(i, 1);
                     loseLife();
                     continue;
                 }
 
-                // رد شدن از پایین صفحه
                 if (e.y > canvas.height + 30) {
                     gameState.enemies.splice(i, 1);
                     loseLife();
                     continue;
                 }
 
-                // برخورد با تیر
                 for (let j = gameState.bullets.length - 1; j >= 0; j--) {
                     let b = gameState.bullets[j];
                     let bdx = e.x - b.x;
                     let bdy = e.y - b.y;
                     if (Math.sqrt(bdx*bdx + bdy*bdy) < e.radius + 5) {
-                        // تیر به دشمن خورد
                         e.hp -= b.damage;
                         gameState.bullets.splice(j, 1);
-                        
                         if (e.hp <= 0) {
                             createParticles(e.x, e.y, '#ff2a2a');
                             gameState.enemies.splice(i, 1);
@@ -941,103 +902,3 @@
                             player.coins += 2;
                             updateUI();
                         }
-                        break;
-                    }
-                }
-            }
-
-            // 6. آپدیت ذرات انفجار
-            for (let i = gameState.particles.length - 1; i >= 0; i--) {
-                let p = gameState.particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= 0.05;
-                
-                if (p.life <= 0) {
-                    gameState.particles.splice(i, 1);
-                    continue;
-                }
-                
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.life;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
-            }
-        }
-
-        function loseLife() {
-            gameState.lives--;
-            updateUI();
-            if (gameState.lives <= 0) {
-                gameOver();
-            }
-        }
-
-        function gameOver() {
-            gameState.isPlaying = false;
-            gameState.isGameOver = true;
-            
-            // ذخیره سکه‌ها و امتیاز
-            saveGame();
-            
-            document.getElementById('final-score').innerText = gameState.score;
-            document.getElementById('gameOverScreen').classList.add('show');
-        }
-
-        // ==========================================
-        // 6. شروع
-        // ==========================================
-        
-        // جلوگیری از اسکرول صفحه با کلیدهای جهت‌دار یا اسپیس (برای دسکتاپ)
-        window.addEventListener('keydown', function(e) {
-            if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-                e.preventDefault();
-            }
-        }, false);
-
-        // راه اندازی اولیه
-        updateUI();
-        startGame(); // شروع اولیه
-        requestAnimationFrame(gameLoop);
-
-    </script>
-</body>
-</html>// ==========================================
-// 7. اصلاح مشکل اسکرول در تب‌های فروشگاه و پروفایل
-// ==========================================
-
-// به‌روزرسانی تابع switchTab برای مدیریت اسکرول
-const originalSwitchTab = switchTab;
-switchTab = function(tabId) {
-    // اجرای کدهای قبلی
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    
-    document.getElementById(tabId + '-tab').classList.add('active');
-    
-    // پیدا کردن دکمه‌ای که کلیک شده (چون event.target ممکنه تغییر کنه)
-    const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.innerText.includes(
-        tabId === 'game' ? 'بازی' : 
-        tabId === 'shop' ? 'فروشگاه' : 
-        tabId === 'profile' ? 'پروفایل' : 'رتبه‌ها'
-    ));
-    if (activeBtn) activeBtn.classList.add('active');
-
-    // مدیریت اسکرول
-    if (tabId === 'game') {
-        document.body.style.overflow = 'hidden'; // قفل کردن اسکرول در بازی
-        if (!gameState.isPlaying && gameState.isGameOver) {
-            startGame();
-        }
-        isGamePaused = false;
-    } else {
-        document.body.style.overflow = 'auto'; // اجازه اسکرول در فروشگاه و پروفایل
-        isGamePaused = true;
-    }
-    updateUI();
-};
-
-// تنظیم اولیه اسکرول
-document.body.style.overflow = 'hidden'; // بازی که باز میشه، اسکرول قفل باشه
