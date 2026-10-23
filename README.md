@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>تیراندازی فضایی 🚀</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
@@ -17,25 +17,27 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background-color: #05050a;
             color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; 
         }
 
-        /* --- هدر (باریک‌تر از قبل تا فضای بیشتری به بازی بده) --- */
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
         .header {
             display: flex;
             justify-content: space-around;
             background: #0a0a15;
-            padding: 2px 0; /* خیلی باریک شد */
             border-bottom: 1px solid #1a1a2e;
             z-index: 100;
             flex-shrink: 0;
-            height: 40px; /* ارتفاع ثابت و کم */
+            height: 35px;
             align-items: center;
         }
 
@@ -43,9 +45,9 @@
             background: transparent;
             border: none;
             color: #6a6a8a;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
-            padding: 4px 10px;
+            padding: 2px 8px;
             border-radius: 8px;
             transition: 0.3s;
             cursor: pointer;
@@ -61,6 +63,8 @@
             flex: 1;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .tab-content {
@@ -75,29 +79,29 @@
             display: block;
         }
 
-        /* --- تب بازی (بزرگترین بخش) --- */
         #game-tab {
             padding: 0;
             overflow: hidden;
             position: relative;
             height: 100%;
             width: 100%;
+            flex: 1;
         }
 
         .game-ui {
             position: absolute;
-            top: 10px;
-            right: 15px;
-            left: 15px;
+            top: 5px;
+            right: 10px;
+            left: 10px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
             z-index: 10;
         }
 
-        .hearts { color: #ff2a2a; font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 10px #ff2a2a; }
+        .hearts { color: #ff2a2a; font-size: 18px; letter-spacing: 1px; text-shadow: 0 0 10px #ff2a2a; }
         .score-board { text-align: left; color: #00f0ff; font-weight: bold; text-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
-        .score-board div { margin-bottom: 3px; font-size: 14px; }
+        .score-board div { margin-bottom: 2px; font-size: 13px; }
         .coins-text { color: #ffd700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); }
 
         canvas {
@@ -105,9 +109,9 @@
             width: 100%;
             height: 100%;
             touch-action: none;
+            padding-bottom: env(safe-area-inset-bottom, 0px); 
         }
 
-        /* --- فروشگاه --- */
         .shop-container { max-width: 600px; margin: 0 auto; padding-bottom: 30px; }
         .shop-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         
@@ -158,7 +162,6 @@
         }
         .cost-tag { color: #ffcc00; font-weight: bold; }
 
-        /* --- پروفایل --- */
         .profile-container { max-width: 600px; margin: 0 auto; text-align: center; padding-bottom: 30px; }
         
         .avatar-preview {
@@ -196,7 +199,6 @@
         }
         .code-box span { color: #ffd700; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
 
-        /* --- Game Over & Wave Text --- */
         .game-over-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); display: none;
@@ -222,7 +224,6 @@
     </div>
 
     <div class="main-content">
-        <!-- تب بازی -->
         <div id="game-tab" class="tab-content active">
             <div class="game-ui">
                 <div class="score-board">
@@ -243,7 +244,6 @@
             </div>
         </div>
 
-        <!-- تب فروشگاه -->
         <div id="shop-tab" class="tab-content">
             <div class="shop-container">
                 <div class="shop-tabs">
@@ -255,7 +255,6 @@
             </div>
         </div>
 
-        <!-- تب پروفایل -->
         <div id="profile-tab" class="tab-content">
             <div class="profile-container">
                 <h2 style="color: #00f0ff; margin-bottom: 10px;">پروفایل شما 👤</h2>
@@ -288,7 +287,6 @@
             </div>
         </div>
 
-        <!-- تب رتبه‌ها -->
         <div id="leaderboard-tab" class="tab-content">
             <div class="shop-container" style="text-align: center;">
                 <h2 style="color: #ffd700; text-shadow: 0 0 10px #ffd700; margin-top: 20px;">🏆 رتبه‌بندی</h2>
@@ -298,7 +296,6 @@
     </div>
 
     <script>
-        // ================= دیتای بازی =================
         const weaponsData = {
             laser: { name: 'لیزر ساده', damage: 1, bullets: 1, buyCost: 0, upgCost: 200, icon: '🔫' },
             twin: { name: 'شلیک دوقلو', damage: 1, bullets: 2, buyCost: 100, upgCost: 200, icon: '⚡' },
@@ -318,7 +315,6 @@
         const avatarsList = ['👻', '🚀', '👽', '🤖', '🦊', '🐉', '💀', '🛸'];
         const SAVE_KEY = 'spaceShooterSave_v3';
 
-        // ================= سیستم سیو =================
         function getDefaultPlayer() {
             return {
                 coins: 0, name: '', avatar: '👻',
@@ -342,7 +338,6 @@
             updateUI();
         }
 
-        // ================= مدیریت تب‌ها =================
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -354,7 +349,6 @@
             if (tabId === 'game') {
                 document.body.style.overflow = 'hidden';
                 isGamePaused = false;
-                // با یک تاخیر کوتاه سایز کانواس رو تنظیم میکنیم تا تب کاملا باز بشه
                 setTimeout(resizeCanvas, 50); 
                 if (!gameState.isPlaying && !gameState.isGameOver) startGame();
             } else {
@@ -372,7 +366,6 @@
             document.getElementById('ships-list').style.display = tab === 'ships' ? 'block' : 'none';
         }
 
-        // ================= آپدیت UI =================
         function updateUI() {
             document.getElementById('ui-coins').innerText = player.coins;
             document.getElementById('ui-score').innerText = gameState.score;
@@ -381,7 +374,6 @@
             for(let i=0; i<3; i++) heartsHTML += i < gameState.lives ? '❤️' : '🖤';
             document.getElementById('ui-hearts').innerHTML = heartsHTML;
 
-            // اسلحه‌ها
             let weaponsHTML = '';
             for (const [key, data] of Object.entries(weaponsData)) {
                 const isOwned = player.ownedWeapons.includes(key);
@@ -414,7 +406,6 @@
             }
             document.getElementById('weapons-list').innerHTML = weaponsHTML;
 
-            // سفینه‌ها
             let shipsHTML = '';
             for (const [key, data] of Object.entries(shipsData)) {
                 const isOwned = player.ownedShips.includes(key);
@@ -436,7 +427,6 @@
             }
             document.getElementById('ships-list').innerHTML = shipsHTML;
 
-            // پروفایل
             document.getElementById('profile-avatar-preview').innerText = player.avatar;
             document.getElementById('profile-name-display').innerText = player.name;
             if(document.activeElement !== document.getElementById('profile-name-input')) {
@@ -451,7 +441,6 @@
             document.getElementById('avatar-list').innerHTML = avatarsHTML;
         }
 
-        // ================= عملیات فروشگاه =================
         function buyWeapon(key) {
             if (player.coins >= weaponsData[key].buyCost) {
                 player.coins -= weaponsData[key].buyCost;
@@ -498,7 +487,6 @@
             alert('پروفایل با موفقیت ذخیره شد! ✅');
         }
 
-        // ================= موتور بازی =================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let isGamePaused = true;
@@ -519,13 +507,12 @@
         function resizeCanvas() {
             const tab = document.getElementById('game-tab');
             if (tab.classList.contains('active')) {
-                // این خطوط باعث میشن کانواس دقیقا اندازه ی صفحه بشه
                 canvas.width = tab.clientWidth;
                 canvas.height = tab.clientHeight;
                 
                 if (!gameState.isPlaying) {
                     ship.x = canvas.width / 2;
-                    ship.y = canvas.height - 70;
+                    ship.y = canvas.height - 50; 
                     ship.targetX = ship.x;
                     ship.targetY = ship.y;
                 }
@@ -559,7 +546,8 @@
             gameState.particles = []; gameState.speedMultiplier = 1; gameState.spawnInterval = 1000;
             gameState.bossActive = false; gameState.bossDefeatedCount = 0; gameState.nextBossScore = 500;
             
-            ship.x = canvas.width / 2; ship.y = canvas.height - 70;
+            ship.x = canvas.width / 2; 
+            ship.y = canvas.height - 50;
             ship.targetX = ship.x; ship.targetY = ship.y;
             ship.color = shipsData[player.equippedShip].color;
             
@@ -613,7 +601,6 @@
             }
             ctx.closePath(); ctx.fill(); ctx.stroke();
             
-            // نوار خون باس
             if (enemy.isBoss) {
                 ctx.fillStyle = '#000'; ctx.fillRect(-enemy.radius, -enemy.radius - 20, enemy.radius*2, 8);
                 ctx.fillStyle = '#ff00ff'; 
@@ -647,7 +634,6 @@
             ship.y += (ship.targetY - ship.y) * 0.2;
             drawShip();
 
-            // شلیک
             if (ship.isDragging && timestamp - gameState.lastShot > 250) {
                 const weapon = weaponsData[player.equippedWeapon];
                 const dmg = weapon.damage + (player.weaponLevels[player.equippedWeapon] || 0);
@@ -672,7 +658,6 @@
                 if (b.y < 0) gameState.bullets.splice(i, 1);
             }
 
-            // بررسی ظاهر شدن باس
             if (!gameState.bossActive && gameState.score >= gameState.nextBossScore) {
                 gameState.bossActive = true;
                 gameState.enemies.push({
@@ -683,7 +668,6 @@
                 showWaveText("⚠️ باس وارد شد! ⚠️");
             }
 
-            // تولید دشمن
             if (!gameState.bossActive) {
                 gameState.spawnTimer += 16;
                 if (gameState.spawnTimer > gameState.spawnInterval) {
@@ -736,7 +720,8 @@
                                 gameState.spawnInterval = Math.max(150, gameState.spawnInterval - 200);
                                 showWaveText("موج بعدی!");
                             } else {
-                                gameState.score += 10; player.coins += 2;
+                                // ✨ امتیاز دشمن معمولی از ۱۰ به ۲۰ تغییر کرد ✨
+                                gameState.score += 20; player.coins += 2;
                                 gameState.speedMultiplier += 0.01;
                                 gameState.spawnInterval = Math.max(300, 1000 - (gameState.score / 10));
                             }
@@ -768,7 +753,6 @@
             }
         }
 
-        // ================= شروع =================
         window.addEventListener('load', () => {
             updateUI();
             resizeCanvas();
