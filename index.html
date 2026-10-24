@@ -128,10 +128,11 @@
 
     <script>
         // ==========================================
-        // ۱. تنظیمات Scorezilla (مستقیم و بدون کتابخانه)
+        // ۱. تنظیمات Scorezilla (بدون کتابخانه - جلوگیری از سفید شدن)
         // ==========================================
         const BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
         const PUBLIC_KEY = "pk_apachi_DpoZiszBhOQY7rJ3ysf5g6"; 
+        const API_URL = "https://api.scorezilla.dev/v1"; 
 
         // ==========================================
         // ۲. دیتای بازی
@@ -153,7 +154,7 @@
         };
 
         const avatarsList = ['👻', '🚀', '👽', '🤖', '🦊', '🐉', '💀', '🛸'];
-        const SAVE_KEY = 'spaceShooterSave_v3';
+        const SAVE_KEY = 'spaceShooterSave_v5';
 
         function getDefaultPlayer() {
             return {
@@ -313,27 +314,17 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla - روش مستقیم و پایدار)
+        // ۵. لیدربرد (مستقیم با fetch - سایت رو سیاه نمیکنه)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (score <= 0) return;
             try {
-                await fetch("https://api.scorezilla.dev/v1/scores", {
+                await fetch(`${API_URL}/scores`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${PUBLIC_KEY}`
-                    },
-                    body: JSON.stringify({
-                        boardId: BOARD_ID,
-                        playerId: player.code,
-                        score: score,
-                        name: player.name
-                    })
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${PUBLIC_KEY}` },
+                    body: JSON.stringify({ boardId: BOARD_ID, playerId: player.code, score: score, name: player.name })
                 });
-            } catch (e) {
-                console.error("خطا در ارسال امتیاز:", e);
-            }
+            } catch (e) { console.error("Submit error:", e); }
         }
 
         async function loadOnlineLeaderboard() {
@@ -346,17 +337,15 @@
             listEl.innerHTML = '';
 
             try {
-                const response = await fetch(`https://api.scorezilla.dev/v1/leaderboard/${BOARD_ID}?limit=20`, {
+                const response = await fetch(`${API_URL}/leaderboard/${BOARD_ID}?limit=20`, {
                     headers: { 'Authorization': `Bearer ${PUBLIC_KEY}` }
                 });
-                
                 if (!response.ok) throw new Error("HTTP Error");
                 const results = await response.json();
                 
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
-                    statusEl.style.display = 'block'; 
-                    statusEl.className = 'empty-text';
+                    statusEl.style.display = 'block'; statusEl.className = 'empty-text';
                     statusEl.innerText = 'هنوز رکوردی ثبت نشده.';
                     return;
                 }
@@ -371,7 +360,7 @@
                     html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; border-color: ${rank <= 3 ? rankColor : '#1a3a2a'}">
                         <div style="display:flex; align-items:center; gap:10px;">
                             <span style="font-size:20px;">${rankIcon}</span>
-                            <span style="font-size:16px; font-weight:bold; color:${rankColor};">${data.name || data.playerId || 'ناشناس'}</span>
+                            <span style="font-size:16px; font-weight:bold; color:${rankColor};">${data.name || 'ناشناس'}</span>
                         </div>
                         <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score}</span>
                     </div>`;
@@ -379,10 +368,8 @@
                 });
                 listEl.innerHTML = html;
             } catch (e) {
-                console.error(e);
-                statusEl.style.display = 'block'; 
-                statusEl.className = 'error-text';
-                statusEl.innerText = 'خطا در دریافت اطلاعات.';
+                statusEl.style.display = 'block'; statusEl.className = 'error-text';
+                statusEl.innerText = 'خطا در دریافت اطلاعات. (تنظیمات تخته را چک کنید).';
             }
         }
 
@@ -664,4 +651,4 @@
         });
     </script>
 </body>
-                    </html>
+            </html>
