@@ -128,11 +128,12 @@
 
     <script type="module">
         // ==========================================
-        // وارد کردن کتابخانه Scorezilla (نسخه پایدار)
+        // ۱. وارد کردن کتابخانه Scorezilla
         // ==========================================
         import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
-        const SCOREZILLA_BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
+        // ✅ حلزون تخته شما (main) را اینجا گذاشتم
+        const SCOREZILLA_BOARD_ID = "main"; 
         const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
         let scorezilla = null;
@@ -150,7 +151,7 @@
         }
 
         // ==========================================
-        // دیتای بازی
+        // ۲. دیتای بازی
         // ==========================================
         const weaponsData = {
             laser: { name: 'لیزر ساده', damage: 1, bullets: 1, buyCost: 0, upgCost: 200, icon: '🔫' },
@@ -195,7 +196,7 @@
         }
 
         // ==========================================
-        // مدیریت تب‌ها و UI
+        // ۳. مدیریت تب‌ها و UI
         // ==========================================
         window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -274,7 +275,7 @@
         }
 
         // ==========================================
-        // عملیات فروشگاه
+        // ۴. عملیات فروشگاه و پروفایل
         // ==========================================
         window.buyWeapon = function(key) {
             if (player.coins >= weaponsData[key].buyCost && !player.ownedWeapons.includes(key)) {
@@ -329,7 +330,7 @@
         }
 
         // ==========================================
-        // لیدربرد آنلاین (Scorezilla)
+        // ۵. لیدربرد آنلاین (Scorezilla)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (!isScorezillaReady || score <= 0) return;
@@ -395,7 +396,7 @@
         }
 
         // ==========================================
-        // موتور بازی
+        // ۶. موتور بازی
         // ==========================================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -672,4 +673,4 @@
         });
     </script>
 </body>
-                    </html>
+                </html>
