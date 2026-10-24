@@ -314,7 +314,7 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla)
+        // ۵. لیدربرد آنلاین (Scorezilla - روش مستقیم fetch)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (score <= 0) return;
@@ -346,7 +346,7 @@
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
                     statusEl.style.display = 'block'; statusEl.className = 'empty-text';
-                    statusEl.innerText = 'هنوز رکوردی ثبت نشده.';
+                    statusEl.innerText = 'هنوز رکوردی ثبت نشده. اولین نفر باش!';
                     return;
                 }
                 
@@ -368,6 +368,7 @@
                 });
                 listEl.innerHTML = html;
             } catch (e) {
+                console.error(e);
                 statusEl.style.display = 'block'; statusEl.className = 'error-text';
                 statusEl.innerText = 'خطا در دریافت اطلاعات. (تنظیمات تخته را چک کنید).';
             }
