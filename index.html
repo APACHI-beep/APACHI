@@ -17,18 +17,20 @@
     display:flex; justify-content:space-around; align-items:center;
     padding:calc(12px + env(safe-area-inset-top)) 10px 12px 10px;
     background:#04070a; border-bottom:1px solid rgba(0,200,255,.2);
-    z-index:100;
+    z-index:100; overflow-x:auto;
   }
+  .top-nav::-webkit-scrollbar{display:none;}
   .nav-btn{
-    flex:1; text-align:center; padding:10px 0; font-size:16px; font-weight:bold;
+    flex:1; text-align:center; padding:10px 5px; font-size:14px; font-weight:bold;
     color:#6b7c8c; cursor:pointer; transition:.3s; position:relative;
-    display:flex; align-items:center; justify-content:center; gap:6px;
+    display:flex; align-items:center; justify-content:center; gap:4px; white-space:nowrap;
   }
   .nav-btn.active{ color:#00e5ff; text-shadow:0 0 10px rgba(0,229,255,.6); }
   .nav-btn.active::after{
     content:''; position:absolute; bottom:-12px; left:10%; right:10%; height:2px;
     background:#00e5ff; box-shadow:0 0 10px #00e5ff; border-radius:2px;
   }
+  #navAdmin { display: none; color: #ffd700; }
 
   /* ---------- محتوا ---------- */
   .content{ flex:1; position:relative; overflow:hidden; }
@@ -52,12 +54,12 @@
   #gameCanvas{ display:block; width:100%; height:100%; touch-action:none; }
 
   /* ---------- msg ---------- */
-  #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6}
-  #msg span{font-size:clamp(26px,8vw,44px);font-weight:bold;color:#fff;opacity:0;text-align:center;text-shadow:0 0 18px #00d4ff,0 0 40px #0088ff;transition:.35s;transform:scale(.8)}
+  #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:9999}
+  #msg span{font-size:clamp(22px,7vw,36px);font-weight:bold;color:#fff;opacity:0;text-align:center;text-shadow:0 0 18px #00d4ff,0 0 40px #0088ff;transition:.3s;transform:scale(.8); padding: 15px; background: rgba(0,0,0,0.6); border-radius: 20px; border: 1px solid rgba(0,200,255,.4);}
   #msg span.show{opacity:1;transform:scale(1)}
 
-  /* ---------- فروشگاه ---------- */
-  .shop-container{ padding:20px 15px 40px; }
+  /* ---------- فروشگاه و پروفایل ---------- */
+  .shop-container{ padding:20px 15px 40px; max-width: 600px; margin: 0 auto; width: 100%;}
   .shop-header{ text-align:center; margin-bottom:20px; }
   .shop-header h2{ font-size:22px; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px; }
   .shop-coins{ font-size:18px; color:#ffd45e; margin-top:10px; background:rgba(255,212,94,.1); padding:8px 20px; border-radius:20px; display:inline-block; }
@@ -66,30 +68,36 @@
   .cat-tabs::-webkit-scrollbar{ display:none; }
   .cat-btn{ flex:0 0 auto; padding:10px 20px; background:#0a1520; border:1px solid #1a3a50; border-radius:12px; color:#6b7c8c; font-size:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:5px; transition:.2s; }
   .cat-btn.active{ border-color:#00e5ff; color:#00e5ff; background:rgba(0,229,255,.05); box-shadow:inset 0 0 15px rgba(0,229,255,.1); }
-  .cat-btn .icon{ font-size:20px; }
 
   .item-card{ background:#0b131c; border:1px solid #1a2a3a; border-radius:16px; padding:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; transition:.3s; }
   .item-card.equipped{ border-color:#00e5ff; box-shadow:0 0 15px rgba(0,229,255,.2); }
   .item-info h3{ font-size:16px; color:#fff; margin-bottom:5px; }
   .item-info p{ font-size:12px; color:#6b7c8c; margin-bottom:2px; }
-  .item-info .price{ font-size:14px; color:#ffd45e; margin-top:5px; display:flex; align-items:center; gap:5px; }
   
   .btn{ border:none; padding:10px 20px; border-radius:25px; font-size:14px; font-weight:bold; cursor:pointer; transition:.2s; font-family:inherit; }
   .btn:active{ transform:scale(.95); }
-  .btn-outline{ background:transparent; border:1px solid #00e5ff; color:#00e5ff; box-shadow:0 0 10px rgba(0,229,255,.2); }
-  .btn-outline.disabled{ border-color:#555; color:#555; box-shadow:none; cursor:default; }
   .btn-solid{ background:linear-gradient(90deg, #ff00cc, #6600ff); color:#fff; box-shadow:0 0 15px rgba(255,0,204,.4); }
   .btn-buy{ background:linear-gradient(90deg, #ff00cc, #6600ff); color:#fff; padding:8px 20px; border-radius:20px; font-size:13px; }
   .btn-equip{ background:transparent; border:1px solid #00e5ff; color:#00e5ff; padding:8px 20px; border-radius:20px; font-size:13px; }
   .btn-equipped{ background:#00e5ff; color:#000; padding:8px 20px; border-radius:20px; font-size:13px; }
 
-  /* ---------- Start Menu (Overlay) ---------- */
+  /* Profile Specific */
+  .profile-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .profile-item { background: #0b131c; border: 1px solid #1a2a3a; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .profile-item.active { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0,229,255,.2); }
+  .profile-item .name { font-size: 18px; font-weight: bold; color: #fff; }
+  .profile-item .stats { font-size: 12px; color: #6b7c8c; margin-top: 5px; }
+  .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+  .input-group input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #1a3a50; background: #04070a; color: #fff; font-family: inherit; outline: none; }
+  .input-group input:focus { border-color: #00e5ff; }
+
+  /* Start Menu (Overlay) */
   #startMenu{
     position:absolute; inset:0; z-index:50; display:flex; flex-direction:column;
     align-items:center; justify-content:center; background:rgba(4,7,10,.9);
     backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
   }
-  #startMenu h1{ font-size:36px; color:#00e5ff; margin-bottom:10px; text-shadow:0 0 20px #00e5ff; }
+  #startMenu h1{ font-size:36px; color:#00e5ff; margin-bottom:10px; text-shadow:0 0 20px #00e5ff; cursor: pointer; user-select: none;}
   #startMenu p{ font-size:13px; color:#889; margin-bottom:30px; }
   #startBtn{ padding:15px 50px; font-size:20px; background:linear-gradient(90deg,#00c8ff,#0055ff); border:none; border-radius:30px; color:#fff; font-weight:bold; box-shadow:0 0 25px rgba(0,200,255,.5); cursor:pointer; }
   #startStats{ margin-top:20px; font-size:14px; color:#ffd45e; text-align:center; line-height:1.6; }
@@ -101,12 +109,10 @@
   
   <!-- منوی بالا -->
   <div class="top-nav">
-    <div class="nav-btn active" id="navGame" onclick="switchTab('game')">
-      <span>🎮</span> بازی
-    </div>
-    <div class="nav-btn" id="navShop" onclick="switchTab('shop')">
-      <span>🛒</span> فروشگاه
-    </div>
+    <div class="nav-btn active" id="navGame" onclick="switchTab('game')"><span>🎮</span> بازی</div>
+    <div class="nav-btn" id="navShop" onclick="switchTab('shop')"><span>🛒</span> فروشگاه</div>
+    <div class="nav-btn" id="navProfile" onclick="switchTab('profile')"><span>👤</span> پروفایل</div>
+    <div class="nav-btn" id="navAdmin" onclick="switchTab('admin')"><span>👑</span> پنل مالک</div>
   </div>
 
   <div class="content">
@@ -129,7 +135,7 @@
 
       <!-- منوی شروع / پایان بازی -->
       <div id="startMenu">
-        <h1>SPACE FIGHTER</h1>
+        <h1 id="mainLogo">SPACE FIGHTER</h1>
         <p>انگشتت را بکش تا حرکت کنی — شلیک خودکار است</p>
         <button id="startBtn">شروع بازی</button>
         <div id="startStats"></div>
@@ -143,43 +149,88 @@
           <h2>🛒 فروشگاه</h2>
           <div class="shop-coins" id="shopCoins">💰 موجودی شما: 0</div>
         </div>
-
         <div class="cat-tabs">
           <div class="cat-btn active" onclick="switchCat('weapons', this)"><span class="icon">🔫</span>سلاح‌ها</div>
           <div class="cat-btn" onclick="switchCat('ships', this)"><span class="icon">🚀</span>سفینه‌ها</div>
         </div>
-
         <div id="shopItems"></div>
       </div>
     </div>
+
+    <!-- صفحه پروفایل -->
+    <div class="page" id="pageProfile">
+      <div class="shop-container">
+        <div class="shop-header">
+          <h2>👤 پروفایل‌ها</h2>
+          <p style="font-size:12px; color:#889; margin-top:10px;">یک پروفایل انتخاب کنید یا پروفایل جدید بسازید</p>
+        </div>
+        
+        <div class="input-group">
+          <input type="text" id="newProfileName" placeholder="نام جدید..." maxlength="15">
+          <button class="btn btn-buy" onclick="createProfile()">ساخت</button>
+        </div>
+
+        <div class="profile-list" id="profileList">
+          <!-- لیست پروفایل‌ها اینجا رندر می‌شود -->
+        </div>
+      </div>
+    </div>
+
+    <!-- صفحه پنل مالک -->
+    <div class="page" id="pageAdmin">
+      <div class="shop-container">
+        <div class="shop-header">
+          <h2>👑 پنل مالک</h2>
+          <p style="font-size:12px; color:#889; margin-top:10px;">مدیریت سکه‌های بازیکنان</p>
+        </div>
+        
+        <div class="input-group" style="flex-direction:column;">
+          <input type="text" id="adminSearch" placeholder="جستجوی نام کاربر..." oninput="renderAdminList()">
+        </div>
+
+        <div class="profile-list" id="adminList">
+          <!-- لیست ادمین اینجا رندر می‌شود -->
+        </div>
+      </div>
+    </div>
   </div>
+  
+  <!-- پیام سراسری -->
+  <div id="msg"><span id="msgText"></span></div>
 </div>
 
 <script>
 /* ============================================================
-   داده‌ها و ذخیره‌سازی
+   دیتابیس اصلی (شامل تمام پروفایل‌ها)
 ============================================================ */
-const SAVE = {
-  get(k, d){ try{ const v = localStorage.getItem('sf_'+k); return v===null? d : JSON.parse(v);}catch(e){return d;} },
-  set(k, v){ try{ localStorage.setItem('sf_'+k, JSON.stringify(v)); }catch(e){} }
-};
+let db = localStorage.getItem('sf_db_v3');
+if(!db){
+  // پروفایل پیش‌فرض سازنده
+  db = {
+    profiles: {
+      "مالک": {
+        id: "مالک", name: "مالک", isAdmin: true,
+        coins: Infinity, record: 0,
+        ownedWeapons: ['simple', 'double', 'red', 'three', 'plasma', 'four', 'missile'],
+        ownedShips: ['default', 'galaxy', 'purple', 'gold', 'crystal'],
+        equippedWeapon: 'simple', equippedShip: 'default',
+        weaponLevels: { simple: 0 }
+      }
+    },
+    currentProfileId: "مالک"
+  };
+  localStorage.setItem('sf_db_v3', JSON.stringify(db));
+} else {
+  db = JSON.parse(db);
+}
 
-let userData = SAVE.get('userData', {
-  coins: 0,
-  record: 0,
-  ownedWeapons: ['simple'],
-  ownedShips: ['default'],
-  equippedWeapon: 'simple',
-  equippedShip: 'default',
-  weaponLevels: { simple: 0 }
-});
+function saveDB(){ localStorage.setItem('sf_db_v3', JSON.stringify(db)); }
 
-// اطمینان از وجود فیلدها
-if(!userData.ownedWeapons) userData.ownedWeapons = ['simple'];
-if(!userData.ownedShips) userData.ownedShips = ['default'];
-if(!userData.weaponLevels) userData.weaponLevels = { simple: 0 };
-if(!userData.equippedWeapon) userData.equippedWeapon = 'simple';
-if(!userData.equippedShip) userData.equippedShip = 'default';
+// دریافت پروفایل فعلی
+function getProfile(){
+  if(!db.currentProfileId || !db.profiles[db.currentProfileId]) return null;
+  return db.profiles[db.currentProfileId];
+}
 
 const WEAPONS = {
   simple:   { name:'لیزر ساده',    price:0,    dmg:1, shots:1, color:'#00e5ff', desc:'دمیج: 1 | تعداد تیر: 1' },
@@ -200,7 +251,7 @@ const SHIPS = {
 };
 
 /* ============================================================
-   تنظیمات پایه
+   تنظیمات بازی (Canvas)
 ============================================================ */
 const cv = document.getElementById('gameCanvas');
 const ctx = cv.getContext('2d');
@@ -214,55 +265,22 @@ function resize(){
   ctx.setTransform(DPR,0,0,DPR,0,0);
 }
 window.addEventListener('resize', ()=> { resize(); makeStars(); });
-window.addEventListener('orientationchange', ()=> setTimeout(()=>{ resize(); makeStars(); }, 200));
 
-/* ============================================================
-   وضعیت بازی
-============================================================ */
 const state = {
-  running: false,
-  over: false,
-  score: 0,
-  sessionCoins: 0,
-  lives: 3,
-  enemies: [],
-  bullets: [],
-  bossBullets: [],
-  particles: [],
-  stars: [],
-  boss: null,
-  bossActive: false,
-  nextBossScore: 1000,
-  wave: 1,
-  spawnTimer: 0,
-  spawnInterval: 1.0,
-  shootTimer: 0,
-  shootInterval: 0.18,
-  lastTime: 0,
-  shake: 0
+  running: false, over: false, score: 0, sessionCoins: 0, lives: 3,
+  enemies: [], bullets: [], bossBullets: [], particles: [], stars: [],
+  boss: null, bossActive: false, nextBossScore: 1000, wave: 1,
+  spawnTimer: 0, spawnInterval: 1.0, shootTimer: 0, lastTime: 0, shake: 0
 };
 
-const player = {
-  x: 0, y: 0, w: 74, h: 62,
-  targetX: 0, targetY: 0,
-  alive: true,
-  invuln: 0
-};
-
+const player = { x: 0, y: 0, w: 74, h: 62, targetX: 0, targetY: 0, alive: true, invuln: 0 };
 function playerScale(){ return Math.max(0.7, Math.min(1, W / 480)); }
 
-/* ============================================================
-   ستاره‌ها
-============================================================ */
 function makeStars(){
   state.stars = [];
   const count = Math.floor((W*H)/6000);
   for(let i=0;i<count;i++){
-    state.stars.push({
-      x: Math.random()*W, y: Math.random()*H,
-      r: Math.random()*1.6 + .3, s: Math.random()*25 + 8,
-      a: Math.random()*.7 + .25, tw: Math.random()*Math.PI*2
-    });
+    state.stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.6 + .3, s: Math.random()*25 + 8, a: Math.random()*.7 + .25, tw: Math.random()*Math.PI*2 });
   }
 }
 setTimeout(()=>{ resize(); makeStars(); }, 50);
@@ -270,41 +288,15 @@ setTimeout(()=>{ resize(); makeStars(); }, 50);
 /* ============================================================
    ورودی
 ============================================================ */
-let pointerActive = false, pointerX = null, pointerY = null;
-let touchOffsetX = 0, touchOffsetY = 0;
-
+let pointerActive = false, pointerX = null, pointerY = null, touchOffsetX = 0, touchOffsetY = 0;
 function getPoint(e){
   if(e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
   if(e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
   return { x: e.clientX, y: e.clientY };
 }
-
-cv.addEventListener('mousemove', e=>{
-  if(isMobile) return;
-  const r = cv.getBoundingClientRect();
-  pointerX = e.clientX - r.left; pointerY = e.clientY - r.top;
-  pointerActive = true;
-});
-
-cv.addEventListener('touchstart', e=>{
-  if(!state.running) return;
-  const p = getPoint(e);
-  const r = cv.getBoundingClientRect();
-  pointerX = p.x - r.left; pointerY = p.y - r.top;
-  touchOffsetX = player.x - pointerX;
-  touchOffsetY = player.y - pointerY;
-  pointerActive = true;
-  e.preventDefault();
-}, {passive:false});
-
-cv.addEventListener('touchmove', e=>{
-  if(!state.running) return;
-  const p = getPoint(e);
-  const r = cv.getBoundingClientRect();
-  pointerX = p.x - r.left; pointerY = p.y - r.top;
-  e.preventDefault();
-}, {passive:false});
-
+cv.addEventListener('mousemove', e=>{ if(isMobile) return; const r = cv.getBoundingClientRect(); pointerX = e.clientX - r.left; pointerY = e.clientY - r.top; pointerActive = true; });
+cv.addEventListener('touchstart', e=>{ if(!state.running) return; const p = getPoint(e); const r = cv.getBoundingClientRect(); pointerX = p.x - r.left; pointerY = p.y - r.top; touchOffsetX = player.x - pointerX; touchOffsetY = player.y - pointerY; pointerActive = true; e.preventDefault(); }, {passive:false});
+cv.addEventListener('touchmove', e=>{ if(!state.running) return; const p = getPoint(e); const r = cv.getBoundingClientRect(); pointerX = p.x - r.left; pointerY = p.y - r.top; e.preventDefault(); }, {passive:false});
 cv.addEventListener('touchend', e=> e.preventDefault(), {passive:false});
 
 const keys = {};
@@ -316,15 +308,11 @@ addEventListener('keyup', e=> keys[e.key] = false);
 ============================================================ */
 const rand = (a,b)=> a + Math.random()*(b-a);
 const dist2 = (a,b,c,d)=> (a-c)**2 + (b-d)**2;
-
 function spawnParticles(x, y, n, color, speed=180, life=.7, size=3){
   for(let i=0;i<n;i++){
     const ang = Math.random()*Math.PI*2;
     const sp = Math.random()*speed + 30;
-    state.particles.push({
-      x, y, vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp,
-      life, maxLife: life, color, size: Math.random()*size + 1
-    });
+    state.particles.push({ x, y, vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp, life, maxLife: life, color, size: Math.random()*size + 1 });
   }
 }
 
@@ -344,11 +332,14 @@ function updateHUD(){
   for(let i=0;i<Math.max(0,state.lives);i++) h += '❤️';
   document.getElementById('hearts').textContent = h;
   document.getElementById('score').textContent  = state.score;
-  document.getElementById('record').textContent = userData.record;
-  document.getElementById('coinsHud').textContent = '💰 ' + userData.coins;
   
-  if(document.getElementById('pageShop').classList.contains('active')){
-    document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + userData.coins;
+  const p = getProfile();
+  if(p){
+    document.getElementById('record').textContent = p.record;
+    let total = p.coins;
+    if(total !== Infinity) total += state.sessionCoins;
+    document.getElementById('coinsHud').textContent = '💰 ' + (total === Infinity ? '∞' : total);
+    document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + (total === Infinity ? '∞' : total);
   }
 }
 
@@ -356,69 +347,38 @@ function updateHUD(){
    سیستم شلیک
 ============================================================ */
 function getWeaponStats(){
-  const base = WEAPONS[userData.equippedWeapon] || WEAPONS.simple;
-  const lvl = userData.weaponLevels[userData.equippedWeapon] || 0;
-  return {
-    dmg: base.dmg + lvl,
-    shots: base.shots,
-    color: base.color,
-    isMissile: userData.equippedWeapon === 'missile'
-  };
+  const p = getProfile();
+  const base = WEAPONS[p.equippedWeapon] || WEAPONS.simple;
+  const lvl = p.weaponLevels[p.equippedWeapon] || 0;
+  return { dmg: base.dmg + lvl, shots: base.shots, color: base.color, isMissile: p.equippedWeapon === 'missile' };
 }
 
 function playerShoot(){
   const wStat = getWeaponStats();
   const s = playerScale();
-  const bx = player.x;
-  const by = player.y - player.h*s/2;
-  
-  const spacing = 14;
-  const totalWidth = (wStat.shots - 1) * spacing;
+  const bx = player.x, by = player.y - player.h*s/2;
+  const spacing = 14, totalWidth = (wStat.shots - 1) * spacing;
   
   for(let i=0; i<wStat.shots; i++){
     const ox = -totalWidth/2 + i*spacing;
     let angle = 0;
     if(wStat.shots > 1) angle = (i / (wStat.shots-1) - .5) * 0.15;
-    
-    state.bullets.push({
-      x: bx + ox, y: by,
-      r: wStat.isMissile ? 3 : 4,
-      vy: -900, vx: Math.sin(angle)*900,
-      dmg: wStat.dmg,
-      color: wStat.color,
-      isMissile: wStat.isMissile
-    });
+    state.bullets.push({ x: bx + ox, y: by, r: wStat.isMissile ? 3 : 4, vy: -900, vx: Math.sin(angle)*900, dmg: wStat.dmg, color: wStat.color, isMissile: wStat.isMissile });
   }
   spawnParticles(bx, by, 3, wStat.color, 90, .25, 2);
 }
 
 /* ============================================================
-   دشمنان (سرعت بیشتر + تنوع شکل)
+   دشمنان و باس
 ============================================================ */
 function spawnEnemy(){
   const s = playerScale();
-  const r = rand(14, 24) * s;
-  const speedBoost = 1 + (state.wave - 1) * 0.2; // 20% سریع‌تر در هر موج
-  const type = Math.floor(rand(0, 3)); // 3 نوع دشمن
-  
-  state.enemies.push({
-    x: rand(r+10, W-r-10),
-    y: -r-20,
-    r,
-    vy: (rand(90, 140) + state.wave*8) * speedBoost,
-    vx: rand(-50, 50) * speedBoost,
-    type: type,
-    rot: rand(0, Math.PI*2),
-    vrot: rand(-2, 2),
-    hp: 1,
-    maxHp: 1,
-    hitFlash: 0
-  });
+  const r = rand(22, 35) * s; 
+  const speedBoost = 1 + (state.wave - 1) * 0.2;
+  const type = Math.floor(rand(0, 3)); 
+  state.enemies.push({ x: rand(r+10, W-r-10), y: -r-20, r, vy: (rand(90, 140) + state.wave*8) * speedBoost, vx: rand(-50, 50) * speedBoost, type: type, rot: rand(0, Math.PI*2), vrot: rand(-2, 2), hp: 1, maxHp: 1, hitFlash: 0 });
 }
 
-/* ============================================================
-   باس
-============================================================ */
 const BOSS_TYPES = [
   { color:'#ff4dff', glow:'rgba(255,60,220,.3)', hpBase:25, speedBase:80 },
   { color:'#ff8a3d', glow:'rgba(255,140,60,.3)', hpBase:35, speedBase:100 },
@@ -433,109 +393,76 @@ function spawnBoss(){
   const scale = playerScale();
   const w = 220 * scale, h = 110 * scale;
   const speedBoost = 1 + (state.wave - 1) * 0.15;
-
-  state.boss = {
-    x: W/2, y: -h - 40, w, h,
-    vx: type.speedBase * speedBoost, dir: 1,
-    hp: type.hpBase + (state.wave - 1) * 8,
-    maxHp: type.hpBase + (state.wave - 1) * 8,
-    entering: true, shootStage: 0, shootTimer: 1.5,
-    cycles: 0, hitFlash: 0, typeIndex: waveIdx % 4,
-    color: type.color, glow: type.glow
-  };
+  state.boss = { x: W/2, y: -h - 40, w, h, vx: type.speedBase * speedBoost, dir: 1, hp: type.hpBase + (state.wave - 1) * 8, maxHp: type.hpBase + (state.wave - 1) * 8, entering: true, shootStage: 0, shootTimer: 1.5, cycles: 0, hitFlash: 0, typeIndex: waveIdx % 4, color: type.color, glow: type.glow };
   showMessage('باس وارد شد!', 2.2);
 }
 
 function bossShoot(){
-  const b = state.boss;
-  if(!b) return;
-  const counts = [3, 5, 7];
-  const n = counts[b.shootStage % 3];
+  const b = state.boss; if(!b) return;
+  const counts = [3, 5, 7]; const n = counts[b.shootStage % 3];
   const originX = b.x, originY = b.y + b.h/2 - 8;
   const baseAng = Math.atan2(player.y - originY, player.x - originX);
-  const spread = 0.5;
-  const bulletSpeed = 250 * (1 + (state.wave-1)*0.08);
-
+  const spread = 0.5; const bulletSpeed = 250 * (1 + (state.wave-1)*0.08);
   for(let i=0;i<n;i++){
-    const t = n===1? 0 : (i/(n-1) - .5);
-    const ang = baseAng + t*spread;
-    state.bossBullets.push({
-      x: originX, y: originY,
-      vx: Math.cos(ang)*bulletSpeed, vy: Math.sin(ang)*bulletSpeed,
-      r: 8, color: b.color, trail: []
-    });
+    const t = n===1? 0 : (i/(n-1) - .5); const ang = baseAng + t*spread;
+    state.bossBullets.push({ x: originX, y: originY, vx: Math.cos(ang)*bulletSpeed, vy: Math.sin(ang)*bulletSpeed, r: 8, color: b.color, trail: [] });
   }
-  b.shootStage++;
-  spawnParticles(originX, originY, 14, b.color, 200, .4, 3);
+  b.shootStage++; spawnParticles(originX, originY, 14, b.color, 200, .4, 3);
 }
 
 /* ============================================================
    شروع / پایان
 ============================================================ */
 function startGame(){
-  state.running = true;
-  state.over = false;
-  state.score = 0;
-  state.sessionCoins = 0;
-  state.lives = 3;
+  const p = getProfile();
+  if(!p) { switchTab('profile'); return; }
+
+  state.running = true; state.over = false; state.score = 0; state.sessionCoins = 0; state.lives = 3;
   state.enemies = []; state.bullets = []; state.bossBullets = []; state.particles = [];
-  state.boss = null; state.bossActive = false;
-  state.nextBossScore = 1000; state.wave = 1;
+  state.boss = null; state.bossActive = false; state.nextBossScore = 1000; state.wave = 1;
   state.spawnTimer = 0; state.shootTimer = 0; state.shake = 0;
 
   const s = playerScale();
-  player.x = W/2; player.y = H - 110*s;
-  player.targetX = player.x; player.targetY = player.y;
+  player.x = W/2; player.y = H - 110*s; player.targetX = player.x; player.targetY = player.y;
   player.alive = true; player.invuln = 0;
 
   pointerActive = false; pointerX = null; pointerY = null;
-
   updateHUD();
   document.getElementById('startMenu').style.display = 'none';
   msgEl.classList.remove('show');
 }
 
 function endGame(){
-  state.running = false;
-  state.over = true;
-
-  if(state.score > userData.record){
-    userData.record = state.score;
+  state.running = false; state.over = true;
+  const p = getProfile();
+  if(p){
+    if(state.score > p.record) p.record = state.score;
+    if(p.coins !== Infinity) p.coins += state.sessionCoins;
+    saveDB();
   }
-  userData.coins += state.sessionCoins;
   state.sessionCoins = 0;
-  SAVE.set('userData', userData);
   updateHUD();
 
   const menu = document.getElementById('startMenu');
   menu.style.display = 'flex';
   menu.querySelector('h1').textContent = 'GAME OVER';
   document.getElementById('startBtn').textContent = 'دوباره بازی کن';
-  document.getElementById('startStats').innerHTML =
-    `امتیاز: ${state.score}<br>رکورد: ${userData.record}<br>💰 ${userData.coins}`;
+  document.getElementById('startStats').innerHTML = `امتیاز: ${state.score}<br>رکورد: ${p.record}<br>💰 ${p.coins === Infinity ? '∞' : p.coins}`;
 }
 
 /* ============================================================
-   آپدیت
+   آپدیت بازی
 ============================================================ */
 function update(dt){
   if(msgTimer > 0){ msgTimer -= dt; if(msgTimer <= 0) msgEl.classList.remove('show'); }
   if(state.shake > 0) state.shake = Math.max(0, state.shake - dt*60);
   if(player.invuln > 0) player.invuln -= dt;
 
-  for(const s of state.stars){
-    s.y += s.s * dt * .55; s.tw += dt*3;
-    if(s.y > H + 3){ s.y = -3; s.x = Math.random()*W; }
-  }
-
+  for(const s of state.stars){ s.y += s.s * dt * .55; s.tw += dt*3; if(s.y > H + 3){ s.y = -3; s.x = Math.random()*W; } }
   if(!state.running) return;
 
-  const s = playerScale();
-  player.w = 74 * s; player.h = 62 * s;
-
-  // حرکت
-  const speedKeys = 800;
-  let kx = 0, ky = 0;
+  const s = playerScale(); player.w = 74 * s; player.h = 62 * s;
+  const speedKeys = 800; let kx = 0, ky = 0;
   if(keys['ArrowLeft'] || keys['a'] || keys['A']) kx -= 1;
   if(keys['ArrowRight']|| keys['d'] || keys['D']) kx += 1;
   if(keys['ArrowUp']   || keys['w'] || keys['W']) ky -= 1;
@@ -546,188 +473,93 @@ function update(dt){
     player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, player.targetX + kx/len*speedKeys*dt));
     player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, player.targetY + ky/len*speedKeys*dt));
   } else if(pointerActive && pointerX !== null){
-    if(isMobile){
-      player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, pointerX + touchOffsetX));
-      player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, pointerY + touchOffsetY));
-    } else {
-      player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, pointerX));
-      player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, pointerY));
-    }
+    if(isMobile){ player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, pointerX + touchOffsetX)); player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, pointerY + touchOffsetY)); }
+    else { player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, pointerX)); player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, pointerY)); }
   }
   player.x += (player.targetX - player.x) * Math.min(1, dt*16);
   player.y += (player.targetY - player.y) * Math.min(1, dt*16);
 
-  // شلیک
   state.shootTimer -= dt;
-  if(state.shootTimer <= 0 && player.alive){
-    const wStat = getWeaponStats();
-    state.shootTimer = wStat.isMissile ? 0.09 : 0.18; // مسلسل سریع‌تر
-    playerShoot();
-  }
+  if(state.shootTimer <= 0 && player.alive){ const wStat = getWeaponStats(); state.shootTimer = wStat.isMissile ? 0.09 : 0.18; playerShoot(); }
 
-  // اسپاون دشمن
   if(!state.bossActive){
     state.spawnTimer -= dt;
-    if(state.spawnTimer <= 0){
-      state.spawnTimer = Math.max(.3, state.spawnInterval - state.wave*0.05);
-      spawnEnemy();
-      if(Math.random() < .25 + state.wave*0.02) spawnEnemy();
-    }
+    if(state.spawnTimer <= 0){ state.spawnTimer = Math.max(.3, state.spawnInterval - state.wave*0.05); spawnEnemy(); if(Math.random() < .25 + state.wave*0.02) spawnEnemy(); }
   }
-
   if(!state.bossActive && state.score >= state.nextBossScore) spawnBoss();
   if(state.bossActive && state.boss) updateBoss(dt);
 
-  // تیرهای بازیکن
   for(let i=state.bullets.length-1;i>=0;i--){
-    const b = state.bullets[i];
-    b.x += b.vx*dt; b.y += b.vy*dt;
+    const b = state.bullets[i]; b.x += b.vx*dt; b.y += b.vy*dt;
     if(b.y < -20 || b.x < -20 || b.x > W+20){ state.bullets.splice(i,1); continue; }
-
     let removed = false;
     for(let j=state.enemies.length-1;j>=0;j--){
       const e = state.enemies[j];
       if(dist2(b.x,b.y,e.x,e.y) < (e.r + b.r)**2){
-        e.hp -= b.dmg;
-        e.hitFlash = .1;
-        if(e.hp <= 0){
-          state.enemies.splice(j,1);
-          spawnParticles(e.x, e.y, 16, '#00e5ff', 220, .55, 3);
-          addScore(30); addCoins(3);
-          state.shake = Math.max(state.shake, 3);
-        } else {
-          spawnParticles(b.x, b.y, 4, '#fff', 100, .2, 1);
-        }
-        state.bullets.splice(i,1);
-        removed = true;
-        break;
+        e.hp -= b.dmg; e.hitFlash = .1;
+        if(e.hp <= 0){ state.enemies.splice(j,1); spawnParticles(e.x, e.y, 16, '#00e5ff', 220, .55, 3); addScore(30); addCoins(3); state.shake = Math.max(state.shake, 3); }
+        else { spawnParticles(b.x, b.y, 4, '#fff', 100, .2, 1); }
+        state.bullets.splice(i,1); removed = true; break;
       }
     }
     if(removed) continue;
-
     if(state.bossActive && state.boss && !state.boss.entering){
       const bs = state.boss;
       if(Math.abs(b.x - bs.x) < bs.w/2 && Math.abs(b.y - bs.y) < bs.h/2){
-        state.bullets.splice(i,1);
-        bs.hp -= b.dmg;
-        bs.hitFlash = .1;
-        spawnParticles(b.x, b.y, 5, bs.color, 120, .3, 2);
+        state.bullets.splice(i,1); bs.hp -= b.dmg; bs.hitFlash = .1; spawnParticles(b.x, b.y, 5, bs.color, 120, .3, 2);
         if(bs.hp <= 0) killBoss();
       }
     }
   }
 
-  // دشمنان
   for(let i=state.enemies.length-1;i>=0;i--){
-    const e = state.enemies[i];
-    e.y += e.vy*dt; e.x += e.vx*dt; e.rot += e.vrot*dt;
+    const e = state.enemies[i]; e.y += e.vy*dt; e.x += e.vx*dt; e.rot += e.vrot*dt;
     if(e.hitFlash > 0) e.hitFlash -= dt;
-
     if(e.x < e.r){ e.x = e.r; e.vx = Math.abs(e.vx); }
     if(e.x > W-e.r){ e.x = W-e.r; e.vx = -Math.abs(e.vx); }
-
-    // برخورد با بازیکن
-    if(player.alive && player.invuln <= 0 && dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.4)**2){
-      state.enemies.splice(i,1);
-      hitPlayer();
-      continue;
-    }
-    
-    // رد شدن از پایین صفحه
-    if(e.y > H + e.r + 20){
-      state.enemies.splice(i,1);
-      hitPlayer(true); // true یعنی از نوع رد شدن
-    }
+    if(player.alive && player.invuln <= 0 && dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.4)**2){ state.enemies.splice(i,1); hitPlayer(); continue; }
+    if(e.y > H + e.r + 20){ state.enemies.splice(i,1); hitPlayer(true); }
   }
 
-  // تیرهای باس
   for(let i=state.bossBullets.length-1;i>=0;i--){
-    const b = state.bossBullets[i];
-    b.trail.push({x:b.x, y:b.y}); if(b.trail.length > 7) b.trail.shift();
-    b.x += b.vx*dt; b.y += b.vy*dt;
-
+    const b = state.bossBullets[i]; b.trail.push({x:b.x, y:b.y}); if(b.trail.length > 7) b.trail.shift(); b.x += b.vx*dt; b.y += b.vy*dt;
     if(b.x < -40 || b.x > W+40 || b.y < -40 || b.y > H+40){ state.bossBullets.splice(i,1); continue; }
-    if(player.alive && player.invuln <= 0 && dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){
-      state.bossBullets.splice(i,1);
-      hitPlayer();
-    }
+    if(player.alive && player.invuln <= 0 && dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){ state.bossBullets.splice(i,1); hitPlayer(); }
   }
 
-  // ذرات
   for(let i=state.particles.length-1;i>=0;i--){
-    const p = state.particles[i];
-    p.x += p.vx*dt; p.y += p.vy*dt;
-    p.vx *= (1 - 2.2*dt); p.vy *= (1 - 2.2*dt);
-    p.life -= dt;
+    const p = state.particles[i]; p.x += p.vx*dt; p.y += p.vy*dt; p.vx *= (1 - 2.2*dt); p.vy *= (1 - 2.2*dt); p.life -= dt;
     if(p.life <= 0) state.particles.splice(i,1);
   }
-
   updateHUD();
 }
 
 function updateBoss(dt){
-  const b = state.boss;
-  if(b.hitFlash > 0) b.hitFlash -= dt;
-
-  if(b.entering){
-    b.y += 130*dt;
-    if(b.y >= 120 * playerScale()){ b.y = 120 * playerScale(); b.entering = false; }
-    return;
-  }
-
-  b.x += b.vx * b.dir * dt;
-  const margin = b.w/2 + 10;
+  const b = state.boss; if(b.hitFlash > 0) b.hitFlash -= dt;
+  if(b.entering){ b.y += 130*dt; if(b.y >= 120 * playerScale()){ b.y = 120 * playerScale(); b.entering = false; } return; }
+  b.x += b.vx * b.dir * dt; const margin = b.w/2 + 10;
   if(b.x > W - margin){ b.x = W - margin; b.dir = -1; bossShoot(); }
   if(b.x < margin){ b.x = margin; b.dir = 1; bossShoot(); }
-
   b.shootTimer -= dt;
-  if(b.shootTimer <= 0){
-    b.shootTimer = Math.max(1.0, 1.8 - b.cycles*0.05);
-    bossShoot(); b.cycles++;
-  }
-
-  if(player.alive && player.invuln <= 0 &&
-     Math.abs(player.x - b.x) < b.w/2 + 10 && Math.abs(player.y - b.y) < b.h/2 + 14){
-    hitPlayer();
-  }
+  if(b.shootTimer <= 0){ b.shootTimer = Math.max(1.0, 1.8 - b.cycles*0.05); bossShoot(); b.cycles++; }
+  if(player.alive && player.invuln <= 0 && Math.abs(player.x - b.x) < b.w/2 + 10 && Math.abs(player.y - b.y) < b.h/2 + 14){ hitPlayer(); }
 }
 
 function killBoss(){
-  const b = state.boss;
-  spawnParticles(b.x, b.y, 70, b.color, 420, 1.1, 5);
-  spawnParticles(b.x, b.y, 40, '#ffffff', 300, .9, 4);
-  state.boss = null; state.bossActive = false;
-  state.shake = 18;
-  addScore(100);
-  state.wave++; state.nextBossScore += 1000;
+  const b = state.boss; spawnParticles(b.x, b.y, 70, b.color, 420, 1.1, 5); spawnParticles(b.x, b.y, 40, '#ffffff', 300, .9, 4);
+  state.boss = null; state.bossActive = false; state.shake = 18; addScore(100); state.wave++; state.nextBossScore += 1000;
   showMessage('موج بعدی', 1.8);
 }
 
 function hitPlayer(isFromBottom = false){
   if(!player.alive || player.invuln > 0) return;
-  state.lives--;
-  state.shake = 14;
-  player.invuln = 1.5;
-  
-  if(isFromBottom){
-    // افکت برای رد شدن از پایین
-    spawnParticles(player.x, H - 20, 10, '#ff3355', 150, .5, 3);
-  } else {
-    spawnParticles(player.x, player.y, 30, '#ff3355', 280, .8, 4);
-  }
-
-  if(state.lives <= 0){
-    player.alive = false;
-    spawnParticles(player.x, player.y, 60, '#ffcc00', 380, 1.2, 5);
-    setTimeout(endGame, 600);
-    state.running = false;
-  }
+  state.lives--; state.shake = 14; player.invuln = 1.5;
+  if(isFromBottom) spawnParticles(player.x, H - 20, 10, '#ff3355', 150, .5, 3);
+  else spawnParticles(player.x, player.y, 30, '#ff3355', 280, .8, 4);
+  if(state.lives <= 0){ player.alive = false; spawnParticles(player.x, player.y, 60, '#ffcc00', 380, 1.2, 5); setTimeout(endGame, 600); state.running = false; }
 }
 
-function addScore(n){
-  state.score += n;
-  if(state.score > userData.record){ userData.record = state.score; }
-}
+function addScore(n){ state.score += n; const p=getProfile(); if(p && state.score > p.record){ p.record = state.score; } }
 function addCoins(n){ state.sessionCoins += n; }
 
 /* ============================================================
@@ -737,204 +569,95 @@ function drawStars(){
   const shakeX = state.shake ? rand(-state.shake,state.shake) : 0;
   const shakeY = state.shake ? rand(-state.shake,state.shake) : 0;
   ctx.save(); ctx.translate(shakeX, shakeY);
-  for(const s of state.stars){
-    const tw = .6 + .4*Math.sin(s.tw);
-    ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${s.a*tw})`;
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
-  }
+  for(const s of state.stars){ const tw = .6 + .4*Math.sin(s.tw); ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${s.a*tw})`; ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); }
   ctx.restore();
 }
 
 function drawPlayer(){
   if(!player.alive) return;
-  const s = playerScale();
-  const ship = SHIPS[userData.equippedShip] || SHIPS.default;
-  
-  ctx.save();
-  ctx.translate(player.x, player.y);
-  ctx.scale(s, s);
-
-  if(player.invuln > 0){
-    const blink = Math.floor(player.invuln * 12) % 2;
-    ctx.globalAlpha = blink ? 0.35 : 1;
-  }
-
-  const g = ctx.createRadialGradient(0,0,4, 0,0,64);
-  g.addColorStop(0, ship.color2+'44');
-  g.addColorStop(1, ship.color2+'00');
+  const p = getProfile(); if(!p) return;
+  const s = playerScale(); const ship = SHIPS[p.equippedShip] || SHIPS.default;
+  ctx.save(); ctx.translate(player.x, player.y); ctx.scale(s, s);
+  if(player.invuln > 0){ const blink = Math.floor(player.invuln * 12) % 2; ctx.globalAlpha = blink ? 0.35 : 1; }
+  const g = ctx.createRadialGradient(0,0,4, 0,0,64); g.addColorStop(0, ship.color2+'44'); g.addColorStop(1, ship.color2+'00');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,64,0,Math.PI*2); ctx.fill();
-
   const w = 74/2, h = 62/2;
-  ctx.beginPath();
-  ctx.moveTo(0, -h - 6);
-  ctx.lineTo(w, h*0.55); ctx.lineTo(w*0.55, h*0.9);
-  ctx.lineTo(w*0.16, h*0.55); ctx.lineTo(0, h + 16);
-  ctx.lineTo(-w*0.16, h*0.55); ctx.lineTo(-w*0.55, h*0.9);
-  ctx.lineTo(-w, h*0.55);
-  ctx.closePath();
-
-  const pg = ctx.createLinearGradient(0,-h,0,h);
-  pg.addColorStop(0, ship.color1);
-  pg.addColorStop(.5, ship.color2);
-  pg.addColorStop(1, ship.color3);
-  ctx.fillStyle = pg;
-  ctx.shadowColor = ship.color2;
-  ctx.shadowBlur = 20;
-  ctx.fill();
-  ctx.lineWidth = 1.5; ctx.strokeStyle = ship.color1; ctx.stroke();
-
-  // موتور
-  const fl = 6 + Math.random()*7;
-  const eg = ctx.createLinearGradient(0,h,0,h+fl*2);
-  eg.addColorStop(0, ship.color1); eg.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = eg;
-  ctx.beginPath(); ctx.moveTo(-7, h*0.35); ctx.lineTo(7, h*0.35); ctx.lineTo(0, h + fl*2); ctx.fill();
-
+  ctx.beginPath(); ctx.moveTo(0, -h - 6); ctx.lineTo(w, h*0.55); ctx.lineTo(w*0.55, h*0.9); ctx.lineTo(w*0.16, h*0.55); ctx.lineTo(0, h + 16); ctx.lineTo(-w*0.16, h*0.55); ctx.lineTo(-w*0.55, h*0.9); ctx.lineTo(-w, h*0.55); ctx.closePath();
+  const pg = ctx.createLinearGradient(0,-h,0,h); pg.addColorStop(0, ship.color1); pg.addColorStop(.5, ship.color2); pg.addColorStop(1, ship.color3);
+  ctx.fillStyle = pg; ctx.shadowColor = ship.color2; ctx.shadowBlur = 20; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = ship.color1; ctx.stroke();
+  const fl = 6 + Math.random()*7; const eg = ctx.createLinearGradient(0,h,0,h+fl*2); eg.addColorStop(0, ship.color1); eg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = eg; ctx.beginPath(); ctx.moveTo(-7, h*0.35); ctx.lineTo(7, h*0.35); ctx.lineTo(0, h + fl*2); ctx.fill();
   ctx.restore();
 }
 
 function drawEnemy(e){
-  ctx.save();
-  ctx.translate(e.x, e.y);
-  ctx.rotate(e.rot);
-  
-  if(e.hitFlash > 0){
-    ctx.fillStyle = '#fff';
-    ctx.strokeStyle = '#fff';
-    ctx.shadowBlur = 0;
-  } else {
-    ctx.fillStyle = 'transparent';
-    ctx.strokeStyle = '#3ff5d0';
-    ctx.shadowColor = '#3ff5d0';
-    ctx.shadowBlur = 15;
-  }
-
-  ctx.beginPath();
-  const r = e.r;
-  if(e.type === 0){
-    // شش‌ضلعی
-    for(let i=0;i<6;i++){ const a = Math.PI/3*i - Math.PI/2; const px = Math.cos(a)*r, py = Math.sin(a)*r; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
-  } else if(e.type === 1){
-    // مربع چرخیده (الماسی)
-    ctx.moveTo(0,-r); ctx.lineTo(r*0.8,0); ctx.lineTo(0,r); ctx.lineTo(-r*0.8,0);
-  } else {
-    // مثلث
-    ctx.moveTo(0,-r); ctx.lineTo(r, r*0.7); ctx.lineTo(-r, r*0.7);
-  }
+  ctx.save(); ctx.translate(e.x, e.y); ctx.rotate(e.rot);
+  if(e.hitFlash > 0){ ctx.fillStyle = '#fff'; ctx.strokeStyle = '#fff'; ctx.shadowBlur = 0; }
+  else { ctx.fillStyle = 'transparent'; ctx.strokeStyle = '#3ff5d0'; ctx.shadowColor = '#3ff5d0'; ctx.shadowBlur = 15; }
+  ctx.beginPath(); const r = e.r;
+  if(e.type === 0){ for(let i=0;i<6;i++){ const a = Math.PI/3*i - Math.PI/2; const px = Math.cos(a)*r, py = Math.sin(a)*r; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); } }
+  else if(e.type === 1){ ctx.moveTo(0,-r); ctx.lineTo(r*0.8,0); ctx.lineTo(0,r); ctx.lineTo(-r*0.8,0); }
+  else { ctx.moveTo(0,-r); ctx.lineTo(r, r*0.7); ctx.lineTo(-r, r*0.7); }
   ctx.closePath();
-  
-  if(e.hitFlash > 0) ctx.fill();
-  else { ctx.lineWidth = 2.5; ctx.stroke(); }
-  
+  if(e.hitFlash > 0) ctx.fill(); else { ctx.lineWidth = 2.5; ctx.stroke(); }
   ctx.restore();
 }
 
 function drawBullets(){
   for(const b of state.bullets){
-    if(b.isMissile){
-      ctx.fillStyle = b.color;
-      ctx.shadowColor = b.color; ctx.shadowBlur = 10;
-      ctx.fillRect(b.x - 1.5, b.y - 6, 3, 12);
-    } else {
-      const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*3);
-      g.addColorStop(0,'#ffffff'); g.addColorStop(.3,b.color); g.addColorStop(1,'rgba(0,0,0,0)');
+    if(b.isMissile){ ctx.fillStyle = b.color; ctx.shadowColor = b.color; ctx.shadowBlur = 10; ctx.fillRect(b.x - 1.5, b.y - 6, 3, 12); }
+    else {
+      const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*3); g.addColorStop(0,'#ffffff'); g.addColorStop(.3,b.color); g.addColorStop(1,'rgba(0,0,0,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*3,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 10; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
     }
   }
 }
 
 function drawBossBullets(){
   for(const b of state.bossBullets){
-    for(let i=0;i<b.trail.length;i++){
-      const t = b.trail[i]; const a = (i / b.trail.length) * .45;
-      ctx.beginPath(); ctx.fillStyle = `rgba(255,80,230,${a})`;
-      ctx.arc(t.x, t.y, b.r*(i/b.trail.length)*0.9, 0, Math.PI*2); ctx.fill();
-    }
-    const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*4);
-    g.addColorStop(0,'#fff'); g.addColorStop(.25, b.color); g.addColorStop(1,'rgba(0,0,0,0)');
+    for(let i=0;i<b.trail.length;i++){ const t = b.trail[i]; const a = (i / b.trail.length) * .45; ctx.beginPath(); ctx.fillStyle = `rgba(255,80,230,${a})`; ctx.arc(t.x, t.y, b.r*(i/b.trail.length)*0.9, 0, Math.PI*2); ctx.fill(); }
+    const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*4); g.addColorStop(0,'#fff'); g.addColorStop(.25, b.color); g.addColorStop(1,'rgba(0,0,0,0)');
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*4,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 15;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*0.6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 15; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*0.6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
   }
 }
 
 function drawBoss(){
   const b = state.boss; if(!b) return;
   ctx.save(); ctx.translate(b.x, b.y);
-
-  const g = ctx.createRadialGradient(0,0,20, 0,0,b.w*0.9);
-  g.addColorStop(0, b.glow); g.addColorStop(1,'rgba(0,0,0,0)');
+  const g = ctx.createRadialGradient(0,0,20, 0,0,b.w*0.9); g.addColorStop(0, b.glow); g.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,b.w*0.9,0,Math.PI*2); ctx.fill();
-
   const w = b.w/2, h = b.h/2;
   ctx.beginPath();
-  if(b.typeIndex === 0){
-    ctx.moveTo(-w,-h*.3); ctx.lineTo(-w*.5,-h); ctx.lineTo(w*.5,-h); ctx.lineTo(w,-h*.3); ctx.lineTo(w*.6,h); ctx.lineTo(-w*.6,h);
-  } else if(b.typeIndex === 1){
-    ctx.moveTo(0,-h); ctx.lineTo(w,0); ctx.lineTo(0,h); ctx.lineTo(-w,0);
-  } else {
-    for(let i=0;i<8;i++){ const a=(i/8)*Math.PI*2 - Math.PI/2; const rad=i%2===0?w:w*.6; const px=Math.cos(a)*rad; const py=Math.sin(a)*h; if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py); }
-  }
+  if(b.typeIndex === 0){ ctx.moveTo(-w,-h*.3); ctx.lineTo(-w*.5,-h); ctx.lineTo(w*.5,-h); ctx.lineTo(w,-h*.3); ctx.lineTo(w*.6,h); ctx.lineTo(-w*.6,h); }
+  else if(b.typeIndex === 1){ ctx.moveTo(0,-h); ctx.lineTo(w,0); ctx.lineTo(0,h); ctx.lineTo(-w,0); }
+  else { for(let i=0;i<8;i++){ const a=(i/8)*Math.PI*2 - Math.PI/2; const rad=i%2===0?w:w*.6; const px=Math.cos(a)*rad; const py=Math.sin(a)*h; if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py); } }
   ctx.closePath();
-
-  const bg = ctx.createLinearGradient(0,-h,0,h);
-  bg.addColorStop(0, b.hitFlash>0 ? '#fff' : b.color);
-  bg.addColorStop(.5, b.hitFlash>0 ? '#fff' : '#333');
-  bg.addColorStop(1, b.hitFlash>0 ? '#fff' : '#000');
-  ctx.fillStyle = bg; ctx.shadowColor = b.color; ctx.shadowBlur = 25;
-  ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = b.color; ctx.stroke();
-
-  const hpW = b.w * 0.9;
-  ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(-hpW/2, -h - 22, hpW, 6);
-  const hpRatio = Math.max(0, b.hp / b.maxHp);
-  ctx.fillStyle = '#ff2e6e'; ctx.fillRect(-hpW/2, -h - 22, hpW*hpRatio, 6);
-
+  const bg = ctx.createLinearGradient(0,-h,0,h); bg.addColorStop(0, b.hitFlash>0 ? '#fff' : b.color); bg.addColorStop(.5, b.hitFlash>0 ? '#fff' : '#333'); bg.addColorStop(1, b.hitFlash>0 ? '#fff' : '#000');
+  ctx.fillStyle = bg; ctx.shadowColor = b.color; ctx.shadowBlur = 25; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = b.color; ctx.stroke();
+  const hpW = b.w * 0.9; ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(-hpW/2, -h - 22, hpW, 6);
+  const hpRatio = Math.max(0, b.hp / b.maxHp); ctx.fillStyle = '#ff2e6e'; ctx.fillRect(-hpW/2, -h - 22, hpW*hpRatio, 6);
   ctx.restore();
 }
 
 function drawParticles(){
-  for(const p of state.particles){
-    const a = Math.max(0, p.life / p.maxLife);
-    ctx.globalAlpha = a; ctx.beginPath(); ctx.fillStyle = p.color;
-    ctx.arc(p.x, p.y, p.size * a + .4, 0, Math.PI*2); ctx.fill();
-  }
+  for(const p of state.particles){ const a = Math.max(0, p.life / p.maxLife); ctx.globalAlpha = a; ctx.beginPath(); ctx.fillStyle = p.color; ctx.arc(p.x, p.y, p.size * a + .4, 0, Math.PI*2); ctx.fill(); }
   ctx.globalAlpha = 1;
 }
 
-/* ============================================================
-   حلقه اصلی
-============================================================ */
 function loop(t){
-  const dt = Math.min(.05, (t - state.lastTime)/1000 || 0);
-  state.lastTime = t;
-
-  update(dt);
-
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
-
+  const dt = Math.min(.05, (t - state.lastTime)/1000 || 0); state.lastTime = t;
+  update(dt); ctx.clearRect(0,0,W,H); ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
   drawStars();
-
-  ctx.save();
-  if(state.shake > 0) ctx.translate(rand(-state.shake,state.shake)*.5, rand(-state.shake,state.shake)*.5);
-
-  drawBoss();
-  for(const e of state.enemies) drawEnemy(e);
-  drawBullets();
-  drawBossBullets();
-  drawPlayer();
-  drawParticles();
-
+  ctx.save(); if(state.shake > 0) ctx.translate(rand(-state.shake,state.shake)*.5, rand(-state.shake,state.shake)*.5);
+  drawBoss(); for(const e of state.enemies) drawEnemy(e); drawBullets(); drawBossBullets(); drawPlayer(); drawParticles();
   ctx.restore();
-
   requestAnimationFrame(loop);
 }
 
 /* ============================================================
-   UI Logic (Tabs & Shop)
+   UI Logic (Tabs & Shop & Profile)
 ============================================================ */
 function switchTab(tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -944,10 +667,20 @@ function switchTab(tab){
     document.getElementById('navGame').classList.add('active');
     document.getElementById('pageGame').classList.add('active');
     resize();
-  } else {
+    const p = getProfile();
+    if(p) document.getElementById('startMenu').style.display = 'flex';
+  } else if(tab === 'shop'){
     document.getElementById('navShop').classList.add('active');
     document.getElementById('pageShop').classList.add('active');
     renderShop('weapons');
+  } else if(tab === 'profile'){
+    document.getElementById('navProfile').classList.add('active');
+    document.getElementById('pageProfile').classList.add('active');
+    renderProfileList();
+  } else if(tab === 'admin'){
+    document.getElementById('navAdmin').classList.add('active');
+    document.getElementById('pageAdmin').classList.add('active');
+    renderAdminList();
   }
 }
 
@@ -958,141 +691,219 @@ function switchCat(cat, btn){
 }
 
 function renderShop(cat){
-  const container = document.getElementById('shopItems');
-  container.innerHTML = '';
-  document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + userData.coins;
+  const container = document.getElementById('shopItems'); container.innerHTML = '';
+  const p = getProfile(); if(!p) return;
+  const totalCoins = p.coins === Infinity ? Infinity : p.coins + state.sessionCoins;
+  document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + (totalCoins === Infinity ? '∞' : totalCoins);
 
   if(cat === 'weapons'){
     for(const key in WEAPONS){
       const w = WEAPONS[key];
-      const isOwned = userData.ownedWeapons.includes(key);
-      const isEquipped = userData.equippedWeapon === key;
-      const lvl = userData.weaponLevels[key] || 0;
+      const isOwned = p.ownedWeapons.includes(key);
+      const isEquipped = p.equippedWeapon === key;
+      const lvl = p.weaponLevels[key] || 0;
       const nextPrice = Math.floor(w.price * 0.7 * Math.pow(1.8, lvl));
       
       let btnHTML = '';
-      if(isEquipped){
-        btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
-      } else if(isOwned){
-        btnHTML = `<button class="btn btn-equip" onclick="equipWeapon('${key}')">مجهز کردن</button>`;
-      } else {
-        btnHTML = `<button class="btn btn-buy" onclick="buyWeapon('${key}')">💰 ${w.price}</button>`;
-      }
-
+      if(isEquipped) btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
+      else if(isOwned) btnHTML = `<button class="btn btn-equip" onclick="equipWeapon('${key}')">مجهز کردن</button>`;
+      else btnHTML = `<button class="btn btn-buy" onclick="buyWeapon('${key}')">💰 ${w.price}</button>`;
+      
       let upgradeHTML = '';
-      if(isOwned){
-        upgradeHTML = `
-          <button class="btn btn-solid" onclick="upgradeWeapon('${key}')" style="margin-top:8px; padding:8px 15px; font-size:12px;">
-            ⚡ ارتقا Lvl ${lvl} - 💰 ${nextPrice}
-          </button>`;
-      }
+      if(isOwned) upgradeHTML = `<button class="btn btn-solid" onclick="upgradeWeapon('${key}')" style="margin-top:8px; padding:8px 15px; font-size:12px;">⚡ ارتقا Lvl ${lvl} - 💰 ${nextPrice}</button>`;
 
-      container.innerHTML += `
-        <div class="item-card ${isEquipped?'equipped':''}">
-          <div class="item-info">
-            <h3>${w.name}</h3>
-            <p>دمیج: ${w.dmg + lvl} | تعداد تیر: ${w.shots}</p>
-            ${upgradeHTML}
-          </div>
-          ${btnHTML}
-        </div>
-      `;
+      container.innerHTML += `<div class="item-card ${isEquipped?'equipped':''}"><div class="item-info"><h3>${w.name}</h3><p>دمیج: ${w.dmg + lvl} | تعداد تیر: ${w.shots}</p>${upgradeHTML}</div>${btnHTML}</div>`;
     }
   } else if(cat === 'ships'){
     for(const key in SHIPS){
       const s = SHIPS[key];
-      const isOwned = userData.ownedShips.includes(key);
-      const isEquipped = userData.equippedShip === key;
+      const isOwned = p.ownedShips.includes(key);
+      const isEquipped = p.equippedShip === key;
       
       let btnHTML = '';
-      if(isEquipped){
-        btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
-      } else if(isOwned){
-        btnHTML = `<button class="btn btn-equip" onclick="equipShip('${key}')">مجهز کردن</button>`;
-      } else {
-        btnHTML = `<button class="btn btn-buy" onclick="buyShip('${key}')">💰 ${s.price}</button>`;
-      }
+      if(isEquipped) btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
+      else if(isOwned) btnHTML = `<button class="btn btn-equip" onclick="equipShip('${key}')">مجهز کردن</button>`;
+      else btnHTML = `<button class="btn btn-buy" onclick="buyShip('${key}')">💰 ${s.price}</button>`;
 
-      container.innerHTML += `
-        <div class="item-card ${isEquipped?'equipped':''}">
-          <div class="item-info">
-            <h3>${s.name}</h3>
-            <p>ظاهر سفینه</p>
-            ${!isOwned ? `<p class="price">💰 ${s.price}</p>` : ''}
-          </div>
-          ${btnHTML}
-        </div>
-      `;
+      container.innerHTML += `<div class="item-card ${isEquipped?'equipped':''}"><div class="item-info"><h3>${s.name}</h3><p>ظاهر سفینه</p>${!isOwned ? `<p class="price">💰 ${s.price}</p>` : ''}</div>${btnHTML}</div>`;
     }
   }
 }
 
-function buyWeapon(key){
-  const w = WEAPONS[key];
-  if(userData.coins >= w.price){
-    userData.coins -= w.price;
-    userData.ownedWeapons.push(key);
-    SAVE.set('userData', userData);
-    renderShop('weapons');
-  } else {
-    alert('سکه کافی نیست!');
+function deductCoins(p, amount){
+  if(p.coins === Infinity) return;
+  const total = p.coins + state.sessionCoins;
+  if(total >= amount){
+    if(state.sessionCoins >= amount) state.sessionCoins -= amount;
+    else { const rem = amount - state.sessionCoins; state.sessionCoins = 0; p.coins -= rem; }
+    saveDB();
+    return true;
   }
+  return false;
 }
 
-function equipWeapon(key){
-  userData.equippedWeapon = key;
-  SAVE.set('userData', userData);
-  renderShop('weapons');
+function buyWeapon(key){
+  const w = WEAPONS[key]; const p = getProfile();
+  if(deductCoins(p, w.price)){ p.ownedWeapons.push(key); saveDB(); renderShop('weapons'); updateHUD(); }
+  else showMessage('موجودی کافی نیست', 1.5);
 }
+
+function equipWeapon(key){ const p = getProfile(); p.equippedWeapon = key; saveDB(); renderShop('weapons'); }
 
 function upgradeWeapon(key){
-  const w = WEAPONS[key];
-  const lvl = userData.weaponLevels[key] || 0;
+  const w = WEAPONS[key]; const p = getProfile(); const lvl = p.weaponLevels[key] || 0;
   const nextPrice = Math.floor(w.price * 0.7 * Math.pow(1.8, lvl));
-  
-  if(userData.coins >= nextPrice){
-    userData.coins -= nextPrice;
-    userData.weaponLevels[key] = lvl + 1;
-    SAVE.set('userData', userData);
-    renderShop('weapons');
-  } else {
-    alert('سکه کافی نیست!');
-  }
+  if(deductCoins(p, nextPrice)){ p.weaponLevels[key] = lvl + 1; saveDB(); renderShop('weapons'); updateHUD(); }
+  else showMessage('موجودی کافی نیست', 1.5);
 }
 
 function buyShip(key){
-  const s = SHIPS[key];
-  if(userData.coins >= s.price){
-    userData.coins -= s.price;
-    userData.ownedShips.push(key);
-    SAVE.set('userData', userData);
-    renderShop('ships');
-  } else {
-    alert('سکه کافی نیست!');
+  const s = SHIPS[key]; const p = getProfile();
+  if(deductCoins(p, s.price)){ p.ownedShips.push(key); saveDB(); renderShop('ships'); updateHUD(); }
+  else showMessage('موجودی کافی نیست', 1.5);
+}
+
+function equipShip(key){ const p = getProfile(); p.equippedShip = key; saveDB(); renderShop('ships'); }
+
+/* ============================================================
+   Profile Logic
+============================================================ */
+function renderProfileList(){
+  const list = document.getElementById('profileList'); list.innerHTML = '';
+  const p = getProfile();
+  
+  for(const id in db.profiles){
+    const prof = db.profiles[id];
+    const activeClass = (db.currentProfileId === id) ? 'active' : '';
+    const isAdminStr = prof.isAdmin ? ' 👑' : '';
+    
+    list.innerHTML += `
+      <div class="profile-item ${activeClass}" onclick="selectProfile('${id}')">
+        <div>
+          <div class="name">${prof.name}${isAdminStr}</div>
+          <div class="stats">💰 ${prof.coins === Infinity ? '∞' : prof.coins} | 🏆 ${prof.record}</div>
+        </div>
+        ${activeClass ? '<span style="color:#00e5ff; font-weight:bold;">فعال</span>' : ''}
+      </div>
+    `;
   }
 }
 
-function equipShip(key){
-  userData.equippedShip = key;
-  SAVE.set('userData', userData);
-  renderShop('ships');
+function createProfile(){
+  const nameInput = document.getElementById('newProfileName');
+  const name = nameInput.value.trim();
+  if(name.length < 2){ showMessage('نام باید حداقل ۲ حرف باشد', 1.5); return; }
+  if(db.profiles[name]){ showMessage('این نام قبلا وجود دارد', 1.5); return; }
+
+  db.profiles[name] = {
+    id: name, name: name, isAdmin: false, coins: 0, record: 0,
+    ownedWeapons: ['simple'], ownedShips: ['default'],
+    equippedWeapon: 'simple', equippedShip: 'default',
+    weaponLevels: { simple: 0 }
+  };
+  saveDB();
+  nameInput.value = '';
+  selectProfile(name);
 }
+
+function selectProfile(id){
+  db.currentProfileId = id;
+  saveDB();
+  updateHUD();
+  renderProfileList();
+  showMessage(`خوش آمدید ${db.profiles[id].name}`, 1.5);
+  setTimeout(()=> switchTab('game'), 800);
+}
+
+/* ============================================================
+   Admin Panel Logic
+============================================================ */
+function renderAdminList(){
+  const p = getProfile();
+  if(!p || !p.isAdmin){
+    document.getElementById('adminList').innerHTML = '<p style="color:red; text-align:center;">شما دسترسی ندارید.</p>';
+    return;
+  }
+
+  const list = document.getElementById('adminList');
+  const query = document.getElementById('adminSearch').value.trim().toLowerCase();
+  list.innerHTML = '';
+
+  for(const id in db.profiles){
+    const prof = db.profiles[id];
+    if(query && !prof.name.toLowerCase().includes(query)) continue;
+    
+    list.innerHTML += `
+      <div class="item-card" style="flex-direction:column; align-items:stretch; gap:10px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="font-weight:bold; color:#00e5ff;">${prof.name}</span>
+          <span style="color:#ffd45e;">💰 ${prof.coins === Infinity ? '∞' : prof.coins}</span>
+        </div>
+        <div class="input-group" style="margin:0;">
+          <input type="number" id="admin_amount_${id}" placeholder="مقدار سکه..." style="padding:8px;">
+          <button class="btn btn-buy" onclick="adminGiveCoins('${id}')" style="padding:8px 15px;">افزودن</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function adminGiveCoins(targetId){
+  const p = getProfile();
+  if(!p || !p.isAdmin) return;
+
+  const amountInput = document.getElementById('admin_amount_' + targetId);
+  const amount = parseInt(amountInput.value);
+  
+  if(isNaN(amount) || amount <= 0){ showMessage('مقدار نامعتبر', 1.5); return; }
+
+  const target = db.profiles[targetId];
+  if(target){
+    if(target.coins === Infinity){
+      showMessage('این کاربر پول بی‌نهایت دارد', 1.5);
+      return;
+    }
+    target.coins += amount;
+    saveDB();
+    renderAdminList();
+    updateHUD();
+    showMessage(`💰 ${amount} سکه به ${target.name} داده شد`, 2);
+  }
+}
+
+/* ============================================================
+   دکمه مخفی باز کردن پنل ادمین (کلیک 5 بار روی لوگوی بازی)
+============================================================ */
+let logoClicks = 0;
+document.getElementById('mainLogo').addEventListener('click', ()=>{
+  logoClicks++;
+  if(logoClicks >= 5){
+    document.getElementById('navAdmin').style.display = 'flex';
+    showMessage('👑 پنل مالک فعال شد', 2);
+    logoClicks = 0;
+  }
+  setTimeout(()=> { logoClicks = 0; }, 2000);
+});
 
 /* ============================================================
    شروع اولیه
 ============================================================ */
 document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('startStats').innerHTML = `رکورد: ${userData.record}<br>💰 ${userData.coins}`;
 
-const _s = playerScale();
-player.x = 150; player.y = H - 100;
-player.targetX = player.x; player.targetY = player.y;
+function initApp(){
+  const p = getProfile();
+  if(p){
+    document.getElementById('startStats').innerHTML = `پروفایل: ${p.name}<br>💰 ${p.coins === Infinity ? '∞' : p.coins}`;
+  } else {
+    switchTab('profile');
+  }
+  updateHUD();
+}
+initApp();
 
-// ذخیره هنگام خروج
-window.addEventListener('beforeunload', ()=>{
-  SAVE.set('userData', userData);
-});
+const _s = playerScale(); player.x = 150; player.y = H - 100; player.targetX = player.x; player.targetY = player.y;
 
+window.addEventListener('beforeunload', ()=> saveDB());
 requestAnimationFrame(loop);
 </script>
 </body>
