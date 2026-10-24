@@ -128,23 +128,19 @@
 
     <script type="module">
         // ==========================================
-        // ۱. وارد کردن کتابخانه Scorezilla
+        // ۱. وارد کردن کتابخانه Scorezilla (روش درست)
         // ==========================================
-        import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
+        import { createHeadlessClient } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
-        // ✅ حلزون تخته شما در داشبورد (Slug)
         const SCOREZILLA_BOARD_ID = "apachi-main"; 
-        
-        // ✅ کلید عمومی شما
         const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
-        let scorezilla = null;
+        let sz = null;
         let isScorezillaReady = false;
 
         try {
-            scorezilla = new Scorezilla({
-                publicKey: SCOREZILLA_PUBLIC_KEY,
-                boardId: SCOREZILLA_BOARD_ID
+            sz = createHeadlessClient({
+                publicKey: SCOREZILLA_PUBLIC_KEY
             });
             isScorezillaReady = true;
             console.log("Scorezilla متصل شد.");
@@ -337,7 +333,7 @@
         async function sendScoreToLeaderboard(score) {
             if (!isScorezillaReady || score <= 0) return;
             try {
-                await scorezilla.submitScore({
+                await sz.submit({
                     boardId: SCOREZILLA_BOARD_ID,
                     playerId: player.code,
                     score: score,
@@ -362,7 +358,7 @@
             listEl.innerHTML = '';
 
             try {
-                const results = await scorezilla.getLeaderboard({ 
+                const results = await sz.getLeaderboard({ 
                     boardId: SCOREZILLA_BOARD_ID, 
                     top: 20 
                 });
@@ -678,4 +674,4 @@
         });
     </script>
 </body>
-    </html>
+                    </html>
