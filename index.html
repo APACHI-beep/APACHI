@@ -128,11 +128,11 @@
 
     <script>
         // ==========================================
-        // ۱. تنظیمات Scorezilla
+        // ۱. تنظیمات Scorezilla (با استفاده از آدرس اصلی)
         // ==========================================
         const BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
         const PUBLIC_KEY = "pk_apachi_DpoZiszBhOQY7rJ3ysf5g6"; 
-        const API_URL = "https://api.scorezilla.dev/v1"; 
+        const API_URL = "https://scorezilla.dev/api"; // آدرس اصلی
 
         // ==========================================
         // ۲. دیتای بازی
@@ -314,7 +314,7 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla - روش مستقیم fetch)
+        // ۵. لیدربرد آنلاین (Scorezilla)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (score <= 0) return;
@@ -346,7 +346,7 @@
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
                     statusEl.style.display = 'block'; statusEl.className = 'empty-text';
-                    statusEl.innerText = 'هنوز رکوردی ثبت نشده. اولین نفر باش!';
+                    statusEl.innerText = 'هنوز رکوردی ثبت نشده.';
                     return;
                 }
                 
@@ -652,4 +652,4 @@
         });
     </script>
 </body>
-    </html>
+                    </html>
