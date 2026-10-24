@@ -126,34 +126,32 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-
+    <script src="https://cdn.scorezilla.dev/sdk.js"></script>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAs1GewY6v9RR5MACBvhd8zXef-9XdEBco",
-            authDomain: "apachi-90001.firebaseapp.com",
-            projectId: "apachi-90001",
-            storageBucket: "apachi-90001.firebasestorage.app",
-            messagingSenderId: "234791141191",
-            appId: "1:234791141191:web:65d184b96bdb702f081662",
-            measurementId: "G-8924N4CT9Q"
-        };
+        // ==========================================
+        // تنظیمات Scorezilla
+        // ==========================================
+        const SCOREZILLA_BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
+        const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
-        let db = null;
-        let isFirebaseReady = false;
+        let isScorezillaReady = false;
 
-        try {
-            if (typeof firebase !== 'undefined') {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                firebase.auth().signInAnonymously().then(() => {
-                    isFirebaseReady = true;
-                }).catch(e => console.error("Auth Error:", e));
+        window.addEventListener('load', () => {
+            if (typeof Scorezilla !== 'undefined') {
+                try {
+                    Scorezilla.init({
+                        publicKey: SCOREZILLA_PUBLIC_KEY,
+                        boardId: SCOREZILLA_BOARD_ID
+                    });
+                    isScorezillaReady = true;
+                    console.log("Scorezilla متصل شد.");
+                } catch (e) { console.error("خطا در اتصال به Scorezilla:", e); }
             }
-        } catch (e) { console.error("Init Error:", e); }
+        });
 
+        // ==========================================
+        // دیتای بازی
+        // ==========================================
         const weaponsData = {
             laser: { name: 'لیزر ساده', damage: 1, bullets: 1, buyCost: 0, upgCost: 200, icon: '🔫' },
             twin: { name: 'شلیک دوقلو', damage: 1, bullets: 2, buyCost: 100, upgCost: 200, icon: '⚡' },
@@ -191,7 +189,6 @@
 
         if (!player.name) player.name = 'خلبان ' + Math.floor(Math.random() * 9000 + 1000);
 
-        // اصلاحیه مهم: ذخیره و آپدیت دیتا قبل از رندر شدن UI
         function saveGame() {
             try { localStorage.setItem(SAVE_KEY, JSON.stringify(player)); } catch(e) {}
             updateUI();
@@ -273,7 +270,6 @@
             document.getElementById('avatar-list').innerHTML = avatarsHTML;
         }
 
-        // اصلاحیه خریدها برای رفع باگ ثبت نشدن
         function buyWeapon(key) {
             if (player.coins >= weaponsData[key].buyCost && !player.ownedWeapons.includes(key)) {
                 player.coins -= weaponsData[key].buyCost; 
@@ -326,58 +322,75 @@
             alert('پروفایل ذخیره شد! ✅');
         }
 
-        function sendScoreToLeaderboard(score) {
-            if (!isFirebaseReady || score <= 0) return;
-            db.collection("leaderboard").add({
-                name: player.name, avatar: player.avatar, score: score, timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).catch(e => console.error("Send Score Error:", e));
+        // ==========================================
+        // لیدربرد آنلاین (Scorezilla)
+        // ==========================================
+        async function sendScoreToLeaderboard(score) {
+            if (!isScorezillaReady || score <= 0) return;
+            try {
+                await Scorezilla.submitScore(score, {
+                    playerName: player.name,
+                    metadata: { avatar: player.avatar }
+                });
+                console.log("امتیاز ثبت شد.");
+            } catch (e) {
+                console.error("خطا در ارسال امتیاز:", e);
+            }
         }
 
-        function loadOnlineLeaderboard() {
+        async function loadOnlineLeaderboard() {
             const statusEl = document.getElementById('leaderboard-status');
             const listEl = document.getElementById('leaderboard-list');
             
-            if (!isFirebaseReady) {
+            if (!isScorezillaReady) {
                 statusEl.style.display = 'block'; statusEl.className = 'error-text';
-                statusEl.innerText = 'اتصال به سرور برقرار نیست (از فیلترشکن استفاده کنید یا قوانین دیتابیس را چک کنید).';
+                statusEl.innerText = 'اتصال به سرور برقرار نیست. (کلید عمومی Scorezilla تنظیم نشده است).';
                 listEl.innerHTML = ''; return;
             }
             statusEl.style.display = 'block'; statusEl.className = 'loading-text'; statusEl.innerText = 'در حال دریافت...';
             listEl.innerHTML = '';
 
-            db.collection("leaderboard").orderBy("score", "desc").limit(20).get()
-                .then(snap => {
-                    statusEl.style.display = 'none';
-                    if (snap.empty) {
-                        statusEl.style.display = 'block'; statusEl.className = 'empty-text';
-                        statusEl.innerText = 'هنوز رکوردی ثبت نشده. اولین نفر باش!';
-                        return;
-                    }
-                    let html = ''; let rank = 1;
-                    snap.forEach(doc => {
-                        const data = doc.data();
-                        let rankColor = '#fff', rankIcon = `${rank}.`;
-                        if (rank === 1) { rankColor = '#ffd700'; rankIcon = '🥇'; }
-                        else if (rank === 2) { rankColor = '#c0c0c0'; rankIcon = '🥈'; }
-                        else if (rank === 3) { rankColor = '#cd7f32'; rankIcon = '🥉'; }
-                        html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; border-color: ${rank <= 3 ? rankColor : '#1a3a2a'}">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:20px;">${rankIcon}</span>
-                                <span style="font-size:24px;">${data.avatar || '👻'}</span>
-                                <span style="font-size:16px; font-weight:bold; color:${rankColor};">${data.name}</span>
-                            </div>
-                            <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score} <span style="font-size:12px; color:#888;">امتیاز</span></span>
-                        </div>`;
-                        rank++;
-                    });
-                    listEl.innerHTML = html;
-                }).catch(e => {
-                    console.error(e);
-                    statusEl.style.display = 'block'; statusEl.className = 'error-text';
-                    statusEl.innerText = 'خطا در دریافت اطلاعات. (قوانین Firestore را روی حالت Test قرار دهید).';
+            try {
+                const results = await Scorezilla.getScores({ limit: 20 });
+                
+                statusEl.style.display = 'none';
+                if (!results || results.length === 0) {
+                    statusEl.style.display = 'block'; statusEl.className = 'empty-text';
+                    statusEl.innerText = 'هنوز رکوردی ثبت نشده. اولین نفر باش!';
+                    return;
+                }
+                
+                let html = ''; let rank = 1;
+                results.forEach(data => {
+                    let rankColor = '#fff', rankIcon = `${rank}.`;
+                    if (rank === 1) { rankColor = '#ffd700'; rankIcon = '🥇'; }
+                    else if (rank === 2) { rankColor = '#c0c0c0'; rankIcon = '🥈'; }
+                    else if (rank === 3) { rankColor = '#cd7f32'; rankIcon = '🥉'; }
+                    
+                    const name = data.metadata?.playerName || data.playerName || 'ناشناس';
+                    const avatar = data.metadata?.avatar || '👻';
+                    
+                    html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; border-color: ${rank <= 3 ? rankColor : '#1a3a2a'}">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:20px;">${rankIcon}</span>
+                            <span style="font-size:24px;">${avatar}</span>
+                            <span style="font-size:16px; font-weight:bold; color:${rankColor};">${name}</span>
+                        </div>
+                        <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score} <span style="font-size:12px; color:#888;">امتیاز</span></span>
+                    </div>`;
+                    rank++;
                 });
+                listEl.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                statusEl.style.display = 'block'; statusEl.className = 'error-text';
+                statusEl.innerText = 'خطا در دریافت اطلاعات. (تنظیمات تخته را چک کنید).';
+            }
         }
 
+        // ==========================================
+        // موتور بازی
+        // ==========================================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let isGamePaused = true;
@@ -496,7 +509,6 @@
             ship.y += (ship.targetY - ship.y) * 0.2;
             drawShip();
 
-            // شلیک بازیکن
             if (ship.isDragging && timestamp - gameState.lastShot > 250) {
                 const weapon = weaponsData[player.equippedWeapon];
                 const dmg = weapon.damage + (player.weaponLevels[player.equippedWeapon] || 0);
@@ -513,7 +525,6 @@
                 gameState.lastShot = timestamp;
             }
 
-            // حرکت تیرهای بازیکن
             for (let i = gameState.bullets.length - 1; i >= 0; i--) {
                 let b = gameState.bullets[i]; b.y -= 10;
                 ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = b.color;
@@ -521,7 +532,6 @@
                 if (b.y < 0) gameState.bullets.splice(i, 1);
             }
 
-            // اسپاون باس
             if (!gameState.bossActive && gameState.score >= gameState.nextBossScore) {
                 gameState.bossActive = true;
                 gameState.enemies.push({ x: canvas.width / 2, y: -60, radius: 40,
@@ -531,7 +541,6 @@
                 showWaveText("⚠️ باس وارد شد! ⚠️");
             }
 
-            // اسپاون دشمنان عادی
             if (!gameState.bossActive) {
                 gameState.spawnTimer += 16;
                 if (gameState.spawnTimer > gameState.spawnInterval) {
@@ -543,47 +552,37 @@
                 }
             }
 
-            // شلیک باس
             if (gameState.bossActive) {
                 gameState.bossShootTimer += 16;
                 if (gameState.bossShootTimer > gameState.bossShootInterval) {
                     gameState.bossShootTimer = 0;
                     const boss = gameState.enemies.find(e => e.isBoss);
                     if (boss) {
-                        // شلیک به سمت سفینه
                         const dx = ship.x - boss.x;
                         const dy = ship.y - boss.y;
                         const distance = Math.sqrt(dx*dx + dy*dy);
                         const speed = 4;
                         
                         gameState.enemyBullets.push({
-                            x: boss.x,
-                            y: boss.y + boss.radius,
-                            vx: (dx / distance) * speed,
-                            vy: (dy / distance) * speed,
+                            x: boss.x, y: boss.y + boss.radius,
+                            vx: (dx / distance) * speed, vy: (dy / distance) * speed,
                             radius: 6
                         });
                     }
                 }
             }
 
-            // حرکت و برخورد تیرهای باس
             for (let i = gameState.enemyBullets.length - 1; i >= 0; i--) {
                 let eb = gameState.enemyBullets[i];
-                eb.x += eb.vx;
-                eb.y += eb.vy;
+                eb.x += eb.vx; eb.y += eb.vy;
                 
                 ctx.save(); 
                 ctx.shadowBlur = 15; ctx.shadowColor = '#ff0044';
                 ctx.fillStyle = '#ff0044'; 
-                ctx.beginPath(); 
-                ctx.arc(eb.x, eb.y, eb.radius, 0, Math.PI * 2); 
-                ctx.fill(); 
+                ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.radius, 0, Math.PI * 2); ctx.fill(); 
                 ctx.restore();
 
-                // برخورد تیر باس با سفینه
-                let dx = eb.x - ship.x;
-                let dy = eb.y - ship.y;
+                let dx = eb.x - ship.x; let dy = eb.y - ship.y;
                 if (Math.sqrt(dx*dx + dy*dy) < eb.radius + 15) {
                     gameState.enemyBullets.splice(i, 1);
                     createParticles(ship.x, ship.y, '#ff0044');
@@ -591,13 +590,11 @@
                     continue;
                 }
 
-                // حذف تیر خارج از صفحه
                 if (eb.x < -20 || eb.x > canvas.width + 20 || eb.y > canvas.height + 20 || eb.y < -20) {
                     gameState.enemyBullets.splice(i, 1);
                 }
             }
 
-            // پردازش دشمنان
             for (let i = gameState.enemies.length - 1; i >= 0; i--) {
                 let e = gameState.enemies[i];
                 if (e.isBoss) { if (e.y < 100) e.y += e.speed; } 
@@ -613,7 +610,6 @@
                     gameState.enemies.splice(i, 1); loseLife(); continue;
                 }
                 
-                // برخورد تیرهای بازیکن با دشمنان
                 for (let j = gameState.bullets.length - 1; j >= 0; j--) {
                     let b = gameState.bullets[j]; 
                     let bdx = e.x - b.x, bdy = e.y - b.y;
@@ -670,4 +666,4 @@
         });
     </script>
 </body>
-    </html>
+                                                                                                                               </html>
