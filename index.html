@@ -56,6 +56,7 @@
         .loading-text { text-align: center; color: #00f0ff; margin-top: 20px; font-size: 16px; }
         .error-text { text-align: center; color: #ff2a2a; margin-top: 20px; font-size: 16px; }
         .empty-text { text-align: center; color: #888; margin-top: 20px; font-size: 16px; }
+        #lb-error { display: none; }
     </style>
 </head>
 <body>
@@ -314,17 +315,53 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla)
+        // ۵. لیدربرد آنلاین (Scorezilla با محافظت کامل از کرش)
         // ==========================================
+        
+        function showLeaderboardError(msg) {
+            let el = document.getElementById('lb-error');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'lb-error';
+                el.style.cssText = 'position:fixed;bottom:10px;left:10px;background:rgba(200,0,0,0.8);color:white;padding:5px 10px;border-radius:5px;font-size:12px;z-index:9999;';
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function hideLeaderboardError() {
+            const el = document.getElementById('lb-error');
+            if (el) el.style.display = 'none';
+        }
+
+        async function safeFetch(url, options = {}) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000); // 6 ثانیه تایم‌اوت
+
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.warn('Leaderboard request failed:', error.message);
+                throw error;
+            }
+        }
+
         async function sendScoreToLeaderboard(score) {
             if (score <= 0) return;
             try {
-                await fetch(`${API_URL}/scores`, {
+                await safeFetch(`${API_URL}/scores`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${PUBLIC_KEY}` },
                     body: JSON.stringify({ boardId: BOARD_ID, playerId: player.code, score: score, name: player.name })
                 });
-            } catch (e) { console.error("Submit error:", e); }
+            } catch (e) { 
+                showLeaderboardError('ثبت امتیاز آنلاین ممکن نیست.');
+            }
         }
 
         async function loadOnlineLeaderboard() {
@@ -337,11 +374,9 @@
             listEl.innerHTML = '';
 
             try {
-                const response = await fetch(`${API_URL}/leaderboard/${BOARD_ID}?limit=20`, {
+                const results = await safeFetch(`${API_URL}/leaderboard/${BOARD_ID}?limit=20`, {
                     headers: { 'Authorization': `Bearer ${PUBLIC_KEY}` }
                 });
-                if (!response.ok) throw new Error("HTTP Error");
-                const results = await response.json();
                 
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
@@ -367,10 +402,12 @@
                     rank++;
                 });
                 listEl.innerHTML = html;
+                hideLeaderboardError();
             } catch (e) {
                 console.error(e);
                 statusEl.style.display = 'block'; statusEl.className = 'error-text';
-                statusEl.innerText = 'خطا در دریافت اطلاعات. (تنظیمات تخته را چک کنید).';
+                statusEl.innerText = 'خطا در دریافت اطلاعات. (لیدربرد در دسترس نیست)';
+                showLeaderboardError('لیدربرد در دسترس نیست.');
             }
         }
 
@@ -652,4 +689,4 @@
         });
     </script>
 </body>
-                </html>
+                        </html>
