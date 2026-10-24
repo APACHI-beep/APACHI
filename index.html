@@ -128,13 +128,15 @@
 
     <script type="module">
         // ==========================================
-        // ۱. Scorezilla SDK (روش صحیح طبق مستندات)
+        // ۱. وارد کردن کتابخانه Scorezilla
         // ==========================================
         import { createHeadlessClient } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
-        // UUID تخته (مقدار صحیح مورد نیاز API)
+        // ✅ UUID تخته (از داشبورد خودت)
         const BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
-        const PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
+        
+        // ✅ کلید عمومی جدید (از عکسی که فرستادی)
+        const PUBLIC_KEY = "pk_apachi_DpoZiszBhOQY7rJ3ysf5g6"; 
 
         let sz = null;
         let isReady = false;
@@ -142,7 +144,7 @@
         try {
             sz = createHeadlessClient({ publicKey: PUBLIC_KEY });
             isReady = true;
-            console.log("Scorezilla آماده است.");
+            console.log("Scorezilla متصل شد.");
         } catch (e) {
             console.error("Scorezilla Init Error:", e);
         }
@@ -327,21 +329,20 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد (Scorezilla - روش استاندارد Headless)
+        // ۵. لیدربرد آنلاین (Scorezilla)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (!isReady || score <= 0) return;
             try {
-                // استفاده از متد submit (طبق مستندات Headless)
-                const result = await sz.submit({
+                await sz.submit({
                     boardId: BOARD_ID,
                     playerId: player.code,
                     score: score,
                     name: player.name
                 });
-                if (result) console.log("امتیاز ثبت شد، رتبه:", result.rank);
+                console.log("امتیاز ثبت شد.");
             } catch (e) {
-                console.error("Submit Error:", e);
+                console.error("خطا در ارسال امتیاز:", e);
             }
         }
 
@@ -358,7 +359,10 @@
             listEl.innerHTML = '';
 
             try {
-                const results = await sz.getLeaderboard({ boardId: BOARD_ID, top: 20 });
+                const results = await sz.getLeaderboard({ 
+                    boardId: BOARD_ID, 
+                    top: 20 
+                });
                 
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
@@ -379,7 +383,7 @@
                             <span style="font-size:20px;">${rankIcon}</span>
                             <span style="font-size:16px; font-weight:bold; color:${rankColor};">${data.name || data.playerId || 'ناشناس'}</span>
                         </div>
-                        <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score}</span>
+                        <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score} <span style="font-size:12px; color:#888;">امتیاز</span></span>
                     </div>`;
                     rank++;
                 });
@@ -387,7 +391,7 @@
             } catch (e) {
                 console.error("Leaderboard Error:", e);
                 statusEl.style.display = 'block'; statusEl.className = 'error-text';
-                statusEl.innerText = 'خطا در دریافت اطلاعات.';
+                statusEl.innerText = 'خطا در دریافت اطلاعات. (تنظیمات تخته را چک کنید).';
             }
         }
 
@@ -669,4 +673,4 @@
         });
     </script>
 </body>
-</html>￼Enter
+                                        </html>
