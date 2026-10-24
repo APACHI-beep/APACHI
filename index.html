@@ -16,7 +16,6 @@
   #game{position:fixed;inset:0;background:#000}
   canvas{display:block;width:100%;height:100%;touch-action:none}
 
-  /* ---------- HUD ---------- */
   .hud{position:absolute;top:0;left:0;right:0;
        padding:calc(8px + env(safe-area-inset-top)) 12px 0 12px;
        display:flex;justify-content:space-between;align-items:flex-start;
@@ -24,14 +23,20 @@
        text-shadow:0 0 8px rgba(0,200,255,.8)}
   .hud .left{text-align:left;direction:ltr;line-height:1.15}
   .hud .right{text-align:right}
-  .hearts{font-size:22px;letter-spacing:2px;color:#ff3b5c;
-          text-shadow:0 0 10px #ff3b5c,0 0 22px #ff0033}
+  /* قلب‌های ایموجی واقعی گوشی */
+  .hearts{
+    font-size:26px;
+    letter-spacing:2px;
+    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+    filter:drop-shadow(0 0 6px rgba(255,60,90,.85)) drop-shadow(0 0 14px rgba(255,0,50,.5));
+    line-height:1;
+  }
   .label{font-size:9px;opacity:.7;letter-spacing:1px}
   .score{font-size:18px;font-weight:bold;color:#7ef9ff}
   .record{font-size:12px;color:#ffd45e;margin-bottom:1px}
-  .coins{font-size:15px;color:#ffe066;margin-top:2px}
+  .coins{font-size:15px;color:#ffe066;margin-top:2px;
+    font-family:inherit,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 
-  /* ---------- Center message ---------- */
   #msg{position:absolute;inset:0;display:flex;align-items:center;
        justify-content:center;pointer-events:none;z-index:6;padding:0 16px}
   #msg span{font-size:clamp(26px,8vw,44px);font-weight:bold;color:#fff;opacity:0;
@@ -40,7 +45,6 @@
        transition:opacity .35s, transform .35s;transform:scale(.8)}
   #msg span.show{opacity:1;transform:scale(1)}
 
-  /* ---------- Start screen ---------- */
   #start{position:absolute;inset:0;z-index:10;display:flex;
     flex-direction:column;align-items:center;justify-content:center;
     background:radial-gradient(circle at 50% 45%,#061a2e 0%,#000 70%);
@@ -70,7 +74,7 @@
       <div class="coins" id="coins">💰 0</div>
     </div>
     <div class="right">
-      <div class="hearts" id="hearts">❤❤❤</div>
+      <div class="hearts" id="hearts"></div>
     </div>
   </div>
 
@@ -139,16 +143,13 @@ const state = {
   time: 0
 };
 
-/* ============================================================
-   سفینه بازیکن
-============================================================ */
 const player = {
   x: 0, y: 0, w: 74, h: 62,
   targetX: 0, targetY: 0,
-  alive: true
+  alive: true,
+  invuln: 0
 };
 
-/* مقیاس بازیکن بر اساس عرض صفحه */
 function playerScale(){ return Math.max(0.7, Math.min(1, W / 480)); }
 
 /* ============================================================
@@ -171,11 +172,11 @@ function makeStars(){
 makeStars();
 
 /* ============================================================
-   ورودی لمسی و موس
+   ورودی
 ============================================================ */
 let pointerActive = false;
 let pointerX = null, pointerY = null;
-let touchOffsetX = 0, touchOffsetY = 0;  // برای جابجایی نسبی
+let touchOffsetX = 0, touchOffsetY = 0;
 
 function getPoint(e){
   if(e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -192,7 +193,6 @@ cv.addEventListener('mousemove', e=>{
 cv.addEventListener('touchstart', e=>{
   const p = getPoint(e);
   pointerX = p.x; pointerY = p.y;
-  // آفست نسبی: انگشت هر جا باشد سفینه از همان‌جا شروع می‌کند
   touchOffsetX = player.x - p.x;
   touchOffsetY = player.y - p.y;
   pointerActive = true;
@@ -205,12 +205,8 @@ cv.addEventListener('touchmove', e=>{
   e.preventDefault();
 }, {passive:false});
 
-cv.addEventListener('touchend', e=>{
-  // انگشت را برنداریم (سفینه ثابت می‌ماند)
-  e.preventDefault();
-}, {passive:false});
+cv.addEventListener('touchend', e=> e.preventDefault(), {passive:false});
 
-/* کیبورد هم برای دسکتاپ */
 const keys = {};
 addEventListener('keydown', e=>{
   keys[e.key] = true;
@@ -239,7 +235,7 @@ function spawnParticles(x, y, n, color, speed=180, life=.7, size=3){
 }
 
 /* ============================================================
-   پیام مرکزی
+   پیام
 ============================================================ */
 const msgEl = document.getElementById('msgText');
 let msgTimer = 0;
@@ -250,7 +246,7 @@ function showMessage(text, dur=1.6){
 }
 
 /* ============================================================
-   HUD
+   HUD — قلب‌های ایموجی
 ============================================================ */
 const heartsEl  = document.getElementById('hearts');
 const scoreEl   = document.getElementById('score');
@@ -258,10 +254,14 @@ const recordEl  = document.getElementById('record');
 const coinsEl   = document.getElementById('coins');
 
 function updateHUD(){
-  heartsEl.textContent = '❤'.repeat(Math.max(0,state.lives));
+  // قلب‌های ایموجی واقعی گوشی
+  let h = '';
+  for(let i=0;i<Math.max(0,state.lives);i++) h += '❤️';
+  heartsEl.textContent = h;
+
   scoreEl.textContent  = state.score;
   recordEl.textContent = bestRecord;
-  coinsEl.textContent  = '💰 ' + totalCoins;
+  coinsEl.textContent  = '💰 ' + (totalCoins + state.sessionCoins);
 }
 
 /* ============================================================
@@ -276,18 +276,18 @@ function playerShoot(){
 }
 
 /* ============================================================
-   دشمن شش‌ضلعی خالی — سرعت با موج افزایش می‌یابد
+   دشمن
 ============================================================ */
 function spawnEnemy(){
   const s = playerScale();
   const r = rand(15, 24) * s;
-  const speedBoost = 1 + (state.wave - 1) * 0.22;   // هر موج ۲۲٪ سریع‌تر
+  const speedBoost = 1 + (state.wave - 1) * 0.15;
   state.enemies.push({
     x: rand(r+10, W-r-10),
     y: -r-20,
     r,
-    vy: (rand(70, 125) + state.wave*6) * speedBoost,
-    vx: rand(-40, 40) * speedBoost,
+    vy: (rand(65, 110) + state.wave*4) * speedBoost,
+    vx: rand(-35, 35) * speedBoost,
     rot: rand(0, Math.PI*2),
     vrot: rand(-1.6, 1.6),
     hp: 1,
@@ -296,13 +296,13 @@ function spawnEnemy(){
 }
 
 /* ============================================================
-   باس — شکل و سرعت متغیر در هر موج
+   باس
 ============================================================ */
 const BOSS_TYPES = [
-  { name:'نوع ۱', color:'#ff4dff', glow:'rgba(255,60,220,.3)', hpBase:26, speedBase:170 },
-  { name:'نوع ۲', color:'#ff8a3d', glow:'rgba(255,140,60,.3)', hpBase:34, speedBase:210 },
-  { name:'نوع ۳', color:'#4dff88', glow:'rgba(70,255,140,.3)', hpBase:42, speedBase:250 },
-  { name:'نوع ۴', color:'#4d9dff', glow:'rgba(70,150,255,.3)', hpBase:50, speedBase:290 }
+  { color:'#ff4dff', glow:'rgba(255,60,220,.3)', hpBase:22, speedBase:70 },
+  { color:'#ff8a3d', glow:'rgba(255,140,60,.3)', hpBase:28, speedBase:85 },
+  { color:'#4dff88', glow:'rgba(70,255,140,.3)', hpBase:34, speedBase:100 },
+  { color:'#4d9dff', glow:'rgba(70,150,255,.3)', hpBase:40, speedBase:115 }
 ];
 
 function spawnBoss(){
@@ -312,7 +312,7 @@ function spawnBoss(){
   const scale = playerScale();
   const w = 220 * scale;
   const h = 110 * scale;
-  const speedBoost = 1 + (state.wave - 1) * 0.28;   // هر موج ۲۸٪ سریع‌تر
+  const speedBoost = 1 + (state.wave - 1) * 0.12;
 
   state.boss = {
     x: W/2,
@@ -320,11 +320,11 @@ function spawnBoss(){
     w, h,
     vx: type.speedBase * speedBoost,
     dir: 1,
-    hp: type.hpBase + (state.wave - 1) * 6,
-    maxHp: type.hpBase + (state.wave - 1) * 6,
+    hp: type.hpBase + (state.wave - 1) * 4,
+    maxHp: type.hpBase + (state.wave - 1) * 4,
     entering: true,
     shootStage: 0,
-    shootTimer: 1.2,
+    shootTimer: 1.6,
     cycles: 0,
     hitFlash: 0,
     t: 0,
@@ -344,8 +344,8 @@ function bossShoot(){
   const originX = b.x;
   const originY = b.y + b.h/2 - 8;
   const baseAng = Math.atan2(player.y - originY, player.x - originX);
-  const spread = 0.55;
-  const bulletSpeed = 300 * (1 + (state.wave-1)*0.1);
+  const spread = 0.5;
+  const bulletSpeed = 230 * (1 + (state.wave-1)*0.06);
 
   for(let i=0;i<n;i++){
     const t = n===1? 0 : (i/(n-1) - .5);
@@ -354,7 +354,7 @@ function bossShoot(){
       x: originX, y: originY,
       vx: Math.cos(ang)*bulletSpeed,
       vy: Math.sin(ang)*bulletSpeed,
-      r: 9,
+      r: 8,
       color: b.color,
       trail: []
     });
@@ -364,7 +364,7 @@ function bossShoot(){
 }
 
 /* ============================================================
-   شروع / ریست
+   شروع
 ============================================================ */
 function startGame(){
   state.running = true;
@@ -390,6 +390,7 @@ function startGame(){
   player.targetX = player.x;
   player.targetY = player.y;
   player.alive = true;
+  player.invuln = 0;
 
   pointerActive = false;
   pointerX = null; pointerY = null;
@@ -400,7 +401,7 @@ function startGame(){
 }
 
 /* ============================================================
-   پایان بازی
+   پایان
 ============================================================ */
 function endGame(){
   state.running = false;
@@ -412,6 +413,7 @@ function endGame(){
   }
   totalCoins += state.sessionCoins;
   SAVE.set('coins', totalCoins);
+  state.sessionCoins = 0;
   updateHUD();
 
   const s = document.getElementById('start');
@@ -432,6 +434,7 @@ function update(dt){
     if(msgTimer <= 0) msgEl.classList.remove('show');
   }
   if(state.shake > 0) state.shake = Math.max(0, state.shake - dt*60);
+  if(player.invuln > 0) player.invuln -= dt;
 
   for(const s of state.stars){
     s.y += s.s * dt * .55;
@@ -445,7 +448,6 @@ function update(dt){
   player.w = 74 * s;
   player.h = 62 * s;
 
-  /* --- حرکت بازیکن --- */
   const speedKeys = 780;
   let kx = 0, ky = 0;
   if(keys['ArrowLeft'] || keys['a'] || keys['A']) kx -= 1;
@@ -458,10 +460,7 @@ function update(dt){
     player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, player.targetX + kx/len*speedKeys*dt));
     player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, player.targetY + ky/len*speedKeys*dt));
   } else if(pointerActive && pointerX !== null){
-    // لمسی: جابجایی نسبی (انگشت حرکت می‌کند سفینه هم)
     if(isMobile){
-      // محاسبه حرکت نسبی بر اساس آفست اولیه
-      // ما مستقیماً از موقعیت انگشت استفاده می‌کنیم اما با آفست
       player.targetX = Math.max(player.w/2, Math.min(W-player.w/2, pointerX + touchOffsetX));
       player.targetY = Math.max(player.h/2, Math.min(H-player.h/2, pointerY + touchOffsetY));
     } else {
@@ -472,30 +471,27 @@ function update(dt){
   player.x += (player.targetX - player.x) * Math.min(1, dt*16);
   player.y += (player.targetY - player.y) * Math.min(1, dt*16);
 
-  /* --- شلیک خودکار --- */
   state.shootTimer -= dt;
   if(state.shootTimer <= 0 && player.alive){
     state.shootTimer = state.shootInterval;
     playerShoot();
   }
 
-  /* --- تولید دشمن --- */
   if(!state.bossActive){
     state.spawnTimer -= dt;
     if(state.spawnTimer <= 0){
-      state.spawnTimer = Math.max(.28, state.spawnInterval - state.wave*0.05);
+      state.spawnTimer = Math.max(.35, state.spawnInterval - state.wave*0.035);
       spawnEnemy();
-      if(Math.random() < .3 + state.wave*0.02) spawnEnemy();
+      if(Math.random() < .28 + state.wave*0.015) spawnEnemy();
     }
   }
 
-  /* --- باس --- */
   if(!state.bossActive && state.score >= state.nextBossScore){
     spawnBoss();
   }
   if(state.bossActive && state.boss) updateBoss(dt);
 
-  /* --- تیرهای بازیکن --- */
+  /* تیرهای بازیکن */
   for(let i=state.bullets.length-1;i>=0;i--){
     const b = state.bullets[i];
     b.x += b.vx*dt; b.y += b.vy*dt;
@@ -529,7 +525,7 @@ function update(dt){
     }
   }
 
-  /* --- دشمن‌ها --- */
+  /* دشمن‌ها */
   for(let i=state.enemies.length-1;i>=0;i--){
     const e = state.enemies[i];
     e.y += e.vy*dt;
@@ -540,7 +536,8 @@ function update(dt){
     if(e.x < e.r){ e.x = e.r; e.vx = Math.abs(e.vx); }
     if(e.x > W-e.r){ e.x = W-e.r; e.vx = -Math.abs(e.vx); }
 
-    if(player.alive && dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.42)**2){
+    if(player.alive && player.invuln <= 0 &&
+       dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.42)**2){
       state.enemies.splice(i,1);
       hitPlayer();
       continue;
@@ -548,7 +545,7 @@ function update(dt){
     if(e.y > H + e.r + 20) state.enemies.splice(i,1);
   }
 
-  /* --- تیرهای باس --- */
+  /* تیرهای باس */
   for(let i=state.bossBullets.length-1;i>=0;i--){
     const b = state.bossBullets[i];
     b.trail.push({x:b.x, y:b.y});
@@ -558,13 +555,13 @@ function update(dt){
     if(b.x < -40 || b.x > W+40 || b.y < -40 || b.y > H+40){
       state.bossBullets.splice(i,1); continue;
     }
-    if(player.alive && dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){
+    if(player.alive && player.invuln <= 0 &&
+       dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){
       state.bossBullets.splice(i,1);
       hitPlayer();
     }
   }
 
-  /* --- ذرات --- */
   for(let i=state.particles.length-1;i>=0;i--){
     const p = state.particles[i];
     p.x += p.vx*dt; p.y += p.vy*dt;
@@ -594,15 +591,15 @@ function updateBoss(dt){
 
   b.shootTimer -= dt;
   if(b.shootTimer <= 0){
-    b.shootTimer = Math.max(.75, 1.7 - b.cycles*0.08);
+    b.shootTimer = Math.max(1.0, 2.0 - b.cycles*0.06);
     bossShoot();
     b.cycles++;
   }
 
-  if(player.alive &&
+  if(player.alive && player.invuln <= 0 &&
      Math.abs(player.x - b.x) < b.w/2 + 10 &&
      Math.abs(player.y - b.y) < b.h/2 + 14){
-    hitPlayer(true);
+    hitPlayer();
   }
 }
 
@@ -619,11 +616,16 @@ function killBoss(){
   showMessage('موج بعدی', 1.8);
 }
 
-function hitPlayer(fromBoss=false){
-  if(!player.alive) return;
+/* ============================================================
+   ضربه به بازیکن — سفینه سر جای خودش می‌ماند
+============================================================ */
+function hitPlayer(){
+  if(!player.alive || player.invuln > 0) return;
   state.lives--;
   state.shake = 14;
+  player.invuln = 1.6;
   spawnParticles(player.x, player.y, 30, '#ff3355', 280, .8, 4);
+
   if(state.lives <= 0){
     player.alive = false;
     spawnParticles(player.x, player.y, 60, '#ffcc00', 380, 1.2, 5);
@@ -632,6 +634,7 @@ function hitPlayer(fromBoss=false){
     if(state.score > bestRecord){ bestRecord = state.score; SAVE.set('record', bestRecord); }
     totalCoins += state.sessionCoins;
     SAVE.set('coins', totalCoins);
+    state.sessionCoins = 0;
     updateHUD();
     setTimeout(()=>{
       const scr = document.getElementById('start');
@@ -641,13 +644,8 @@ function hitPlayer(fromBoss=false){
       document.getElementById('startStats').innerHTML =
         `امتیاز: ${state.score}<br>رکورد: ${bestRecord}<br>💰 ${totalCoins}`;
     }, 700);
-  } else {
-    const s = playerScale();
-    player.x = W/2; player.y = H - 110*s;
-    player.targetX = player.x; player.targetY = player.y;
-    pointerActive = false;
-    touchOffsetX = 0; touchOffsetY = 0;
   }
+  // سفینه جابجا نمی‌شود
 }
 
 function addScore(n){
@@ -689,6 +687,11 @@ function drawPlayer(){
   ctx.save();
   ctx.translate(player.x, player.y);
   ctx.scale(s, s);
+
+  if(player.invuln > 0){
+    const blink = Math.floor(player.invuln * 12) % 2;
+    ctx.globalAlpha = blink ? 0.35 : 1;
+  }
 
   const g = ctx.createRadialGradient(0,0,4, 0,0,64);
   g.addColorStop(0,'rgba(0,200,255,.25)');
@@ -794,11 +797,7 @@ function drawBossBullets(){
       const t = b.trail[i];
       const a = (i / b.trail.length) * .45;
       ctx.beginPath();
-      ctx.fillStyle = b.color.replace(')', `,${a})`).replace('rgb','rgba');
-      if(b.color.startsWith('#')){
-        // fallback برای رنگ hex
-        ctx.fillStyle = `rgba(255,80,230,${a})`;
-      }
+      ctx.fillStyle = `rgba(255,80,230,${a})`;
       ctx.arc(t.x, t.y, b.r*(i/b.trail.length)*0.9, 0, Math.PI*2);
       ctx.fill();
     }
@@ -836,7 +835,6 @@ function drawBoss(){
 
   ctx.beginPath();
   if(type === 0){
-    // نوع ۱: شش‌ضلعی کشیده
     ctx.moveTo(-w, -h*0.35);
     ctx.lineTo(-w*0.55, -h);
     ctx.lineTo(w*0.55, -h);
@@ -844,13 +842,11 @@ function drawBoss(){
     ctx.lineTo(w*0.7, h);
     ctx.lineTo(-w*0.7, h);
   } else if(type === 1){
-    // نوع ۲: الماسی
     ctx.moveTo(0, -h);
     ctx.lineTo(w, 0);
     ctx.lineTo(0, h);
     ctx.lineTo(-w, 0);
   } else if(type === 2){
-    // نوع ۳: ستاره‌ای
     const points = 8;
     for(let i=0;i<points;i++){
       const a = (i/points)*Math.PI*2 - Math.PI/2;
@@ -860,7 +856,6 @@ function drawBoss(){
       if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
     }
   } else {
-    // نوع ۴: شش‌ضلعی چرخیده
     for(let i=0;i<6;i++){
       const a = (i/6)*Math.PI*2 - Math.PI/2;
       const px = Math.cos(a)*w;
@@ -907,7 +902,6 @@ function drawBoss(){
   }
   ctx.shadowBlur = 0;
 
-  // نوار جان
   const hpW = b.w * 0.9;
   ctx.fillStyle = 'rgba(0,0,0,.55)';
   ctx.fillRect(-hpW/2, -h - 22, hpW, 8);
@@ -921,7 +915,6 @@ function drawBoss(){
   ctx.restore();
 }
 
-/* تیره/روشن کردن رنگ hex */
 function shadeColor(hex, amt){
   if(!hex.startsWith('#')) return hex;
   let c = hex.slice(1);
@@ -993,4 +986,4 @@ player.targetY = player.y;
 requestAnimationFrame(loop);
 </script>
 </body>
-    </html>
+       </html>
