@@ -132,7 +132,6 @@
         // ==========================================
         import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
-        // ✅ حلزون تخته شما (main) را اینجا گذاشتم
         const SCOREZILLA_BOARD_ID = "main"; 
         const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
@@ -330,14 +329,16 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla)
+        // ۵. لیدربرد آنلاین (Scorezilla) - اصلاح شده
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (!isScorezillaReady || score <= 0) return;
             try {
-                await scorezilla.submitScore(score, {
-                    playerName: player.name,
-                    metadata: { avatar: player.avatar }
+                await scorezilla.submitScore({
+                    boardId: SCOREZILLA_BOARD_ID,
+                    playerId: player.code, // استفاده از کد یکتا برای جلوگیری از تداخل
+                    score: score,
+                    name: player.name
                 });
                 console.log("امتیاز ثبت شد.");
             } catch (e) {
@@ -358,7 +359,10 @@
             listEl.innerHTML = '';
 
             try {
-                const results = await scorezilla.getScores({ limit: 20 });
+                const results = await scorezilla.getLeaderboard({ 
+                    boardId: SCOREZILLA_BOARD_ID, 
+                    top: 20 
+                });
                 
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
@@ -374,13 +378,11 @@
                     else if (rank === 2) { rankColor = '#c0c0c0'; rankIcon = '🥈'; }
                     else if (rank === 3) { rankColor = '#cd7f32'; rankIcon = '🥉'; }
                     
-                    const name = data.metadata?.playerName || data.playerName || 'ناشناس';
-                    const avatar = data.metadata?.avatar || '👻';
+                    const name = data.name || data.playerId || 'ناشناس';
                     
                     html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; border-color: ${rank <= 3 ? rankColor : '#1a3a2a'}">
                         <div style="display:flex; align-items:center; gap:10px;">
                             <span style="font-size:20px;">${rankIcon}</span>
-                            <span style="font-size:24px;">${avatar}</span>
                             <span style="font-size:16px; font-weight:bold; color:${rankColor};">${name}</span>
                         </div>
                         <span style="color:#00f0ff; font-weight:900; font-size:18px;">${data.score} <span style="font-size:12px; color:#888;">امتیاز</span></span>
@@ -673,4 +675,4 @@
         });
     </script>
 </body>
-                </html>
+    </html>￼Enter
