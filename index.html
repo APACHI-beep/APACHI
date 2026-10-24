@@ -132,10 +132,10 @@
         // ==========================================
         import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
-        // ✅ شناسه یکتای تخته (از داشبورد خودت)
-        const SCOREZILLA_BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
+        // ✅ حلزون تخته شما در داشبورد (Slug)
+        const SCOREZILLA_BOARD_ID = "apachi-main"; 
         
-        // ✅ کلید عمومی جدید (از داشبورد خودت)
+        // ✅ کلید عمومی شما
         const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
         let scorezilla = null;
@@ -339,7 +339,7 @@
             try {
                 await scorezilla.submitScore({
                     boardId: SCOREZILLA_BOARD_ID,
-                    playerId: player.code, // استفاده از کد یکتا برای جلوگیری از تداخل
+                    playerId: player.code,
                     score: score,
                     name: player.name
                 });
@@ -678,4 +678,4 @@
         });
     </script>
 </body>
-                                             </html>
+    </html>
