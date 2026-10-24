@@ -6,115 +6,215 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
-<title>Space Fighter</title>
+<title>تیراندازی فضایی 🚀</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;background:#000;overflow:hidden;
-    font-family:Tahoma,Verdana,sans-serif;user-select:none;
-    -webkit-user-select:none;-webkit-touch-callout:none;
-    touch-action:none;overscroll-behavior:none}
-  #game{position:fixed;inset:0;background:#000}
-  canvas{display:block;width:100%;height:100%;touch-action:none}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:Tahoma,Verdana,sans-serif}
+  html,body{height:100%;background:#04070a;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none}
+  #app{position:fixed;inset:0;display:flex;flex-direction:column;color:#fff}
 
-  .hud{position:absolute;top:0;left:0;right:0;
-       padding:calc(8px + env(safe-area-inset-top)) 12px 0 12px;
-       display:flex;justify-content:space-between;align-items:flex-start;
-       pointer-events:none;z-index:5;color:#fff;
-       text-shadow:0 0 8px rgba(0,200,255,.8)}
-  .hud .left{text-align:left;direction:ltr;line-height:1.15}
-  .hud .right{text-align:right}
-  /* قلب‌های ایموجی واقعی گوشی */
-  .hearts{
-    font-size:26px;
-    letter-spacing:2px;
-    font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
-    filter:drop-shadow(0 0 6px rgba(255,60,90,.85)) drop-shadow(0 0 14px rgba(255,0,50,.5));
-    line-height:1;
+  /* ---------- منوی بالا ---------- */
+  .top-nav{
+    display:flex; justify-content:space-around; align-items:center;
+    padding:calc(12px + env(safe-area-inset-top)) 10px 12px 10px;
+    background:#04070a; border-bottom:1px solid rgba(0,200,255,.2);
+    z-index:100;
   }
-  .label{font-size:9px;opacity:.7;letter-spacing:1px}
-  .score{font-size:18px;font-weight:bold;color:#7ef9ff}
-  .record{font-size:12px;color:#ffd45e;margin-bottom:1px}
-  .coins{font-size:15px;color:#ffe066;margin-top:2px;
-    font-family:inherit,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+  .nav-btn{
+    flex:1; text-align:center; padding:10px 0; font-size:16px; font-weight:bold;
+    color:#6b7c8c; cursor:pointer; transition:.3s; position:relative;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .nav-btn.active{ color:#00e5ff; text-shadow:0 0 10px rgba(0,229,255,.6); }
+  .nav-btn.active::after{
+    content:''; position:absolute; bottom:-12px; left:10%; right:10%; height:2px;
+    background:#00e5ff; box-shadow:0 0 10px #00e5ff; border-radius:2px;
+  }
 
-  #msg{position:absolute;inset:0;display:flex;align-items:center;
-       justify-content:center;pointer-events:none;z-index:6;padding:0 16px}
-  #msg span{font-size:clamp(26px,8vw,44px);font-weight:bold;color:#fff;opacity:0;
-       letter-spacing:2px;text-align:center;
-       text-shadow:0 0 18px #00d4ff,0 0 40px #0088ff,0 0 80px #0044ff;
-       transition:opacity .35s, transform .35s;transform:scale(.8)}
+  /* ---------- محتوا ---------- */
+  .content{ flex:1; position:relative; overflow:hidden; }
+  .page{ position:absolute; inset:0; display:none; flex-direction:column; overflow-y:auto; }
+  .page.active{ display:flex; }
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:absolute; top:0; left:0; right:0;
+    padding:15px 15px 0 15px; display:flex; justify-content:space-between;
+    pointer-events:none; z-index:5; text-shadow:0 0 8px rgba(0,200,255,.8);
+  }
+  .hud-left{ text-align:left; direction:ltr; line-height:1.2; }
+  .hud-right{ text-align:right; }
+  .hearts{ font-size:24px; letter-spacing:2px; font-family:"Apple Color Emoji","Segoe UI Emoji",sans-serif; filter:drop-shadow(0 0 6px rgba(255,60,90,.85)); }
+  .label{ font-size:10px; opacity:.7; letter-spacing:1px; }
+  .score{ font-size:20px; font-weight:bold; color:#7ef9ff; }
+  .record{ font-size:13px; color:#ffd45e; }
+  .coins{ font-size:16px; color:#ffe066; margin-top:2px; }
+
+  #gameCanvas{ display:block; width:100%; height:100%; touch-action:none; }
+
+  /* ---------- msg ---------- */
+  #msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:6}
+  #msg span{font-size:clamp(26px,8vw,44px);font-weight:bold;color:#fff;opacity:0;text-align:center;text-shadow:0 0 18px #00d4ff,0 0 40px #0088ff;transition:.35s;transform:scale(.8)}
   #msg span.show{opacity:1;transform:scale(1)}
 
-  #start{position:absolute;inset:0;z-index:10;display:flex;
-    flex-direction:column;align-items:center;justify-content:center;
-    background:radial-gradient(circle at 50% 45%,#061a2e 0%,#000 70%);
-    color:#fff;padding:20px;text-align:center}
-  #start h1{font-size:clamp(28px,9vw,46px);letter-spacing:4px;margin-bottom:8px;
-    color:#7ef9ff;text-shadow:0 0 20px #00c8ff,0 0 60px #0066ff}
-  #start p{opacity:.65;margin-bottom:26px;font-size:12px;line-height:1.7;max-width:340px}
-  #start button{cursor:pointer;font-family:inherit;font-size:clamp(16px,5vw,20px);
-    padding:13px 44px;border-radius:40px;border:2px solid #00d4ff;
-    background:rgba(0,180,255,.08);color:#7ef9ff;letter-spacing:2px;
-    box-shadow:0 0 25px rgba(0,180,255,.5),inset 0 0 25px rgba(0,180,255,.15);
-    transition:.2s;touch-action:manipulation}
-  #start button:active{transform:scale(.96);background:rgba(0,180,255,.25)}
-  #start .stats{margin-top:28px;font-size:13px;color:#ffe066;opacity:.9;line-height:1.8}
+  /* ---------- فروشگاه ---------- */
+  .shop-container{ padding:20px 15px 40px; }
+  .shop-header{ text-align:center; margin-bottom:20px; }
+  .shop-header h2{ font-size:22px; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .shop-coins{ font-size:18px; color:#ffd45e; margin-top:10px; background:rgba(255,212,94,.1); padding:8px 20px; border-radius:20px; display:inline-block; }
+  
+  .cat-tabs{ display:flex; gap:10px; margin-bottom:20px; overflow-x:auto; padding-bottom:5px; }
+  .cat-tabs::-webkit-scrollbar{ display:none; }
+  .cat-btn{ flex:0 0 auto; padding:10px 20px; background:#0a1520; border:1px solid #1a3a50; border-radius:12px; color:#6b7c8c; font-size:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:5px; transition:.2s; }
+  .cat-btn.active{ border-color:#00e5ff; color:#00e5ff; background:rgba(0,229,255,.05); box-shadow:inset 0 0 15px rgba(0,229,255,.1); }
+  .cat-btn .icon{ font-size:20px; }
+
+  .item-card{ background:#0b131c; border:1px solid #1a2a3a; border-radius:16px; padding:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; transition:.3s; }
+  .item-card.equipped{ border-color:#00e5ff; box-shadow:0 0 15px rgba(0,229,255,.2); }
+  .item-info h3{ font-size:16px; color:#fff; margin-bottom:5px; }
+  .item-info p{ font-size:12px; color:#6b7c8c; margin-bottom:2px; }
+  .item-info .price{ font-size:14px; color:#ffd45e; margin-top:5px; display:flex; align-items:center; gap:5px; }
+  
+  .btn{ border:none; padding:10px 20px; border-radius:25px; font-size:14px; font-weight:bold; cursor:pointer; transition:.2s; font-family:inherit; }
+  .btn:active{ transform:scale(.95); }
+  .btn-outline{ background:transparent; border:1px solid #00e5ff; color:#00e5ff; box-shadow:0 0 10px rgba(0,229,255,.2); }
+  .btn-outline.disabled{ border-color:#555; color:#555; box-shadow:none; cursor:default; }
+  .btn-solid{ background:linear-gradient(90deg, #ff00cc, #6600ff); color:#fff; box-shadow:0 0 15px rgba(255,0,204,.4); }
+  .btn-buy{ background:linear-gradient(90deg, #ff00cc, #6600ff); color:#fff; padding:8px 20px; border-radius:20px; font-size:13px; }
+  .btn-equip{ background:transparent; border:1px solid #00e5ff; color:#00e5ff; padding:8px 20px; border-radius:20px; font-size:13px; }
+  .btn-equipped{ background:#00e5ff; color:#000; padding:8px 20px; border-radius:20px; font-size:13px; }
+
+  /* ---------- Start Menu (Overlay) ---------- */
+  #startMenu{
+    position:absolute; inset:0; z-index:50; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; background:rgba(4,7,10,.9);
+    backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+  }
+  #startMenu h1{ font-size:36px; color:#00e5ff; margin-bottom:10px; text-shadow:0 0 20px #00e5ff; }
+  #startMenu p{ font-size:13px; color:#889; margin-bottom:30px; }
+  #startBtn{ padding:15px 50px; font-size:20px; background:linear-gradient(90deg,#00c8ff,#0055ff); border:none; border-radius:30px; color:#fff; font-weight:bold; box-shadow:0 0 25px rgba(0,200,255,.5); cursor:pointer; }
+  #startStats{ margin-top:20px; font-size:14px; color:#ffd45e; text-align:center; line-height:1.6; }
+
 </style>
 </head>
 <body>
-<div id="game">
-  <canvas id="cv"></canvas>
-
-  <div class="hud">
-    <div class="left">
-      <div class="label">RECORD</div>
-      <div class="record" id="record">0</div>
-      <div class="label" style="margin-top:4px">SCORE</div>
-      <div class="score" id="score">0</div>
-      <div class="coins" id="coins">💰 0</div>
+<div id="app">
+  
+  <!-- منوی بالا -->
+  <div class="top-nav">
+    <div class="nav-btn active" id="navGame" onclick="switchTab('game')">
+      <span>🎮</span> بازی
     </div>
-    <div class="right">
-      <div class="hearts" id="hearts"></div>
+    <div class="nav-btn" id="navShop" onclick="switchTab('shop')">
+      <span>🛒</span> فروشگاه
     </div>
   </div>
 
-  <div id="msg"><span id="msgText"></span></div>
+  <div class="content">
+    <!-- صفحه بازی -->
+    <div class="page active" id="pageGame">
+      <canvas id="gameCanvas"></canvas>
+      <div class="hud">
+        <div class="hud-left">
+          <div class="label">RECORD</div>
+          <div class="record" id="record">0</div>
+          <div class="label" style="margin-top:4px">SCORE</div>
+          <div class="score" id="score">0</div>
+          <div class="coins" id="coinsHud">💰 0</div>
+        </div>
+        <div class="hud-right">
+          <div class="hearts" id="hearts"></div>
+        </div>
+      </div>
+      <div id="msg"><span id="msgText"></span></div>
 
-  <div id="start">
-    <h1>SPACE FIGHTER</h1>
-    <p>انگشتت را روی صفحه بکش تا سفینه حرکت کند — شلیک خودکار است</p>
-    <button id="startBtn">شروع بازی</button>
-    <div class="stats" id="startStats"></div>
+      <!-- منوی شروع / پایان بازی -->
+      <div id="startMenu">
+        <h1>SPACE FIGHTER</h1>
+        <p>انگشتت را بکش تا حرکت کنی — شلیک خودکار است</p>
+        <button id="startBtn">شروع بازی</button>
+        <div id="startStats"></div>
+      </div>
+    </div>
+
+    <!-- صفحه فروشگاه -->
+    <div class="page" id="pageShop">
+      <div class="shop-container">
+        <div class="shop-header">
+          <h2>🛒 فروشگاه</h2>
+          <div class="shop-coins" id="shopCoins">💰 موجودی شما: 0</div>
+        </div>
+
+        <div class="cat-tabs">
+          <div class="cat-btn active" onclick="switchCat('weapons', this)"><span class="icon">🔫</span>سلاح‌ها</div>
+          <div class="cat-btn" onclick="switchCat('ships', this)"><span class="icon">🚀</span>سفینه‌ها</div>
+        </div>
+
+        <div id="shopItems"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 /* ============================================================
-   ذخیره‌سازی دائمی
+   داده‌ها و ذخیره‌سازی
 ============================================================ */
 const SAVE = {
   get(k, d){ try{ const v = localStorage.getItem('sf_'+k); return v===null? d : JSON.parse(v);}catch(e){return d;} },
   set(k, v){ try{ localStorage.setItem('sf_'+k, JSON.stringify(v)); }catch(e){} }
 };
-let totalCoins = SAVE.get('coins', 0);
-let bestRecord = SAVE.get('record', 0);
+
+let userData = SAVE.get('userData', {
+  coins: 0,
+  record: 0,
+  ownedWeapons: ['simple'],
+  ownedShips: ['default'],
+  equippedWeapon: 'simple',
+  equippedShip: 'default',
+  weaponLevels: { simple: 0 }
+});
+
+// اطمینان از وجود فیلدها
+if(!userData.ownedWeapons) userData.ownedWeapons = ['simple'];
+if(!userData.ownedShips) userData.ownedShips = ['default'];
+if(!userData.weaponLevels) userData.weaponLevels = { simple: 0 };
+if(!userData.equippedWeapon) userData.equippedWeapon = 'simple';
+if(!userData.equippedShip) userData.equippedShip = 'default';
+
+const WEAPONS = {
+  simple:   { name:'لیزر ساده',    price:0,    dmg:1, shots:1, color:'#00e5ff', desc:'دمیج: 1 | تعداد تیر: 1' },
+  double:   { name:'شلیک دوقلو',   price:200,  dmg:1, shots:2, color:'#ff00cc', desc:'دمیج: 1 | تعداد تیر: 2' },
+  red:      { name:'لیزر سرخ',     price:400,  dmg:2, shots:1, color:'#ff3333', desc:'دمیج: 2 | تعداد تیر: 1' },
+  three:    { name:'سه‌گانه',      price:650,  dmg:1, shots:3, color:'#ffd700', desc:'دمیج: 1 | تعداد تیر: 3' },
+  plasma:   { name:'پلاسما',       price:900,  dmg:4, shots:1, color:'#aa00ff', desc:'دمیج: 4 | تعداد تیر: 1' },
+  four:     { name:'چهارگانه',     price:1200, dmg:1, shots:4, color:'#ff6600', desc:'دمیج: 1 | تعداد تیر: 4' },
+  missile:  { name:'مسلسل نئونی',  price:1800, dmg:1, shots:1, color:'#00ff88', desc:'دمیج: 1 | تعداد تیر: 1 (سریع)' }
+};
+
+const SHIPS = {
+  default:  { name:'سفینه پایه', price:0,    color1:'#d9f7ff', color2:'#5fc8ea', color3:'#12304a' },
+  galaxy:   { name:'شاهین کهکشانی', price:500,  color1:'#aaffff', color2:'#00aaff', color3:'#002244' },
+  purple:   { name:'شیخ بنفش', price:800,  color1:'#ffaaff', color2:'#aa00ff', color3:'#220044' },
+  gold:     { name:'سپر طلایی', price:1500, color1:'#ffffaa', color2:'#ffaa00', color3:'#332200' },
+  crystal:  { name:'ستاره کریستالی', price:2500, color1:'#ffffff', color2:'#88ccff', color3:'#113355' }
+};
 
 /* ============================================================
    تنظیمات پایه
 ============================================================ */
-const cv = document.getElementById('cv');
+const cv = document.getElementById('gameCanvas');
 const ctx = cv.getContext('2d');
 let W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
 let isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
 function resize(){
-  W = window.innerWidth; H = window.innerHeight;
+  const rect = cv.parentElement.getBoundingClientRect();
+  W = rect.width; H = rect.height;
   cv.width = W * DPR; cv.height = H * DPR;
   ctx.setTransform(DPR,0,0,DPR,0,0);
 }
-window.addEventListener('resize', resize);
-window.addEventListener('orientationchange', ()=> setTimeout(resize, 200));
-resize();
+window.addEventListener('resize', ()=> { resize(); makeStars(); });
+window.addEventListener('orientationchange', ()=> setTimeout(()=>{ resize(); makeStars(); }, 200));
 
 /* ============================================================
    وضعیت بازی
@@ -135,12 +235,11 @@ const state = {
   nextBossScore: 1000,
   wave: 1,
   spawnTimer: 0,
-  spawnInterval: 1.05,
+  spawnInterval: 1.0,
   shootTimer: 0,
-  shootInterval: 0.16,
+  shootInterval: 0.18,
   lastTime: 0,
-  shake: 0,
-  time: 0
+  shake: 0
 };
 
 const player = {
@@ -157,25 +256,21 @@ function playerScale(){ return Math.max(0.7, Math.min(1, W / 480)); }
 ============================================================ */
 function makeStars(){
   state.stars = [];
-  const count = Math.floor((W*H)/7000);
+  const count = Math.floor((W*H)/6000);
   for(let i=0;i<count;i++){
     state.stars.push({
-      x: Math.random()*W,
-      y: Math.random()*H,
-      r: Math.random()*1.6 + .3,
-      s: Math.random()*22 + 6,
-      a: Math.random()*.7 + .25,
-      tw: Math.random()*Math.PI*2
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*1.6 + .3, s: Math.random()*25 + 8,
+      a: Math.random()*.7 + .25, tw: Math.random()*Math.PI*2
     });
   }
 }
-makeStars();
+setTimeout(()=>{ resize(); makeStars(); }, 50);
 
 /* ============================================================
    ورودی
 ============================================================ */
-let pointerActive = false;
-let pointerX = null, pointerY = null;
+let pointerActive = false, pointerX = null, pointerY = null;
 let touchOffsetX = 0, touchOffsetY = 0;
 
 function getPoint(e){
@@ -186,32 +281,34 @@ function getPoint(e){
 
 cv.addEventListener('mousemove', e=>{
   if(isMobile) return;
-  pointerX = e.clientX; pointerY = e.clientY;
+  const r = cv.getBoundingClientRect();
+  pointerX = e.clientX - r.left; pointerY = e.clientY - r.top;
   pointerActive = true;
 });
 
 cv.addEventListener('touchstart', e=>{
+  if(!state.running) return;
   const p = getPoint(e);
-  pointerX = p.x; pointerY = p.y;
-  touchOffsetX = player.x - p.x;
-  touchOffsetY = player.y - p.y;
+  const r = cv.getBoundingClientRect();
+  pointerX = p.x - r.left; pointerY = p.y - r.top;
+  touchOffsetX = player.x - pointerX;
+  touchOffsetY = player.y - pointerY;
   pointerActive = true;
   e.preventDefault();
 }, {passive:false});
 
 cv.addEventListener('touchmove', e=>{
+  if(!state.running) return;
   const p = getPoint(e);
-  pointerX = p.x; pointerY = p.y;
+  const r = cv.getBoundingClientRect();
+  pointerX = p.x - r.left; pointerY = p.y - r.top;
   e.preventDefault();
 }, {passive:false});
 
 cv.addEventListener('touchend', e=> e.preventDefault(), {passive:false});
 
 const keys = {};
-addEventListener('keydown', e=>{
-  keys[e.key] = true;
-  if(e.key === ' ') e.preventDefault();
-});
+addEventListener('keydown', e=> { keys[e.key] = true; if(e.key===' ') e.preventDefault(); });
 addEventListener('keyup', e=> keys[e.key] = false);
 
 /* ============================================================
@@ -225,18 +322,12 @@ function spawnParticles(x, y, n, color, speed=180, life=.7, size=3){
     const ang = Math.random()*Math.PI*2;
     const sp = Math.random()*speed + 30;
     state.particles.push({
-      x, y,
-      vx: Math.cos(ang)*sp,
-      vy: Math.sin(ang)*sp,
-      life, maxLife: life,
-      color, size: Math.random()*size + 1
+      x, y, vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp,
+      life, maxLife: life, color, size: Math.random()*size + 1
     });
   }
 }
 
-/* ============================================================
-   پیام
-============================================================ */
 const msgEl = document.getElementById('msgText');
 let msgTimer = 0;
 function showMessage(text, dur=1.6){
@@ -246,51 +337,81 @@ function showMessage(text, dur=1.6){
 }
 
 /* ============================================================
-   HUD — قلب‌های ایموجی
+   HUD
 ============================================================ */
-const heartsEl  = document.getElementById('hearts');
-const scoreEl   = document.getElementById('score');
-const recordEl  = document.getElementById('record');
-const coinsEl   = document.getElementById('coins');
-
 function updateHUD(){
-  // قلب‌های ایموجی واقعی گوشی
   let h = '';
   for(let i=0;i<Math.max(0,state.lives);i++) h += '❤️';
-  heartsEl.textContent = h;
-
-  scoreEl.textContent  = state.score;
-  recordEl.textContent = bestRecord;
-  coinsEl.textContent  = '💰 ' + (totalCoins + state.sessionCoins);
+  document.getElementById('hearts').textContent = h;
+  document.getElementById('score').textContent  = state.score;
+  document.getElementById('record').textContent = userData.record;
+  document.getElementById('coinsHud').textContent = '💰 ' + userData.coins;
+  
+  if(document.getElementById('pageShop').classList.contains('active')){
+    document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + userData.coins;
+  }
 }
 
 /* ============================================================
-   شلیک بازیکن
+   سیستم شلیک
 ============================================================ */
+function getWeaponStats(){
+  const base = WEAPONS[userData.equippedWeapon] || WEAPONS.simple;
+  const lvl = userData.weaponLevels[userData.equippedWeapon] || 0;
+  return {
+    dmg: base.dmg + lvl,
+    shots: base.shots,
+    color: base.color,
+    isMissile: userData.equippedWeapon === 'missile'
+  };
+}
+
 function playerShoot(){
+  const wStat = getWeaponStats();
   const s = playerScale();
   const bx = player.x;
   const by = player.y - player.h*s/2;
-  state.bullets.push({ x: bx, y: by, r: 5, vy: -820, vx: 0 });
-  spawnParticles(bx, by, 3, '#7ef9ff', 90, .25, 2);
+  
+  const spacing = 14;
+  const totalWidth = (wStat.shots - 1) * spacing;
+  
+  for(let i=0; i<wStat.shots; i++){
+    const ox = -totalWidth/2 + i*spacing;
+    let angle = 0;
+    if(wStat.shots > 1) angle = (i / (wStat.shots-1) - .5) * 0.15;
+    
+    state.bullets.push({
+      x: bx + ox, y: by,
+      r: wStat.isMissile ? 3 : 4,
+      vy: -900, vx: Math.sin(angle)*900,
+      dmg: wStat.dmg,
+      color: wStat.color,
+      isMissile: wStat.isMissile
+    });
+  }
+  spawnParticles(bx, by, 3, wStat.color, 90, .25, 2);
 }
 
 /* ============================================================
-   دشمن
+   دشمنان (سرعت بیشتر + تنوع شکل)
 ============================================================ */
 function spawnEnemy(){
   const s = playerScale();
-  const r = rand(15, 24) * s;
-  const speedBoost = 1 + (state.wave - 1) * 0.15;
+  const r = rand(14, 24) * s;
+  const speedBoost = 1 + (state.wave - 1) * 0.2; // 20% سریع‌تر در هر موج
+  const type = Math.floor(rand(0, 3)); // 3 نوع دشمن
+  
   state.enemies.push({
     x: rand(r+10, W-r-10),
     y: -r-20,
     r,
-    vy: (rand(65, 110) + state.wave*4) * speedBoost,
-    vx: rand(-35, 35) * speedBoost,
+    vy: (rand(90, 140) + state.wave*8) * speedBoost,
+    vx: rand(-50, 50) * speedBoost,
+    type: type,
     rot: rand(0, Math.PI*2),
-    vrot: rand(-1.6, 1.6),
+    vrot: rand(-2, 2),
     hp: 1,
+    maxHp: 1,
     hitFlash: 0
   });
 }
@@ -299,10 +420,10 @@ function spawnEnemy(){
    باس
 ============================================================ */
 const BOSS_TYPES = [
-  { color:'#ff4dff', glow:'rgba(255,60,220,.3)', hpBase:22, speedBase:70 },
-  { color:'#ff8a3d', glow:'rgba(255,140,60,.3)', hpBase:28, speedBase:85 },
-  { color:'#4dff88', glow:'rgba(70,255,140,.3)', hpBase:34, speedBase:100 },
-  { color:'#4d9dff', glow:'rgba(70,150,255,.3)', hpBase:40, speedBase:115 }
+  { color:'#ff4dff', glow:'rgba(255,60,220,.3)', hpBase:25, speedBase:80 },
+  { color:'#ff8a3d', glow:'rgba(255,140,60,.3)', hpBase:35, speedBase:100 },
+  { color:'#4dff88', glow:'rgba(70,255,140,.3)', hpBase:45, speedBase:120 },
+  { color:'#4d9dff', glow:'rgba(70,150,255,.3)', hpBase:55, speedBase:140 }
 ];
 
 function spawnBoss(){
@@ -310,28 +431,17 @@ function spawnBoss(){
   const waveIdx = (state.wave - 1);
   const type = BOSS_TYPES[waveIdx % BOSS_TYPES.length];
   const scale = playerScale();
-  const w = 220 * scale;
-  const h = 110 * scale;
-  const speedBoost = 1 + (state.wave - 1) * 0.12;
+  const w = 220 * scale, h = 110 * scale;
+  const speedBoost = 1 + (state.wave - 1) * 0.15;
 
   state.boss = {
-    x: W/2,
-    y: -h - 40,
-    w, h,
-    vx: type.speedBase * speedBoost,
-    dir: 1,
-    hp: type.hpBase + (state.wave - 1) * 4,
-    maxHp: type.hpBase + (state.wave - 1) * 4,
-    entering: true,
-    shootStage: 0,
-    shootTimer: 1.6,
-    cycles: 0,
-    hitFlash: 0,
-    t: 0,
-    typeIndex: waveIdx % BOSS_TYPES.length,
-    color: type.color,
-    glow: type.glow,
-    speedBoost
+    x: W/2, y: -h - 40, w, h,
+    vx: type.speedBase * speedBoost, dir: 1,
+    hp: type.hpBase + (state.wave - 1) * 8,
+    maxHp: type.hpBase + (state.wave - 1) * 8,
+    entering: true, shootStage: 0, shootTimer: 1.5,
+    cycles: 0, hitFlash: 0, typeIndex: waveIdx % 4,
+    color: type.color, glow: type.glow
   };
   showMessage('باس وارد شد!', 2.2);
 }
@@ -341,22 +451,18 @@ function bossShoot(){
   if(!b) return;
   const counts = [3, 5, 7];
   const n = counts[b.shootStage % 3];
-  const originX = b.x;
-  const originY = b.y + b.h/2 - 8;
+  const originX = b.x, originY = b.y + b.h/2 - 8;
   const baseAng = Math.atan2(player.y - originY, player.x - originX);
   const spread = 0.5;
-  const bulletSpeed = 230 * (1 + (state.wave-1)*0.06);
+  const bulletSpeed = 250 * (1 + (state.wave-1)*0.08);
 
   for(let i=0;i<n;i++){
     const t = n===1? 0 : (i/(n-1) - .5);
     const ang = baseAng + t*spread;
     state.bossBullets.push({
       x: originX, y: originY,
-      vx: Math.cos(ang)*bulletSpeed,
-      vy: Math.sin(ang)*bulletSpeed,
-      r: 8,
-      color: b.color,
-      trail: []
+      vx: Math.cos(ang)*bulletSpeed, vy: Math.sin(ang)*bulletSpeed,
+      r: 8, color: b.color, trail: []
     });
   }
   b.shootStage++;
@@ -364,7 +470,7 @@ function bossShoot(){
 }
 
 /* ============================================================
-   شروع
+   شروع / پایان
 ============================================================ */
 function startGame(){
   state.running = true;
@@ -372,83 +478,63 @@ function startGame(){
   state.score = 0;
   state.sessionCoins = 0;
   state.lives = 3;
-  state.enemies.length = 0;
-  state.bullets.length = 0;
-  state.bossBullets.length = 0;
-  state.particles.length = 0;
-  state.boss = null;
-  state.bossActive = false;
-  state.nextBossScore = 1000;
-  state.wave = 1;
-  state.spawnTimer = 0;
-  state.shootTimer = 0;
-  state.shake = 0;
+  state.enemies = []; state.bullets = []; state.bossBullets = []; state.particles = [];
+  state.boss = null; state.bossActive = false;
+  state.nextBossScore = 1000; state.wave = 1;
+  state.spawnTimer = 0; state.shootTimer = 0; state.shake = 0;
 
   const s = playerScale();
-  player.x = W/2;
-  player.y = H - 110*s;
-  player.targetX = player.x;
-  player.targetY = player.y;
-  player.alive = true;
-  player.invuln = 0;
+  player.x = W/2; player.y = H - 110*s;
+  player.targetX = player.x; player.targetY = player.y;
+  player.alive = true; player.invuln = 0;
 
-  pointerActive = false;
-  pointerX = null; pointerY = null;
+  pointerActive = false; pointerX = null; pointerY = null;
 
   updateHUD();
+  document.getElementById('startMenu').style.display = 'none';
   msgEl.classList.remove('show');
-  document.getElementById('start').style.display = 'none';
 }
 
-/* ============================================================
-   پایان
-============================================================ */
 function endGame(){
   state.running = false;
   state.over = true;
 
-  if(state.score > bestRecord){
-    bestRecord = state.score;
-    SAVE.set('record', bestRecord);
+  if(state.score > userData.record){
+    userData.record = state.score;
   }
-  totalCoins += state.sessionCoins;
-  SAVE.set('coins', totalCoins);
+  userData.coins += state.sessionCoins;
   state.sessionCoins = 0;
+  SAVE.set('userData', userData);
   updateHUD();
 
-  const s = document.getElementById('start');
-  s.style.display = 'flex';
-  s.querySelector('h1').textContent = 'GAME OVER';
-  s.querySelector('button').textContent = 'دوباره بازی کن';
+  const menu = document.getElementById('startMenu');
+  menu.style.display = 'flex';
+  menu.querySelector('h1').textContent = 'GAME OVER';
+  document.getElementById('startBtn').textContent = 'دوباره بازی کن';
   document.getElementById('startStats').innerHTML =
-    `امتیاز: ${state.score}<br>رکورد: ${bestRecord}<br>💰 ${totalCoins}`;
+    `امتیاز: ${state.score}<br>رکورد: ${userData.record}<br>💰 ${userData.coins}`;
 }
 
 /* ============================================================
-   به‌روزرسانی
+   آپدیت
 ============================================================ */
 function update(dt){
-  state.time += dt;
-  if(msgTimer > 0){
-    msgTimer -= dt;
-    if(msgTimer <= 0) msgEl.classList.remove('show');
-  }
+  if(msgTimer > 0){ msgTimer -= dt; if(msgTimer <= 0) msgEl.classList.remove('show'); }
   if(state.shake > 0) state.shake = Math.max(0, state.shake - dt*60);
   if(player.invuln > 0) player.invuln -= dt;
 
   for(const s of state.stars){
-    s.y += s.s * dt * .55;
-    s.tw += dt*3;
+    s.y += s.s * dt * .55; s.tw += dt*3;
     if(s.y > H + 3){ s.y = -3; s.x = Math.random()*W; }
   }
 
   if(!state.running) return;
 
   const s = playerScale();
-  player.w = 74 * s;
-  player.h = 62 * s;
+  player.w = 74 * s; player.h = 62 * s;
 
-  const speedKeys = 780;
+  // حرکت
+  const speedKeys = 800;
   let kx = 0, ky = 0;
   if(keys['ArrowLeft'] || keys['a'] || keys['A']) kx -= 1;
   if(keys['ArrowRight']|| keys['d'] || keys['D']) kx += 1;
@@ -471,27 +557,28 @@ function update(dt){
   player.x += (player.targetX - player.x) * Math.min(1, dt*16);
   player.y += (player.targetY - player.y) * Math.min(1, dt*16);
 
+  // شلیک
   state.shootTimer -= dt;
   if(state.shootTimer <= 0 && player.alive){
-    state.shootTimer = state.shootInterval;
+    const wStat = getWeaponStats();
+    state.shootTimer = wStat.isMissile ? 0.09 : 0.18; // مسلسل سریع‌تر
     playerShoot();
   }
 
+  // اسپاون دشمن
   if(!state.bossActive){
     state.spawnTimer -= dt;
     if(state.spawnTimer <= 0){
-      state.spawnTimer = Math.max(.35, state.spawnInterval - state.wave*0.035);
+      state.spawnTimer = Math.max(.3, state.spawnInterval - state.wave*0.05);
       spawnEnemy();
-      if(Math.random() < .28 + state.wave*0.015) spawnEnemy();
+      if(Math.random() < .25 + state.wave*0.02) spawnEnemy();
     }
   }
 
-  if(!state.bossActive && state.score >= state.nextBossScore){
-    spawnBoss();
-  }
+  if(!state.bossActive && state.score >= state.nextBossScore) spawnBoss();
   if(state.bossActive && state.boss) updateBoss(dt);
 
-  /* تیرهای بازیکن */
+  // تیرهای بازیکن
   for(let i=state.bullets.length-1;i>=0;i--){
     const b = state.bullets[i];
     b.x += b.vx*dt; b.y += b.vy*dt;
@@ -501,12 +588,17 @@ function update(dt){
     for(let j=state.enemies.length-1;j>=0;j--){
       const e = state.enemies[j];
       if(dist2(b.x,b.y,e.x,e.y) < (e.r + b.r)**2){
-        state.enemies.splice(j,1);
+        e.hp -= b.dmg;
+        e.hitFlash = .1;
+        if(e.hp <= 0){
+          state.enemies.splice(j,1);
+          spawnParticles(e.x, e.y, 16, '#00e5ff', 220, .55, 3);
+          addScore(30); addCoins(3);
+          state.shake = Math.max(state.shake, 3);
+        } else {
+          spawnParticles(b.x, b.y, 4, '#fff', 100, .2, 1);
+        }
         state.bullets.splice(i,1);
-        spawnParticles(e.x, e.y, 16, '#00e5ff', 220, .55, 3);
-        addScore(30);
-        addCoins(3);
-        state.shake = Math.max(state.shake, 3);
         removed = true;
         break;
       }
@@ -517,51 +609,51 @@ function update(dt){
       const bs = state.boss;
       if(Math.abs(b.x - bs.x) < bs.w/2 && Math.abs(b.y - bs.y) < bs.h/2){
         state.bullets.splice(i,1);
-        bs.hp--;
-        bs.hitFlash = .12;
+        bs.hp -= b.dmg;
+        bs.hitFlash = .1;
         spawnParticles(b.x, b.y, 5, bs.color, 120, .3, 2);
         if(bs.hp <= 0) killBoss();
       }
     }
   }
 
-  /* دشمن‌ها */
+  // دشمنان
   for(let i=state.enemies.length-1;i>=0;i--){
     const e = state.enemies[i];
-    e.y += e.vy*dt;
-    e.x += e.vx*dt;
-    e.rot += e.vrot*dt;
+    e.y += e.vy*dt; e.x += e.vx*dt; e.rot += e.vrot*dt;
     if(e.hitFlash > 0) e.hitFlash -= dt;
 
     if(e.x < e.r){ e.x = e.r; e.vx = Math.abs(e.vx); }
     if(e.x > W-e.r){ e.x = W-e.r; e.vx = -Math.abs(e.vx); }
 
-    if(player.alive && player.invuln <= 0 &&
-       dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.42)**2){
+    // برخورد با بازیکن
+    if(player.alive && player.invuln <= 0 && dist2(e.x,e.y,player.x,player.y) < (e.r + player.h*0.4)**2){
       state.enemies.splice(i,1);
       hitPlayer();
       continue;
     }
-    if(e.y > H + e.r + 20) state.enemies.splice(i,1);
+    
+    // رد شدن از پایین صفحه
+    if(e.y > H + e.r + 20){
+      state.enemies.splice(i,1);
+      hitPlayer(true); // true یعنی از نوع رد شدن
+    }
   }
 
-  /* تیرهای باس */
+  // تیرهای باس
   for(let i=state.bossBullets.length-1;i>=0;i--){
     const b = state.bossBullets[i];
-    b.trail.push({x:b.x, y:b.y});
-    if(b.trail.length > 7) b.trail.shift();
+    b.trail.push({x:b.x, y:b.y}); if(b.trail.length > 7) b.trail.shift();
     b.x += b.vx*dt; b.y += b.vy*dt;
 
-    if(b.x < -40 || b.x > W+40 || b.y < -40 || b.y > H+40){
-      state.bossBullets.splice(i,1); continue;
-    }
-    if(player.alive && player.invuln <= 0 &&
-       dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){
+    if(b.x < -40 || b.x > W+40 || b.y < -40 || b.y > H+40){ state.bossBullets.splice(i,1); continue; }
+    if(player.alive && player.invuln <= 0 && dist2(b.x,b.y,player.x,player.y) < (b.r + player.h*0.35)**2){
       state.bossBullets.splice(i,1);
       hitPlayer();
     }
   }
 
+  // ذرات
   for(let i=state.particles.length-1;i>=0;i--){
     const p = state.particles[i];
     p.x += p.vx*dt; p.y += p.vy*dt;
@@ -575,7 +667,6 @@ function update(dt){
 
 function updateBoss(dt){
   const b = state.boss;
-  b.t += dt;
   if(b.hitFlash > 0) b.hitFlash -= dt;
 
   if(b.entering){
@@ -591,14 +682,12 @@ function updateBoss(dt){
 
   b.shootTimer -= dt;
   if(b.shootTimer <= 0){
-    b.shootTimer = Math.max(1.0, 2.0 - b.cycles*0.06);
-    bossShoot();
-    b.cycles++;
+    b.shootTimer = Math.max(1.0, 1.8 - b.cycles*0.05);
+    bossShoot(); b.cycles++;
   }
 
   if(player.alive && player.invuln <= 0 &&
-     Math.abs(player.x - b.x) < b.w/2 + 10 &&
-     Math.abs(player.y - b.y) < b.h/2 + 14){
+     Math.abs(player.x - b.x) < b.w/2 + 10 && Math.abs(player.y - b.y) < b.h/2 + 14){
     hitPlayer();
   }
 }
@@ -607,53 +696,37 @@ function killBoss(){
   const b = state.boss;
   spawnParticles(b.x, b.y, 70, b.color, 420, 1.1, 5);
   spawnParticles(b.x, b.y, 40, '#ffffff', 300, .9, 4);
-  state.boss = null;
-  state.bossActive = false;
+  state.boss = null; state.bossActive = false;
   state.shake = 18;
   addScore(100);
-  state.wave++;
-  state.nextBossScore += 1000;
+  state.wave++; state.nextBossScore += 1000;
   showMessage('موج بعدی', 1.8);
 }
 
-/* ============================================================
-   ضربه به بازیکن — سفینه سر جای خودش می‌ماند
-============================================================ */
-function hitPlayer(){
+function hitPlayer(isFromBottom = false){
   if(!player.alive || player.invuln > 0) return;
   state.lives--;
   state.shake = 14;
-  player.invuln = 1.6;
-  spawnParticles(player.x, player.y, 30, '#ff3355', 280, .8, 4);
+  player.invuln = 1.5;
+  
+  if(isFromBottom){
+    // افکت برای رد شدن از پایین
+    spawnParticles(player.x, H - 20, 10, '#ff3355', 150, .5, 3);
+  } else {
+    spawnParticles(player.x, player.y, 30, '#ff3355', 280, .8, 4);
+  }
 
   if(state.lives <= 0){
     player.alive = false;
     spawnParticles(player.x, player.y, 60, '#ffcc00', 380, 1.2, 5);
+    setTimeout(endGame, 600);
     state.running = false;
-    state.over = true;
-    if(state.score > bestRecord){ bestRecord = state.score; SAVE.set('record', bestRecord); }
-    totalCoins += state.sessionCoins;
-    SAVE.set('coins', totalCoins);
-    state.sessionCoins = 0;
-    updateHUD();
-    setTimeout(()=>{
-      const scr = document.getElementById('start');
-      scr.style.display = 'flex';
-      scr.querySelector('h1').textContent = 'GAME OVER';
-      scr.querySelector('button').textContent = 'دوباره بازی کن';
-      document.getElementById('startStats').innerHTML =
-        `امتیاز: ${state.score}<br>رکورد: ${bestRecord}<br>💰 ${totalCoins}`;
-    }, 700);
   }
-  // سفینه جابجا نمی‌شود
 }
 
 function addScore(n){
   state.score += n;
-  if(state.score > bestRecord){
-    bestRecord = state.score;
-    SAVE.set('record', bestRecord);
-  }
+  if(state.score > userData.record){ userData.record = state.score; }
 }
 function addCoins(n){ state.sessionCoins += n; }
 
@@ -663,20 +736,11 @@ function addCoins(n){ state.sessionCoins += n; }
 function drawStars(){
   const shakeX = state.shake ? rand(-state.shake,state.shake) : 0;
   const shakeY = state.shake ? rand(-state.shake,state.shake) : 0;
-  ctx.save();
-  ctx.translate(shakeX, shakeY);
+  ctx.save(); ctx.translate(shakeX, shakeY);
   for(const s of state.stars){
     const tw = .6 + .4*Math.sin(s.tw);
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(255,255,255,${s.a*tw})`;
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    ctx.fill();
-    if(s.r > 1.1){
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(180,220,255,${s.a*tw*0.18})`;
-      ctx.arc(s.x, s.y, s.r*2.6, 0, Math.PI*2);
-      ctx.fill();
-    }
+    ctx.beginPath(); ctx.fillStyle = `rgba(255,255,255,${s.a*tw})`;
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
   }
   ctx.restore();
 }
@@ -684,6 +748,8 @@ function drawStars(){
 function drawPlayer(){
   if(!player.alive) return;
   const s = playerScale();
+  const ship = SHIPS[userData.equippedShip] || SHIPS.default;
+  
   ctx.save();
   ctx.translate(player.x, player.y);
   ctx.scale(s, s);
@@ -694,246 +760,146 @@ function drawPlayer(){
   }
 
   const g = ctx.createRadialGradient(0,0,4, 0,0,64);
-  g.addColorStop(0,'rgba(0,200,255,.25)');
-  g.addColorStop(1,'rgba(0,200,255,0)');
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(0,0,64,0,Math.PI*2); ctx.fill();
+  g.addColorStop(0, ship.color2+'44');
+  g.addColorStop(1, ship.color2+'00');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,64,0,Math.PI*2); ctx.fill();
 
   const w = 74/2, h = 62/2;
   ctx.beginPath();
   ctx.moveTo(0, -h - 6);
-  ctx.lineTo(w, h*0.55);
-  ctx.lineTo(w*0.55, h*0.9);
-  ctx.lineTo(w*0.16, h*0.55);
-  ctx.lineTo(0, h + 16);
-  ctx.lineTo(-w*0.16, h*0.55);
-  ctx.lineTo(-w*0.55, h*0.9);
+  ctx.lineTo(w, h*0.55); ctx.lineTo(w*0.55, h*0.9);
+  ctx.lineTo(w*0.16, h*0.55); ctx.lineTo(0, h + 16);
+  ctx.lineTo(-w*0.16, h*0.55); ctx.lineTo(-w*0.55, h*0.9);
   ctx.lineTo(-w, h*0.55);
   ctx.closePath();
 
   const pg = ctx.createLinearGradient(0,-h,0,h);
-  pg.addColorStop(0,'#d9f7ff');
-  pg.addColorStop(.45,'#5fc8ea');
-  pg.addColorStop(1,'#12304a');
+  pg.addColorStop(0, ship.color1);
+  pg.addColorStop(.5, ship.color2);
+  pg.addColorStop(1, ship.color3);
   ctx.fillStyle = pg;
-  ctx.shadowColor = '#3ad4ff';
-  ctx.shadowBlur = 22;
+  ctx.shadowColor = ship.color2;
+  ctx.shadowBlur = 20;
   ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = ship.color1; ctx.stroke();
 
-  ctx.lineWidth = 1.6;
-  ctx.strokeStyle = 'rgba(180,245,255,.95)';
-  ctx.shadowBlur = 10;
-  ctx.stroke();
-
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = 'rgba(0,60,90,.55)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0,-h*0.5); ctx.lineTo(0,h*0.4); ctx.stroke();
-
+  // موتور
   const fl = 6 + Math.random()*7;
   const eg = ctx.createLinearGradient(0,h,0,h+fl*2);
-  eg.addColorStop(0,'rgba(120,240,255,.9)');
-  eg.addColorStop(1,'rgba(0,120,255,0)');
+  eg.addColorStop(0, ship.color1); eg.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = eg;
-  ctx.beginPath();
-  ctx.moveTo(-7, h*0.35); ctx.lineTo(7, h*0.35);
-  ctx.lineTo(0, h + fl*2);
-  ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-7, h*0.35); ctx.lineTo(7, h*0.35); ctx.lineTo(0, h + fl*2); ctx.fill();
 
   ctx.restore();
 }
 
-function drawHexagon(x, y, r, rot, flash){
+function drawEnemy(e){
   ctx.save();
-  ctx.translate(x,y);
-  ctx.rotate(rot);
-  ctx.beginPath();
-  for(let i=0;i<6;i++){
-    const a = Math.PI/3*i - Math.PI/2;
-    const px = Math.cos(a)*r, py = Math.sin(a)*r;
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-  }
-  ctx.closePath();
-  ctx.lineWidth = 2.4;
-  if(flash > 0){
-    ctx.strokeStyle = '#ffffff';
-    ctx.fillStyle = 'rgba(255,255,255,.35)';
-    ctx.fill();
+  ctx.translate(e.x, e.y);
+  ctx.rotate(e.rot);
+  
+  if(e.hitFlash > 0){
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#fff';
+    ctx.shadowBlur = 0;
   } else {
+    ctx.fillStyle = 'transparent';
     ctx.strokeStyle = '#3ff5d0';
     ctx.shadowColor = '#3ff5d0';
-    ctx.shadowBlur = 16;
+    ctx.shadowBlur = 15;
   }
-  ctx.stroke();
-  ctx.restore();
-}
 
-function drawEnemies(){
-  for(const e of state.enemies) drawHexagon(e.x, e.y, e.r, e.rot, e.hitFlash);
+  ctx.beginPath();
+  const r = e.r;
+  if(e.type === 0){
+    // شش‌ضلعی
+    for(let i=0;i<6;i++){ const a = Math.PI/3*i - Math.PI/2; const px = Math.cos(a)*r, py = Math.sin(a)*r; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+  } else if(e.type === 1){
+    // مربع چرخیده (الماسی)
+    ctx.moveTo(0,-r); ctx.lineTo(r*0.8,0); ctx.lineTo(0,r); ctx.lineTo(-r*0.8,0);
+  } else {
+    // مثلث
+    ctx.moveTo(0,-r); ctx.lineTo(r, r*0.7); ctx.lineTo(-r, r*0.7);
+  }
+  ctx.closePath();
+  
+  if(e.hitFlash > 0) ctx.fill();
+  else { ctx.lineWidth = 2.5; ctx.stroke(); }
+  
+  ctx.restore();
 }
 
 function drawBullets(){
   for(const b of state.bullets){
-    const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*3);
-    g.addColorStop(0,'#ffffff');
-    g.addColorStop(.35,'#8ef7ff');
-    g.addColorStop(1,'rgba(0,180,255,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*3,0,Math.PI*2); ctx.fill();
-
-    ctx.beginPath();
-    ctx.fillStyle = '#eaffff';
-    ctx.shadowColor = '#4de3ff';
-    ctx.shadowBlur = 14;
-    ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    if(b.isMissile){
+      ctx.fillStyle = b.color;
+      ctx.shadowColor = b.color; ctx.shadowBlur = 10;
+      ctx.fillRect(b.x - 1.5, b.y - 6, 3, 12);
+    } else {
+      const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*3);
+      g.addColorStop(0,'#ffffff'); g.addColorStop(.3,b.color); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
   }
 }
 
 function drawBossBullets(){
   for(const b of state.bossBullets){
     for(let i=0;i<b.trail.length;i++){
-      const t = b.trail[i];
-      const a = (i / b.trail.length) * .45;
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(255,80,230,${a})`;
-      ctx.arc(t.x, t.y, b.r*(i/b.trail.length)*0.9, 0, Math.PI*2);
-      ctx.fill();
+      const t = b.trail[i]; const a = (i / b.trail.length) * .45;
+      ctx.beginPath(); ctx.fillStyle = `rgba(255,80,230,${a})`;
+      ctx.arc(t.x, t.y, b.r*(i/b.trail.length)*0.9, 0, Math.PI*2); ctx.fill();
     }
     const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*4);
-    g.addColorStop(0,'rgba(255,255,255,1)');
-    g.addColorStop(.25, b.color);
-    g.addColorStop(1,'rgba(200,0,255,0)');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*4,0,Math.PI*2); ctx.fill();
-
-    ctx.beginPath();
-    ctx.fillStyle = '#fff';
-    ctx.shadowColor = b.color;
-    ctx.shadowBlur = 22;
-    ctx.arc(b.x,b.y,b.r*0.55,0,Math.PI*2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    g.addColorStop(0,'#fff'); g.addColorStop(.25, b.color); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.shadowColor = b.color; ctx.shadowBlur = 15;
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r*0.6,0,Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
   }
 }
 
 function drawBoss(){
-  const b = state.boss;
-  if(!b) return;
-  ctx.save();
-  ctx.translate(b.x, b.y);
+  const b = state.boss; if(!b) return;
+  ctx.save(); ctx.translate(b.x, b.y);
 
   const g = ctx.createRadialGradient(0,0,20, 0,0,b.w*0.9);
-  g.addColorStop(0, b.glow);
-  g.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.arc(0,0,b.w*0.9,0,Math.PI*2); ctx.fill();
+  g.addColorStop(0, b.glow); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0,0,b.w*0.9,0,Math.PI*2); ctx.fill();
 
   const w = b.w/2, h = b.h/2;
-  const type = b.typeIndex % 4;
-
   ctx.beginPath();
-  if(type === 0){
-    ctx.moveTo(-w, -h*0.35);
-    ctx.lineTo(-w*0.55, -h);
-    ctx.lineTo(w*0.55, -h);
-    ctx.lineTo(w, -h*0.35);
-    ctx.lineTo(w*0.7, h);
-    ctx.lineTo(-w*0.7, h);
-  } else if(type === 1){
-    ctx.moveTo(0, -h);
-    ctx.lineTo(w, 0);
-    ctx.lineTo(0, h);
-    ctx.lineTo(-w, 0);
-  } else if(type === 2){
-    const points = 8;
-    for(let i=0;i<points;i++){
-      const a = (i/points)*Math.PI*2 - Math.PI/2;
-      const rad = i%2===0 ? w : w*0.6;
-      const px = Math.cos(a)*rad;
-      const py = Math.sin(a)*(h*1.1);
-      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-    }
+  if(b.typeIndex === 0){
+    ctx.moveTo(-w,-h*.3); ctx.lineTo(-w*.5,-h); ctx.lineTo(w*.5,-h); ctx.lineTo(w,-h*.3); ctx.lineTo(w*.6,h); ctx.lineTo(-w*.6,h);
+  } else if(b.typeIndex === 1){
+    ctx.moveTo(0,-h); ctx.lineTo(w,0); ctx.lineTo(0,h); ctx.lineTo(-w,0);
   } else {
-    for(let i=0;i<6;i++){
-      const a = (i/6)*Math.PI*2 - Math.PI/2;
-      const px = Math.cos(a)*w;
-      const py = Math.sin(a)*h;
-      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-    }
+    for(let i=0;i<8;i++){ const a=(i/8)*Math.PI*2 - Math.PI/2; const rad=i%2===0?w:w*.6; const px=Math.cos(a)*rad; const py=Math.sin(a)*h; if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py); }
   }
   ctx.closePath();
 
   const bg = ctx.createLinearGradient(0,-h,0,h);
-  if(b.hitFlash > 0){
-    bg.addColorStop(0,'#ffffff');
-    bg.addColorStop(1,b.color);
-  } else {
-    bg.addColorStop(0, b.color);
-    bg.addColorStop(.5, shadeColor(b.color, -50));
-    bg.addColorStop(1,'#1a0518');
-  }
-  ctx.fillStyle = bg;
-  ctx.shadowColor = b.color;
-  ctx.shadowBlur = 30;
-  ctx.fill();
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = 'rgba(255,255,255,.85)';
-  ctx.stroke();
-
-  ctx.shadowBlur = 0;
-  ctx.strokeStyle = 'rgba(255,255,255,.25)';
-  ctx.lineWidth = 1.5;
-  for(let i=-1;i<=1;i++){
-    ctx.beginPath();
-    ctx.moveTo(i*w*0.35, -h*0.6);
-    ctx.lineTo(i*w*0.35, h*0.7);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = '#fff';
-  ctx.shadowColor = b.color;
-  ctx.shadowBlur = 16;
-  for(const ox of [-w*0.55, 0, w*0.55]){
-    ctx.beginPath();
-    ctx.arc(ox, h*0.55, 7, 0, Math.PI*2);
-    ctx.fill();
-  }
-  ctx.shadowBlur = 0;
+  bg.addColorStop(0, b.hitFlash>0 ? '#fff' : b.color);
+  bg.addColorStop(.5, b.hitFlash>0 ? '#fff' : '#333');
+  bg.addColorStop(1, b.hitFlash>0 ? '#fff' : '#000');
+  ctx.fillStyle = bg; ctx.shadowColor = b.color; ctx.shadowBlur = 25;
+  ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = b.color; ctx.stroke();
 
   const hpW = b.w * 0.9;
-  ctx.fillStyle = 'rgba(0,0,0,.55)';
-  ctx.fillRect(-hpW/2, -h - 22, hpW, 8);
+  ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(-hpW/2, -h - 22, hpW, 6);
   const hpRatio = Math.max(0, b.hp / b.maxHp);
-  const hg = ctx.createLinearGradient(-hpW/2,0,hpW/2,0);
-  hg.addColorStop(0,'#ff2e6e');
-  hg.addColorStop(1,'#ff9ad4');
-  ctx.fillStyle = hg;
-  ctx.fillRect(-hpW/2, -h - 22, hpW*hpRatio, 8);
+  ctx.fillStyle = '#ff2e6e'; ctx.fillRect(-hpW/2, -h - 22, hpW*hpRatio, 6);
 
   ctx.restore();
-}
-
-function shadeColor(hex, amt){
-  if(!hex.startsWith('#')) return hex;
-  let c = hex.slice(1);
-  if(c.length===3) c = c.split('').map(x=>x+x).join('');
-  const num = parseInt(c,16);
-  let r = Math.max(0, Math.min(255, (num>>16) + amt));
-  let g = Math.max(0, Math.min(255, ((num>>8)&255) + amt));
-  let b = Math.max(0, Math.min(255, (num&255) + amt));
-  return '#' + ((r<<16)|(g<<8)|b).toString(16).padStart(6,'0');
 }
 
 function drawParticles(){
   for(const p of state.particles){
     const a = Math.max(0, p.life / p.maxLife);
-    ctx.globalAlpha = a;
-    ctx.beginPath();
-    ctx.fillStyle = p.color;
-    ctx.arc(p.x, p.y, p.size * a + .4, 0, Math.PI*2);
-    ctx.fill();
+    ctx.globalAlpha = a; ctx.beginPath(); ctx.fillStyle = p.color;
+    ctx.arc(p.x, p.y, p.size * a + .4, 0, Math.PI*2); ctx.fill();
   }
   ctx.globalAlpha = 1;
 }
@@ -947,18 +913,16 @@ function loop(t){
 
   update(dt);
 
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
 
   drawStars();
 
   ctx.save();
-  if(state.shake > 0){
-    ctx.translate(rand(-state.shake,state.shake)*.5, rand(-state.shake,state.shake)*.5);
-  }
+  if(state.shake > 0) ctx.translate(rand(-state.shake,state.shake)*.5, rand(-state.shake,state.shake)*.5);
 
   drawBoss();
-  drawEnemies();
+  for(const e of state.enemies) drawEnemy(e);
   drawBullets();
   drawBossBullets();
   drawPlayer();
@@ -970,20 +934,166 @@ function loop(t){
 }
 
 /* ============================================================
-   شروع
+   UI Logic (Tabs & Shop)
+============================================================ */
+function switchTab(tab){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  
+  if(tab === 'game'){
+    document.getElementById('navGame').classList.add('active');
+    document.getElementById('pageGame').classList.add('active');
+    resize();
+  } else {
+    document.getElementById('navShop').classList.add('active');
+    document.getElementById('pageShop').classList.add('active');
+    renderShop('weapons');
+  }
+}
+
+function switchCat(cat, btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderShop(cat);
+}
+
+function renderShop(cat){
+  const container = document.getElementById('shopItems');
+  container.innerHTML = '';
+  document.getElementById('shopCoins').textContent = '💰 موجودی شما: ' + userData.coins;
+
+  if(cat === 'weapons'){
+    for(const key in WEAPONS){
+      const w = WEAPONS[key];
+      const isOwned = userData.ownedWeapons.includes(key);
+      const isEquipped = userData.equippedWeapon === key;
+      const lvl = userData.weaponLevels[key] || 0;
+      const nextPrice = Math.floor(w.price * 0.7 * Math.pow(1.8, lvl));
+      
+      let btnHTML = '';
+      if(isEquipped){
+        btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
+      } else if(isOwned){
+        btnHTML = `<button class="btn btn-equip" onclick="equipWeapon('${key}')">مجهز کردن</button>`;
+      } else {
+        btnHTML = `<button class="btn btn-buy" onclick="buyWeapon('${key}')">💰 ${w.price}</button>`;
+      }
+
+      let upgradeHTML = '';
+      if(isOwned){
+        upgradeHTML = `
+          <button class="btn btn-solid" onclick="upgradeWeapon('${key}')" style="margin-top:8px; padding:8px 15px; font-size:12px;">
+            ⚡ ارتقا Lvl ${lvl} - 💰 ${nextPrice}
+          </button>`;
+      }
+
+      container.innerHTML += `
+        <div class="item-card ${isEquipped?'equipped':''}">
+          <div class="item-info">
+            <h3>${w.name}</h3>
+            <p>دمیج: ${w.dmg + lvl} | تعداد تیر: ${w.shots}</p>
+            ${upgradeHTML}
+          </div>
+          ${btnHTML}
+        </div>
+      `;
+    }
+  } else if(cat === 'ships'){
+    for(const key in SHIPS){
+      const s = SHIPS[key];
+      const isOwned = userData.ownedShips.includes(key);
+      const isEquipped = userData.equippedShip === key;
+      
+      let btnHTML = '';
+      if(isEquipped){
+        btnHTML = `<button class="btn btn-equipped">مجهز شده</button>`;
+      } else if(isOwned){
+        btnHTML = `<button class="btn btn-equip" onclick="equipShip('${key}')">مجهز کردن</button>`;
+      } else {
+        btnHTML = `<button class="btn btn-buy" onclick="buyShip('${key}')">💰 ${s.price}</button>`;
+      }
+
+      container.innerHTML += `
+        <div class="item-card ${isEquipped?'equipped':''}">
+          <div class="item-info">
+            <h3>${s.name}</h3>
+            <p>ظاهر سفینه</p>
+            ${!isOwned ? `<p class="price">💰 ${s.price}</p>` : ''}
+          </div>
+          ${btnHTML}
+        </div>
+      `;
+    }
+  }
+}
+
+function buyWeapon(key){
+  const w = WEAPONS[key];
+  if(userData.coins >= w.price){
+    userData.coins -= w.price;
+    userData.ownedWeapons.push(key);
+    SAVE.set('userData', userData);
+    renderShop('weapons');
+  } else {
+    alert('سکه کافی نیست!');
+  }
+}
+
+function equipWeapon(key){
+  userData.equippedWeapon = key;
+  SAVE.set('userData', userData);
+  renderShop('weapons');
+}
+
+function upgradeWeapon(key){
+  const w = WEAPONS[key];
+  const lvl = userData.weaponLevels[key] || 0;
+  const nextPrice = Math.floor(w.price * 0.7 * Math.pow(1.8, lvl));
+  
+  if(userData.coins >= nextPrice){
+    userData.coins -= nextPrice;
+    userData.weaponLevels[key] = lvl + 1;
+    SAVE.set('userData', userData);
+    renderShop('weapons');
+  } else {
+    alert('سکه کافی نیست!');
+  }
+}
+
+function buyShip(key){
+  const s = SHIPS[key];
+  if(userData.coins >= s.price){
+    userData.coins -= s.price;
+    userData.ownedShips.push(key);
+    SAVE.set('userData', userData);
+    renderShop('ships');
+  } else {
+    alert('سکه کافی نیست!');
+  }
+}
+
+function equipShip(key){
+  userData.equippedShip = key;
+  SAVE.set('userData', userData);
+  renderShop('ships');
+}
+
+/* ============================================================
+   شروع اولیه
 ============================================================ */
 document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('startStats').innerHTML =
-  `رکورد: ${bestRecord}<br>💰 ${totalCoins}`;
-updateHUD();
+document.getElementById('startStats').innerHTML = `رکورد: ${userData.record}<br>💰 ${userData.coins}`;
 
 const _s = playerScale();
-player.x = W/2;
-player.y = H - 110*_s;
-player.targetX = player.x;
-player.targetY = player.y;
+player.x = 150; player.y = H - 100;
+player.targetX = player.x; player.targetY = player.y;
+
+// ذخیره هنگام خروج
+window.addEventListener('beforeunload', ()=>{
+  SAVE.set('userData', userData);
+});
 
 requestAnimationFrame(loop);
 </script>
 </body>
-       </html>
+ </html>
