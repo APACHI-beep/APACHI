@@ -126,31 +126,31 @@
         </div>
     </div>
 
-    <script src="https://cdn.scorezilla.dev/sdk.js"></script>
-    <script>
+    <script type="module">
         // ==========================================
-        // تنظیمات Scorezilla
+        // ۱. وارد کردن کتابخانه Scorezilla
         // ==========================================
+        import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@latest/dist/index.js';
+
         const SCOREZILLA_BOARD_ID = "fcbea6d7-013f-477b-acca-66b728284ed4"; 
         const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
 
+        let scorezilla = null;
         let isScorezillaReady = false;
 
-        window.addEventListener('load', () => {
-            if (typeof Scorezilla !== 'undefined') {
-                try {
-                    Scorezilla.init({
-                        publicKey: SCOREZILLA_PUBLIC_KEY,
-                        boardId: SCOREZILLA_BOARD_ID
-                    });
-                    isScorezillaReady = true;
-                    console.log("Scorezilla متصل شد.");
-                } catch (e) { console.error("خطا در اتصال به Scorezilla:", e); }
-            }
-        });
+        try {
+            scorezilla = new Scorezilla({
+                publicKey: SCOREZILLA_PUBLIC_KEY,
+                boardId: SCOREZILLA_BOARD_ID
+            });
+            isScorezillaReady = true;
+            console.log("Scorezilla متصل شد.");
+        } catch (e) {
+            console.error("خطا در اتصال به Scorezilla:", e);
+        }
 
         // ==========================================
-        // دیتای بازی
+        // ۲. دیتای بازی
         // ==========================================
         const weaponsData = {
             laser: { name: 'لیزر ساده', damage: 1, bullets: 1, buyCost: 0, upgCost: 200, icon: '🔫' },
@@ -194,7 +194,10 @@
             updateUI();
         }
 
-        function switchTab(tabId) {
+        // ==========================================
+        // ۳. مدیریت تب‌ها و UI
+        // ==========================================
+        window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId + '-tab').classList.add('active');
@@ -212,14 +215,14 @@
             }
             if (tabId === 'leaderboard') loadOnlineLeaderboard();
             updateUI();
-        }
+        };
 
-        function switchShopTab(tab, btn) {
+        window.switchShopTab = function(tab, btn) {
             document.querySelectorAll('.shop-tab-btn').forEach(el => el.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('weapons-list').style.display = tab === 'weapons' ? 'block' : 'none';
             document.getElementById('ships-list').style.display = tab === 'ships' ? 'block' : 'none';
-        }
+        };
 
         function updateUI() {
             document.getElementById('ui-coins').innerText = player.coins;
@@ -270,7 +273,10 @@
             document.getElementById('avatar-list').innerHTML = avatarsHTML;
         }
 
-        function buyWeapon(key) {
+        // ==========================================
+        // ۴. عملیات فروشگاه و پروفایل
+        // ==========================================
+        window.buyWeapon = function(key) {
             if (player.coins >= weaponsData[key].buyCost && !player.ownedWeapons.includes(key)) {
                 player.coins -= weaponsData[key].buyCost; 
                 player.ownedWeapons.push(key); 
@@ -280,14 +286,14 @@
             }
         }
         
-        function equipWeapon(key) { 
+        window.equipWeapon = function(key) { 
             if (player.ownedWeapons.includes(key)) { 
                 player.equippedWeapon = key; 
                 saveGame(); 
             } 
         }
         
-        function upgradeWeapon(key) {
+        window.upgradeWeapon = function(key) {
             if (player.coins >= weaponsData[key].upgCost) {
                 player.coins -= weaponsData[key].upgCost; 
                 player.weaponLevels[key] += 1; 
@@ -295,7 +301,7 @@
             } else alert('سکه کافی نیست!');
         }
         
-        function buyShip(key) {
+        window.buyShip = function(key) {
             if (player.coins >= shipsData[key].cost && !player.ownedShips.includes(key)) {
                 player.coins -= shipsData[key].cost; 
                 player.ownedShips.push(key); 
@@ -305,7 +311,7 @@
             }
         }
         
-        function equipShip(key) {
+        window.equipShip = function(key) {
             if (player.ownedShips.includes(key)) { 
                 player.equippedShip = key; 
                 ship.color = shipsData[key].color; 
@@ -313,9 +319,9 @@
             }
         }
         
-        function selectAvatar(av) { player.avatar = av; updateUI(); }
+        window.selectAvatar = function(av) { player.avatar = av; updateUI(); }
         
-        function saveProfile() {
+        window.saveProfile = function() {
             const newName = document.getElementById('profile-name-input').value.trim();
             if (newName) player.name = newName; 
             saveGame(); 
@@ -323,12 +329,12 @@
         }
 
         // ==========================================
-        // لیدربرد آنلاین (Scorezilla)
+        // ۵. لیدربرد آنلاین (Scorezilla)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (!isScorezillaReady || score <= 0) return;
             try {
-                await Scorezilla.submitScore(score, {
+                await scorezilla.submitScore(score, {
                     playerName: player.name,
                     metadata: { avatar: player.avatar }
                 });
@@ -351,7 +357,7 @@
             listEl.innerHTML = '';
 
             try {
-                const results = await Scorezilla.getScores({ limit: 20 });
+                const results = await scorezilla.getScores({ limit: 20 });
                 
                 statusEl.style.display = 'none';
                 if (!results || results.length === 0) {
@@ -389,7 +395,7 @@
         }
 
         // ==========================================
-        // موتور بازی
+        // ۶. موتور بازی
         // ==========================================
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -438,7 +444,7 @@
         canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if(ship.isDragging) handleMove(e); }, {passive: false});
         window.addEventListener('touchend', () => { ship.isDragging = false; });
 
-        function startGame() {
+        window.startGame = function() {
             resizeCanvas();
             gameState.score = 0; gameState.lives = 3; gameState.isPlaying = true;
             gameState.isGameOver = false; gameState.bullets = []; gameState.enemies = [];
@@ -666,4 +672,4 @@
         });
     </script>
 </body>
-                                                                                                                               </html>
+    </html>
