@@ -133,7 +133,8 @@
         import { Scorezilla } from 'https://cdn.jsdelivr.net/npm/scorezilla@0.5.2/dist/index.js';
 
         const SCOREZILLA_BOARD_ID = "main"; 
-        const SCOREZILLA_PUBLIC_KEY = "pk_apachi_Ev3goxNLlQUK9TkBTCEaAG"; 
+        // ✅ کلید عمومی جدید شما اینجا قرار گرفت
+        const SCOREZILLA_PUBLIC_KEY = "pk_apachi_DpoZiszBhOQY7rJ3ysf5g6"; 
 
         let scorezilla = null;
         let isScorezillaReady = false;
@@ -329,14 +330,14 @@
         }
 
         // ==========================================
-        // ۵. لیدربرد آنلاین (Scorezilla) - اصلاح شده
+        // ۵. لیدربرد آنلاین (Scorezilla)
         // ==========================================
         async function sendScoreToLeaderboard(score) {
             if (!isScorezillaReady || score <= 0) return;
             try {
                 await scorezilla.submitScore({
                     boardId: SCOREZILLA_BOARD_ID,
-                    playerId: player.code, // استفاده از کد یکتا برای جلوگیری از تداخل
+                    playerId: player.code,
                     score: score,
                     name: player.name
                 });
@@ -675,4 +676,4 @@
         });
     </script>
 </body>
-    </html>￼Enter
+    </html>
