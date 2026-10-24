@@ -31,6 +31,8 @@
     background:#00e5ff; box-shadow:0 0 10px #00e5ff; border-radius:2px;
   }
   #navAdmin { display: none; color: #ffd700; }
+  #navAdmin.active { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,.6); }
+  #navAdmin.active::after { background: #ffd700; box-shadow: 0 0 10px #ffd700; }
 
   /* ---------- محتوا ---------- */
   .content{ flex:1; position:relative; overflow:hidden; }
@@ -111,8 +113,8 @@
   <div class="top-nav">
     <div class="nav-btn active" id="navGame" onclick="switchTab('game')"><span>🎮</span> بازی</div>
     <div class="nav-btn" id="navShop" onclick="switchTab('shop')"><span>🛒</span> فروشگاه</div>
-    <div class="nav-btn" id="navProfile" onclick="switchTab('profile')"><span>👤</span> پروفایل</div>
     <div class="nav-btn" id="navAdmin" onclick="switchTab('admin')"><span>👑</span> پنل مالک</div>
+    <div class="nav-btn" id="navProfile" onclick="switchTab('profile')"><span>👤</span> پروفایل</div>
   </div>
 
   <div class="content">
@@ -157,6 +159,24 @@
       </div>
     </div>
 
+    <!-- صفحه پنل مالک (فقط برای ادمین) -->
+    <div class="page" id="pageAdmin">
+      <div class="shop-container">
+        <div class="shop-header">
+          <h2>👑 پنل مالک</h2>
+          <p style="font-size:12px; color:#889; margin-top:10px;">واریز سکه به بازیکنان</p>
+        </div>
+        
+        <div class="input-group" style="flex-direction:column; gap:15px;">
+          <input type="text" id="adminSearch" placeholder="جستجوی نام بازیکن..." oninput="renderAdminList()">
+        </div>
+
+        <div class="profile-list" id="adminList">
+          <!-- لیست بازیکنان برای ادمین اینجا رندر می‌شود -->
+        </div>
+      </div>
+    </div>
+
     <!-- صفحه پروفایل -->
     <div class="page" id="pageProfile">
       <div class="shop-container">
@@ -175,24 +195,6 @@
         </div>
       </div>
     </div>
-
-    <!-- صفحه پنل مالک -->
-    <div class="page" id="pageAdmin">
-      <div class="shop-container">
-        <div class="shop-header">
-          <h2>👑 پنل مالک</h2>
-          <p style="font-size:12px; color:#889; margin-top:10px;">مدیریت سکه‌های بازیکنان</p>
-        </div>
-        
-        <div class="input-group" style="flex-direction:column;">
-          <input type="text" id="adminSearch" placeholder="جستجوی نام کاربر..." oninput="renderAdminList()">
-        </div>
-
-        <div class="profile-list" id="adminList">
-          <!-- لیست ادمین اینجا رندر می‌شود -->
-        </div>
-      </div>
-    </div>
   </div>
   
   <!-- پیام سراسری -->
@@ -201,18 +203,16 @@
 
 <script>
 /* ============================================================
-   دیتابیس اصلی (شامل تمام پروفایل‌ها)
+   دیتابیس و ذخیره‌سازی
 ============================================================ */
 let db = localStorage.getItem('sf_db_v3');
 if(!db){
-  // پروفایل پیش‌فرض سازنده
   db = {
     profiles: {
       "مالک": {
         id: "مالک", name: "مالک", isAdmin: true,
         coins: Infinity, record: 0,
-        ownedWeapons: ['simple', 'double', 'red', 'three', 'plasma', 'four', 'missile'],
-        ownedShips: ['default', 'galaxy', 'purple', 'gold', 'crystal'],
+        ownedWeapons: ['simple'], ownedShips: ['default'],
         equippedWeapon: 'simple', equippedShip: 'default',
         weaponLevels: { simple: 0 }
       }
@@ -225,21 +225,16 @@ if(!db){
 }
 
 function saveDB(){ localStorage.setItem('sf_db_v3', JSON.stringify(db)); }
-
-// دریافت پروفایل فعلی
-function getProfile(){
-  if(!db.currentProfileId || !db.profiles[db.currentProfileId]) return null;
-  return db.profiles[db.currentProfileId];
-}
+function getProfile(){ if(!db.currentProfileId || !db.profiles[db.currentProfileId]) return null; return db.profiles[db.currentProfileId]; }
 
 const WEAPONS = {
-  simple:   { name:'لیزر ساده',    price:0,    dmg:1, shots:1, color:'#00e5ff', desc:'دمیج: 1 | تعداد تیر: 1' },
-  double:   { name:'شلیک دوقلو',   price:200,  dmg:1, shots:2, color:'#ff00cc', desc:'دمیج: 1 | تعداد تیر: 2' },
-  red:      { name:'لیزر سرخ',     price:400,  dmg:2, shots:1, color:'#ff3333', desc:'دمیج: 2 | تعداد تیر: 1' },
-  three:    { name:'سه‌گانه',      price:650,  dmg:1, shots:3, color:'#ffd700', desc:'دمیج: 1 | تعداد تیر: 3' },
-  plasma:   { name:'پلاسما',       price:900,  dmg:4, shots:1, color:'#aa00ff', desc:'دمیج: 4 | تعداد تیر: 1' },
-  four:     { name:'چهارگانه',     price:1200, dmg:1, shots:4, color:'#ff6600', desc:'دمیج: 1 | تعداد تیر: 4' },
-  missile:  { name:'مسلسل نئونی',  price:1800, dmg:1, shots:1, color:'#00ff88', desc:'دمیج: 1 | تعداد تیر: 1 (سریع)' }
+  simple:   { name:'لیزر ساده',    price:0,    dmg:1, shots:1, color:'#00e5ff' },
+  double:   { name:'شلیک دوقلو',   price:200,  dmg:1, shots:2, color:'#ff00cc' },
+  red:      { name:'لیزر سرخ',     price:400,  dmg:2, shots:1, color:'#ff3333' },
+  three:    { name:'سه‌گانه',      price:650,  dmg:1, shots:3, color:'#ffd700' },
+  plasma:   { name:'پلاسما',       price:900,  dmg:4, shots:1, color:'#aa00ff' },
+  four:     { name:'چهارگانه',     price:1200, dmg:1, shots:4, color:'#ff6600' },
+  missile:  { name:'مسلسل نئونی',  price:1800, dmg:1, shots:1, color:'#00ff88' }
 };
 
 const SHIPS = {
@@ -251,7 +246,7 @@ const SHIPS = {
 };
 
 /* ============================================================
-   تنظیمات بازی (Canvas)
+   تنظیمات Canvas
 ============================================================ */
 const cv = document.getElementById('gameCanvas');
 const ctx = cv.getContext('2d');
@@ -348,6 +343,7 @@ function updateHUD(){
 ============================================================ */
 function getWeaponStats(){
   const p = getProfile();
+  if(!p) return { dmg: 1, shots: 1, color: '#00e5ff', isMissile: false };
   const base = WEAPONS[p.equippedWeapon] || WEAPONS.simple;
   const lvl = p.weaponLevels[p.equippedWeapon] || 0;
   return { dmg: base.dmg + lvl, shots: base.shots, color: base.color, isMissile: p.equippedWeapon === 'missile' };
@@ -657,9 +653,18 @@ function loop(t){
 }
 
 /* ============================================================
-   UI Logic (Tabs & Shop & Profile)
+   UI Logic (Tabs & Shop & Profile & Admin)
 ============================================================ */
 function switchTab(tab){
+  // چک کردن دسترسی برای پنل ادمین
+  if(tab === 'admin'){
+    const p = getProfile();
+    if(!p || !p.isAdmin){
+      showMessage('دسترسی غیرمجاز!', 1.5);
+      return;
+    }
+  }
+
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   
@@ -673,14 +678,14 @@ function switchTab(tab){
     document.getElementById('navShop').classList.add('active');
     document.getElementById('pageShop').classList.add('active');
     renderShop('weapons');
-  } else if(tab === 'profile'){
-    document.getElementById('navProfile').classList.add('active');
-    document.getElementById('pageProfile').classList.add('active');
-    renderProfileList();
   } else if(tab === 'admin'){
     document.getElementById('navAdmin').classList.add('active');
     document.getElementById('pageAdmin').classList.add('active');
     renderAdminList();
+  } else if(tab === 'profile'){
+    document.getElementById('navProfile').classList.add('active');
+    document.getElementById('pageProfile').classList.add('active');
+    renderProfileList();
   }
 }
 
@@ -731,7 +736,7 @@ function renderShop(cat){
 }
 
 function deductCoins(p, amount){
-  if(p.coins === Infinity) return;
+  if(p.coins === Infinity) return true;
   const total = p.coins + state.sessionCoins;
   if(total >= amount){
     if(state.sessionCoins >= amount) state.sessionCoins -= amount;
@@ -770,7 +775,6 @@ function equipShip(key){ const p = getProfile(); p.equippedShip = key; saveDB();
 ============================================================ */
 function renderProfileList(){
   const list = document.getElementById('profileList'); list.innerHTML = '';
-  const p = getProfile();
   
   for(const id in db.profiles){
     const prof = db.profiles[id];
@@ -792,13 +796,25 @@ function renderProfileList(){
 function createProfile(){
   const nameInput = document.getElementById('newProfileName');
   const name = nameInput.value.trim();
+  
   if(name.length < 2){ showMessage('نام باید حداقل ۲ حرف باشد', 1.5); return; }
-  if(db.profiles[name]){ showMessage('این نام قبلا وجود دارد', 1.5); return; }
+  
+  // چک کردن تکراری بودن نام (بدون حساسیت به حروف بزرگ/کوچک)
+  const lowerName = name.toLowerCase();
+  for(const id in db.profiles){
+    if(db.profiles[id].name.toLowerCase() === lowerName){
+      showMessage('این نام قبلا انتخاب شده است', 1.5);
+      return;
+    }
+  }
 
+  // ساخت پروفایل جدید با تجهیزات اولیه
   db.profiles[name] = {
     id: name, name: name, isAdmin: false, coins: 0, record: 0,
-    ownedWeapons: ['simple'], ownedShips: ['default'],
-    equippedWeapon: 'simple', equippedShip: 'default',
+    ownedWeapons: ['simple'], 
+    ownedShips: ['default'],
+    equippedWeapon: 'simple', 
+    equippedShip: 'default',
     weaponLevels: { simple: 0 }
   };
   saveDB();
@@ -811,7 +827,16 @@ function selectProfile(id){
   saveDB();
   updateHUD();
   renderProfileList();
-  showMessage(`خوش آمدید ${db.profiles[id].name}`, 1.5);
+  
+  // نمایش/مخفی کردن تب ادمین
+  const p = db.profiles[id];
+  if(p && p.isAdmin){
+    document.getElementById('navAdmin').style.display = 'flex';
+  } else {
+    document.getElementById('navAdmin').style.display = 'none';
+  }
+
+  showMessage(`خوش آمدید ${p.name}`, 1.5);
   setTimeout(()=> switchTab('game'), 800);
 }
 
@@ -831,17 +856,19 @@ function renderAdminList(){
 
   for(const id in db.profiles){
     const prof = db.profiles[id];
+    // ادمین خودش را در لیست واریز نمی‌بینید
+    if(prof.isAdmin) continue; 
     if(query && !prof.name.toLowerCase().includes(query)) continue;
     
     list.innerHTML += `
       <div class="item-card" style="flex-direction:column; align-items:stretch; gap:10px;">
         <div style="display:flex; justify-content:space-between;">
           <span style="font-weight:bold; color:#00e5ff;">${prof.name}</span>
-          <span style="color:#ffd45e;">💰 ${prof.coins === Infinity ? '∞' : prof.coins}</span>
+          <span style="color:#ffd45e;">💰 ${prof.coins}</span>
         </div>
         <div class="input-group" style="margin:0;">
           <input type="number" id="admin_amount_${id}" placeholder="مقدار سکه..." style="padding:8px;">
-          <button class="btn btn-buy" onclick="adminGiveCoins('${id}')" style="padding:8px 15px;">افزودن</button>
+          <button class="btn btn-buy" onclick="adminGiveCoins('${id}')" style="padding:8px 15px;">واریز</button>
         </div>
       </div>
     `;
@@ -867,23 +894,9 @@ function adminGiveCoins(targetId){
     saveDB();
     renderAdminList();
     updateHUD();
-    showMessage(`💰 ${amount} سکه به ${target.name} داده شد`, 2);
+    showMessage(`💰 ${amount} سکه به ${target.name} واریز شد`, 2);
   }
 }
-
-/* ============================================================
-   دکمه مخفی باز کردن پنل ادمین (کلیک 5 بار روی لوگوی بازی)
-============================================================ */
-let logoClicks = 0;
-document.getElementById('mainLogo').addEventListener('click', ()=>{
-  logoClicks++;
-  if(logoClicks >= 5){
-    document.getElementById('navAdmin').style.display = 'flex';
-    showMessage('👑 پنل مالک فعال شد', 2);
-    logoClicks = 0;
-  }
-  setTimeout(()=> { logoClicks = 0; }, 2000);
-});
 
 /* ============================================================
    شروع اولیه
@@ -893,6 +906,8 @@ document.getElementById('startBtn').addEventListener('click', startGame);
 function initApp(){
   const p = getProfile();
   if(p){
+    // تنظیم نمایش تب ادمین در لود اولیه
+    if(p.isAdmin) document.getElementById('navAdmin').style.display = 'flex';
     document.getElementById('startStats').innerHTML = `پروفایل: ${p.name}<br>💰 ${p.coins === Infinity ? '∞' : p.coins}`;
   } else {
     switchTab('profile');
