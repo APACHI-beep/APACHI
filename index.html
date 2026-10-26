@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>تیراندازی فضایی</title>
+<title>Space Ship</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Vazirmatn:wght@600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Vazirmatn:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif; touch-action:none; user-select:none; }
@@ -16,61 +16,61 @@
   #ui { position:fixed; inset:0; pointer-events:none; padding:8px 12px; direction:rtl; z-index:5; }
 
   #leftUI {
-    position:absolute; top:10px; left:10px; text-align:right;
-    display:flex; flex-direction:column; gap:6px;
+    position:absolute; top:12px; left:10px; text-align:right;
+    display:flex; flex-direction:column; gap:5px;
   }
-  .scoreLine { color:#00e5ff; font-size:18px; font-weight:900; text-shadow:0 0 8px rgba(0,229,255,.6); font-family:'Vazirmatn', sans-serif; }
-  .scoreLine .num { font-family:'Orbitron', sans-serif; font-size:20px; letter-spacing:1px; margin-right:4px; }
+  .scoreLine { color:#00e5ff; font-size:16px; font-weight:900; text-shadow:0 0 10px rgba(0,229,255,.7); font-family:'Vazirmatn', sans-serif; }
+  .scoreLine .num { font-family:'Orbitron', sans-serif; font-size:18px; letter-spacing:1px; margin-right:4px; }
   
-  .coinLine { display:flex; align-items:center; gap:6px; color:#ffea00; font-size:18px; font-weight:900; text-shadow:0 0 8px rgba(255,234,0,.6); }
-  .coinLine .num { font-family:'Orbitron', sans-serif; font-size:18px; }
-  .coinImg { width:20px; height:20px; }
+  .coinLine { display:flex; align-items:center; gap:5px; color:#ffea00; font-size:16px; font-weight:900; text-shadow:0 0 10px rgba(255,234,0,.7); }
+  .coinLine .num { font-family:'Orbitron', sans-serif; font-size:16px; }
+  .coinImg { width:18px; height:18px; }
 
-  #rightUI { position:absolute; top:10px; right:10px; display:flex; gap:6px; align-items:flex-start; }
+  #rightUI { position:absolute; top:12px; right:10px; display:flex; gap:5px; align-items:flex-start; }
   .heart {
-    width:26px; height:26px;
-    background:#ff1a1a;
+    width:24px; height:24px;
+    background:radial-gradient(circle at 35% 30%, #ffe1e6 0%, #ff1744 25%, #c10d33 70%, #6a0018 100%);
     clip-path: path('M12,22 C-2,12 -2,4 5,2 C9,1 12,3 12,6 C12,3 15,1 19,2 C26,4 26,12 12,22 Z');
-    filter:drop-shadow(0 0 6px #ff0000);
+    filter:drop-shadow(0 0 8px #ff1744) drop-shadow(0 0 15px rgba(255,23,68,0.5));
   }
 
-  /* ===== Message (Boss) ===== */
+  /* ===== Message ===== */
   #message {
     position:fixed; top:35%; left:50%; transform:translate(-50%,-50%) scale(0.7);
     color:#fff; font-size:32px; font-weight:900;
-    text-shadow:0 0 15px #ff2b6d, 0 0 30px #ff2b6d;
+    text-shadow:0 0 15px #ff2b6d, 0 0 35px #ff2b6d, 0 0 60px #ff2b6d;
     opacity:0; transition:all .45s cubic-bezier(.2,1.4,.4,1); pointer-events:none;
     text-align:center; white-space:nowrap; z-index:7; font-family:'Vazirmatn',sans-serif;
   }
   #message.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
 
-  /* ===== Game Over Screen (Matches Image 3) ===== */
+  /* ===== Game Over ===== */
   #gameOver {
     position:fixed; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    background:rgba(0,0,0,0.85); backdrop-filter:blur(2px);
-    transition:opacity .3s; z-index:10; opacity:0; pointer-events:none;
+    background:radial-gradient(circle at 50% 40%, rgba(0,20,40,.9), rgba(0,0,0,.98));
+    backdrop-filter:blur(4px); transition:opacity .3s; z-index:10; opacity:0; pointer-events:none;
     font-family:'Vazirmatn', sans-serif;
   }
   #gameOver.show { opacity:1; pointer-events:auto; }
   
   .go-title {
-    font-size:42px; font-weight:900; color:#ff1744;
-    text-shadow:0 0 20px #ff1744, 0 0 40px #ff1744, 0 0 60px #ff1744;
-    margin-bottom:30px; display:flex; align-items:center; gap:10px;
+    font-size:40px; font-weight:900; color:#ff1744;
+    text-shadow:0 0 20px #ff1744, 0 0 50px #ff1744, 0 0 80px #ff1744;
+    margin-bottom:30px; display:flex; align-items:center; gap:12px;
   }
-  .go-title svg { width:36px; height:36px; fill:#ff1744; filter:drop-shadow(0 0 10px #ff1744); }
+  .go-title svg { width:38px; height:38px; fill:#ff1744; filter:drop-shadow(0 0 12px #ff1744); }
 
-  .go-sub { color:#fff; font-size:18px; font-weight:800; margin-bottom:20px; }
+  .go-sub { color:#fff; font-size:18px; font-weight:800; margin-bottom:25px; text-shadow:0 0 8px rgba(255,255,255,.5); }
   .go-score { color:#fff; font-size:20px; font-weight:800; margin-bottom:15px; display:flex; gap:5px;}
-  .go-reward { color:#ffe000; font-size:20px; font-weight:800; margin-bottom:40px; display:flex; gap:8px; align-items:center;}
+  .go-reward { color:#ffe000; font-size:20px; font-weight:800; margin-bottom:40px; display:flex; gap:8px; align-items:center; text-shadow:0 0 10px #ffe000; }
   .go-reward svg { width:22px; height:22px; fill:#ffe000; }
 
   #restartBtn {
-    cursor:pointer; border:none; padding:16px 60px; font-size:22px; font-weight:900;
+    cursor:pointer; border:none; padding:16px 60px; font-size:20px; font-weight:900;
     color:#fff; border-radius:50px; font-family:'Vazirmatn',sans-serif;
     background:linear-gradient(180deg, #ff4081, #e91e63);
-    box-shadow:0 0 20px #e91e63, 0 0 40px rgba(233,30,99,0.5);
+    box-shadow:0 0 20px #e91e63, 0 0 50px rgba(233,30,99,0.6), inset 0 -3px 0 rgba(0,0,0,.2);
     transition:transform .15s;
   }
   #restartBtn:active { transform:scale(.95); }
@@ -84,7 +84,6 @@
     <div class="scoreLine">امتیاز این دست <span class="num" id="score">0</span></div>
     <div class="coinLine">
       <span class="num" id="coins">0</span>
-      <!-- Coin Icon -->
       <svg class="coinImg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700" stroke="#b8860b" stroke-width="2"/><text x="12" y="16" font-size="12" font-weight="bold" fill="#b8860b" text-anchor="middle">$</text></svg>
     </div>
   </div>
@@ -113,7 +112,7 @@
 
 <script>
 /* ================================================================
-   Space Ship — Redesign based on provided images
+   SPACE SHIP — MAX QUALITY, ZERO LAG
    ================================================================ */
 
 const cv = document.getElementById('cv');
@@ -148,7 +147,7 @@ const G = {
   particles:[], stars:[], floatTexts:[],
   touch:{active:false, x:0, y:0},
   fireCooldown:0, shake:0, flash:0,
-  MAX_PARTICLES: 100
+  MAX_PARTICLES: 120
 };
 
 /* ---------- caches ---------- */
@@ -171,13 +170,20 @@ function makeGlow(color, radius, intensity=1){
   return c;
 }
 
-/* ---------- Enemy Sprite ---------- */
+/* ---------- Enemy Sprite (Hexagon) ---------- */
 function makeEnemySprite(r){
-  const pad = r*0.5;
+  const pad = r*0.6;
   const size = (r+pad)*2;
   const c = makeCanvas(size,size);
   const g = c.getContext('2d');
   g.translate(size/2, size/2);
+
+  // Outer glow
+  const halo = g.createRadialGradient(0,0,r*0.5, 0,0,r*1.5);
+  halo.addColorStop(0,'rgba(255,50,90,0.4)');
+  halo.addColorStop(1,'rgba(255,0,50,0)');
+  g.fillStyle = halo;
+  g.beginPath(); g.arc(0,0,r*1.5,0,Math.PI*2); g.fill();
 
   const hexPath = (rad)=>{
     g.beginPath();
@@ -189,18 +195,21 @@ function makeEnemySprite(r){
     g.closePath();
   };
 
+  // Fill (dark red)
   hexPath(r);
-  g.fillStyle = 'rgba(100, 20, 40, 0.4)';
+  g.fillStyle = 'rgba(60, 0, 15, 0.7)';
   g.fill();
 
+  // Neon stroke
   g.strokeStyle = '#ff3355';
   g.lineWidth = 2.5;
   hexPath(r);
   g.stroke();
 
-  g.strokeStyle = 'rgba(255,100,120,0.3)';
+  // Inner detail
+  g.strokeStyle = 'rgba(255,100,120,0.25)';
   g.lineWidth = 1;
-  hexPath(r*0.8);
+  hexPath(r*0.7);
   g.stroke();
 
   return c;
@@ -213,45 +222,53 @@ function makeShipSprite(scale){
   g.scale(scale,scale);
   g.translate(50, 50);
 
-  // Red hull
+  // Red hull with gradient
+  const bodyGrad = g.createLinearGradient(0, -30, 0, 25);
+  bodyGrad.addColorStop(0, '#ff2a4a');
+  bodyGrad.addColorStop(1, '#8a0015');
   g.beginPath();
   g.moveTo(0, -32);
-  g.lineTo(-24, 18);
+  g.lineTo(-22, 16);
+  g.lineTo(-8, 12);
   g.lineTo(0, 26);
-  g.lineTo(24, 18);
+  g.lineTo(8, 12);
+  g.lineTo(22, 16);
   g.closePath();
-  g.fillStyle = '#e60026';
+  g.fillStyle = bodyGrad;
   g.fill();
-  
+  g.strokeStyle = '#ff6677';
+  g.lineWidth = 1.5;
+  g.stroke();
+
   // Grey center panel
   g.beginPath();
-  g.moveTo(0, -20);
-  g.lineTo(-8, 22);
-  g.lineTo(8, 22);
+  g.moveTo(0, -18);
+  g.lineTo(-6, 22);
+  g.lineTo(6, 22);
   g.closePath();
-  g.fillStyle = '#6a7075';
+  g.fillStyle = '#5a6065';
   g.fill();
 
   // Blue/Teal Cockpit (Gradient)
   const cg = g.createLinearGradient(0, -15, 0, 8);
-  cg.addColorStop(0, '#b2f5ff');
+  cg.addColorStop(0, '#e0ffff');
   cg.addColorStop(1, '#00bfff');
   g.beginPath();
   g.moveTo(0, -22);
-  g.lineTo(-6, 4);
-  g.lineTo(6, 4);
+  g.lineTo(-5, 2);
+  g.lineTo(5, 2);
   g.closePath();
   g.fillStyle = cg;
   g.fill();
 
   // Engine glow
-  const eg = g.createRadialGradient(0, 28, 1, 0, 28, 15);
+  const eg = g.createRadialGradient(0, 26, 1, 0, 26, 12);
   eg.addColorStop(0, 'rgba(255,255,255,1)');
-  eg.addColorStop(0.4, 'rgba(255,50,100,0.8)');
+  eg.addColorStop(0.3, 'rgba(255,80,100,0.9)');
   eg.addColorStop(1, 'rgba(255,0,0,0)');
   g.fillStyle = eg;
   g.beginPath();
-  g.arc(0, 28, 15, 0, Math.PI*2);
+  g.arc(0, 26, 12, 0, Math.PI*2);
   g.fill();
 
   return c;
@@ -264,65 +281,71 @@ function makeMiniSprite(scale){
   g.scale(scale,scale);
   g.translate(20, 20);
 
-  const eg = g.createRadialGradient(0, 10, 1, 0, 10, 10);
-  eg.addColorStop(0, 'rgba(0,255,255,0.6)');
+  // Glow
+  const eg = g.createRadialGradient(0, 8, 1, 0, 8, 10);
+  eg.addColorStop(0, 'rgba(0,255,255,0.7)');
   eg.addColorStop(1, 'rgba(0,255,255,0)');
   g.fillStyle = eg;
-  g.beginPath(); g.arc(0, 10, 10, 0, Math.PI*2); g.fill();
+  g.beginPath(); g.arc(0, 8, 10, 0, Math.PI*2); g.fill();
 
+  // Body
   g.beginPath();
   g.moveTo(0, -16);
-  g.lineTo(-12, 10);
-  g.lineTo(0, 14);
-  g.lineTo(12, 10);
+  g.lineTo(-10, 8);
+  g.lineTo(0, 12);
+  g.lineTo(10, 8);
   g.closePath();
-  g.fillStyle = '#00ffff';
+  g.fillStyle = '#00e5ff';
   g.fill();
   g.strokeStyle = '#ffffff';
   g.lineWidth = 1;
   g.stroke();
   
+  // Cockpit
   g.beginPath();
-  g.moveTo(0, -12);
-  g.lineTo(-4, 12);
-  g.lineTo(4, 12);
+  g.moveTo(0, -10);
+  g.lineTo(-3, 10);
+  g.lineTo(3, 10);
   g.closePath();
-  g.fillStyle = 'rgba(255,255,255,0.8)';
+  g.fillStyle = 'rgba(255,255,255,0.9)';
   g.fill();
 
   return c;
 }
 
-/* ---------- Boss Sprite (High Quality, Varied Shapes) ---------- */
+/* ---------- Boss Sprite (High Quality) ---------- */
 function makeBossSprite(w,h,variant){
-  const pad = 60;
+  const pad = 70;
   const c = makeCanvas(w+pad*2, h+pad*2);
   const g = c.getContext('2d');
   g.translate((w+pad*2)/2, (h+pad*2)/2);
 
   // Aura
-  const aura = g.createRadialGradient(0,0,10, 0,0, w*0.8);
-  aura.addColorStop(0,'rgba(255,50,100,0.4)');
+  const aura = g.createRadialGradient(0,0,10, 0,0, w*0.9);
+  aura.addColorStop(0,'rgba(255,50,100,0.5)');
   aura.addColorStop(1,'rgba(255,0,50,0)');
   g.fillStyle = aura;
-  g.beginPath(); g.arc(0,0,w*0.8,0,Math.PI*2); g.fill();
+  g.beginPath(); g.arc(0,0,w*0.9,0,Math.PI*2); g.fill();
 
+  // Shape variants
   const shape = ()=>{
     g.beginPath();
     const hw = w/2, hh = h/2;
     if(variant === 0){
-      g.moveTo(-hw, hh*0.6);
-      g.quadraticCurveTo(-hw*0.9, -hh*1.1, 0, -hh*1.2);
-      g.quadraticCurveTo(hw*0.9, -hh*1.1, hw, hh*0.6);
-      g.lineTo(0, hh*1.2);
+      g.moveTo(-hw, hh*0.5);
+      g.quadraticCurveTo(-hw*0.8, -hh*1.1, 0, -hh*1.2);
+      g.quadraticCurveTo(hw*0.8, -hh*1.1, hw, hh*0.5);
+      g.lineTo(0, hh*1.1);
       g.closePath();
     } else if(variant === 1){
-      g.moveTo(0, -hh*1.5);
-      g.lineTo(hw*1.2, 0);
-      g.lineTo(hw*0.6, hh*1.2);
-      g.lineTo(0, hh*0.8);
-      g.lineTo(-hw*0.6, hh*1.2);
-      g.lineTo(-hw*1.2, 0);
+      g.moveTo(0, -hh*1.4);
+      g.lineTo(hw*1.1, -hh*0.2);
+      g.lineTo(hw*0.5, hh*0.3);
+      g.lineTo(hw*0.9, hh*0.9);
+      g.lineTo(0, hh*1.1);
+      g.lineTo(-hw*0.9, hh*0.9);
+      g.lineTo(-hw*0.5, hh*0.3);
+      g.lineTo(-hw*1.1, -hh*0.2);
       g.closePath();
     } else {
       g.moveTo(-hw*1.1, 0);
@@ -335,17 +358,32 @@ function makeBossSprite(w,h,variant){
     }
   };
 
+  // Glow outline
   shape();
   g.lineWidth = 8; g.strokeStyle = 'rgba(255,50,90,0.2)'; g.stroke();
+  
+  // Body fill
   shape();
-  g.fillStyle = 'rgba(80, 10, 20, 0.9)'; g.fill();
-  g.lineWidth = 3; g.strokeStyle = '#ff2b6d'; g.stroke();
+  const grad = g.createLinearGradient(0,-h/2,0,h/2);
+  grad.addColorStop(0,'#7a0a1a');
+  grad.addColorStop(0.5,'#b01030');
+  grad.addColorStop(1,'#3a0510');
+  g.fillStyle = grad; g.fill();
+  g.lineWidth = 2.5; g.strokeStyle = '#ff3b5c'; g.stroke();
 
-  // Details
-  g.fillStyle = '#ff2b6d';
+  // Panel lines
+  g.strokeStyle = 'rgba(255,150,170,0.3)';
+  g.lineWidth = 1;
+  g.beginPath();
+  g.moveTo(-w/2+20, -h/2+15); g.lineTo(w/2-20, -h/2+15);
+  g.moveTo(-w/2+20, h/2-15); g.lineTo(w/2-20, h/2-15);
+  g.stroke();
+
+  // Cannon lights
+  g.fillStyle = '#ff5577';
   for(let i=0; i<5; i++){
     g.beginPath();
-    g.arc(-w/2 + 20 + i*((w-40)/4), h/2 - 10, 4, 0, Math.PI*2);
+    g.arc(-w/2 + 20 + i*((w-40)/4), h/2 - 8, 3.5, 0, Math.PI*2);
     g.fill();
   }
 
@@ -423,7 +461,6 @@ function shootMini(m){
 
 /* ---------- Enemy ---------- */
 function spawnEnemy(){
-  // Varied sizes as requested
   const baseR = clamp(Math.min(W,H) * 0.04, 15, 40);
   const r = baseR * rnd(0.6, 1.4); 
   
@@ -743,7 +780,7 @@ function hitPlayer(){
 
 /* ---------- Draw ---------- */
 function draw(){
-  ctx.fillStyle = '#0a0a12'; // Very dark blue/black background
+  ctx.fillStyle = '#05060a'; // Deep space black
   ctx.fillRect(0,0,W,H);
 
   // Stars
@@ -759,6 +796,14 @@ function draw(){
     const bs = G.boss;
     if(caches.boss){
       ctx.drawImage(caches.boss, bs.x - caches.boss.width/2, bs.y - caches.boss.height/2);
+    }
+    // Boss Core Glow (Pulsing)
+    const pulse = Math.sin(bs.t * 5) * 0.1 + 1;
+    const core = caches.particles['#ff5d8f'];
+    if(core){
+      ctx.globalAlpha = 0.7;
+      ctx.drawImage(core, bs.x - 25*pulse, bs.y - 25*pulse, 50*pulse, 50*pulse);
+      ctx.globalAlpha = 1;
     }
     // HP Bar
     ctx.fillStyle = 'rgba(255,0,50,0.3)';
@@ -830,4 +875,4 @@ updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-     </html>
+ </html>
