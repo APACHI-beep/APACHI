@@ -66,22 +66,26 @@
   #shopContent::-webkit-scrollbar{display:none}
   
   .weapon-card{background:linear-gradient(135deg,rgba(5,20,15,.9),rgba(10,25,20,.9));border:1px solid rgba(50,200,100,.5);border-radius:16px;padding:16px;position:relative;box-shadow:0 4px 15px rgba(0,0,0,.5)}
-  
   .w-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
   .w-name{color:#fff;font-size:20px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,.8)}
   .w-info{color:#8ab2c8;font-size:13px;font-weight:600}
-  
   .w-actions{display:flex;gap:10px;margin-top:12px;align-items:stretch}
   .w-btn{flex:1;border:none;border-radius:14px;padding:12px;font-size:15px;font-weight:900;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'Vazirmatn',sans-serif;transition:transform .15s}
   .w-btn:active{transform:scale(.95)}
-  
   .btn-equip{background:transparent;border:2px solid #0fb;color:#0fb;box-shadow:inset 0 0 10px rgba(0,255,187,.2);flex:0.8}
   .btn-buy{background:linear-gradient(180deg,#ff4df0,#a010a0);box-shadow:0 0 15px rgba(255,77,240,.5);font-size:14px}
   .btn-buy.disabled{background:#333;box-shadow:none;opacity:0.6;cursor:not-allowed}
   .btn-equip.active{background:linear-gradient(180deg,#0fb,#008f70);color:#001018;box-shadow:0 0 15px #0fb;border-color:#0fb}
-  
   .price-row{font-size:12px;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;color:#ffd700;text-shadow:0 1px 2px #000}
   .max-level{color:#ffd700;font-size:16px;text-shadow:0 0 10px #ffd700;font-weight:900;margin-top:10px;text-align:center;display:flex;align-items:center;justify-content:center;flex:1}
+
+  /* Simple Modal (Rank/Profile) */
+  #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.78),rgba(0,0,0,.97));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+  #simpleModal.show{opacity:1;pointer-events:auto}
+  .simple-card{background:linear-gradient(180deg,rgba(20,40,70,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:22px;padding:28px 26px;box-shadow:0 0 50px rgba(56,200,255,.6),inset 0 0 30px rgba(56,200,255,.2);text-align:center;max-width:88vw;min-width:280px}
+  .simple-card h2{color:#a8f0ff;font-size:24px;margin-bottom:12px;text-shadow:0 0 16px #38c8ff;font-weight:900}
+  .simple-card p{color:#cdeaff;font-size:15px;margin-bottom:18px;line-height:1.8}
+  .simple-card button{cursor:pointer;border:none;padding:12px 36px;font-size:15px;font-weight:800;color:#001018;border-radius:30px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);box-shadow:0 0 18px #18a8ff,inset 0 -2px 0 rgba(0,0,0,.3)}
 
   #gameOver{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.92),rgba(0,0,0,.98));backdrop-filter:blur(8px);transition:opacity .3s;z-index:10;opacity:0;pointer-events:none}
   #gameOver.show{opacity:1;pointer-events:auto}
@@ -123,6 +127,15 @@
     <div class="shop-tab" id="stShips">🚀 سفینه‌ها</div>
   </div>
   <div id="shopContent"></div>
+</div>
+
+<!-- Simple Modal for Rank / Profile -->
+<div id="simpleModal">
+  <div class="simple-card">
+    <h2 id="smTitle">🏆</h2>
+    <p>این بخش به زودی اضافه می‌شود</p>
+    <button id="smClose">باشه</button>
+  </div>
 </div>
 
 <div id="lobby">
@@ -201,6 +214,10 @@ const shopPanel = document.getElementById('shopPanel');
 const shopContent = document.getElementById('shopContent');
 const stWeapons = document.getElementById('stWeapons');
 const stShips = document.getElementById('stShips');
+const simpleModal = document.getElementById('simpleModal');
+const smTitle = document.getElementById('smTitle');
+const smClose = document.getElementById('smClose');
+
 let currentShopTab = 'weapons';
 
 function renderShop() {
@@ -313,6 +330,18 @@ stShips.addEventListener('click', () => {
   stWeapons.classList.remove('active');
   renderShop();
 });
+
+/* Simple Modal Logic */
+function showSimpleModal(title) {
+  smTitle.textContent = title;
+  simpleModal.classList.add('show');
+  G.running = false;
+}
+smClose.addEventListener('click', () => {
+  simpleModal.classList.remove('show');
+  if(!G.over && !G.inLobby) G.running = true;
+});
+
 
 const G = {
   running:false, over:false, inLobby:true,
@@ -593,26 +622,52 @@ function drawLobbyShip(){
 
 const tabs=['tabGame','tabShop','tabRank','tabProfile'].map(id=>document.getElementById(id));
 
-function showShop(){ 
-  shopPanel.classList.add('show'); 
-  G.running=false; 
-  renderShop(); 
-  // وقتی وارد فروشگاه از داخل بازی میشیم تب ها رو فعال نگه دار
-  tabsEl.classList.add('active'); 
+function closeAllOverlays(){
+  shopPanel.classList.remove('show');
+  simpleModal.classList.remove('show');
 }
-function closeModal(){ 
-  shopPanel.classList.remove('show'); 
-  if(!G.over&&!G.inLobby) G.running=true; 
-}
+
 function setTab(id){ 
   tabs.forEach(t=>t.classList.remove('active')); 
   document.getElementById(id).classList.add('active'); 
 }
 
-tabs[0].addEventListener('click',()=>{setTab('tabGame');closeModal();});
-tabs[1].addEventListener('click',()=>{setTab('tabShop');showShop();});
-tabs[2].addEventListener('click',()=>{setTab('tabRank');showShop();}); // Placeholder
-tabs[3].addEventListener('click',()=>{setTab('tabProfile');showShop();}); // Placeholder
+tabs[0].addEventListener('click',()=>{
+  setTab('tabGame');
+  closeAllOverlays();
+  // اگر در لابی بودیم، لابی را نمایش بده
+  if(G.inLobby){
+    lobbyEl.classList.remove('hidden');
+    uiEl.classList.remove('show');
+    G.running=false;
+  } else if (G.over) {
+    lobbyEl.classList.remove('hidden');
+    uiEl.classList.remove('show');
+  } else {
+    // اگر وسط بازی بودیم، بازی ادامه پیدا کند
+    G.running=true;
+  }
+});
+
+tabs[1].addEventListener('click',()=>{
+  setTab('tabShop');
+  simpleModal.classList.remove('show');
+  shopPanel.classList.add('show');
+  G.running=false;
+  renderShop();
+});
+
+tabs[2].addEventListener('click',()=>{
+  setTab('tabRank');
+  shopPanel.classList.remove('show');
+  showSimpleModal('🏆 رتبه بندی');
+});
+
+tabs[3].addEventListener('click',()=>{
+  setTab('tabProfile');
+  shopPanel.classList.remove('show');
+  showSimpleModal('👤 پروفایل');
+});
 
 document.getElementById('startBtn').addEventListener('click',()=>{
   lobbyEl.classList.add('hidden'); G.inLobby=false;G.running=true;
@@ -622,8 +677,9 @@ document.getElementById('startBtn').addEventListener('click',()=>{
   document.getElementById(id).addEventListener('click',()=>{
     lobbyEl.classList.add('hidden');
     tabsEl.classList.add('active'); 
-    showShop();
-    setTab(i===0 ? 'tabShop' : i===1 ? 'tabRank' : 'tabProfile');
+    if (i===0) tabs[1].click();
+    else if (i===1) tabs[2].click();
+    else tabs[3].click();
   });
 });
 
