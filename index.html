@@ -12,39 +12,107 @@
   html,body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif; touch-action:none; user-select:none; }
   canvas { display:block; width:100%; height:100%; }
 
-  /* ===== HUD ===== */
-  #ui { position:fixed; inset:0; pointer-events:none; padding:8px 12px; direction:rtl; z-index:5; }
-
-  #leftUI {
-    position:absolute; top:12px; left:10px; text-align:right;
-    display:flex; flex-direction:column; gap:5px;
+  /* ===== Top Tabs ===== */
+  #tabs {
+    position:fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; justify-content:center;
+    gap:2px; padding:8px 10px 6px;
+    z-index:6; pointer-events:auto;
+    background:linear-gradient(180deg, rgba(0,10,25,.85), rgba(0,10,25,0));
   }
-  .scoreLine { color:#00e5ff; font-size:16px; font-weight:900; text-shadow:0 0 10px rgba(0,229,255,.7); font-family:'Vazirmatn', sans-serif; }
-  .scoreLine .num { font-family:'Orbitron', sans-serif; font-size:18px; letter-spacing:1px; margin-right:4px; }
-  
-  .coinLine { display:flex; align-items:center; gap:5px; color:#ffea00; font-size:16px; font-weight:900; text-shadow:0 0 10px rgba(255,234,0,.7); }
-  .coinLine .num { font-family:'Orbitron', sans-serif; font-size:16px; }
-  .coinImg { width:18px; height:18px; }
+  .tab {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px;
+    border-radius:12px;
+    font-family:'Vazirmatn',sans-serif;
+    font-weight:800; font-size:14px;
+    color:#9fd4ec;
+    background:rgba(15,35,60,.55);
+    border:1px solid rgba(90,170,220,.35);
+    cursor:pointer;
+    transition:all .2s;
+    user-select:none;
+  }
+  .tab svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .tab.active {
+    color:#001018;
+    background:linear-gradient(180deg,#8ff0ff,#18a8ff);
+    border-color:#8ff0ff;
+    box-shadow:0 0 14px rgba(56,200,255,.65), inset 0 -2px 0 rgba(0,0,0,.25);
+  }
+  .tab:active { transform:scale(.96); }
 
-  #rightUI { position:absolute; top:12px; right:10px; display:flex; gap:5px; align-items:flex-start; }
+  /* ===== HUD ===== */
+  #ui { position:fixed; inset:0; pointer-events:none; padding:50px 10px 8px; direction:rtl; z-index:5; }
+
+  #rightUI { position:absolute; top:50px; right:10px; display:flex; gap:6px; }
   .heart {
     width:24px; height:24px;
     background:radial-gradient(circle at 35% 30%, #ffe1e6 0%, #ff1744 25%, #c10d33 70%, #6a0018 100%);
     clip-path: path('M12,22 C-2,12 -2,4 5,2 C9,1 12,3 12,6 C12,3 15,1 19,2 C26,4 26,12 12,22 Z');
     filter:drop-shadow(0 0 8px #ff1744) drop-shadow(0 0 15px rgba(255,23,68,0.5));
   }
+  .heart.dead { opacity:0; }
 
-  /* ===== Message ===== */
+  #leftUI {
+    position:absolute; top:50px; left:10px; text-align:right;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .pill {
+    padding:3px 9px; border-radius:10px;
+    background:linear-gradient(180deg, rgba(40,80,140,.55), rgba(10,20,40,.65));
+    border:1px solid rgba(120,210,255,.55);
+    box-shadow:inset 0 0 6px rgba(120,210,255,.25), 0 0 8px rgba(56,200,255,.25);
+    backdrop-filter:blur(4px);
+    font-family:'Orbitron','Vazirmatn',sans-serif;
+    font-weight:800; line-height:1.1;
+    white-space:nowrap;
+    direction:ltr;
+  }
+  .recordBox { color:#ffd84d; font-size:12px; text-shadow:0 0 6px #ff9d00, 0 0 12px #ff6a00; }
+  .scoreBox  { color:#cdf1ff; font-size:16px; text-shadow:0 0 6px #38c8ff, 0 0 12px #0060ff; }
+  .coinBox   { color:#ffe27a; font-size:16px; text-shadow:0 0 6px #ffb300, 0 0 12px #ff7b00; }
+
   #message {
     position:fixed; top:35%; left:50%; transform:translate(-50%,-50%) scale(0.7);
-    color:#fff; font-size:32px; font-weight:900;
-    text-shadow:0 0 15px #ff2b6d, 0 0 35px #ff2b6d, 0 0 60px #ff2b6d;
+    color:#fff; font-size:30px; font-weight:900; letter-spacing:2px;
+    font-family:'Vazirmatn',sans-serif;
+    text-shadow:0 0 10px #ff2b6d, 0 0 26px #ff2b6d, 0 0 55px #ff2b6d;
     opacity:0; transition:all .45s cubic-bezier(.2,1.4,.4,1); pointer-events:none;
-    text-align:center; white-space:nowrap; z-index:7; font-family:'Vazirmatn',sans-serif;
+    text-align:center; white-space:nowrap; z-index:7;
   }
   #message.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
 
-  /* ===== Game Over ===== */
+  /* ===== Shop overlay ===== */
+  #shopPanel {
+    position:fixed; inset:0; display:flex;
+    align-items:center; justify-content:center;
+    background:radial-gradient(circle at 50% 40%, rgba(0,40,90,.75), rgba(0,0,0,.96));
+    backdrop-filter:blur(6px);
+    opacity:0; pointer-events:none; transition:opacity .3s; z-index:20;
+  }
+  #shopPanel.show { opacity:1; pointer-events:auto; }
+  .shopCard {
+    background:linear-gradient(180deg, rgba(15,30,55,.98), rgba(5,12,26,.98));
+    border:1px solid #38c8ff;
+    border-radius:20px;
+    padding:26px 24px;
+    box-shadow:0 0 40px rgba(56,200,255,.5), inset 0 0 24px rgba(56,200,255,.18);
+    text-align:center; max-width:88vw;
+  }
+  .shopCard h2 { color:#8fefff; font-size:22px; margin-bottom:12px; letter-spacing:2px; text-shadow:0 0 14px #38c8ff; }
+  .shopCard p  { color:#cdeaff; font-size:15px; margin-bottom:18px; line-height:1.8; }
+  .shopCard button {
+    pointer-events:auto; cursor:pointer; border:none;
+    padding:10px 32px; font-size:15px; font-weight:800;
+    color:#001018; border-radius:30px;
+    font-family:'Vazirmatn',sans-serif;
+    background:linear-gradient(180deg,#7ef0ff,#18a8ff);
+    box-shadow:0 0 14px #18a8ff, inset 0 -2px 0 rgba(0,0,0,.25);
+  }
+  .shopCard button:active { transform:scale(.96); }
+
+  /* ===== Game over ===== */
   #gameOver {
     position:fixed; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center;
@@ -53,19 +121,16 @@
     font-family:'Vazirmatn', sans-serif;
   }
   #gameOver.show { opacity:1; pointer-events:auto; }
-  
   .go-title {
     font-size:40px; font-weight:900; color:#ff1744;
     text-shadow:0 0 20px #ff1744, 0 0 50px #ff1744, 0 0 80px #ff1744;
     margin-bottom:30px; display:flex; align-items:center; gap:12px;
   }
   .go-title svg { width:38px; height:38px; fill:#ff1744; filter:drop-shadow(0 0 12px #ff1744); }
-
   .go-sub { color:#fff; font-size:18px; font-weight:800; margin-bottom:25px; text-shadow:0 0 8px rgba(255,255,255,.5); }
   .go-score { color:#fff; font-size:20px; font-weight:800; margin-bottom:15px; display:flex; gap:5px;}
   .go-reward { color:#ffe000; font-size:20px; font-weight:800; margin-bottom:40px; display:flex; gap:8px; align-items:center; text-shadow:0 0 10px #ffe000; }
   .go-reward svg { width:22px; height:22px; fill:#ffe000; }
-
   #restartBtn {
     cursor:pointer; border:none; padding:16px 60px; font-size:20px; font-weight:900;
     color:#fff; border-radius:50px; font-family:'Vazirmatn',sans-serif;
@@ -79,22 +144,40 @@
 <body>
 <canvas id="cv"></canvas>
 
-<div id="ui">
-  <div id="leftUI">
-    <div class="scoreLine">امتیاز این دست <span class="num" id="score">0</span></div>
-    <div class="coinLine">
-      <span class="num" id="coins">0</span>
-      <svg class="coinImg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700" stroke="#b8860b" stroke-width="2"/><text x="12" y="16" font-size="12" font-weight="bold" fill="#b8860b" text-anchor="middle">$</text></svg>
-    </div>
+<!-- Top tabs -->
+<div id="tabs">
+  <div class="tab active" id="tabGame">
+    <svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1.2"/><circle cx="18.5" cy="13" r="1.2"/><path d="M17.5 2c2 3 2 6-1 9l-2-2c2-2 2-5 3-7z"/><path d="M6 2C4 5 4 8 7 11l2-2C7 7 7 4 6 2z"/></svg>
+    <span>بازی</span>
   </div>
+  <div class="tab" id="tabShop">
+    <svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span>فروشگاه</span>
+  </div>
+</div>
+
+<div id="ui">
   <div id="rightUI">
     <div class="heart" id="h1"></div>
     <div class="heart" id="h2"></div>
     <div class="heart" id="h3"></div>
   </div>
+  <div id="leftUI">
+    <div class="pill recordBox" id="record">0</div>
+    <div class="pill scoreBox" id="score">0</div>
+    <div class="pill coinBox" id="coins">💰 0</div>
+  </div>
 </div>
 
 <div id="message"></div>
+
+<div id="shopPanel">
+  <div class="shopCard">
+    <h2>🛍️ فروشگاه</h2>
+    <p>این بخش به زودی اضافه می‌شود</p>
+    <button id="shopClose">باشه</button>
+  </div>
+</div>
 
 <div id="gameOver">
   <div class="go-title">
@@ -178,7 +261,6 @@ function makeEnemySprite(r){
   const g = c.getContext('2d');
   g.translate(size/2, size/2);
 
-  // Outer glow
   const halo = g.createRadialGradient(0,0,r*0.5, 0,0,r*1.5);
   halo.addColorStop(0,'rgba(255,50,90,0.4)');
   halo.addColorStop(1,'rgba(255,0,50,0)');
@@ -195,18 +277,15 @@ function makeEnemySprite(r){
     g.closePath();
   };
 
-  // Fill (dark red)
   hexPath(r);
   g.fillStyle = 'rgba(60, 0, 15, 0.7)';
   g.fill();
 
-  // Neon stroke
   g.strokeStyle = '#ff3355';
   g.lineWidth = 2.5;
   hexPath(r);
   g.stroke();
 
-  // Inner detail
   g.strokeStyle = 'rgba(255,100,120,0.25)';
   g.lineWidth = 1;
   hexPath(r*0.7);
@@ -222,7 +301,6 @@ function makeShipSprite(scale){
   g.scale(scale,scale);
   g.translate(50, 50);
 
-  // Red hull with gradient
   const bodyGrad = g.createLinearGradient(0, -30, 0, 25);
   bodyGrad.addColorStop(0, '#ff2a4a');
   bodyGrad.addColorStop(1, '#8a0015');
@@ -240,7 +318,6 @@ function makeShipSprite(scale){
   g.lineWidth = 1.5;
   g.stroke();
 
-  // Grey center panel
   g.beginPath();
   g.moveTo(0, -18);
   g.lineTo(-6, 22);
@@ -249,7 +326,6 @@ function makeShipSprite(scale){
   g.fillStyle = '#5a6065';
   g.fill();
 
-  // Blue/Teal Cockpit (Gradient)
   const cg = g.createLinearGradient(0, -15, 0, 8);
   cg.addColorStop(0, '#e0ffff');
   cg.addColorStop(1, '#00bfff');
@@ -261,7 +337,6 @@ function makeShipSprite(scale){
   g.fillStyle = cg;
   g.fill();
 
-  // Engine glow
   const eg = g.createRadialGradient(0, 26, 1, 0, 26, 12);
   eg.addColorStop(0, 'rgba(255,255,255,1)');
   eg.addColorStop(0.3, 'rgba(255,80,100,0.9)');
@@ -281,14 +356,12 @@ function makeMiniSprite(scale){
   g.scale(scale,scale);
   g.translate(20, 20);
 
-  // Glow
   const eg = g.createRadialGradient(0, 8, 1, 0, 8, 10);
   eg.addColorStop(0, 'rgba(0,255,255,0.7)');
   eg.addColorStop(1, 'rgba(0,255,255,0)');
   g.fillStyle = eg;
   g.beginPath(); g.arc(0, 8, 10, 0, Math.PI*2); g.fill();
 
-  // Body
   g.beginPath();
   g.moveTo(0, -16);
   g.lineTo(-10, 8);
@@ -301,7 +374,6 @@ function makeMiniSprite(scale){
   g.lineWidth = 1;
   g.stroke();
   
-  // Cockpit
   g.beginPath();
   g.moveTo(0, -10);
   g.lineTo(-3, 10);
@@ -320,14 +392,12 @@ function makeBossSprite(w,h,variant){
   const g = c.getContext('2d');
   g.translate((w+pad*2)/2, (h+pad*2)/2);
 
-  // Aura
   const aura = g.createRadialGradient(0,0,10, 0,0, w*0.9);
   aura.addColorStop(0,'rgba(255,50,100,0.5)');
   aura.addColorStop(1,'rgba(255,0,50,0)');
   g.fillStyle = aura;
   g.beginPath(); g.arc(0,0,w*0.9,0,Math.PI*2); g.fill();
 
-  // Shape variants
   const shape = ()=>{
     g.beginPath();
     const hw = w/2, hh = h/2;
@@ -358,11 +428,9 @@ function makeBossSprite(w,h,variant){
     }
   };
 
-  // Glow outline
   shape();
   g.lineWidth = 8; g.strokeStyle = 'rgba(255,50,90,0.2)'; g.stroke();
   
-  // Body fill
   shape();
   const grad = g.createLinearGradient(0,-h/2,0,h/2);
   grad.addColorStop(0,'#7a0a1a');
@@ -371,7 +439,6 @@ function makeBossSprite(w,h,variant){
   g.fillStyle = grad; g.fill();
   g.lineWidth = 2.5; g.strokeStyle = '#ff3b5c'; g.stroke();
 
-  // Panel lines
   g.strokeStyle = 'rgba(255,150,170,0.3)';
   g.lineWidth = 1;
   g.beginPath();
@@ -379,7 +446,6 @@ function makeBossSprite(w,h,variant){
   g.moveTo(-w/2+20, h/2-15); g.lineTo(w/2-20, h/2-15);
   g.stroke();
 
-  // Cannon lights
   g.fillStyle = '#ff5577';
   for(let i=0; i<5; i++){
     g.beginPath();
@@ -548,16 +614,41 @@ window.addEventListener('mouseup', onPointerUp);
 /* ---------- UI ---------- */
 const scoreEl = document.getElementById('score');
 const coinsEl = document.getElementById('coins');
+const recordEl = document.getElementById('record');
 const hEls = [document.getElementById('h1'), document.getElementById('h2'), document.getElementById('h3')];
 
 function updateUI(){
   for(let i=0;i<3;i++){
-    hEls[i].style.display = i < G.lives ? 'block' : 'none';
+    hEls[i].classList.toggle('dead', i >= G.lives);
   }
   scoreEl.textContent = String(G.score);
-  coinsEl.textContent = String(store.coins);
+  coinsEl.textContent = '💰 ' + String(store.coins);
+  if(G.score > store.record) store.record = G.score;
+  recordEl.textContent = String(store.record);
 }
 
+/* ---------- tabs ---------- */
+const tabGame = document.getElementById('tabGame');
+const tabShop = document.getElementById('tabShop');
+const shopPanel = document.getElementById('shopPanel');
+const shopClose = document.getElementById('shopClose');
+
+function setTab(active){
+  tabGame.classList.toggle('active', active === 'game');
+  tabShop.classList.toggle('active', active === 'shop');
+  if(active === 'shop'){
+    shopPanel.classList.add('show');
+    G.running = false;
+  } else {
+    shopPanel.classList.remove('show');
+    if(!G.over) G.running = true;
+  }
+}
+tabGame.addEventListener('click', ()=> setTab('game'));
+tabShop.addEventListener('click', ()=> setTab('shop'));
+shopClose.addEventListener('click', ()=> setTab('game'));
+
+/* ---------- game flow ---------- */
 const gameOverEl = document.getElementById('gameOver');
 const goScoreEl = document.getElementById('goScore');
 const goRewardEl = document.getElementById('goReward');
@@ -574,6 +665,7 @@ function startGame(){
   resetPlayer();
   updateUI();
   gameOverEl.classList.remove('show');
+  showMessage('🚀 بازی شروع شد', 1800);
 }
 
 function endGame(){
@@ -607,7 +699,6 @@ function update(dt){
     }
   }
 
-  // Bullets move
   for(let i=G.bullets.length-1;i>=0;i--){
     G.bullets[i].y += G.bullets[i].vy * dt;
     if(G.bullets[i].y < -20) G.bullets.splice(i,1);
@@ -617,7 +708,6 @@ function update(dt){
     if(G.miniBullets[i].y < -20) G.miniBullets.splice(i,1);
   }
 
-  // Spawn
   if(!G.bossPhase){
     G.spawnTimer -= dt;
     if(G.spawnTimer <= 0){
@@ -626,7 +716,6 @@ function update(dt){
     }
   }
 
-  // Enemies move
   for(let i=G.enemies.length-1;i>=0;i--){
     const e = G.enemies[i];
     e.y += e.vy*dt;
@@ -636,7 +725,7 @@ function update(dt){
     if(e.y > H + 40) G.enemies.splice(i,1);
   }
 
-  // Collisions (Bullet vs Enemy)
+  // Collisions
   for(let i=G.bullets.length-1;i>=0;i--){
     const b = G.bullets[i];
     for(let j=G.enemies.length-1;j>=0;j--){
@@ -654,7 +743,6 @@ function update(dt){
     }
   }
 
-  // Mini bullets vs Enemy
   for(let i=G.miniBullets.length-1;i>=0;i--){
     const b = G.miniBullets[i];
     for(let j=G.enemies.length-1;j>=0;j--){
@@ -672,7 +760,7 @@ function update(dt){
     }
   }
 
-  // Boss Logic
+  // Boss
   if(G.boss){
     const bs = G.boss;
     bs.t += dt;
@@ -695,7 +783,6 @@ function update(dt){
       }
     }
 
-    // Damage
     for(let i=G.bullets.length-1;i>=0;i--){
       const b = G.bullets[i];
       if(b.x > bs.x - bs.w/2 && b.x < bs.x + bs.w/2 && b.y > bs.y - bs.h/2 && b.y < bs.y + bs.h/2){
@@ -734,7 +821,6 @@ function update(dt){
     updateUI();
   }
 
-  // Enemy bullets
   for(let i=G.enemyBullets.length-1;i>=0;i--){
     const b = G.enemyBullets[i];
     b.x += b.vx*dt; b.y += b.vy*dt;
@@ -745,7 +831,6 @@ function update(dt){
     }
   }
 
-  // Enemy collision
   if(player.hitCooldown <= 0){
     for(let i=G.enemies.length-1;i>=0;i--){
       const e = G.enemies[i];
@@ -756,7 +841,6 @@ function update(dt){
     }
   }
 
-  // Particles
   for(let i=G.particles.length-1;i>=0;i--){
     const p = G.particles[i];
     p.x += p.vx*dt; p.y += p.vy*dt;
@@ -764,7 +848,6 @@ function update(dt){
     if(p.life <= 0) G.particles.splice(i,1);
   }
 
-  // Stars
   for(const st of G.stars){
     st.y += st.s*dt;
     if(st.y > H){ st.y = -5; st.x = Math.random()*W; }
@@ -780,10 +863,9 @@ function hitPlayer(){
 
 /* ---------- Draw ---------- */
 function draw(){
-  ctx.fillStyle = '#05060a'; // Deep space black
+  ctx.fillStyle = '#05060a';
   ctx.fillRect(0,0,W,H);
 
-  // Stars
   for(const s of G.stars){
     ctx.fillStyle = s.layer === 0 ? 'rgba(255,255,255,0.8)' : 'rgba(200,220,255,0.4)';
     ctx.beginPath();
@@ -791,13 +873,11 @@ function draw(){
     ctx.fill();
   }
 
-  // Boss
   if(G.boss){
     const bs = G.boss;
     if(caches.boss){
       ctx.drawImage(caches.boss, bs.x - caches.boss.width/2, bs.y - caches.boss.height/2);
     }
-    // Boss Core Glow (Pulsing)
     const pulse = Math.sin(bs.t * 5) * 0.1 + 1;
     const core = caches.particles['#ff5d8f'];
     if(core){
@@ -805,14 +885,12 @@ function draw(){
       ctx.drawImage(core, bs.x - 25*pulse, bs.y - 25*pulse, 50*pulse, 50*pulse);
       ctx.globalAlpha = 1;
     }
-    // HP Bar
     ctx.fillStyle = 'rgba(255,0,50,0.3)';
     ctx.fillRect(W/2 - 100, 60, 200, 8);
     ctx.fillStyle = '#ff2b6d';
     ctx.fillRect(W/2 - 100, 60, 200 * (bs.hp/bs.maxHp), 8);
   }
 
-  // Enemies
   for(const e of G.enemies){
     ctx.save();
     ctx.translate(e.x, e.y);
@@ -821,13 +899,11 @@ function draw(){
     ctx.restore();
   }
 
-  // Enemy Bullets
   ctx.fillStyle = '#ff3355';
   for(const b of G.enemyBullets){
     ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill();
   }
 
-  // Player Bullets
   ctx.fillStyle = '#ffffff';
   for(const b of G.bullets){
     ctx.fillRect(b.x - b.w/2, b.y - b.h/2, b.w, b.h);
@@ -837,7 +913,6 @@ function draw(){
     ctx.fillRect(b.x - b.w/2, b.y - b.h/2, b.w, b.h);
   }
 
-  // Particles
   for(const p of G.particles){
     ctx.globalAlpha = p.life * 2;
     ctx.fillStyle = p.color;
@@ -845,15 +920,12 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  // Player
   if(!G.over && G.running){
     const blink = player.hitCooldown > 0 && Math.floor(player.hitCooldown*15) % 2 === 0;
     if(!blink){
-      // Minis
       for(const m of minis){
         ctx.drawImage(caches.mini, player.x + m.offset - caches.mini.width/2, player.y + 10 - caches.mini.height/2);
       }
-      // Main
       ctx.drawImage(caches.ship, player.x - caches.ship.width/2, player.y - caches.ship.height/2);
     }
   }
