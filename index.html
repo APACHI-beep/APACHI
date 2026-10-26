@@ -79,6 +79,12 @@
   .price-row{font-size:12px;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;color:#ffd700;text-shadow:0 1px 2px #000}
   .max-level{color:#ffd700;font-size:16px;text-shadow:0 0 10px #ffd700;font-weight:900;margin-top:10px;text-align:center;display:flex;align-items:center;justify-content:center;flex:1}
 
+  /* Ship Card Layout */
+  .ship-card{display:flex;align-items:center;justify-content:space-between;padding:10px 15px}
+  .ship-info{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:1}
+  .ship-img-box{width:70px;height:70px;border-radius:12px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-right:15px}
+  .ship-img-box canvas{width:100%;height:100%;object-fit:contain}
+
   /* Simple Modal (Rank/Profile) */
   #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.78),rgba(0,0,0,.97));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:25}
   #simpleModal.show{opacity:1;pointer-events:auto}
@@ -164,7 +170,6 @@ const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d', { alpha:false });
 let W=0,H=0,DPR=1;
 
-/* ========== تعریف player قبل از استفاده ========== */
 const player={x:0,y:0,scale:1,hitCooldown:0};
 const minis=[{offset:-60,fireTimer:0},{offset:60,fireTimer:0}];
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -188,6 +193,14 @@ const WEAPONS = [
   { id:'triple', name:'سه گانه', price:2000, baseUpgPrice:400, upgMul:1.5, baseDmg:1, shots:3, color:'#00ff00' }
 ];
 
+const SHIPS = [
+  { id:'red_wing', name:'بال قرمز', price:0 },
+  { id:'galaxy_hawk', name:'شاهین کهکشانی', price:1000 },
+  { id:'purple_ghost', name:'شبح بنفش', price:1500 },
+  { id:'golden_shield', name:'سپر طلایی', price:2500 },
+  { id:'crystal_star', name:'ستاره کریستالی', price:5000 }
+];
+
 const store = {
   get record(){ return +(localStorage.sp_record||0); },
   set record(v){ localStorage.sp_record = v; },
@@ -200,7 +213,16 @@ const store = {
   },
   saveWeapons(w){ localStorage.setItem('sp_weapons', JSON.stringify(w)); },
   get equipped(){ return localStorage.sp_equipped || 'laser1'; },
-  set equipped(id){ localStorage.sp_equipped = id; }
+  set equipped(id){ localStorage.sp_equipped = id; },
+  
+  get ships(){
+    let s = JSON.parse(localStorage.getItem('sp_ships') || '{}');
+    if(!s['red_wing']) s['red_wing'] = { owned: true };
+    return s;
+  },
+  saveShips(s){ localStorage.setItem('sp_ships', JSON.stringify(s)); },
+  get equippedShip(){ return localStorage.sp_equipped_ship || 'red_wing'; },
+  set equippedShip(id){ localStorage.sp_equipped_ship = id; }
 };
 
 function getWeaponStats(id) {
@@ -225,68 +247,117 @@ const smTitle = document.getElementById('smTitle');
 const smClose = document.getElementById('smClose');
 
 let currentShopTab = 'weapons';
+let prevStateBeforeModal = null;
 
 function renderShop() {
   shopContent.innerHTML = '';
   
-  if(currentShopTab === 'ships') {
-    shopContent.innerHTML = '<div style="color:#fff;text-align:center;margin-top:50px;font-size:20px;font-weight:800;">🚀 به زودی ....</div>';
-    return;
-  }
-
-  WEAPONS.forEach(w => {
-    const st = store.weapons[w.id];
-    const owned = st && st.owned;
-    const level = st ? st.level : 0;
-    const equipped = store.equipped === w.id;
-    const upgPrice = calcUpgPrice(w);
-    const isMax = level >= 10;
-    const stats = getWeaponStats(w.id);
-    
-    const card = document.createElement('div');
-    card.className = 'weapon-card';
-    
-    let html = `
-      <div class="w-header">
-        <div class="w-name">${w.name}</div>
-        <div class="w-info">دمیج: ${owned ? stats.dmg : w.baseDmg} | تعداد تیر: ${w.shots}</div>
-      </div>
-    `;
-    
-    html += `<div class="w-actions">`;
-    
-    if(!owned) {
-      const canBuy = store.coins >= w.price;
-      html += `
-        <button class="w-btn btn-buy ${canBuy?'':'disabled'}" data-action="buy" data-id="${w.id}" style="flex:1;">
-          خرید
-          <div class="price-row">💰 ${w.price}</div>
-        </button>
-      `;
-    } else {
-      html += `
-        <button class="w-btn btn-equip ${equipped?'active':''}" data-action="equip" data-id="${w.id}">
-          ${equipped ? 'مجهز' : 'مجهز کردن'}
-        </button>
+  if(currentShopTab === 'weapons') {
+    WEAPONS.forEach(w => {
+      const st = store.weapons[w.id];
+      const owned = st && st.owned;
+      const level = st ? st.level : 0;
+      const equipped = store.equipped === w.id;
+      const upgPrice = calcUpgPrice(w);
+      const isMax = level >= 10;
+      const stats = getWeaponStats(w.id);
+      
+      const card = document.createElement('div');
+      card.className = 'weapon-card';
+      
+      let html = `
+        <div class="w-header">
+          <div class="w-name">${w.name}</div>
+          <div class="w-info">دمیج: ${owned ? stats.dmg : w.baseDmg} | تعداد تیر: ${w.shots}</div>
+        </div>
       `;
       
-      if(isMax) {
-        html += `<div class="max-level">Lvl.10</div>`;
-      } else {
-        const canUpg = store.coins >= upgPrice;
+      html += `<div class="w-actions">`;
+      
+      if(!owned) {
+        const canBuy = store.coins >= w.price;
         html += `
-          <button class="w-btn btn-buy ${canUpg?'':'disabled'}" data-action="upgrade" data-id="${w.id}" style="flex:1;">
-            🎇 ارتقا - Lvl ${level}
-            <div class="price-row">💰 ${upgPrice}</div>
+          <button class="w-btn btn-buy ${canBuy?'':'disabled'}" data-action="buy" data-id="${w.id}" style="flex:1;">
+            خرید
+            <div class="price-row">💰 ${w.price}</div>
+          </button>
+        `;
+      } else {
+        html += `
+          <button class="w-btn btn-equip ${equipped?'active':''}" data-action="equip" data-id="${w.id}">
+            ${equipped ? 'مجهز' : 'مجهز کردن'}
+          </button>
+        `;
+        
+        if(isMax) {
+          html += `<div class="max-level">Lvl.10</div>`;
+        } else {
+          const canUpg = store.coins >= upgPrice;
+          html += `
+            <button class="w-btn btn-buy ${canUpg?'':'disabled'}" data-action="upgrade" data-id="${w.id}" style="flex:1;">
+              🎇 ارتقا - Lvl ${level}
+              <div class="price-row">💰 ${upgPrice}</div>
+            </button>
+          `;
+        }
+      }
+      
+      html += `</div>`;
+      card.innerHTML = html;
+      shopContent.appendChild(card);
+    });
+  } else {
+    SHIPS.forEach(s => {
+      const sData = store.ships[s.id];
+      const owned = sData && sData.owned;
+      const equipped = store.equippedShip === s.id;
+      
+      const card = document.createElement('div');
+      card.className = 'weapon-card ship-card';
+      
+      let html = `
+        <div class="ship-info">
+          <div class="w-name">${s.name}</div>
+          <div class="w-info">ظاهر سفینه</div>
+        </div>
+        <div class="ship-img-box" id="img-${s.id}"></div>
+      `;
+      
+      let btnsHtml = `<div style="display:flex;flex-direction:column;gap:8px;width:120px;margin-right:15px;">`;
+      if(!owned) {
+        const canBuy = store.coins >= s.price;
+        btnsHtml += `
+          <button class="w-btn btn-buy ${canBuy?'':'disabled'}" data-action="buy-ship" data-id="${s.id}" style="padding:12px 8px;width:100%;">
+            خرید
+            <div class="price-row">💰 ${s.price}</div>
+          </button>
+        `;
+      } else {
+        btnsHtml += `
+          <button class="w-btn btn-equip ${equipped?'active':''}" data-action="equip-ship" data-id="${s.id}" style="padding:12px 8px;width:100%;">
+            ${equipped ? 'مجهز شده' : 'مجهز کردن'}
           </button>
         `;
       }
-    }
-    
-    html += `</div>`;
-    card.innerHTML = html;
-    shopContent.appendChild(card);
-  });
+      btnsHtml += `</div>`;
+      
+      card.innerHTML = html + btnsHtml;
+      shopContent.appendChild(card);
+    });
+
+    // رندر تصاویر سفینه‌ها در HTML
+    setTimeout(() => {
+      SHIPS.forEach(s => {
+        const box = document.getElementById('img-'+s.id);
+        if(box && caches.ships[s.id]) {
+          const c = mkC(caches.ships[s.id].width, caches.ships[s.id].height);
+          const g = c.getContext('2d'); g.drawImage(caches.ships[s.id], 0, 0);
+          c.style.width = '100%'; c.style.height = '100%';
+          box.appendChild(c);
+        }
+      });
+    }, 10);
+  }
 
   shopContent.querySelectorAll('.w-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -319,6 +390,20 @@ function renderShop() {
           updateUI();
           renderShop();
         }
+      } else if(action === 'buy-ship') {
+        const s = SHIPS.find(x=>x.id===id);
+        if(store.coins >= s.price) {
+          store.coins -= s.price;
+          let sData = store.ships;
+          sData[id] = { owned: true };
+          store.saveShips(sData);
+          store.equippedShip = id;
+          updateUI();
+          renderShop();
+        }
+      } else if(action === 'equip-ship') {
+        store.equippedShip = id;
+        renderShop();
       }
     });
   });
@@ -337,22 +422,54 @@ stShips.addEventListener('click', () => {
   renderShop();
 });
 
-/* Simple Modal Logic */
 function showSimpleModal(title) {
   smTitle.textContent = title;
   simpleModal.classList.add('show');
+  
+  // ذخیره وضعیت فعلی برای بازگشت
+  prevStateBeforeModal = {
+    inLobby: G.inLobby,
+    over: G.over,
+    shopOpen: shopPanel.classList.contains('show')
+  };
+  
   G.running = false;
 }
+
 smClose.addEventListener('click', () => {
   simpleModal.classList.remove('show');
-  // اگر در بازی بودیم و پنل بسته شد، بازی ادامه پیدا کند
-  if(!G.over && !G.inLobby) G.running = true;
+  
+  // بازگردانی دقیق وضعیت قبلی
+  if(prevStateBeforeModal) {
+    if (prevStateBeforeModal.inLobby) {
+      lobbyEl.classList.remove('hidden');
+      uiEl.classList.remove('show');
+      shopPanel.classList.remove('show');
+      setTab('tabGame');
+    } else if (prevStateBeforeModal.shopOpen) {
+      lobbyEl.classList.add('hidden');
+      uiEl.classList.remove('show');
+      shopPanel.classList.add('show');
+      setTab('tabShop');
+    } else if (prevStateBeforeModal.over) {
+      lobbyEl.classList.remove('hidden');
+      uiEl.classList.remove('show');
+      setTab('tabGame');
+    } else {
+      // وسط بازی بوده
+      lobbyEl.classList.add('hidden');
+      uiEl.classList.add('show');
+      G.running = true;
+      setTab('tabGame');
+    }
+    prevStateBeforeModal = null;
+  }
 });
 
 const G = {
   running:false, over:false, inLobby:true, ending:false,
   score:0, lives:3, runCoins:0,
-  time:0, spawnTimer:0.4, spawnInterval:0.75, // Spawn زمان کمتر شد
+  time:0, spawnTimer:0.4, spawnInterval:0.75,
   bossPhase:false, boss:null, nextBossScore:1000,
   bullets:[], miniBullets:[], enemies:[], enemyBullets:[],
   particles:[], stars:[], floatTexts:[], shockwaves:[],
@@ -362,7 +479,7 @@ const G = {
   MAX_PARTICLES:200
 };
 
-const caches={};
+const caches={ships:{}};
 const mkC=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;};
 const hexA=(hex,a)=>{const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
 
@@ -375,7 +492,27 @@ function glow(color,radius,intensity=1){
   g.fillStyle=grad;g.fillRect(0,0,size,size);return c;
 }
 
-function makeShipSprite(scale){
+// ================= طراحی سفینه‌ها =================
+function drawShipBase(g, N, T, WY, WX, fill1, fill2, stroke) {
+  const body=()=>{
+    g.beginPath();
+    g.moveTo(0,N);
+    g.bezierCurveTo(-8,-40, -WX*0.4,WY*0.2, -WX,WY);
+    g.lineTo(-WX*0.65,WY+6); g.lineTo(-WX*0.35,WY+18); g.lineTo(-24,T-10); g.lineTo(0,T);
+    g.lineTo(24,T-10); g.lineTo(WX*0.35,WY+18); g.lineTo(WX*0.65,WY+6); g.lineTo(WX,WY);
+    g.bezierCurveTo(WX*0.4,WY*0.2, 8,-40, 0,N);
+    g.closePath();
+  };
+  body(); g.lineWidth=12; g.strokeStyle=hexA(stroke,0.2); g.stroke();
+  body(); g.lineWidth=5; g.strokeStyle=hexA(stroke,0.7); g.stroke();
+  body();
+  const fill=g.createLinearGradient(0,N,0,T);
+  fill.addColorStop(0,fill1); fill.addColorStop(0.5,fill2); fill.addColorStop(1,'#000');
+  g.fillStyle=fill; g.fill();
+  g.lineWidth=2.5; g.strokeStyle=stroke; body(); g.stroke();
+}
+
+function makeRedWing(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const N=-60, T=50, WY=22, WX=52;
@@ -387,26 +524,7 @@ function makeShipSprite(scale){
   engInner.addColorStop(0,'#fff'); engInner.addColorStop(.3,'#ffb3c6'); engInner.addColorStop(1,'rgba(255,20,60,0)');
   g.fillStyle=engInner; g.beginPath(); g.arc(0,42,20,0,Math.PI*2); g.fill();
   
-  const au=g.createRadialGradient(0,0,10,0,0,80); au.addColorStop(0,'rgba(255,70,110,.25)'); au.addColorStop(1,'rgba(255,0,60,0)');
-  g.fillStyle=au; g.beginPath(); g.arc(0,0,80,0,Math.PI*2); g.fill();
-
-  const body=()=>{
-    g.beginPath();
-    g.moveTo(0,N);
-    g.bezierCurveTo(-8,-40, -WX*0.4,WY*0.2, -WX,WY);
-    g.lineTo(-WX*0.65,WY+6); g.lineTo(-WX*0.35,WY+18); g.lineTo(-24,T-10); g.lineTo(0,T);
-    g.lineTo(24,T-10); g.lineTo(WX*0.35,WY+18); g.lineTo(WX*0.65,WY+6); g.lineTo(WX,WY);
-    g.bezierCurveTo(WX*0.4,WY*0.2, 8,-40, 0,N);
-    g.closePath();
-  };
-
-  body(); g.lineWidth=12; g.strokeStyle='rgba(255,60,100,.2)'; g.stroke();
-  body(); g.lineWidth=5; g.strokeStyle='rgba(255,120,150,.7)'; g.stroke();
-  body();
-  const fill=g.createLinearGradient(0,N,0,T);
-  fill.addColorStop(0,'#2a0a12'); fill.addColorStop(0.4,'#7a1a2e'); fill.addColorStop(0.6,'#5c0f20'); fill.addColorStop(1,'#1a0308');
-  g.fillStyle=fill; g.fill();
-  g.lineWidth=2.5; g.strokeStyle='#ff6b85'; body(); g.stroke();
+  drawShipBase(g, N, T, WY, WX, '#2a0a12', '#7a1a2e', '#ff6b85');
 
   g.beginPath(); g.moveTo(0,N+10); g.lineTo(-12, T-15); g.lineTo(12, T-15); g.closePath();
   const panelGrad=g.createLinearGradient(0,0,0,T); panelGrad.addColorStop(0,'#9e2a46'); panelGrad.addColorStop(1,'#3a0510');
@@ -415,33 +533,162 @@ function makeShipSprite(scale){
   const cpGrad=g.createLinearGradient(0,-26,0,-4); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.4,'#ffd1dc'); cpGrad.addColorStop(1,'#ff4d6d');
   g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-18, 9, 20, 0, 0, Math.PI*2); g.fill();
   g.lineWidth=2; g.strokeStyle='#fff'; g.stroke();
-  g.fillStyle='rgba(255,255,255,.8)'; g.beginPath(); g.ellipse(-3,-24, 2.5, 6, 0.3, 0, Math.PI*2); g.fill();
-
+  
   g.fillStyle='#ffebf0'; g.shadowColor='#ff4d6d'; g.shadowBlur=8;
   g.beginPath(); g.arc(-WX+2, WY, 3, 0, Math.PI*2); g.fill();
   g.beginPath(); g.arc(WX-2, WY, 3, 0, Math.PI*2); g.fill();
   g.shadowBlur=0;
-
-  g.strokeStyle='#fff'; g.lineWidth=2; g.globalAlpha=.8;
-  g.beginPath(); g.moveTo(-8, T+4); g.lineTo(-4, T+22); g.stroke();
-  g.beginPath(); g.moveTo(8, T+4); g.lineTo(4, T+22); g.stroke();
-  g.globalAlpha=1;
   return c;
 }
 
-function makeMiniSprite(scale){
+function makeGalaxyHawk(scale){
+  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
+  g.scale(scale,scale); g.translate(sw/2, sh/2);
+  const N=-65, T=55, WY=25, WX=60;
+  
+  const engOuter=g.createRadialGradient(0,45,2,0,45,60);
+  engOuter.addColorStop(0,'rgba(0,200,255,.9)'); engOuter.addColorStop(.5,'rgba(0,100,255,.3)'); engOuter.addColorStop(1,'rgba(0,50,255,0)');
+  g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,60,0,Math.PI*2); g.fill();
+  
+  const wing=()=>{ g.beginPath(); g.moveTo(-15,10); g.lineTo(-WX,35); g.lineTo(-WX+10,45); g.lineTo(-10,30); g.closePath(); };
+  wing(); g.fillStyle='#003355'; g.fill(); g.lineWidth=2; g.strokeStyle='#00d4ff'; g.stroke();
+  
+  drawShipBase(g, N, T, WY, WX, '#001a33', '#00447a', '#00d4ff');
+  
+  const cpGrad=g.createLinearGradient(0,-30,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#00d4ff'); cpGrad.addColorStop(1,'#004488');
+  g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-15, 8, 22, 0, 0, Math.PI*2); g.fill();
+  g.lineWidth=2; g.strokeStyle='#aaffff'; g.stroke();
+  
+  g.shadowColor='#00d4ff'; g.shadowBlur=10;
+  g.fillStyle='#e0ffff';
+  g.beginPath(); g.arc(-WX*0.8, WY, 4, 0, Math.PI*2); g.fill();
+  g.beginPath(); g.arc(WX*0.8, WY, 4, 0, Math.PI*2); g.fill();
+  g.shadowBlur=0;
+  return c;
+}
+
+function makePurpleGhost(scale){
+  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
+  g.scale(scale,scale); g.translate(sw/2, sh/2);
+  
+  const engOuter=g.createRadialGradient(0,40,5,0,40,65);
+  engOuter.addColorStop(0,'rgba(200,0,255,.8)'); engOuter.addColorStop(.6,'rgba(120,0,180,.3)'); engOuter.addColorStop(1,'rgba(80,0,120,0)');
+  g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,65,0,Math.PI*2); g.fill();
+  
+  const shape=()=>{
+    g.beginPath();
+    g.moveTo(0,-65);
+    g.bezierCurveTo(15,-50, 40, 0, 55, 30);
+    g.lineTo(30,25); g.lineTo(20,50);
+    g.lineTo(0,40);
+    g.lineTo(-20,50); g.lineTo(-30,25);
+    g.lineTo(-55,30);
+    g.bezierCurveTo(-40,0, -15,-50, 0,-65);
+    g.closePath();
+  };
+  shape(); g.lineWidth=10; g.strokeStyle='rgba(200,0,255,.2)'; g.stroke();
+  shape(); g.fillStyle='#2a0033'; g.fill();
+  shape(); g.lineWidth=2.5; g.strokeStyle='#d400ff'; g.stroke();
+  
+  const cpGrad=g.createRadialGradient(0,-10,2,0,-10,25); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.3,'#ff99ff'); cpGrad.addColorStop(1,'rgba(200,0,255,0)');
+  g.fillStyle=cpGrad; g.beginPath(); g.arc(0,-10,25,0,Math.PI*2); g.fill();
+  g.fillStyle='#fff'; g.beginPath(); g.arc(0,-10,5,0,Math.PI*2); g.fill();
+  
+  return c;
+}
+
+function makeGoldenShield(scale){
+  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
+  g.scale(scale,scale); g.translate(sw/2, sh/2);
+  
+  const engOuter=g.createRadialGradient(0,45,5,0,45,60);
+  engOuter.addColorStop(0,'rgba(255,200,0,.9)'); engOuter.addColorStop(.6,'rgba(255,150,0,.3)'); engOuter.addColorStop(1,'rgba(200,100,0,0)');
+  g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,60,0,Math.PI*2); g.fill();
+  
+  drawShipBase(g, -55, 50, 25, 50, '#332200', '#997700', '#ffcc00');
+  
+  // سپرهای طلایی
+  const shield=()=>{
+    g.beginPath(); g.moveTo(-60,10); g.lineTo(-30,20); g.lineTo(-30,45); g.lineTo(-60,35); g.closePath();
+  };
+  shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2; g.strokeStyle='#ffeeaa'; g.stroke();
+  g.save(); g.scale(-1,1); shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2; g.strokeStyle='#ffeeaa'; g.stroke(); g.restore();
+  
+  g.beginPath(); g.ellipse(0,-15, 8, 25, 0, 0, Math.PI*2); 
+  const cpGrad=g.createLinearGradient(0,-40,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#ffdd55'); cpGrad.addColorStop(1,'#ff8800');
+  g.fillStyle=cpGrad; g.fill(); g.lineWidth=2; g.strokeStyle='#fff'; g.stroke();
+  
+  g.shadowColor='#ffcc00'; g.shadowBlur=15;
+  g.fillStyle='#ffffaa';
+  g.beginPath(); g.arc(0,-15, 4, 0, Math.PI*2); g.fill();
+  g.shadowBlur=0;
+  return c;
+}
+
+function makeCrystalStar(scale){
+  const sw=160, sh=180, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
+  g.scale(scale,scale); g.translate(sw/2, sh/2);
+  
+  const engOuter=g.createRadialGradient(0,40,5,0,40,70);
+  engOuter.addColorStop(0,'rgba(200,255,255,.9)'); engOuter.addColorStop(.6,'rgba(100,200,255,.3)'); engOuter.addColorStop(1,'rgba(50,150,255,0)');
+  g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,70,0,Math.PI*2); g.fill();
+  
+  // بال‌های کریستالی
+  const crystalWing=()=>{
+    g.beginPath();
+    g.moveTo(-20,-10); g.lineTo(-70,10); g.lineTo(-50,35); g.lineTo(-60,55); g.lineTo(-25,40); 
+    g.closePath();
+  };
+  crystalWing(); g.fillStyle='rgba(150,230,255,.4)'; g.fill(); g.lineWidth=2; g.strokeStyle='#e0ffff'; g.stroke();
+  g.save(); g.scale(-1,1); crystalWing(); g.fillStyle='rgba(150,230,255,.4)'; g.fill(); g.lineWidth=2; g.strokeStyle='#e0ffff'; g.stroke(); g.restore();
+
+  // بدنه کریستالی
+  const shape=()=>{
+    g.beginPath();
+    g.moveTo(0,-75);
+    g.lineTo(25,-20); g.lineTo(20,40); g.lineTo(0,55); g.lineTo(-20,40); g.lineTo(-25,-20);
+    g.closePath();
+  };
+  shape(); g.lineWidth=10; g.strokeStyle='rgba(200,255,255,.2)'; g.stroke();
+  
+  const fill=g.createLinearGradient(0,-75,0,55);
+  fill.addColorStop(0,'#ffffff'); fill.addColorStop(0.3,'#80e0ff'); fill.addColorStop(0.7,'#0088cc'); fill.addColorStop(1,'#004466');
+  shape(); g.fillStyle=fill; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke();
+  
+  // خطوط شکست نور
+  g.strokeStyle='rgba(255,255,255,.6)'; g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(0,-75); g.lineTo(0,55); g.stroke();
+  g.beginPath(); g.moveTo(-20,40); g.lineTo(25,-20); g.stroke();
+  
+  const cpGrad=g.createRadialGradient(0,0,2,0,0,20); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(1,'rgba(200,255,255,0)');
+  g.fillStyle=cpGrad; g.beginPath(); g.arc(0,0,20,0,Math.PI*2); g.fill();
+  
+  return c;
+}
+
+function makeMiniSprite(scale, shipId){
   const c=mkC(60*scale,70*scale),g=c.getContext('2d');
   g.scale(scale,scale); g.translate(30,35);
-  const gl=g.createRadialGradient(0,0,2,0,0,30); gl.addColorStop(0,'rgba(255,100,140,.6)'); gl.addColorStop(1,'rgba(255,0,60,0)');
+  
+  let color = '#ff6b85';
+  let cpColor = '#ff4d6d';
+  if(shipId === 'galaxy_hawk') { color = '#00d4ff'; cpColor = '#00aaff'; }
+  else if(shipId === 'purple_ghost') { color = '#d400ff'; cpColor = '#aa00cc'; }
+  else if(shipId === 'golden_shield') { color = '#ffcc00'; cpColor = '#ffaa00'; }
+  else if(shipId === 'crystal_star') { color = '#e0ffff'; cpColor = '#80e0ff'; }
+
+  const gl=g.createRadialGradient(0,0,2,0,0,30); gl.addColorStop(0,hexA(color,0.6)); gl.addColorStop(1,hexA(color,0));
   g.fillStyle=gl; g.beginPath(); g.arc(0,0,30,0,Math.PI*2); g.fill();
+  
   const body=()=>{ g.beginPath(); g.moveTo(0,-28); g.lineTo(-18, 12); g.lineTo(-6, 8); g.lineTo(0, 20); g.lineTo(6, 8); g.lineTo(18, 12); g.closePath(); };
   body();
-  const f=g.createLinearGradient(0,-28,0,20); f.addColorStop(0,'#2a0a12'); f.addColorStop(0.5,'#8a1a2e'); f.addColorStop(1,'#1a0308');
-  g.fillStyle=f; g.fill(); g.lineWidth=2; g.strokeStyle='#ff6b85'; body(); g.stroke();
-  const cp=g.createLinearGradient(0,-14,0,0); cp.addColorStop(0,'#fff'); cp.addColorStop(1,'#ff4d6d');
+  const f=g.createLinearGradient(0,-28,0,20); f.addColorStop(0,'#111'); f.addColorStop(0.5,color); f.addColorStop(1,'#000');
+  g.fillStyle=f; g.fill(); g.lineWidth=2; g.strokeStyle=color; body(); g.stroke();
+  const cp=g.createLinearGradient(0,-14,0,0); cp.addColorStop(0,'#fff'); cp.addColorStop(1,cpColor);
   g.fillStyle=cp; g.beginPath(); g.ellipse(0,-6, 4, 8, 0, 0, Math.PI*2); g.fill();
   return c;
 }
+// ====================================================
 
 function makeHexSprite(r){
   const pad=r*2, size=(r+pad)*2; const c=mkC(size,size), g=c.getContext('2d'); g.translate(size/2, size/2);
@@ -507,7 +754,16 @@ function buildCaches(){
   caches.particles={ '#ff5d8f':glow('#ff5d8f',8,.8),'#ff3355':glow('#ff3355',8,.8),'#ffd84d':glow('#ffd84d',8,.8),'#7ef0ff':glow('#7ef0ff',8,.8),'#38b6ff':glow('#38b6ff',8,.8),'#ffa5c0':glow('#ffa5c0',8,.8),'#ff7b00':glow('#ff7b00',8,.8),'#ffe066':glow('#ffe066',8,.8) };
   caches.bulletGlow=glow('#38b6ff',22,.9); caches.coreGlow=glow('#ffd84d',44,1); caches.nebula=makeNebula();
   const baseR=enemyRadius(); caches.hex={baseR,sprite:makeHexSprite(baseR)};
-  player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2); caches.ship=makeShipSprite(player.scale); caches.mini=makeMiniSprite(player.scale*.9);
+  
+  player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2);
+  caches.ships['red_wing'] = makeRedWing(player.scale);
+  caches.ships['galaxy_hawk'] = makeGalaxyHawk(player.scale);
+  caches.ships['purple_ghost'] = makePurpleGhost(player.scale);
+  caches.ships['golden_shield'] = makeGoldenShield(player.scale);
+  caches.ships['crystal_star'] = makeCrystalStar(player.scale);
+  
+  caches.mini = makeMiniSprite(player.scale*.9, store.equippedShip);
+  
   if(G.boss) caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
   makeStars();
 }
@@ -526,7 +782,7 @@ function shoot(){
   G.fireCooldown=0.16;
   const s=player.scale;
   const wStats = getWeaponStats(store.equipped);
-  const spreadAngle = 0.15; // زاویه پخش ۸ درجه
+  const spreadAngle = 0.15;
   
   if(wStats.shots === 1) {
     G.bullets.push({x:player.x, y:player.y-30*s, r:9*s, vy:-800, vx:0, dmg:wStats.dmg, color:wStats.color});
@@ -551,7 +807,6 @@ function enemyRadius(){return clamp(Math.min(W,H)*0.045,22,46);}
 function spawnEnemy(){
   const wave = 1 + Math.floor(G.score/1000);
   const r=enemyRadius()*rnd(0.9,1.1);
-  // سرعت کاهش پیدا کرد
   const baseVy = 280 + G.time*1.5 + wave*15;
   const baseVx = 20 + wave*4;
   G.enemies.push({
@@ -623,18 +878,21 @@ function updateUI(){
 }
 
 function drawLobbyShip(){
-  const div=document.getElementById('lobbyShip'); if(!caches.ship)return;
-  const c=mkC(caches.ship.width,caches.ship.height); const g=c.getContext('2d'); g.drawImage(caches.ship,0,0);
-  div.innerHTML=''; c.style.width='180px'; c.style.height='206px'; div.appendChild(c);
+  const div=document.getElementById('lobbyShip');
+  const shipId = store.equippedShip;
+  const shipCache = caches.ships[shipId];
+  if(!shipCache) return;
+  
+  const c=mkC(shipCache.width,shipCache.height); 
+  const g=c.getContext('2d'); 
+  g.drawImage(shipCache,0,0);
+  div.innerHTML=''; 
+  c.style.width='180px'; 
+  c.style.height='206px'; 
+  div.appendChild(c);
 }
 
 const tabs=['tabGame','tabShop','tabRank','tabProfile'].map(id=>document.getElementById(id));
-
-function closeAllOverlays(){
-  shopPanel.classList.remove('show');
-  simpleModal.classList.remove('show');
-  lobbyEl.classList.remove('hidden'); // لابی برگرده
-}
 
 function setTab(id){ 
   tabs.forEach(t=>t.classList.remove('active')); 
@@ -654,7 +912,6 @@ tabs[0].addEventListener('click',()=>{
     lobbyEl.classList.remove('hidden');
     uiEl.classList.remove('show');
   } else {
-    // بازگشت به بازی
     lobbyEl.classList.add('hidden');
     uiEl.classList.add('show');
     G.running=true;
@@ -664,8 +921,8 @@ tabs[0].addEventListener('click',()=>{
 tabs[1].addEventListener('click',()=>{
   setTab('tabShop');
   simpleModal.classList.remove('show');
-  lobbyEl.classList.add('hidden'); // لابی مخفی بشه
-  uiEl.classList.remove('show'); // HUD مخفی بشه
+  lobbyEl.classList.add('hidden');
+  uiEl.classList.remove('show');
   shopPanel.classList.add('show');
   G.running=false;
   renderShop();
@@ -713,6 +970,10 @@ function startGame(){
   G.particles=[];G.floatTexts=[];G.shockwaves=[]; G.fireCooldown=0;G.miniFireCooldown=0;
   G.shake=0;G.flash=0;G.enemyPassCooldown=0; G.touch.active=false;
   G.keysLeft=false;G.keysRight=false;G.keysFire=false;
+  
+  // بروزرسانی کش‌ها بر اساس سفینه مجهز شده
+  caches.mini = makeMiniSprite(player.scale*.9, store.equippedShip);
+  
   resetPlayer();updateUI();
   gameOverEl.classList.remove('show'); showMessage('🚀 بازی شروع شد',1800);
 }
@@ -802,7 +1063,6 @@ function update(dt){
   if(G.touch.active||G.keysFire)shoot();
   for(const m of minis){ m.fireTimer-=dt; if(m.fireTimer<=0){m.fireTimer=0.42;shootMini(m);} }
 
-  // استفاده از vx برای تیرها
   for(let i=G.bullets.length-1;i>=0;i--){
     const b = G.bullets[i];
     b.y+=b.vy*dt;
@@ -812,7 +1072,7 @@ function update(dt){
   for(let i=G.miniBullets.length-1;i>=0;i--){
     const b = G.miniBullets[i];
     b.y+=b.vy*dt;
-    b.x+=b.vx*dt; // vx هم اعمال بشه
+    b.x+=b.vx*dt;
     if(b.y<-20 || b.x<-20 || b.x>W+20) G.miniBullets.splice(i,1);
   }
 
@@ -931,7 +1191,7 @@ function draw(){
   
   if(!G.over&&G.running&&!G.inLobby){
     const blink=player.hitCooldown>0&&Math.floor(player.hitCooldown*14)%2===0;
-    drawSprite(caches.ship,player.x,player.y,1,blink?0.55:1);
+    drawSprite(caches.ships[store.equippedShip], player.x, player.y, 1, blink?0.55:1);
     for(const m of minis){ drawSprite(caches.mini,player.x+m.offset*player.scale,player.y+8*player.scale,1,blink?0.55:1); }
   }
 
@@ -948,9 +1208,8 @@ function loop(now){
   draw(); requestAnimationFrame(loop);
 }
 
-/* شروع */
 resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
- </html>
+   </html>
