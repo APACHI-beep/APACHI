@@ -12,45 +12,24 @@
   html,body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif; touch-action:none; user-select:none; }
   canvas { display:block; width:100%; height:100%; }
 
-  #ui {
-    position:fixed; inset:0; pointer-events:none;
-    padding:6px 8px; direction:rtl; z-index:5;
-  }
+  #ui { position:fixed; inset:0; pointer-events:none; padding:6px 8px; direction:rtl; z-index:5; }
 
-  /* RIGHT (hearts) */
-  #rightUI {
-    position:absolute; top:6px; right:8px; text-align:right;
-  }
+  #rightUI { position:absolute; top:6px; right:8px; text-align:right; }
   .hearts { font-size:26px; letter-spacing:1px; filter:drop-shadow(0 0 6px #ff3355); line-height:1; }
   .hearts .dead { opacity:.22; filter:none; }
 
-  /* LEFT top cluster (stuck to edge) */
   #leftUI {
     position:absolute; top:6px; left:6px; text-align:right;
     display:flex; flex-direction:column; gap:1px;
   }
   .recordBox, .scoreBox, .coinBox {
     color:#e8f6ff; text-shadow:0 0 8px #38c8ff, 0 0 16px #0060ff;
-    font-weight:700; user-select:none;
-    line-height:1.15;
+    font-weight:700; user-select:none; line-height:1.15;
     font-family:'Orbitron','Vazirmatn',sans-serif;
   }
   .recordBox { font-size:12px; color:#ffd84d; text-shadow:0 0 8px #ff9d00; }
   .scoreBox  { font-size:16px; }
   .coinBox   { font-size:18px; color:#ffcf33; text-shadow:0 0 8px #ffb300,0 0 16px #ff7b00; }
-
-  #lbBtn {
-    pointer-events:auto; cursor:pointer;
-    margin-top:6px;
-    background:rgba(20,60,100,.55);
-    border:1px solid #38c8ff;
-    color:#bff3ff; font-family:'Vazirmatn',sans-serif;
-    font-size:12px; font-weight:700;
-    padding:5px 10px; border-radius:10px;
-    box-shadow:0 0 10px rgba(56,200,255,.45), inset 0 0 6px rgba(56,200,255,.25);
-    align-self:flex-start;
-  }
-  #lbBtn:active { transform:scale(.95); }
 
   #message {
     position:fixed; top:38%; left:50%; transform:translate(-50%,-50%) scale(0.7);
@@ -61,48 +40,6 @@
     font-family:'Vazirmatn',sans-serif;
   }
   #message.show { opacity:1; transform:translate(-50%,-50%) scale(1); }
-
-  /* Leaderboard panel */
-  #lbPanel {
-    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-    background:rgba(0,6,18,.85); backdrop-filter:blur(6px);
-    opacity:0; pointer-events:none; transition:opacity .25s; z-index:20;
-  }
-  #lbPanel.show { opacity:1; pointer-events:auto; }
-  #lbCard {
-    width:min(88vw, 340px);
-    background:linear-gradient(180deg, rgba(10,30,55,.98), rgba(4,12,26,.98));
-    border:1px solid #38c8ff;
-    border-radius:16px;
-    padding:16px 16px 12px;
-    box-shadow:0 0 30px rgba(56,200,255,.45), inset 0 0 20px rgba(56,200,255,.15);
-    color:#dff6ff;
-  }
-  #lbCard h2 {
-    text-align:center; font-size:18px; margin-bottom:10px;
-    color:#8fefff; letter-spacing:2px; text-shadow:0 0 12px #38c8ff;
-  }
-  #lbList { list-style:none; max-height:50vh; overflow-y:auto; }
-  #lbList li {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:7px 10px; margin-bottom:5px;
-    background:rgba(20,50,85,.5);
-    border-radius:9px; font-family:'Orbitron',monospace;
-    font-size:14px; border:1px solid rgba(56,200,255,.25);
-  }
-  #lbList li:first-child { border-color:#ffd84d; color:#ffe066; box-shadow:0 0 10px rgba(255,216,77,.4); }
-  #lbList li .rank { color:#7ecfff; font-weight:700; width:28px; }
-  #lbList li .val  { color:#fff; font-weight:700; }
-  #lbList li .dt   { color:#7aa7c0; font-size:10px; font-family:'Vazirmatn',sans-serif; }
-  #lbEmpty { text-align:center; color:#5f8aa5; padding:16px; font-size:13px; }
-  #lbClose {
-    display:block; width:100%; margin-top:10px;
-    background:linear-gradient(180deg,#7ef0ff,#18a8ff);
-    border:none; color:#001018; font-weight:800; font-family:'Vazirmatn',sans-serif;
-    padding:10px; border-radius:10px; font-size:14px; cursor:pointer;
-    box-shadow:0 0 14px #18a8ff;
-  }
-  #lbClose:active { transform:scale(.97); }
 
   #gameOver {
     position:fixed; inset:0; display:flex; flex-direction:column;
@@ -136,20 +73,10 @@
     <div class="recordBox" id="record">رکورد 0</div>
     <div class="scoreBox" id="score">امتیاز 0</div>
     <div class="coinBox" id="coins">💰 0</div>
-    <button id="lbBtn">🏆 لیدربورد</button>
   </div>
 </div>
 
 <div id="message"></div>
-
-<div id="lbPanel">
-  <div id="lbCard">
-    <h2>🏆 برترین‌ها</h2>
-    <ul id="lbList"></ul>
-    <div id="lbEmpty" style="display:none">هنوز رکوردی ثبت نشده</div>
-    <button id="lbClose">بستن</button>
-  </div>
-</div>
 
 <div id="gameOver">
   <h1>پایان بازی</h1>
@@ -177,21 +104,8 @@ const store = {
   get record(){ return +(localStorage.getItem('sp_record')||0); },
   set record(v){ localStorage.setItem('sp_record', v); },
   get coins(){ return +(localStorage.getItem('sp_coins')||0); },
-  set coins(v){ localStorage.setItem('sp_coins', v); },
-  get leaderboard(){
-    try { return JSON.parse(localStorage.getItem('sp_lb')||'[]'); }
-    catch { return []; }
-  },
-  set leaderboard(arr){ localStorage.setItem('sp_lb', JSON.stringify(arr)); }
+  set coins(v){ localStorage.setItem('sp_coins', v); }
 };
-function addToLeaderboard(score, coins){
-  if(score <= 0) return;
-  const list = store.leaderboard;
-  list.push({ s:score, c:coins, d:Date.now() });
-  list.sort((a,b)=> b.s - a.s);
-  const trimmed = list.slice(0, 10);
-  store.leaderboard = trimmed;
-}
 
 /* ================= State ================= */
 const G = {
@@ -234,14 +148,19 @@ resetPlayer();
 function rnd(a,b){ return a + Math.random()*(b-a); }
 function clamp(v,a,b){ return v<a?a:v>b?b:v; }
 
-/* ================= Shooting ================= */
+/* ================= Shooting (single big blue) ================= */
 function shoot(){
   if(G.fireCooldown > 0) return;
-  G.fireCooldown = 0.14;
+  G.fireCooldown = 0.16;
   const s = player.scale;
-  G.bullets.push({ x:player.x-10*s, y:player.y-22*s, r:5*s, vy:-720 });
-  G.bullets.push({ x:player.x+10*s, y:player.y-22*s, r:5*s, vy:-720 });
-  burst(player.x, player.y-26*s, '#6fe3ff', 5, 120);
+  G.bullets.push({
+    x: player.x,
+    y: player.y - 26*s,
+    r: 9*s,
+    vy: -780,
+    glow: '#38b6ff'
+  });
+  burst(player.x, player.y-28*s, '#38b6ff', 6, 130);
 }
 
 /* ================= Enemy ================= */
@@ -282,7 +201,7 @@ function spawnBoss(){
   showMessage('⚠️ باس وارد شد ⚠️');
 }
 
-/* ================= Particles & FX ================= */
+/* ================= Particles ================= */
 function burst(x,y,color,n,spd){
   for(let i=0;i<n;i++){
     const a = Math.random()*Math.PI*2;
@@ -362,35 +281,9 @@ function updateUI(){
   heartsEl.innerHTML = h;
   scoreEl.textContent = 'امتیاز ' + G.score;
   coinsEl.textContent = '💰 ' + store.coins;
+  if(G.score > store.record) store.record = G.score;
   recordEl.textContent = 'رکورد ' + store.record;
 }
-
-/* ================= Leaderboard ================= */
-const lbPanel = document.getElementById('lbPanel');
-const lbList  = document.getElementById('lbList');
-const lbEmpty = document.getElementById('lbEmpty');
-document.getElementById('lbBtn').addEventListener('click', ()=>{
-  const list = store.leaderboard;
-  lbList.innerHTML = '';
-  if(list.length === 0){
-    lbEmpty.style.display = 'block';
-  } else {
-    lbEmpty.style.display = 'none';
-    list.forEach((it, i)=>{
-      const li = document.createElement('li');
-      const dt = new Date(it.d);
-      const ds = `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
-      li.innerHTML = `<span class="rank">${i+1}.</span>
-                      <span class="val">${it.s}</span>
-                      <span class="dt">${ds}</span>`;
-      lbList.appendChild(li);
-    });
-  }
-  lbPanel.classList.add('show');
-});
-document.getElementById('lbClose').addEventListener('click', ()=>{
-  lbPanel.classList.remove('show');
-});
 
 /* ================= Game Flow ================= */
 const gameOverEl = document.getElementById('gameOver');
@@ -414,7 +307,6 @@ function startGame(){
 function endGame(){
   G.running = false; G.over = true;
   if(G.score > store.record) store.record = G.score;
-  addToLeaderboard(G.score, store.coins);
   updateUI();
   document.getElementById('goText').innerHTML =
     `امتیاز این دست: <b style="color:#7ef0ff">${G.score}</b><br>` +
@@ -559,10 +451,14 @@ function update(dt){
       const dx = e.x - player.x, dy = e.y - player.y;
       const hitR = 16 * player.scale;
       if(Math.abs(dx) < e.r + hitR && Math.abs(dy) < e.r + hitR){
-        burst(e.x, e.y, '#ff3355', 22, 320);
-        shockwave(e.x, e.y, '#ff3355', e.r*3);
         G.enemies.splice(i,1);
-        hitPlayer(e.x, e.y);
+        G.lives--;
+        player.hitCooldown = 1.0;
+        updateUI();
+        if(G.lives <= 0){
+          G.lives = 0;
+          setTimeout(endGame, 260);
+        }
         break;
       }
     }
@@ -587,9 +483,9 @@ function update(dt){
     f.life -= dt;
     if(f.life <= 0) G.floatTexts.splice(i,1);
   }
-  for(const s of G.stars){
-    s.y += s.s*dt*(0.3 + s.r*0.3);
-    if(s.y > H){ s.y = -4; s.x = Math.random()*W; }
+  for(const st of G.stars){
+    st.y += st.s*dt*(0.3 + st.r*0.3);
+    if(st.y > H){ st.y = -4; st.x = Math.random()*W; }
   }
 }
 
@@ -600,13 +496,9 @@ function checkBossTrigger(){
   }
 }
 
-/* ---------- hitPlayer (improved) ---------- */
 function hitPlayer(hitX, hitY){
-  // camera shake & flash
   G.shake = 1.4;
   G.flash = 0.9;
-
-  // impact particles at contact point (fallback to player position)
   const ix = (hitX !== undefined) ? hitX : player.x;
   const iy = (hitY !== undefined) ? hitY : player.y;
   burst(ix, iy, '#ff3355', 40, 420);
@@ -615,18 +507,9 @@ function hitPlayer(hitX, hitY){
   shockwave(ix, iy, '#ff3355', Math.min(W,H)*0.35);
   shockwave(ix, iy, '#ffd84d', Math.min(W,H)*0.22);
 
-  // small knockback (do NOT reset position)
-  const dx = player.x - ix;
-  const dir = dx === 0 ? (Math.random()<.5?-1:1) : Math.sign(dx);
-  player.x = clamp(player.x + dir * 22, 40, W-40);
-  player.y = clamp(player.y + 28, H*0.35, H-50);
-
-  // invulnerability window
   player.hitCooldown = 1.2;
-
   G.lives--;
   updateUI();
-
   if(G.lives <= 0){
     G.lives = 0;
     setTimeout(endGame, 320);
@@ -634,29 +517,33 @@ function hitPlayer(hitX, hitY){
 }
 
 /* ================= Draw ================= */
+/* سفینه: بدنه قرمز تیره، لبه نئون قرمز روشن، کابین صورتی-سفید، موتور قرمز */
 function drawShip(x,y,scale){
   ctx.save();
   ctx.translate(x,y);
   ctx.scale(scale, scale);
 
   const blink = player.hitCooldown > 0 && Math.floor(player.hitCooldown*14) % 2 === 0;
-  if(blink) ctx.globalAlpha = 0.45;
+  if(blink) ctx.globalAlpha = 0.5;
 
-  // engine glow
-  const g = ctx.createRadialGradient(0,22,0, 0,22,30);
-  g.addColorStop(0,'rgba(120,235,255,.98)');
-  g.addColorStop(1,'rgba(0,120,255,0)');
+  // engine glow (red)
+  const g = ctx.createRadialGradient(0,22,0, 0,22,32);
+  g.addColorStop(0,'rgba(255,90,110,.98)');
+  g.addColorStop(0.5,'rgba(255,30,60,.55)');
+  g.addColorStop(1,'rgba(255,0,40,0)');
   ctx.fillStyle = g;
   ctx.beginPath();
-  ctx.arc(0,26,30,0,Math.PI*2);
+  ctx.arc(0,26,32,0,Math.PI*2);
   ctx.fill();
 
-  ctx.shadowColor = '#38c8ff';
-  ctx.shadowBlur = 22;
+  // outer neon red aura
+  ctx.shadowColor = '#ff2b4d';
+  ctx.shadowBlur = 26;
 
-  ctx.fillStyle = '#132a3d';
-  ctx.strokeStyle = '#8ff0ff';
-  ctx.lineWidth = 2.2;
+  // body
+  ctx.fillStyle = '#3a0c14';
+  ctx.strokeStyle = '#ff5566';
+  ctx.lineWidth = 2.4;
   ctx.beginPath();
   ctx.moveTo(0, -32);
   ctx.lineTo(-38, 18);
@@ -670,12 +557,31 @@ function drawShip(x,y,scale){
   ctx.fill();
   ctx.stroke();
 
-  ctx.shadowColor = '#aef4ff';
-  ctx.shadowBlur = 14;
-  ctx.fillStyle = 'rgba(160,240,255,.9)';
+  // inner highlight line
+  ctx.shadowBlur = 8;
+  ctx.strokeStyle = 'rgba(255,150,160,.7)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, -26);
+  ctx.lineTo(-16, 10);
+  ctx.moveTo(0, -26);
+  ctx.lineTo(16, 10);
+  ctx.stroke();
+
+  // cockpit (pink-white glow)
+  ctx.shadowColor = '#ffb0c0';
+  ctx.shadowBlur = 16;
+  ctx.fillStyle = 'rgba(255,190,205,.95)';
   ctx.beginPath();
   ctx.ellipse(0, -8, 7, 12, 0, 0, Math.PI*2);
   ctx.fill();
+
+  // small glowing wing tips
+  ctx.shadowColor = '#ff3355';
+  ctx.shadowBlur = 14;
+  ctx.fillStyle = '#ff4d6a';
+  ctx.beginPath(); ctx.arc(-34, 16, 3, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc( 34, 16, 3, 0, Math.PI*2); ctx.fill();
 
   ctx.restore();
 }
@@ -799,7 +705,6 @@ function draw(){
   }
   ctx.globalAlpha = 1;
 
-  // screen flash
   if(G.flash > 0){
     ctx.fillStyle = `rgba(255,60,90,${G.flash*0.28})`;
     ctx.fillRect(0,0,W,H);
@@ -811,7 +716,6 @@ function draw(){
     ctx.translate(rnd(-m,m), rnd(-m,m));
   }
 
-  // shockwaves
   for(const w of G.shockwaves){
     ctx.globalAlpha = w.life * 0.7;
     ctx.strokeStyle = w.color;
@@ -849,9 +753,17 @@ function draw(){
   ctx.shadowBlur = 0;
 
   for(const b of G.bullets){
-    ctx.shadowColor = '#6fe3ff';
-    ctx.shadowBlur = 18;
-    ctx.fillStyle = '#bff6ff';
+    ctx.shadowColor = '#38b6ff';
+    ctx.shadowBlur = 26;
+    const g = ctx.createRadialGradient(b.x, b.y, 1, b.x, b.y, b.r*2.2);
+    g.addColorStop(0, 'rgba(200,240,255,1)');
+    g.addColorStop(0.5, 'rgba(56,182,255,.9)');
+    g.addColorStop(1, 'rgba(56,182,255,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r*2.2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#d6f4ff';
     ctx.beginPath();
     ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
     ctx.fill();
