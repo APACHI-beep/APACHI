@@ -13,7 +13,7 @@
   canvas{display:block;width:100%;height:100%}
   
   /* Tabs */
-  #tabs{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:4px;padding:10px;z-index:10;opacity:0;pointer-events:none;transition:opacity .3s;background:linear-gradient(180deg,rgba(0,10,25,.9),transparent)}
+  #tabs{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:4px;padding:10px;z-index:30;opacity:0;pointer-events:none;transition:opacity .3s;background:linear-gradient(180deg,rgba(0,10,25,.9),transparent)}
   #tabs.active{opacity:1;pointer-events:auto}
   .tab{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:12px;font-weight:800;font-size:13px;color:#9fd4ec;background:rgba(15,35,60,.65);border:1px solid rgba(90,170,220,.35);cursor:pointer;transition:all .2s}
   .tab svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -21,7 +21,7 @@
   .tab:active{transform:scale(.95)}
   
   /* HUD */
-  #ui{position:fixed;inset:0;pointer-events:none;padding:72px 10px 8px;z-index:5;display:none}
+  #ui{position:fixed;inset:0;pointer-events:none;padding:72px 10px 8px;z-index:15;display:none}
   #ui.show{display:block}
   #rightUI{position:absolute;top:72px;right:10px;display:flex;gap:6px}
   .heart{width:24px;height:24px;background:radial-gradient(circle at 35% 30%,#fff0f3,#ff4d6d 22%,#d8002f 60%,#5a0016);clip-path:path('M12,22 C-2,12 -2,4 5,2 C9,1 12,3 12,6 C12,3 15,1 19,2 C26,4 26,12 12,22 Z');filter:drop-shadow(0 0 10px #ff4d6d)}
@@ -33,7 +33,7 @@
   .coinBox{color:#ffe27a;font-size:16px;text-shadow:0 0 8px #ffb300}
 
   /* Lobby */
-  #lobby{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:40px;background:radial-gradient(circle at 50% 30%,rgba(0,50,100,.55),rgba(0,0,0,.98) 70%),radial-gradient(circle at 80% 80%,rgba(120,30,200,.25),transparent 60%),radial-gradient(circle at 20% 70%,rgba(30,150,255,.2),transparent 60%);z-index:8;transition:opacity .4s;overflow:hidden}
+  #lobby{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:40px;background:radial-gradient(circle at 50% 30%,rgba(0,50,100,.55),rgba(0,0,0,.98) 70%),radial-gradient(circle at 80% 80%,rgba(120,30,200,.25),transparent 60%),radial-gradient(circle at 20% 70%,rgba(30,150,255,.2),transparent 60%);z-index:10;transition:opacity .4s;overflow:hidden}
   #lobby::before{content:'';position:absolute;inset:0;background-image:radial-gradient(2px 2px at 15% 25%,#fff,transparent),radial-gradient(2px 2px at 82% 18%,#fff,transparent),radial-gradient(1.5px 1.5px at 35% 65%,#cfe8ff,transparent),radial-gradient(2px 2px at 70% 75%,#fff,transparent),radial-gradient(1px 1px at 55% 35%,#fff,transparent),radial-gradient(1.5px 1.5px at 10% 85%,#fff,transparent),radial-gradient(1px 1px at 90% 55%,#cfe8ff,transparent),radial-gradient(1.5px 1.5px at 25% 15%,#fff,transparent),radial-gradient(2px 2px at 60% 90%,#fff,transparent);opacity:.85;animation:tw 4s ease-in-out infinite alternate}
   @keyframes tw{0%{opacity:.55}100%{opacity:.95}}
   #lobby.hidden{opacity:0;pointer-events:none}
@@ -49,11 +49,11 @@
   .secBtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
   /* Modals */
-  #message{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.7);color:#fff;font-size:32px;font-weight:900;font-family:'Orbitron',sans-serif;text-shadow:0 0 12px #ff2b6d,0 0 30px #ff2b6d,0 0 60px #ff2b6d;opacity:0;transition:all .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none;white-space:nowrap;z-index:7;letter-spacing:2px}
+  #message{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.7);color:#fff;font-size:32px;font-weight:900;font-family:'Orbitron',sans-serif;text-shadow:0 0 12px #ff2b6d,0 0 30px #ff2b6d,0 0 60px #ff2b6d;opacity:0;transition:all .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none;white-space:nowrap;z-index:25;letter-spacing:2px}
   #message.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
   
   /* Shop Panel */
-  #shopPanel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.95),rgba(0,0,0,.98));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:4;padding-top:65px}
+  #shopPanel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.95),rgba(0,0,0,.98));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:25;padding-top:65px}
   #shopPanel.show{opacity:1;pointer-events:auto}
   
   /* Shop Tabs */
@@ -80,14 +80,14 @@
   .max-level{color:#ffd700;font-size:16px;text-shadow:0 0 10px #ffd700;font-weight:900;margin-top:10px;text-align:center;display:flex;align-items:center;justify-content:center;flex:1}
 
   /* Simple Modal (Rank/Profile) */
-  #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.78),rgba(0,0,0,.97));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+  #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.78),rgba(0,0,0,.97));backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:25}
   #simpleModal.show{opacity:1;pointer-events:auto}
   .simple-card{background:linear-gradient(180deg,rgba(20,40,70,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:22px;padding:28px 26px;box-shadow:0 0 50px rgba(56,200,255,.6),inset 0 0 30px rgba(56,200,255,.2);text-align:center;max-width:88vw;min-width:280px}
   .simple-card h2{color:#a8f0ff;font-size:24px;margin-bottom:12px;text-shadow:0 0 16px #38c8ff;font-weight:900}
   .simple-card p{color:#cdeaff;font-size:15px;margin-bottom:18px;line-height:1.8}
   .simple-card button{cursor:pointer;border:none;padding:12px 36px;font-size:15px;font-weight:800;color:#001018;border-radius:30px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);box-shadow:0 0 18px #18a8ff,inset 0 -2px 0 rgba(0,0,0,.3)}
 
-  #gameOver{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.92),rgba(0,0,0,.98));backdrop-filter:blur(8px);transition:opacity .3s;z-index:10;opacity:0;pointer-events:none}
+  #gameOver{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.92),rgba(0,0,0,.98));backdrop-filter:blur(8px);transition:opacity .3s;z-index:30;opacity:0;pointer-events:none}
   #gameOver.show{opacity:1;pointer-events:auto}
   .go-title{font-size:40px;font-weight:900;color:#ff3355;text-shadow:0 0 20px #ff1744,0 0 50px #ff1744;margin-bottom:30px;display:flex;align-items:center;gap:12px;font-family:'Orbitron',sans-serif}
   .go-title svg{width:40px;height:40px;fill:#ff3355}
@@ -345,13 +345,14 @@ function showSimpleModal(title) {
 }
 smClose.addEventListener('click', () => {
   simpleModal.classList.remove('show');
+  // اگر در بازی بودیم و پنل بسته شد، بازی ادامه پیدا کند
   if(!G.over && !G.inLobby) G.running = true;
 });
 
 const G = {
   running:false, over:false, inLobby:true, ending:false,
   score:0, lives:3, runCoins:0,
-  time:0, spawnTimer:0.4, spawnInterval:1.15,
+  time:0, spawnTimer:0.4, spawnInterval:0.75, // Spawn زمان کمتر شد
   bossPhase:false, boss:null, nextBossScore:1000,
   bullets:[], miniBullets:[], enemies:[], enemyBullets:[],
   particles:[], stars:[], floatTexts:[], shockwaves:[],
@@ -525,16 +526,17 @@ function shoot(){
   G.fireCooldown=0.16;
   const s=player.scale;
   const wStats = getWeaponStats(store.equipped);
+  const spreadAngle = 0.15; // زاویه پخش ۸ درجه
   
   if(wStats.shots === 1) {
-    G.bullets.push({x:player.x, y:player.y-30*s, r:9*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x, y:player.y-30*s, r:9*s, vy:-800, vx:0, dmg:wStats.dmg, color:wStats.color});
   } else if(wStats.shots === 2) {
-    G.bullets.push({x:player.x-15*s, y:player.y-25*s, r:7*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
-    G.bullets.push({x:player.x+15*s, y:player.y-25*s, r:7*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x-15*s, y:player.y-25*s, r:7*s, vy:-800, vx:-Math.tan(spreadAngle)*800, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x+15*s, y:player.y-25*s, r:7*s, vy:-800, vx:Math.tan(spreadAngle)*800, dmg:wStats.dmg, color:wStats.color});
   } else if(wStats.shots === 3) {
-    G.bullets.push({x:player.x, y:player.y-35*s, r:9*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
-    G.bullets.push({x:player.x-20*s, y:player.y-20*s, r:7*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
-    G.bullets.push({x:player.x+20*s, y:player.y-20*s, r:7*s, vy:-800, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x, y:player.y-35*s, r:9*s, vy:-800, vx:0, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x-20*s, y:player.y-20*s, r:7*s, vy:-800, vx:-Math.tan(spreadAngle)*800, dmg:wStats.dmg, color:wStats.color});
+    G.bullets.push({x:player.x+20*s, y:player.y-20*s, r:7*s, vy:-800, vx:Math.tan(spreadAngle)*800, dmg:wStats.dmg, color:wStats.color});
   }
   
   if(G.particles.length<G.MAX_PARTICLES) burst(player.x,player.y-32*s,'#38b6ff',4,110);
@@ -542,15 +544,16 @@ function shoot(){
 
 function shootMini(m){
   const s=player.scale;
-  G.miniBullets.push({x:player.x+m.offset*s,y:player.y+8*s,r:5*s,vy:-680,dmg:1});
+  G.miniBullets.push({x:player.x+m.offset*s,y:player.y+8*s,r:5*s,vy:-680,vx:0,dmg:1});
 }
 
 function enemyRadius(){return clamp(Math.min(W,H)*0.045,22,46);}
 function spawnEnemy(){
   const wave = 1 + Math.floor(G.score/1000);
   const r=enemyRadius()*rnd(0.9,1.1);
-  const baseVy = 550 + G.time*2.5 + wave*30;
-  const baseVx = 40 + wave*6;
+  // سرعت کاهش پیدا کرد
+  const baseVy = 280 + G.time*1.5 + wave*15;
+  const baseVx = 20 + wave*4;
   G.enemies.push({
     x:rnd(r+20,W-r-20),y:-r-20,r, vy:rnd(baseVy*0.85,baseVy*1.15), vx:rnd(-baseVx,baseVx),
     rot:Math.random()*Math.PI, rotSpeed:rnd(-1.6,1.6), hp:1
@@ -630,6 +633,7 @@ const tabs=['tabGame','tabShop','tabRank','tabProfile'].map(id=>document.getElem
 function closeAllOverlays(){
   shopPanel.classList.remove('show');
   simpleModal.classList.remove('show');
+  lobbyEl.classList.remove('hidden'); // لابی برگرده
 }
 
 function setTab(id){ 
@@ -639,7 +643,9 @@ function setTab(id){
 
 tabs[0].addEventListener('click',()=>{
   setTab('tabGame');
-  closeAllOverlays();
+  shopPanel.classList.remove('show');
+  simpleModal.classList.remove('show');
+  
   if(G.inLobby){
     lobbyEl.classList.remove('hidden');
     uiEl.classList.remove('show');
@@ -648,6 +654,9 @@ tabs[0].addEventListener('click',()=>{
     lobbyEl.classList.remove('hidden');
     uiEl.classList.remove('show');
   } else {
+    // بازگشت به بازی
+    lobbyEl.classList.add('hidden');
+    uiEl.classList.add('show');
     G.running=true;
   }
 });
@@ -655,6 +664,8 @@ tabs[0].addEventListener('click',()=>{
 tabs[1].addEventListener('click',()=>{
   setTab('tabShop');
   simpleModal.classList.remove('show');
+  lobbyEl.classList.add('hidden'); // لابی مخفی بشه
+  uiEl.classList.remove('show'); // HUD مخفی بشه
   shopPanel.classList.add('show');
   G.running=false;
   renderShop();
@@ -663,12 +674,16 @@ tabs[1].addEventListener('click',()=>{
 tabs[2].addEventListener('click',()=>{
   setTab('tabRank');
   shopPanel.classList.remove('show');
+  lobbyEl.classList.add('hidden'); 
+  uiEl.classList.remove('show');
   showSimpleModal('🏆 رتبه بندی');
 });
 
 tabs[3].addEventListener('click',()=>{
   setTab('tabProfile');
   shopPanel.classList.remove('show');
+  lobbyEl.classList.add('hidden');
+  uiEl.classList.remove('show');
   showSimpleModal('👤 پروفایل');
 });
 
@@ -693,7 +708,7 @@ const restartBtn=document.getElementById('restartBtn');
 
 function startGame(){
   G.running=true;G.over=false;G.ending=false; G.score=0;G.lives=3;G.runCoins=0;
-  G.time=0;G.spawnTimer=0.4;G.spawnInterval=1.15; G.bossPhase=false;G.boss=null;G.nextBossScore=1000;
+  G.time=0;G.spawnTimer=0.4;G.spawnInterval=0.75; G.bossPhase=false;G.boss=null;G.nextBossScore=1000;
   G.bullets=[];G.miniBullets=[];G.enemies=[];G.enemyBullets=[];
   G.particles=[];G.floatTexts=[];G.shockwaves=[]; G.fireCooldown=0;G.miniFireCooldown=0;
   G.shake=0;G.flash=0;G.enemyPassCooldown=0; G.touch.active=false;
@@ -787,8 +802,19 @@ function update(dt){
   if(G.touch.active||G.keysFire)shoot();
   for(const m of minis){ m.fireTimer-=dt; if(m.fireTimer<=0){m.fireTimer=0.42;shootMini(m);} }
 
-  for(let i=G.bullets.length-1;i>=0;i--){G.bullets[i].y+=G.bullets[i].vy*dt;if(G.bullets[i].y<-20)G.bullets.splice(i,1);}
-  for(let i=G.miniBullets.length-1;i>=0;i--){G.miniBullets[i].y+=G.miniBullets[i].vy*dt;if(G.miniBullets[i].y<-20)G.miniBullets.splice(i,1);}
+  // استفاده از vx برای تیرها
+  for(let i=G.bullets.length-1;i>=0;i--){
+    const b = G.bullets[i];
+    b.y+=b.vy*dt;
+    b.x+=b.vx*dt;
+    if(b.y<-20 || b.x<-20 || b.x>W+20) G.bullets.splice(i,1);
+  }
+  for(let i=G.miniBullets.length-1;i>=0;i--){
+    const b = G.miniBullets[i];
+    b.y+=b.vy*dt;
+    b.x+=b.vx*dt; // vx هم اعمال بشه
+    if(b.y<-20 || b.x<-20 || b.x>W+20) G.miniBullets.splice(i,1);
+  }
 
   if(!G.bossPhase && !G.boss){
     G.spawnTimer-=dt;
@@ -927,4 +953,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                          </html>
+ </html>
