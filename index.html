@@ -91,10 +91,9 @@
   .simple-card{background:linear-gradient(180deg,rgba(20,40,70,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:22px;padding:28px 26px;box-shadow:0 0 50px rgba(56,200,255,.6),inset 0 0 30px rgba(56,200,255,.2);text-align:center;max-width:88vw;min-width:280px}
   .simple-card h2{color:#a8f0ff;font-size:24px;margin-bottom:12px;text-shadow:0 0 16px #38c8ff;font-weight:900}
   .simple-card p{color:#cdeaff;font-size:15px;margin-bottom:18px;line-height:1.8}
-  .simple-card button{cursor:pointer;border:none;padding:12px 36px;font-size:15px;font-weight:800;color:#001018;border-radius:30px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);box-shadow:0 0 18px #18a8ff,inset 0 -2px 0 rgba(0,0,0,.3)}
 
   /* Leaderboard Table Styles */
-  .lb-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:20px;direction:rtl;}
+  .lb-table{width:100%;border-collapse:collapse;margin-top:10px;direction:rtl;}
   .lb-table th{color:#8ab2c8;font-size:14px;padding:8px;border-bottom:1px solid rgba(56,200,255,.3);text-align:right;font-weight:800;}
   .lb-table td{color:#fff;font-size:15px;padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.05);font-weight:700;}
   .lb-table tr:nth-child(1) td{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,.5);font-size:16px;}
@@ -144,12 +143,11 @@
   <div id="shopContent"></div>
 </div>
 
-<!-- Simple Modal for Rank / Profile -->
+<!-- Simple Modal for Rank / Profile (No Close Button) -->
 <div id="simpleModal">
   <div class="simple-card">
     <h2 id="smTitle">🏆</h2>
-    <div id="smContent" style="color:#cdeaff;font-size:15px;margin-bottom:18px;line-height:1.8;">این بخش به زودی اضافه می‌شود</div>
-    <button id="smClose">باشه</button>
+    <div id="smContent" style="color:#cdeaff;font-size:15px;line-height:1.8;min-height:50px;">در حال دریافت اطلاعات...</div>
   </div>
 </div>
 
@@ -262,7 +260,6 @@ const stShips = document.getElementById('stShips');
 const simpleModal = document.getElementById('simpleModal');
 const smTitle = document.getElementById('smTitle');
 const smContent = document.getElementById('smContent');
-const smClose = document.getElementById('smClose');
 
 let currentShopTab = 'weapons';
 let prevStateBeforeModal = null;
@@ -455,31 +452,33 @@ function showSimpleModal(title, contentHTML) {
   G.running = false;
 }
 
-smClose.addEventListener('click', () => {
-  simpleModal.classList.remove('show');
-  
-  if(prevStateBeforeModal) {
-    if (prevStateBeforeModal.inLobby) {
-      lobbyEl.classList.remove('hidden');
-      uiEl.classList.remove('show');
-      shopPanel.classList.remove('show');
-      setTab('tabGame');
-    } else if (prevStateBeforeModal.shopOpen) {
-      lobbyEl.classList.add('hidden');
-      uiEl.classList.remove('show');
-      shopPanel.classList.add('show');
-      setTab('tabShop');
-    } else if (prevStateBeforeModal.over) {
-      lobbyEl.classList.remove('hidden');
-      uiEl.classList.remove('show');
-      setTab('tabGame');
-    } else {
-      lobbyEl.classList.add('hidden');
-      uiEl.classList.add('show');
-      G.running = true;
-      setTab('tabGame');
+// بستن مودال با کلیک روی پس‌زمینه
+simpleModal.addEventListener('click', (e) => {
+  if (e.target === simpleModal) {
+    simpleModal.classList.remove('show');
+    if(prevStateBeforeModal) {
+      if (prevStateBeforeModal.inLobby) {
+        lobbyEl.classList.remove('hidden');
+        uiEl.classList.remove('show');
+        shopPanel.classList.remove('show');
+        setTab('tabGame');
+      } else if (prevStateBeforeModal.shopOpen) {
+        lobbyEl.classList.add('hidden');
+        uiEl.classList.remove('show');
+        shopPanel.classList.add('show');
+        setTab('tabShop');
+      } else if (prevStateBeforeModal.over) {
+        lobbyEl.classList.remove('hidden');
+        uiEl.classList.remove('show');
+        setTab('tabGame');
+      } else {
+        lobbyEl.classList.add('hidden');
+        uiEl.classList.add('show');
+        G.running = true;
+        setTab('tabGame');
+      }
+      prevStateBeforeModal = null;
     }
-    prevStateBeforeModal = null;
   }
 });
 
@@ -984,7 +983,7 @@ tabs[2].addEventListener('click', async () => {
     
   } catch (err) {
     console.error(err);
-    smContent.innerHTML = `<p style="color:#ff3355;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
+    smContent.innerHTML = `<p style="color:#cdeaff;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
   }
 });
 
@@ -1040,7 +1039,6 @@ function endGame(){
   
   // ارسال امتیاز به Supabase
   if (G.score > 0) {
-    // برای سادگی اسم رو رندوم می‌ذاریم
     const pName = 'Player_' + Math.floor(Math.random()*9000+1000);
     sb.from('leaderboard').insert([{ player_name: pName, score: G.score }]).then(({error}) => {
       if (error) console.error('خطا در ارسال امتیاز:', error);
@@ -1273,4 +1271,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                                                           </html>
+ </html>￼Enter
