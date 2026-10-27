@@ -265,7 +265,6 @@ const store = {
   get equippedShip(){ return localStorage.sp_equipped_ship || 'red_wing'; },
   set equippedShip(id){ localStorage.sp_equipped_ship = id; },
 
-  // اطلاعات پروفایل
   get playerName(){ return localStorage.getItem('sp_player_name') || ''; },
   set playerName(v){ localStorage.setItem('sp_player_name', v); },
   get playerAvatar(){ return +(localStorage.getItem('sp_player_avatar')||0); },
@@ -287,10 +286,11 @@ function resetAllData() {
 async function clearAllLeaderboard() {
   if(confirm('⚠️ هشدار جدی: آیا مطمئن هستید که می‌خواهید تمام رکوردهای همه بازیکن‌ها را از روی سرور پاک کنید؟')) {
     try {
-      const { error } = await sb.from('leaderboard').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      const { error } = await sb.from('leaderboard').delete().gte('score', 0);
       if (error) throw error;
       alert('✅ تمام رکوردهای سرور با موفقیت پاک شدند!');
     } catch (err) {
+      console.error(err);
       alert('❌ خطا در پاک کردن رکوردها.');
     }
   }
@@ -747,7 +747,11 @@ function makeStars(){
 }
 
 function resetPlayer(){
-  player.x=W/2; player.y=H-90; player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2); player.hitCooldown=0; minis.forEach(m=>m.fireTimer=0);
+  if(!W || !H) return;
+  player.x=W/2; player.y=H-90;
+  player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2);
+  player.hitCooldown=0;
+  minis.forEach(m=>m.fireTimer=0);
 }
 
 function shoot(){
@@ -901,6 +905,9 @@ tabs[1].addEventListener('click',()=>{
   renderShop();
 });
 
+// ============================================
+// رتبه‌بندی — کوئری اصلاح‌شده با دو مرحله
+// ============================================
 tabs[2].addEventListener('click', async () => {
   setTab('tabRank');
   shopPanel.classList.remove('show');
@@ -911,61 +918,59 @@ tabs[2].addEventListener('click', async () => {
   showSimpleModal('🏆 رتبه بندی', contentHTML);
 
   try {
-    // گرفتن رکوردها همراه با اطلاعات پروفایل (اسم و آواتار)
-    const { data, error } = await sb.from('leaderboard')
-      .select('player_name, score, profiles(avatar_id)')
+    const { data: lbData, error: lbError } = await sb.from('leaderboard')
+      .select('id, player_name, score, profile_id')
       .order('score', { ascending: false })
       .limit(10);
-    
-    if (error) throw error;
-    
-    if (!data || data.length === 0) {
+
+    if (lbError) throw lbError;
+
+    if (!lbData || lbData.length === 0) {
       smContent.innerHTML = '<p style="color:#cdeaff;">هنوز رکوردی ثبت نشده! شما اولین نفر باشید.</p>';
       return;
     }
 
+    const profileIds = lbData.filter(r => r.profile_id).map(r => r.profile_id);
+    let avatarMap = {};
+    if (profileIds.length > 0) {
+      const { data: profs } = await sb.from('profiles')
+        .select('id, avatar_id')
+        .in('id', profileIds);
+      if (profs) profs.forEach(p => avatarMap[p.id] = p.avatar_id);
+    }
+
     let tableHTML = `<table class="lb-table">
-      <thead>
-        <tr>
-          <th>رتبه</th>
-          <th>بازیکن</th>
-          <th style="text-align:left;">امتیاز</th>
-        </tr>
-      </thead>
+      <thead><tr><th>رتبه</th><th>بازیکن</th><th style="text-align:left;">امتیاز</th></tr></thead>
       <tbody>`;
-      
-    data.forEach((row, i) => {
-      // اگر پروفایل متصل بود آواتار رو نشون بده، وگرنه یه پیش‌فرض
-      const avatarEmoji = row.profiles && row.profiles.avatar_id !== undefined 
-        ? AVATARS[row.profiles.avatar_id] 
+
+    lbData.forEach((row, i) => {
+      const avatarEmoji = row.profile_id && avatarMap[row.profile_id] !== undefined
+        ? AVATARS[avatarMap[row.profile_id]]
         : '👽';
-      
       const name = row.player_name || 'ناشناس';
-      
       tableHTML += `<tr>
         <td>${i + 1}</td>
-        <td>
-          <div style="display:flex; align-items:center;">
-            <span class="lb-avatar">${avatarEmoji}</span>
-            ${name}
-          </div>
-        </td>
+        <td><div style="display:flex;align-items:center;">
+          <span class="lb-avatar">${avatarEmoji}</span>${name}
+        </div></td>
         <td>${row.score}</td>
       </tr>`;
     });
-    
+
     tableHTML += `</tbody></table>`;
     smContent.innerHTML = tableHTML;
-    
+
   } catch (err) {
     console.error(err);
     smContent.innerHTML = `<p style="color:#cdeaff;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
   }
 });
 
-// ---------------------------------------------------------
-// بخش پروفایل جدید
-// ---------------------------------------------------------
+// ============================================
+// پروفایل
+// ============================================
+let tempAvatarSelection = null;
+
 tabs[3].addEventListener('click',()=>{
   setTab('tabProfile');
   shopPanel.classList.remove('show');
@@ -978,6 +983,8 @@ tabs[3].addEventListener('click',()=>{
   const pAvatar = store.playerAvatar;
   const pCode = store.recoveryCode || 'هنوز ذخیره نشده';
   
+  tempAvatarSelection = pAvatar;
+
   let avatarGridHTML = '';
   AVATARS.forEach((emoji, index) => {
     avatarGridHTML += `<div class="avatar-item ${index === pAvatar ? 'active' : ''}" onclick="selectAvatar(${index})">${emoji}</div>`;
@@ -1035,11 +1042,8 @@ tabs[3].addEventListener('click',()=>{
   showSimpleModal('👤 پروفایل شما', profileHTML);
 });
 
-let tempAvatarSelection = null;
-
 window.selectAvatar = function(index) {
   tempAvatarSelection = index;
-  // آپدیت UI در لحظه
   document.getElementById('mainAvatar').textContent = AVATARS[index];
   const items = document.querySelectorAll('.avatar-item');
   items.forEach((item, i) => {
@@ -1048,8 +1052,12 @@ window.selectAvatar = function(index) {
   });
 }
 
+// ============================================
+// ذخیره پروفایل — با آپدیت رکوردهای قبلی
+// ============================================
 window.saveProfile = async function() {
-  const nameInput = document.getElementById('nameInput').value.trim();
+  const nameInputEl = document.getElementById('nameInput');
+  const nameInput = nameInputEl.value.trim();
   if(!nameInput) {
     alert('لطفاً یک اسم وارد کنید!');
     return;
@@ -1057,7 +1065,6 @@ window.saveProfile = async function() {
   
   const finalAvatar = tempAvatarSelection !== null ? tempAvatarSelection : store.playerAvatar;
   
-  // تولید کد اختصاصی اگر وجود نداشت
   let code = store.recoveryCode;
   if(!code || code === 'هنوز ذخیره نشده') {
     const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -1067,11 +1074,9 @@ window.saveProfile = async function() {
   }
 
   try {
-    // چک کردن اینکه آیا این پروفایل قبلا ساخته شده یا نه
     let profileId = store.profileId;
     
     if(profileId) {
-      // آپدیت پروفایل موجود
       const { error } = await sb.from('profiles').update({
         player_name: nameInput,
         avatar_id: finalAvatar,
@@ -1081,7 +1086,6 @@ window.saveProfile = async function() {
       }).eq('id', profileId);
       if(error) throw error;
     } else {
-      // ساخت پروفایل جدید در دیتابیس
       const { data, error } = await sb.from('profiles').insert([{
         player_name: nameInput,
         avatar_id: finalAvatar,
@@ -1094,13 +1098,18 @@ window.saveProfile = async function() {
       }
     }
 
-    // ذخیره در مرورگر
     store.playerName = nameInput;
     store.playerAvatar = finalAvatar;
-    
+
+    // آپدیت رکوردهای قبلی در leaderboard
+    if (store.profileId) {
+      const { error: lbErr } = await sb.from('leaderboard')
+        .update({ player_name: nameInput, profile_id: store.profileId })
+        .eq('profile_id', store.profileId);
+      if (lbErr) console.warn('خطا در آپدیت leaderboard:', lbErr);
+    }
+
     alert('✅ اکانت شما با موفقیت در فضای ابری ذخیره شد!');
-    
-    // رفرش کردن پروفایل برای نمایش کد جدید
     tabs[3].click();
     
   } catch (err) {
@@ -1114,6 +1123,9 @@ window.showRestoreInput = function() {
   area.style.display = area.style.display === 'none' ? 'block' : 'none';
 }
 
+// ============================================
+// بازیابی پروفایل — با آپدیت UI
+// ============================================
 window.restoreProfile = async function() {
   const inputCode = document.getElementById('restoreCodeInput').value.trim().toUpperCase();
   if(!inputCode) {
@@ -1129,15 +1141,17 @@ window.restoreProfile = async function() {
       return;
     }
 
-    // بازیابی اطلاعات در مرورگر
     store.playerName = data.player_name;
     store.playerAvatar = data.avatar_id;
     store.recoveryCode = data.recovery_code;
     store.profileId = data.id;
-    store.record = data.best_score; // رکورد رو هم برگردون
+    store.record = data.best_score;
+
+    updateUI();
+    tempAvatarSelection = data.avatar_id;
 
     alert('✅ اکانت شما با موفقیت بازیابی شد!');
-    tabs[3].click(); // رفرش پروفایل
+    tabs[3].click();
     
   } catch (err) {
     console.error(err);
@@ -1179,6 +1193,9 @@ function startGame(){
   gameOverEl.classList.remove('show'); showMessage('🚀 بازی شروع شد',1800);
 }
 
+// ============================================
+// پایان بازی — ارسال profile_id هم اضافه شد
+// ============================================
 function endGame(){
   if(G.ending) return;
   G.ending=true;
@@ -1188,19 +1205,17 @@ function endGame(){
   goScoreEl.textContent=G.score; goRewardEl.textContent='+'+reward;
   gameOverEl.classList.add('show');
   
-  // ارسال امتیاز به Supabase
   if (G.score > 0) {
-    // اگر اسم داشت با اسم خودش، اگر نداشت یه اسم رندوم
     const pName = store.playerName || ('Player_' + Math.floor(Math.random()*9000+1000));
     
-    // به روزرسانی رکورد در پروفایل (اگر لاگین بود)
     if(store.profileId) {
-       sb.from('profiles').update({ best_score: store.record }).eq('id', store.profileId).then();
+      sb.from('profiles').update({ best_score: store.record }).eq('id', store.profileId).then();
     }
 
     sb.from('leaderboard').insert([{ 
       player_name: pName, 
-      score: G.score 
+      score: G.score,
+      profile_id: store.profileId || null
     }]).then(({error}) => {
       if (error) console.error('خطا در ارسال امتیاز:', error);
     });
@@ -1432,4 +1447,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                                                                                              </html>
+ </html>
