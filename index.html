@@ -712,12 +712,22 @@ function makeHexSprite(r){
 
 function makeNebula(){
   const c=mkC(W||1, H||1); const g=c.getContext('2d'); g.fillStyle='#020006'; g.fillRect(0,0,W,H);
-  for(let i=0;i<8;i++){ 
-    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*W*0.7+W*0.4; 
+  for(let i=0;i<10;i++){ 
+    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*W*0.8+W*0.5; 
     const grad=g.createRadialGradient(x,y,0, x,y,r); 
-    const hue=i%3===0?'rgba(80,20,120,':i%3===1?'rgba(20,80,150,':'rgba(150,20,80,';
-    grad.addColorStop(0,hue+'0.15)'); grad.addColorStop(1,hue+'0)'); 
+    const hue=i%4===0?'rgba(120,20,180,':i%4===1?'rgba(20,100,200,':i%4===2?'rgba(200,20,100,':'rgba(20,180,160,';
+    grad.addColorStop(0,hue+'0.18)'); grad.addColorStop(1,hue+'0)'); 
     g.fillStyle=grad; g.fillRect(0,0,W,H); 
+  }
+  // Shooting stars for background
+  for(let i=0;i<3;i++) {
+    const sx = Math.random()*W, sy = Math.random()*H*0.5;
+    const ex = sx - 80, ey = sy + 80;
+    const grad = g.createLinearGradient(sx, sy, ex, ey);
+    grad.addColorStop(0, 'rgba(255,255,255,0.8)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    g.strokeStyle = grad; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(sx, sy); g.lineTo(ex, ey); g.stroke();
   }
   return c;
 }
@@ -776,7 +786,7 @@ function buildCaches(){
 }
 
 function makeStars(){
-  G.stars=[]; const count=Math.floor((W*H)/3000);
+  G.stars=[]; const count=Math.floor((W*H)/2500);
   for(let i=0;i<count;i++){ 
     const layer=Math.floor(Math.random()*3); 
     G.stars.push({ 
@@ -1475,4 +1485,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                                                                                              </html>
+ </html>
