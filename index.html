@@ -133,6 +133,31 @@
   .reset-btn{background:linear-gradient(180deg,#ff4d4d,#cc0000);color:#fff;border:none;padding:14px 20px;border-radius:14px;font-weight:900;font-size:15px;margin-top:12px;cursor:pointer;width:100%;box-shadow:0 0 20px rgba(255,0,0,0.5);font-family:'Vazirmatn',sans-serif}
   .reset-btn:active{transform:scale(0.95)}
   .server-reset-btn{background:linear-gradient(180deg,#ff8800,#cc5500);box-shadow:0 0 20px rgba(255,136,0,0.5)}
+
+  /* دکمه بازگشت شیک پشتیبانی */
+  .support-back-btn {
+    margin-top: 20px;
+    background: linear-gradient(180deg, rgba(40,80,140,.8), rgba(10,20,40,.9));
+    border: 1.5px solid #38c8ff;
+    color: #a8f3ff;
+    padding: 12px 30px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 15px;
+    font-family: 'Vazirmatn', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(56,200,255,.4), inset 0 0 15px rgba(56,200,255,.1);
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .support-back-btn:active {
+    transform: scale(.95);
+    box-shadow: 0 0 30px rgba(56,200,255,.8), inset 0 0 20px rgba(56,200,255,.3);
+  }
 </style>
 </head>
 <body>
@@ -231,12 +256,20 @@ function resize(){
   buildCaches(); drawLobbyShip(); resetPlayer();
 }
 addEventListener('resize', resize);
+
+// ====== لیست اسلحه‌های آپدیت شده ======
 const WEAPONS = [
   { id:'laser1', name:'لیزر ساده', price:0, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:1, color:'#38b6ff' },
-  { id:'double', name:'شلیک دوقلو', price:500, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:2, color:'#ffd84d' },
-  { id:'red', name:'لیزر سرخ', price:1000, baseUpgPrice:300, upgMul:1.5, baseDmg:2, shots:1, color:'#ff3355' },
-  { id:'triple', name:'سه گانه', price:2000, baseUpgPrice:400, upgMul:1.5, baseDmg:1, shots:3, color:'#00ff00' }
+  { id:'double', name:'شلیک دوقلو', price:50, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:2, color:'#ffd84d' },
+  { id:'red', name:'لیزر سرخ', price:150, baseUpgPrice:300, upgMul:1.5, baseDmg:2, shots:1, color:'#ff3355' },
+  { id:'triple', name:'سه گانه', price:300, baseUpgPrice:400, upgMul:1.5, baseDmg:1, shots:3, color:'#00ff00' },
+  { id:'plasma', name:'پلاسما', price:600, baseUpgPrice:200, upgMul:1.8, baseDmg:4, shots:1, color:'#ff00ff' },
+  { id:'quad', name:'چهارگانه', price:1000, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:4, color:'#00ffff' },
+  { id:'neon_mg', name:'مسلسل نئونی', price:1800, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:1, color:'#ffff00', isAuto:true },
+  { id:'space_shotgun', name:'شاتگان فضایی', price:3000, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:5, color:'#ff8800' },
+  { id:'supernova', name:'ابرنواختر', price:8000, baseUpgPrice:500, upgMul:1.8, baseDmg:2, shots:7, color:'#ff0044' }
 ];
+
 const SHIPS = [
   { id:'red_wing', name:'بال قرمز', price:0 },
   { id:'galaxy_hawk', name:'شاهین کهکشانی', price:1000 },
@@ -415,9 +448,17 @@ window.showSupportModal = function() {
       <p style="color:#eaf7ff; font-size:16px; font-weight:bold; margin-bottom:15px;">برای ارتباط با پشتیبانی، به آیدی زیر در پیام‌رسان سروش پیام دهید:</p>
       <div style="background:rgba(0,0,0,0.6); border:1px solid #38c8ff; border-radius:12px; padding:12px; font-family:'Orbitron', sans-serif; font-size:22px; color:#fff; letter-spacing:2px; margin-bottom:20px; box-shadow:inset 0 0 15px rgba(56,200,255,0.3);">APACHI1@</div>
       <button onclick="copyToClipboard('APACHI1@')" class="btn-buy" style="width:100%; padding:15px; border-radius:14px; font-size:16px; font-weight:900; font-family:'Vazirmatn'; cursor:pointer; border:none; background:linear-gradient(180deg,#a8f3ff,#18a8ff); color:#001018; box-shadow:0 0 20px rgba(24,168,255,0.6);">📋 کپی کردن آیدی</button>
+      <button onclick="closeSupportModal()" class="support-back-btn">🔙 بازگشت به لابی</button>
     </div>
   `;
   showSimpleModal('پشتیبانی بازی', supportHTML);
+}
+window.closeSupportModal = function() {
+  simpleModal.classList.remove('show');
+  lobbyEl.classList.remove('hidden');
+  G.inLobby = true;
+  G.running = false;
+  setTab('tabGame');
 }
 const G = {
   running:false, over:false, inLobby:true, ending:false,
@@ -434,7 +475,6 @@ const G = {
 const caches={ships:{}};
 const mkC=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;};
 const hexA=(hex,a)=>{const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
-
 function glow(color,radius,intensity=1){
   const size=radius*2,c=mkC(size,size),g=c.getContext('2d');
   const grad=g.createRadialGradient(radius,radius,1,radius,radius,radius);
@@ -574,20 +614,15 @@ function makeMiniSprite(scale, shipId){
   g.fillStyle=cp; g.beginPath(); g.ellipse(0,-6, 4, 9, 0, 0, Math.PI*2); g.fill();
   return c;
 }
-
-// ====== دشمن جدید و باکیفیت (کریستالی و درخشان) ======
 function makeHexSprite(r){
   const size = r * 4.5;
   const c = mkC(size, size), g = c.getContext('2d');
   g.translate(size/2, size/2);
-  
-  // هاله نورانی بیرونی
   const halo = g.createRadialGradient(0,0,r*0.2, 0,0,r*1.6);
   halo.addColorStop(0,'rgba(255,60,120,0.6)');
   halo.addColorStop(0.5,'rgba(200,20,80,0.3)');
   halo.addColorStop(1,'rgba(100,0,40,0)');
   g.fillStyle = halo; g.beginPath(); g.arc(0,0,r*1.6,0,Math.PI*2); g.fill();
-
   const drawPoly = (rad, rot, fill, stroke, lw) => {
     g.beginPath();
     for(let i=0; i<6; i++){
@@ -599,38 +634,26 @@ function makeHexSprite(r){
     if(fill) { g.fillStyle = fill; g.fill(); }
     if(stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); }
   };
-
-  // بدنه اصلی کریستالی
   const bodyGrad = g.createLinearGradient(-r, -r, r, r);
   bodyGrad.addColorStop(0, '#4a001a');
   bodyGrad.addColorStop(0.5, '#8a002a');
   bodyGrad.addColorStop(1, '#2a000a');
   drawPoly(r, 0, bodyGrad, '#ff3377', 3);
-
-  // لایه داخلی
   drawPoly(r*0.75, Math.PI/6, null, 'rgba(255,120,160,0.8)', 2);
-  
-  // خطوط تزئینی
   g.strokeStyle = 'rgba(255,200,220,0.4)'; g.lineWidth = 1.5;
   for(let i=0; i<6; i++){
     const a = (Math.PI/3)*i - Math.PI/2;
     g.beginPath(); g.moveTo(0,0); g.lineTo(Math.cos(a)*r, Math.sin(a)*r); g.stroke();
   }
-
-  // هسته مرکزی درخشان
   const coreGrad = g.createRadialGradient(0,0,1, 0,0,r*0.5);
   coreGrad.addColorStop(0, '#fff');
   coreGrad.addColorStop(0.3, '#ffaacc');
   coreGrad.addColorStop(0.7, '#ff3366');
   coreGrad.addColorStop(1, 'rgba(255,0,80,0)');
   g.fillStyle = coreGrad; g.beginPath(); g.arc(0,0,r*0.5,0,Math.PI*2); g.fill();
-
-  // نقطه درخشان هسته
   g.fillStyle = '#ffffff'; g.beginPath(); g.arc(-r*0.1, -r*0.1, r*0.15, 0, Math.PI*2); g.fill();
-
   return c;
 }
-
 function makeNebula(){
   const c=mkC(W||1, H||1); const g=c.getContext('2d'); g.fillStyle='#020006'; g.fillRect(0,0,W,H);
   for(let i=0;i<10;i++){
@@ -642,108 +665,68 @@ function makeNebula(){
   }
   return c;
 }
-
-// ====== باس جدید و خیلی خفن‌تر ======
 function makeBossSprite(w,h,variant){
   const pad=100,c=mkC(w+pad*2,h+pad*2),g=c.getContext('2d'); g.translate((w+pad*2)/2,(h+pad*2)/2);
   const hue1=(variant*47)%360,hue2=(hue1+50)%360;
   const cM=`hsl(${hue1},90%,45%)`, cD=`hsl(${hue1},85%,15%)`, cL=`hsl(${hue2},100%,70%)`;
-  
-  // هاله بزرگ
   const au=g.createRadialGradient(0,0,20,0,0,w*0.9); 
   au.addColorStop(0,`hsla(${hue1},100%,60%,.8)`); 
   au.addColorStop(0.5,`hsla(${hue1},100%,50%,.3)`); 
   au.addColorStop(1,`hsla(${hue1},100%,40%,0)`);  
   g.fillStyle=au; g.beginPath(); g.arc(0,0,w*0.9,0,Math.PI*2); g.fill();
-
   const hw=w/2,hh=h/2;
-  
-  // زره‌های چندلایه
   const drawArmor = (scale) => {
     g.beginPath();
     switch(variant%3){
-      case 0: // سفینه مادر
-        g.moveTo(0,-hh*scale*1.2);
-        g.lineTo(hw*scale, -hh*scale*0.5);
-        g.lineTo(hw*scale*0.8, hh*scale*0.8);
-        g.lineTo(0, hh*scale*1.1);
-        g.lineTo(-hw*scale*0.8, hh*scale*0.8);
-        g.lineTo(-hw*scale, -hh*scale*0.5);
+      case 0:
+        g.moveTo(0,-hh*scale*1.2); g.lineTo(hw*scale, -hh*scale*0.5); g.lineTo(hw*scale*0.8, hh*scale*0.8);
+        g.lineTo(0, hh*scale*1.1); g.lineTo(-hw*scale*0.8, hh*scale*0.8); g.lineTo(-hw*scale, -hh*scale*0.5);
         break;
-      case 1: // کریستالی
-        g.moveTo(0,-hh*scale*1.3);
-        g.lineTo(hw*scale*0.6, -hh*scale*0.6);
-        g.lineTo(hw*scale*1.1, 0);
-        g.lineTo(hw*scale*0.6, hh*scale*0.8);
-        g.lineTo(0, hh*scale*1.2);
-        g.lineTo(-hw*scale*0.6, hh*scale*0.8);
-        g.lineTo(-hw*scale*1.1, 0);
-        g.lineTo(-hw*scale*0.6, -hh*scale*0.6);
+      case 1:
+        g.moveTo(0,-hh*scale*1.3); g.lineTo(hw*scale*0.6, -hh*scale*0.6); g.lineTo(hw*scale*1.1, 0);
+        g.lineTo(hw*scale*0.6, hh*scale*0.8); g.lineTo(0, hh*scale*1.2); g.lineTo(-hw*scale*0.6, hh*scale*0.8);
+        g.lineTo(-hw*scale*1.1, 0); g.lineTo(-hw*scale*0.6, -hh*scale*0.6);
         break;
-      case 2: // جنگنده
-        g.moveTo(-hw*scale*1.2, -hh*scale*0.3);
-        g.lineTo(-hw*scale*0.5, -hh*scale*1.1);
-        g.lineTo(0, -hh*scale*0.6);
-        g.lineTo(hw*scale*0.5, -hh*scale*1.1);
-        g.lineTo(hw*scale*1.2, -hh*scale*0.3);
-        g.lineTo(hw*scale*0.7, hh*scale*0.9);
-        g.lineTo(0, hh*scale*1.2);
-        g.lineTo(-hw*scale*0.7, hh*scale*0.9);
+      case 2:
+        g.moveTo(-hw*scale*1.2, -hh*scale*0.3); g.lineTo(-hw*scale*0.5, -hh*scale*1.1); g.lineTo(0, -hh*scale*0.6);
+        g.lineTo(hw*scale*0.5, -hh*scale*1.1); g.lineTo(hw*scale*1.2, -hh*scale*0.3); g.lineTo(hw*scale*0.7, hh*scale*0.9);
+        g.lineTo(0, hh*scale*1.2); g.lineTo(-hw*scale*0.7, hh*scale*0.9);
         break;
     }
     g.closePath();
   };
-
-  // لایه بیرونی با درخشش
   drawArmor(1.0);
   g.lineWidth=18; g.strokeStyle=`hsla(${hue1},100%,60%,.3)`; g.stroke();
   g.lineWidth=8; g.strokeStyle=`hsla(${hue1},100%,70%,.7)`; g.stroke();
-  
-  // بدنه اصلی
   drawArmor(1.0);
   const gr=g.createLinearGradient(0,-hh,0,hh); 
   gr.addColorStop(0,cD); gr.addColorStop(0.4,cM); gr.addColorStop(0.6,cM); gr.addColorStop(1,cD);
   g.fillStyle=gr; g.fill();
   g.lineWidth=3; g.strokeStyle=cL; g.stroke();
-
-  // جزئیات زره
   g.save(); drawArmor(1.0); g.clip();
   g.strokeStyle=`hsla(${hue2},100%,80%,.4)`; g.lineWidth=2;
   for(let i=-3;i<=3;i++){
     g.beginPath(); g.moveTo(-hw,i*hh*0.3); g.lineTo(hw,i*hh*0.3); g.stroke();
     g.beginPath(); g.moveTo(i*hw*0.3,-hh); g.lineTo(i*hw*0.3,hh); g.stroke();
   }
-  // چراغ‌های زره
   g.fillStyle=`hsla(${hue2},100%,90%,1)`;
   for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++){
     if(Math.random()>0.5) continue;
     g.beginPath(); g.arc(i*hw*0.25, j*hh*0.25, 3, 0, Math.PI*2); g.fill();
   }
   g.restore();
-
-  // هسته مرکزی بزرگ و درخشان
   const coreR=Math.min(hw,hh)*0.4; 
   const core=g.createRadialGradient(0,0,2,0,0,coreR*2.5); 
-  core.addColorStop(0,'#fff'); 
-  core.addColorStop(0.2,cL); 
-  core.addColorStop(0.6,`hsl(${hue1},100%,55%)`); 
-  core.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
+  core.addColorStop(0,'#fff'); core.addColorStop(0.2,cL); core.addColorStop(0.6,`hsl(${hue1},100%,55%)`); core.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
   g.fillStyle=core; g.beginPath(); g.arc(0,0,coreR*2.5,0,Math.PI*2); g.fill();
-  
-  // حلقه‌های چرخان دور هسته
   g.strokeStyle=`hsla(${hue2},100%,90%,0.9)`; g.lineWidth=4; 
   g.beginPath(); g.arc(0,0,coreR*1.2,0,Math.PI*1.5); g.stroke();
   g.lineWidth=2; 
   g.beginPath(); g.arc(0,0,coreR*1.6,Math.PI,Math.PI*2.5); g.stroke();
-
-  // نقطه درخشان
   g.fillStyle='#fff'; g.beginPath(); g.arc(0,0,coreR*0.3,0,Math.PI*2); g.fill();
-
   return c;
 }
-
 function buildCaches(){
-  // ستاره‌های جدید و براق (کوچک‌تر و درخشان‌تر)
   caches.stars=[];
   for(let i=0;i<4;i++){
     const sz = 4 + i*3;
@@ -755,18 +738,14 @@ function buildCaches(){
     grd.addColorStop(0.4, 'rgba(100,200,255,0.4)');
     grd.addColorStop(1, 'rgba(0,100,255,0)');
     g.fillStyle = grd; g.fillRect(0,0,sz*2,sz*2);
-    // صلیب نور
     g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 1;
     g.beginPath(); g.moveTo(sz, 0); g.lineTo(sz, sz*2); g.moveTo(0, sz); g.lineTo(sz*2, sz); g.stroke();
     caches.stars.push(c);
   }
-
   caches.particles={ '#ff5d8f':glow('#ff5d8f',10,1),'#ff3355':glow('#ff3355',10,1),'#ffd84d':glow('#ffd84d',10,1),'#7ef0ff':glow('#7ef0ff',10,1),'#38b6ff':glow('#38b6ff',10,1),'#ffa5c0':glow('#ffa5c0',10,1),'#ff7b00':glow('#ff7b00',10,1),'#ffe066':glow('#ffe066',10,1) };
   caches.bulletGlow=glow('#38b6ff',24,1); caches.coreGlow=glow('#ffd84d',50,1); caches.nebula=makeNebula();
-  
   const baseR=enemyRadius(); 
   caches.hex={baseR, sprite: makeHexSprite(baseR)};
-  
   player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2);
   caches.ships['red_wing'] = makeRedWing(player.scale);
   caches.ships['galaxy_hawk'] = makeGalaxyHawk(player.scale);
@@ -777,9 +756,8 @@ function buildCaches(){
   if(G.boss) caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
   makeStars();
 }
-
 function makeStars(){
-  G.stars=[]; const count=Math.floor((W*H)/3000); // کاهش تعداد برای روانی
+  G.stars=[]; const count=Math.floor((W*H)/3000);
   for(let i=0;i<count;i++){
     const layer=Math.floor(Math.random()*3);
     G.stars.push({
@@ -792,7 +770,6 @@ function makeStars(){
     });
   }
 }
-
 function resetPlayer(){
   if(!W || !H) return;
   player.x=W/2; player.y=H-90;
@@ -802,22 +779,33 @@ function resetPlayer(){
 }
 function shoot(){
   if(G.fireCooldown>0)return;
-  G.fireCooldown=0.15;
-  const s=player.scale;
   const wStats = getWeaponStats(store.equipped);
+  G.fireCooldown = wStats.isAuto ? 0.08 : 0.15;
+  
+  const s=player.scale;
   const spreadAngle = 0.15;
-  const fireB = (x, y, vx, dmg, isMain) => {
-    G.bullets.push({ x, y, r: (isMain ? 10 : 7) * s, vy: -850, vx, dmg: dmg, color: wStats.color });
+  
+  const fireB = (x, y, vx, dmg, isMain, color) => {
+    G.bullets.push({ x, y, r: (isMain ? 10 : 7) * s, vy: -850, vx, dmg: dmg, color: color || wStats.color });
   };
-  if(wStats.shots === 1) { fireB(player.x, player.y-30*s, 0, wStats.dmg, true); }
-  else if(wStats.shots === 2) {
-    fireB(player.x-16*s, player.y-25*s, -Math.tan(spreadAngle)*850, wStats.dmg, false);
-    fireB(player.x+16*s, player.y-25*s, Math.tan(spreadAngle)*850, wStats.dmg, false);
-  } else if(wStats.shots === 3) {
-    fireB(player.x, player.y-35*s, 0, wStats.dmg, true);
-    fireB(player.x-22*s, player.y-20*s, -Math.tan(spreadAngle)*850, wStats.dmg, false);
-    fireB(player.x+22*s, player.y-20*s, Math.tan(spreadAngle)*850, wStats.dmg, false);
+
+  if(wStats.shots === 1) {
+    fireB(player.x, player.y-30*s, 0, wStats.dmg, true);
+  } else {
+    // محاسبه هوشمند زاویه پخش برای تعداد تیرهای بالا (4، 5، 7)
+    const totalSpread = wStats.shots > 3 ? 0.35 : (wStats.shots === 3 ? 0.2 : 0.15);
+    const startAngle = -totalSpread / 2;
+    const angleStep = wStats.shots > 1 ? totalSpread / (wStats.shots - 1) : 0;
+    
+    for(let i=0; i<wStats.shots; i++){
+      const angle = startAngle + i * angleStep;
+      const vx = Math.sin(angle) * 850;
+      const vy = -Math.cos(angle) * 850;
+      const isCenter = wStats.shots % 2 !== 0 && i === Math.floor(wStats.shots / 2);
+      fireB(player.x, player.y-30*s, vx, wStats.dmg, isCenter);
+    }
   }
+  
   if(G.particles.length<G.MAX_PARTICLES) burst(player.x,player.y-32*s,'#38b6ff',6,120);
 }
 function shootMini(m){
@@ -1080,7 +1068,7 @@ function drawSprite(cache,x,y,scale=1,alpha=1){
 }
 function drawHex(e){
   const s=caches.hex.sprite;
-  const ratio = (e.r * 2) / caches.hex.sprite.width * 2; // تنظیم مقیاس جدید
+  const ratio = (e.r * 2) / caches.hex.sprite.width * 2;
   ctx.save(); ctx.translate(e.x,e.y); ctx.rotate(e.rot);
   const size = e.r * 4.5;
   ctx.drawImage(s, -size/2, -size/2, size, size);
@@ -1152,8 +1140,6 @@ function update(dt){
 function draw(){
   if(!caches.nebula) return;
   ctx.drawImage(caches.nebula,0,0,W,H);
-  
-  // ستاره‌های براق جدید
   for(const s of G.stars){
     const cache=caches.stars[s.layer];
     const size=s.r*6;
@@ -1162,7 +1148,6 @@ function draw(){
     ctx.drawImage(cache,s.x-size/2,s.y-size/2,size,size);
   }
   ctx.globalAlpha=1;
-
   if(G.flash>0){ctx.fillStyle=`rgba(255,60,90,${G.flash*0.3})`;ctx.fillRect(0,0,W,H);}
   ctx.save();
   if(G.shake>0){const m=G.shake*10;ctx.translate(rnd(-m,m),rnd(-m,m));}
@@ -1205,4 +1190,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                                                                                              </html>
+ </html>
