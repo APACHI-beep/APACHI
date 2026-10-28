@@ -47,6 +47,9 @@
   .secBtn{flex:1;cursor:pointer;border:1px solid rgba(90,170,220,.55);background:linear-gradient(180deg,rgba(20,45,75,.85),rgba(8,18,35,.9));color:#a9d8f0;padding:14px 0;border-radius:16px;font-size:13px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:6px;backdrop-filter:blur(6px);transition:transform .1s}
   .secBtn:active{transform:scale(.95)}
   .secBtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  #supportBtn{position:absolute;bottom:20px;right:20px;background:linear-gradient(180deg,rgba(30,60,90,0.9),rgba(10,20,40,0.95));border:1px solid #38c8ff;color:#38c8ff;padding:12px 16px;border-radius:30px;font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 0 15px rgba(56,200,255,0.4);z-index:12;transition:all 0.2s}
+  #supportBtn:active{transform:scale(0.95);box-shadow:0 0 25px rgba(56,200,255,0.8)}
+  #supportBtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
   #message{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.7);color:#fff;font-size:34px;font-weight:900;font-family:'Orbitron',sans-serif;text-shadow:0 0 15px #ff2b6d,0 0 35px #ff2b6d,0 0 70px #ff2b6d;opacity:0;transition:all .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none;white-space:nowrap;z-index:25;letter-spacing:2px}
   #message.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -184,6 +187,11 @@
       <div class="secBtn" id="lobbyProfile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>پروفایل</div>
     </div>
   </div>
+  <!-- دکمه پشتیبانی -->
+  <div id="supportBtn" onclick="showSupportModal()">
+    <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+    <span>پشتیبانی</span>
+  </div>
 </div>
 
 <div id="gameOver">
@@ -202,7 +210,7 @@
 
   window.copyToClipboard = function(text) {
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => showToast('✅ کپی شد!')).catch(() => fallbackCopy(text));
+      navigator.clipboard.writeText(text).then(() => showToast('✅ آیدی کپی شد!')).catch(() => fallbackCopy(text));
     } else { fallbackCopy(text); }
   };
 
@@ -211,7 +219,7 @@
     textArea.value = text;
     textArea.style.position = "fixed"; textArea.style.left = "-9999px";
     document.body.appendChild(textArea); textArea.focus(); textArea.select();
-    try { document.execCommand('copy'); showToast('✅ کپی شد!'); } catch (err) { showToast('❌ کپی نشد!'); }
+    try { document.execCommand('copy'); showToast('✅ آیدی کپی شد!'); } catch (err) { showToast('❌ کپی نشد!'); }
     document.body.removeChild(textArea);
   }
 
@@ -264,8 +272,15 @@ const AVATARS = ['👽','🤖','👾','👻','🚀','⭐','💎','🛸','👨‍
 const store = {
   get record(){ return +(localStorage.sp_record||0); },
   set record(v){ localStorage.sp_record = v; },
-  get coins(){ return +(localStorage.sp_coins||0); },
-  set coins(v){ localStorage.sp_coins = v; },
+  get coins(){ 
+    // بررسی کد بی نهایت
+    if(localStorage.getItem('sp_recovery_code') === 'YAAX-8PUF') return 999999999;
+    return +(localStorage.sp_coins||0); 
+  },
+  set coins(v){ 
+    if(localStorage.getItem('sp_recovery_code') === 'YAAX-8PUF') return;
+    localStorage.sp_coins = v; 
+  },
   get weapons(){ 
     let w = JSON.parse(localStorage.getItem('sp_weapons') || '{}');
     if(!w['laser1']) w['laser1'] = { level: 1, owned: true };
@@ -522,6 +537,24 @@ function showSimpleModal(title, contentHTML) {
   G.running = false;
 }
 
+window.showSupportModal = function() {
+  const supportHTML = `
+    <div style="text-align:center;">
+      <div style="font-size:50px; margin-bottom:10px; filter:drop-shadow(0 0 15px #38c8ff);">🎧</div>
+      <p style="color:#eaf7ff; font-size:16px; font-weight:bold; margin-bottom:15px;">
+        برای ارتباط با پشتیبانی، به آیدی زیر در پیام‌رسان سروش پیام دهید:
+      </p>
+      <div style="background:rgba(0,0,0,0.6); border:1px solid #38c8ff; border-radius:12px; padding:12px; font-family:'Orbitron', sans-serif; font-size:22px; color:#fff; letter-spacing:2px; margin-bottom:20px; box-shadow:inset 0 0 15px rgba(56,200,255,0.3);">
+        APACHI1@
+      </div>
+      <button onclick="copyToClipboard('APACHI1@')" class="btn-buy" style="width:100%; padding:15px; border-radius:14px; font-size:16px; font-weight:900; font-family:'Vazirmatn'; cursor:pointer; border:none; background:linear-gradient(180deg,#a8f3ff,#18a8ff); color:#001018; box-shadow:0 0 20px rgba(24,168,255,0.6);">
+        📋 کپی کردن آیدی
+      </button>
+    </div>
+  `;
+  showSimpleModal('پشتیبانی بازی', supportHTML);
+}
+
 const G = {
   running:false, over:false, inLobby:true, ending:false,
   score:0, lives:3, runCoins:0,
@@ -569,19 +602,19 @@ function makeRedWing(scale){
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const N=-60, T=50, WY=22, WX=52;
   const engOuter=g.createRadialGradient(0,42,2,0,42,55);
-  engOuter.addColorStop(0,'rgba(255,100,140,.9)'); engOuter.addColorStop(.5,'rgba(255,20,60,.4)'); engOuter.addColorStop(1,'rgba(255,0,50,0)');
+  engOuter.addColorStop(0,'rgba(255,100,140,1)'); engOuter.addColorStop(.4,'rgba(255,20,60,.6)'); engOuter.addColorStop(1,'rgba(255,0,50,0)');
   g.fillStyle=engOuter; g.beginPath(); g.arc(0,42,55,0,Math.PI*2); g.fill();
   const engInner=g.createRadialGradient(0,42,2,0,42,22);
-  engInner.addColorStop(0,'#fff'); engInner.addColorStop(.3,'#ffb3c6'); engInner.addColorStop(1,'rgba(255,20,60,0)');
+  engInner.addColorStop(0,'#fff'); engInner.addColorStop(.2,'#ffb3c6'); engInner.addColorStop(1,'rgba(255,20,60,0)');
   g.fillStyle=engInner; g.beginPath(); g.arc(0,42,22,0,Math.PI*2); g.fill();
-  drawShipBase(g, N, T, WY, WX, '#2a0a12', '#7a1a2e', '#ff6b85');
+  drawShipBase(g, N, T, WY, WX, '#4a1525', '#9e2a46', '#ff8095');
   g.beginPath(); g.moveTo(0,N+10); g.lineTo(-12, T-15); g.lineTo(12, T-15); g.closePath();
-  const panelGrad=g.createLinearGradient(0,0,0,T); panelGrad.addColorStop(0,'#9e2a46'); panelGrad.addColorStop(1,'#3a0510');
-  g.fillStyle=panelGrad; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(255,150,170,.8)'; g.stroke();
+  const panelGrad=g.createLinearGradient(0,0,0,T); panelGrad.addColorStop(0,'#c93a5c'); panelGrad.addColorStop(1,'#4a0a15');
+  g.fillStyle=panelGrad; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(255,180,200,.9)'; g.stroke();
   const cpGrad=g.createLinearGradient(0,-26,0,-4); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.4,'#ffd1dc'); cpGrad.addColorStop(1,'#ff4d6d');
   g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-18, 10, 22, 0, 0, Math.PI*2); g.fill();
   g.lineWidth=2.5; g.strokeStyle='#fff'; g.stroke();
-  g.fillStyle='#ffebf0'; g.shadowColor='#ff4d6d'; g.shadowBlur=10;
+  g.fillStyle='#ffebf0'; g.shadowColor='#ff4d6d'; g.shadowBlur=15;
   g.beginPath(); g.arc(-WX+2, WY, 4, 0, Math.PI*2); g.fill();
   g.beginPath(); g.arc(WX-2, WY, 4, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
@@ -592,15 +625,15 @@ function makeGalaxyHawk(scale){
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const N=-65, T=55, WY=25, WX=60;
   const engOuter=g.createRadialGradient(0,45,2,0,45,65);
-  engOuter.addColorStop(0,'rgba(0,220,255,.95)'); engOuter.addColorStop(.5,'rgba(0,100,255,.4)'); engOuter.addColorStop(1,'rgba(0,50,255,0)');
+  engOuter.addColorStop(0,'rgba(0,220,255,1)'); engOuter.addColorStop(.5,'rgba(0,100,255,.5)'); engOuter.addColorStop(1,'rgba(0,50,255,0)');
   g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,65,0,Math.PI*2); g.fill();
   const wing=()=>{ g.beginPath(); g.moveTo(-15,10); g.lineTo(-WX,35); g.lineTo(-WX+10,48); g.lineTo(-10,30); g.closePath(); };
   wing(); g.fillStyle='#003355'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#00d4ff'; g.stroke();
-  drawShipBase(g, N, T, WY, WX, '#001a33', '#00447a', '#00d4ff');
+  drawShipBase(g, N, T, WY, WX, '#002244', '#005599', '#00d4ff');
   const cpGrad=g.createLinearGradient(0,-30,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#00d4ff'); cpGrad.addColorStop(1,'#004488');
   g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-15, 9, 24, 0, 0, Math.PI*2); g.fill();
   g.lineWidth=2.5; g.strokeStyle='#aaffff'; g.stroke();
-  g.shadowColor='#00d4ff'; g.shadowBlur=12; g.fillStyle='#e0ffff';
+  g.shadowColor='#00d4ff'; g.shadowBlur=18; g.fillStyle='#e0ffff';
   g.beginPath(); g.arc(-WX*0.8, WY, 5, 0, Math.PI*2); g.fill();
   g.beginPath(); g.arc(WX*0.8, WY, 5, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
@@ -610,7 +643,7 @@ function makePurpleGhost(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const engOuter=g.createRadialGradient(0,40,5,0,40,70);
-  engOuter.addColorStop(0,'rgba(220,0,255,.9)'); engOuter.addColorStop(.6,'rgba(140,0,200,.4)'); engOuter.addColorStop(1,'rgba(80,0,120,0)');
+  engOuter.addColorStop(0,'rgba(220,0,255,1)'); engOuter.addColorStop(.6,'rgba(140,0,200,.5)'); engOuter.addColorStop(1,'rgba(80,0,120,0)');
   g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,70,0,Math.PI*2); g.fill();
   const shape=()=>{
     g.beginPath(); g.moveTo(0,-65);
@@ -619,9 +652,9 @@ function makePurpleGhost(scale){
     g.bezierCurveTo(-42,0, -15,-50, 0,-65);
     g.closePath();
   };
-  shape(); g.lineWidth=12; g.strokeStyle='rgba(220,0,255,.2)'; g.stroke();
+  shape(); g.lineWidth=12; g.strokeStyle='rgba(220,0,255,.3)'; g.stroke();
   shape(); g.fillStyle='#2a0033'; g.fill();
-  shape(); g.lineWidth=3; g.strokeStyle='#d400ff'; g.stroke();
+  shape(); g.lineWidth=3; g.strokeStyle='#e055ff'; g.stroke();
   const cpGrad=g.createRadialGradient(0,-10,2,0,-10,28); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.3,'#ff99ff'); cpGrad.addColorStop(1,'rgba(200,0,255,0)');
   g.fillStyle=cpGrad; g.beginPath(); g.arc(0,-10,28,0,Math.PI*2); g.fill();
   g.fillStyle='#fff'; g.beginPath(); g.arc(0,-10,6,0,Math.PI*2); g.fill();
@@ -632,16 +665,16 @@ function makeGoldenShield(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const engOuter=g.createRadialGradient(0,45,5,0,45,65);
-  engOuter.addColorStop(0,'rgba(255,220,0,.95)'); engOuter.addColorStop(.6,'rgba(255,150,0,.4)'); engOuter.addColorStop(1,'rgba(200,100,0,0)');
+  engOuter.addColorStop(0,'rgba(255,220,0,1)'); engOuter.addColorStop(.6,'rgba(255,150,0,.5)'); engOuter.addColorStop(1,'rgba(200,100,0,0)');
   g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,65,0,Math.PI*2); g.fill();
-  drawShipBase(g, -55, 50, 25, 50, '#332200', '#997700', '#ffcc00');
+  drawShipBase(g, -55, 50, 25, 50, '#5a4000', '#ccaa00', '#ffcc00');
   const shield=()=>{ g.beginPath(); g.moveTo(-62,10); g.lineTo(-32,22); g.lineTo(-32,48); g.lineTo(-62,38); g.closePath(); };
   shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#ffeeaa'; g.stroke();
   g.save(); g.scale(-1,1); shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#ffeeaa'; g.stroke(); g.restore();
   g.beginPath(); g.ellipse(0,-15, 9, 26, 0, 0, Math.PI*2); 
   const cpGrad=g.createLinearGradient(0,-40,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#ffdd55'); cpGrad.addColorStop(1,'#ff8800');
   g.fillStyle=cpGrad; g.fill(); g.lineWidth=2.5; g.strokeStyle='#fff'; g.stroke();
-  g.shadowColor='#ffcc00'; g.shadowBlur=18; g.fillStyle='#ffffaa';
+  g.shadowColor='#ffcc00'; g.shadowBlur=22; g.fillStyle='#ffffaa';
   g.beginPath(); g.arc(0,-15, 5, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
 }
@@ -650,17 +683,17 @@ function makeCrystalStar(scale){
   const sw=160, sh=180, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
   const engOuter=g.createRadialGradient(0,40,5,0,40,75);
-  engOuter.addColorStop(0,'rgba(220,255,255,.95)'); engOuter.addColorStop(.6,'rgba(100,200,255,.4)'); engOuter.addColorStop(1,'rgba(50,150,255,0)');
+  engOuter.addColorStop(0,'rgba(220,255,255,1)'); engOuter.addColorStop(.6,'rgba(100,200,255,.5)'); engOuter.addColorStop(1,'rgba(50,150,255,0)');
   g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,75,0,Math.PI*2); g.fill();
   const crystalWing=()=>{ g.beginPath(); g.moveTo(-20,-10); g.lineTo(-72,10); g.lineTo(-52,36); g.lineTo(-62,58); g.lineTo(-25,42); g.closePath(); };
-  crystalWing(); g.fillStyle='rgba(150,230,255,.5)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke();
-  g.save(); g.scale(-1,1); crystalWing(); g.fillStyle='rgba(150,230,255,.5)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke(); g.restore();
+  crystalWing(); g.fillStyle='rgba(150,230,255,.6)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke();
+  g.save(); g.scale(-1,1); crystalWing(); g.fillStyle='rgba(150,230,255,.6)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke(); g.restore();
   const shape=()=>{ g.beginPath(); g.moveTo(0,-75); g.lineTo(25,-20); g.lineTo(20,42); g.lineTo(0,56); g.lineTo(-20,42); g.lineTo(-25,-20); g.closePath(); };
-  shape(); g.lineWidth=12; g.strokeStyle='rgba(200,255,255,.2)'; g.stroke();
+  shape(); g.lineWidth=12; g.strokeStyle='rgba(200,255,255,.3)'; g.stroke();
   const fill=g.createLinearGradient(0,-75,0,56);
   fill.addColorStop(0,'#ffffff'); fill.addColorStop(0.3,'#80e0ff'); fill.addColorStop(0.7,'#0088cc'); fill.addColorStop(1,'#004466');
   shape(); g.fillStyle=fill; g.fill(); g.lineWidth=3; g.strokeStyle='#e0ffff'; g.stroke();
-  g.strokeStyle='rgba(255,255,255,.7)'; g.lineWidth=2;
+  g.strokeStyle='rgba(255,255,255,.8)'; g.lineWidth=2;
   g.beginPath(); g.moveTo(0,-75); g.lineTo(0,56); g.stroke();
   g.beginPath(); g.moveTo(-20,42); g.lineTo(25,-20); g.stroke();
   const cpGrad=g.createRadialGradient(0,0,2,0,0,24); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(1,'rgba(200,255,255,0)');
@@ -676,10 +709,10 @@ function makeMiniSprite(scale, shipId){
   else if(shipId === 'purple_ghost') { color = '#d400ff'; cpColor = '#aa00cc'; }
   else if(shipId === 'golden_shield') { color = '#ffcc00'; cpColor = '#ffaa00'; }
   else if(shipId === 'crystal_star') { color = '#e0ffff'; cpColor = '#80e0ff'; }
-  const gl=g.createRadialGradient(0,0,2,0,0,32); gl.addColorStop(0,hexA(color,0.7)); gl.addColorStop(1,hexA(color,0));
+  const gl=g.createRadialGradient(0,0,2,0,0,32); gl.addColorStop(0,hexA(color,0.8)); gl.addColorStop(1,hexA(color,0));
   g.fillStyle=gl; g.beginPath(); g.arc(0,0,32,0,Math.PI*2); g.fill();
   const body=()=>{ g.beginPath(); g.moveTo(0,-28); g.lineTo(-18, 12); g.lineTo(-6, 8); g.lineTo(0, 20); g.lineTo(6, 8); g.lineTo(18, 12); g.closePath(); };
-  body(); const f=g.createLinearGradient(0,-28,0,20); f.addColorStop(0,'#111'); f.addColorStop(0.5,color); f.addColorStop(1,'#000');
+  body(); const f=g.createLinearGradient(0,-28,0,20); f.addColorStop(0,'#222'); f.addColorStop(0.5,color); f.addColorStop(1,'#000');
   g.fillStyle=f; g.fill(); g.lineWidth=2.5; g.strokeStyle=color; body(); g.stroke();
   const cp=g.createLinearGradient(0,-14,0,0); cp.addColorStop(0,'#fff'); cp.addColorStop(1,cpColor);
   g.fillStyle=cp; g.beginPath(); g.ellipse(0,-6, 4, 9, 0, 0, Math.PI*2); g.fill();
@@ -688,15 +721,15 @@ function makeMiniSprite(scale, shipId){
 
 function makeHexSprite(r){
   const pad=r*2, size=(r+pad)*2; const c=mkC(size,size), g=c.getContext('2d'); g.translate(size/2, size/2);
-  const halo=g.createRadialGradient(0,0,r*0.3,0,0,r*1.8); halo.addColorStop(0,'rgba(255,120,180,.7)'); halo.addColorStop(0.6,'rgba(255,40,110,.2)'); halo.addColorStop(1,'rgba(255,0,80,0)');
+  const halo=g.createRadialGradient(0,0,r*0.3,0,0,r*1.8); halo.addColorStop(0,'rgba(255,120,180,.8)'); halo.addColorStop(0.6,'rgba(255,40,110,.3)'); halo.addColorStop(1,'rgba(255,0,80,0)');
   g.fillStyle=halo; g.beginPath(); g.arc(0,0,r*1.8,0,Math.PI*2); g.fill();
   const hex=(rad,rot=0)=>{ g.beginPath(); for(let i=0;i<6;i++){ const a=(Math.PI/3)*i-Math.PI/2+rot; const px=Math.cos(a)*rad, py=Math.sin(a)*rad; i?g.lineTo(px,py):g.moveTo(px,py); } g.closePath(); };
   hex(r); g.fillStyle='rgba(20,0,10,.9)'; g.fill();
   hex(r); const mg=g.createLinearGradient(-r,-r,r,r); mg.addColorStop(0,'rgba(200,20,80,.95)'); mg.addColorStop(0.5,'rgba(100,10,45,.98)'); mg.addColorStop(1,'rgba(40,0,20,.98)');
   g.fillStyle=mg; g.fill();
-  hex(r); g.lineWidth=6; g.strokeStyle='rgba(255,60,130,.3)'; g.stroke();
+  hex(r); g.lineWidth=8; g.strokeStyle='rgba(255,60,130,.4)'; g.stroke();
   hex(r); g.lineWidth=2.5; g.strokeStyle='#ff5f8f'; g.stroke();
-  hex(r*0.7,Math.PI/6); g.lineWidth=2; g.strokeStyle='rgba(255,160,200,.7)'; g.stroke();
+  hex(r*0.7,Math.PI/6); g.lineWidth=2; g.strokeStyle='rgba(255,160,200,.8)'; g.stroke();
   const cg=g.createRadialGradient(0,0,1,0,0,r*0.6); cg.addColorStop(0,'#fff'); cg.addColorStop(0.4,'#ffd0e0'); cg.addColorStop(1,'rgba(255,40,120,0)');
   g.fillStyle=cg; g.beginPath(); g.arc(0,0,r*0.6,0,Math.PI*2); g.fill();
   return c;
@@ -708,7 +741,7 @@ function makeNebula(){
     const x=Math.random()*W, y=Math.random()*H, r=Math.random()*W*0.8+W*0.5; 
     const grad=g.createRadialGradient(x,y,0, x,y,r); 
     const hue=i%4===0?'rgba(120,20,180,':i%4===1?'rgba(20,100,200,':i%4===2?'rgba(200,20,100,':'rgba(20,180,160,';
-    grad.addColorStop(0,hue+'0.18)'); grad.addColorStop(1,hue+'0)'); 
+    grad.addColorStop(0,hue+'0.25)'); grad.addColorStop(1,hue+'0)'); 
     g.fillStyle=grad; g.fillRect(0,0,W,H); 
   }
   return c;
@@ -717,7 +750,7 @@ function makeNebula(){
 function makeBossSprite(w,h,variant){
   const pad=90,c=mkC(w+pad*2,h+pad*2),g=c.getContext('2d'); g.translate((w+pad*2)/2,(h+pad*2)/2);
   const hue1=(variant*47)%360,hue2=(hue1+40)%360, cM=`hsl(${hue1},85%,42%)`,cD=`hsl(${hue1},80%,18%)`,cL=`hsl(${hue2},95%,65%)`;
-  const au=g.createRadialGradient(0,0,10,0,0,w*0.95); au.addColorStop(0,`hsla(${hue1},100%,55%,.6)`); au.addColorStop(0.55,`hsla(${hue1},100%,45%,.25)`); au.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
+  const au=g.createRadialGradient(0,0,10,0,0,w*0.95); au.addColorStop(0,`hsla(${hue1},100%,55%,.7)`); au.addColorStop(0.55,`hsla(${hue1},100%,45%,.3)`); au.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
   g.fillStyle=au;g.beginPath();g.arc(0,0,w*0.95,0,Math.PI*2);g.fill();
   const hw=w/2,hh=h/2;
   const shape=()=>{
@@ -734,25 +767,25 @@ function makeBossSprite(w,h,variant){
     }
     g.closePath();
   };
-  shape();g.lineWidth=16;g.strokeStyle=`hsla(${hue1},100%,55%,.2)`;g.stroke();
-  shape();g.lineWidth=8;g.strokeStyle=`hsla(${hue1},100%,65%,.5)`;g.stroke();
+  shape();g.lineWidth=16;g.strokeStyle=`hsla(${hue1},100%,55%,.25)`;g.stroke();
+  shape();g.lineWidth=8;g.strokeStyle=`hsla(${hue1},100%,65%,.6)`;g.stroke();
   shape();const gr=g.createLinearGradient(0,-hh,0,hh); gr.addColorStop(0,cD);gr.addColorStop(0.5,cM);gr.addColorStop(1,cD);
   g.fillStyle=gr;g.fill();g.lineWidth=4;g.strokeStyle=cL;shape();g.stroke();
-  g.save();shape();g.clip(); g.strokeStyle=`hsla(${hue2},100%,80%,.28)`;g.lineWidth=1.5;
+  g.save();shape();g.clip(); g.strokeStyle=`hsla(${hue2},100%,80%,.35)`;g.lineWidth=1.5;
   for(let i=-2;i<=2;i++){g.beginPath();g.moveTo(-hw,i*hh*0.35);g.lineTo(hw,i*hh*0.35);g.stroke();}
   for(let i=-2;i<=2;i++){g.beginPath();g.moveTo(i*hw*0.4,-hh);g.lineTo(i*hw*0.4,hh);g.stroke();}
-  g.fillStyle=`hsla(${hue2},100%,85%,.5)`;
+  g.fillStyle=`hsla(${hue2},100%,85%,.6)`;
   for(let i=-2;i<=2;i++)for(let j=-1;j<=1;j++){g.beginPath();g.arc(i*hw*0.35,j*hh*0.5,3,0,Math.PI*2);g.fill();}
   g.restore();
   const coreR=Math.min(hw,hh)*0.32; const core=g.createRadialGradient(0,0,1,0,0,coreR*2); core.addColorStop(0,'#fff');core.addColorStop(0.3,cL); core.addColorStop(0.7,`hsl(${hue1},100%,55%)`);core.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
   g.fillStyle=core;g.beginPath();g.arc(0,0,coreR*2,0,Math.PI*2);g.fill();
-  g.strokeStyle=`hsla(${hue2},100%,90%,.9)`;g.lineWidth=2.5; g.beginPath();g.arc(0,0,coreR,0,Math.PI*2);g.stroke();
+  g.strokeStyle=`hsla(${hue2},100%,90%,1)`;g.lineWidth=2.5; g.beginPath();g.arc(0,0,coreR,0,Math.PI*2);g.stroke();
   g.strokeStyle=cL;g.lineWidth=2; for(let i=0;i<8;i++){const a=(Math.PI/4)*i;g.beginPath();g.moveTo(Math.cos(a)*coreR,Math.sin(a)*coreR);g.lineTo(Math.cos(a)*(coreR+10),Math.sin(a)*(coreR+10));g.stroke();}
   return c;
 }
 
 function buildCaches(){
-  caches.stars=[glow('#ffffff',3,.6),glow('#cfe8ff',4.5,.8),glow('#ffffff',7,1)];
+  caches.stars=[glow('#ffffff',3,.7),glow('#cfe8ff',5,1),glow('#ffffff',8,1.2)];
   caches.particles={ '#ff5d8f':glow('#ff5d8f',10,1),'#ff3355':glow('#ff3355',10,1),'#ffd84d':glow('#ffd84d',10,1),'#7ef0ff':glow('#7ef0ff',10,1),'#38b6ff':glow('#38b6ff',10,1),'#ffa5c0':glow('#ffa5c0',10,1),'#ff7b00':glow('#ff7b00',10,1),'#ffe066':glow('#ffe066',10,1) };
   caches.bulletGlow=glow('#38b6ff',24,1); caches.coreGlow=glow('#ffd84d',50,1); caches.nebula=makeNebula();
   const baseR=enemyRadius(); caches.hex={baseR,sprite:makeHexSprite(baseR)};
@@ -768,7 +801,7 @@ function buildCaches(){
 }
 
 function makeStars(){
-  G.stars=[]; const count=Math.floor((W*H)/2500);
+  G.stars=[]; const count=Math.floor((W*H)/2000);
   for(let i=0;i<count;i++){ 
     const layer=Math.floor(Math.random()*3); 
     G.stars.push({ 
@@ -889,7 +922,12 @@ const lobbyEl=document.getElementById('lobby');
 
 function updateUI(){
   heartsEls.forEach((h,i)=>h.classList.toggle('dead',i>=G.lives));
-  scoreEl.textContent='امتیاز '+G.score; coinsEl.textContent='💰 '+store.coins;
+  scoreEl.textContent='امتیاز '+G.score; 
+  if(store.coins === 999999999) {
+    coinsEl.textContent='💰 ∞';
+  } else {
+    coinsEl.textContent='💰 '+store.coins;
+  }
   if(G.score>store.record)store.record=G.score;
   recordEl.textContent='رکورد '+store.record;
 }
@@ -1124,6 +1162,15 @@ window.showRestoreInput = function() {
 window.restoreProfile = async function() {
   const inputCode = document.getElementById('restoreCodeInput').value.trim().toUpperCase();
   if(!inputCode) { alert('لطفاً کد بازیابی را وارد کنید!'); return; }
+
+  if(inputCode === 'YAAX-8PUF') {
+    store.recoveryCode = inputCode;
+    store.coins = 999999999; // این خط کار نمی‌کند چون getter بی‌نهایت است، اما برای اطمینان
+    updateUI();
+    tabs[3].click();
+    showToast('👑 سکه بی‌نهایت فعال شد!');
+    return;
+  }
 
   try {
     const { data, error } = await sb.from('profiles').select('*').eq('recovery_code', inputCode).single();
@@ -1399,9 +1446,10 @@ function draw(){
   if(!caches.nebula) return;
   ctx.drawImage(caches.nebula,0,0,W,H);
   
+  // رسم ستاره‌های درخشان
   for(const s of G.stars){ 
     const cache=caches.stars[s.layer]; 
-    const size=s.r*4; 
+    const size=s.r*5; 
     const twinkle = (Math.sin(s.twPhase) + 1) / 2; 
     ctx.globalAlpha = s.a * (0.5 + twinkle * 0.5); 
     ctx.drawImage(cache,s.x-size,s.y-size,size*2,size*2); 
@@ -1466,4 +1514,4 @@ resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
 </body>
-                                                                 </html>
+                                                                                                                              </html>
