@@ -11,10 +11,12 @@
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Vazirmatn',sans-serif;touch-action:none;user-select:none}
   canvas{display:block;width:100%;height:100%}
-  #tabs{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:6px;padding:8px;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;background:linear-gradient(180deg,rgba(0,10,25,.95),transparent)}
+  
+  /* نوار تب‌های بالا */
+  #tabs{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:6px;padding:8px;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;background:linear-gradient(180deg,rgba(0,10,25,.95),transparent);flex-wrap:wrap}
   #tabs.active{opacity:1;pointer-events:auto}
-  .tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:800;font-size:13px;color:#9fd4ec;background:rgba(15,35,60,.75);border:1px solid rgba(90,170,220,.4);cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.3)}
-  .tab svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:14px;font-weight:800;font-size:12px;color:#9fd4ec;background:rgba(15,35,60,.75);border:1px solid rgba(90,170,220,.4);cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+  .tab svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .tab.active{color:#001018;background:linear-gradient(180deg,#a8f3ff,#2bb5ff);border-color:#a8f3ff;box-shadow:0 0 20px rgba(56,200,255,.9),inset 0 0 10px rgba(255,255,255,.5)}
   .tab:active{transform:scale(.95)}
 
@@ -56,13 +58,89 @@
   #message{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.7);color:#fff;font-size:clamp(20px,6vw,34px);font-weight:900;font-family:'Orbitron',sans-serif;text-shadow:0 0 15px #ff2b6d,0 0 35px #ff2b6d,0 0 70px #ff2b6d;opacity:0;transition:all .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none;white-space:nowrap;z-index:25;letter-spacing:2px;text-align:center;max-width:95vw}
   #message.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
 
+  /* ====== استایل جدید فروشگاه (تب‌های مربعی) ====== */
   #shopPanel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.95),rgba(0,0,0,.98));backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:25;padding-top:64px}
   #shopPanel.show{opacity:1;pointer-events:auto}
-  .shop-tabs{display:flex;gap:20px;margin-bottom:16px;border-bottom:1px solid rgba(56,200,255,.3);width:90%;max-width:400px;justify-content:space-around;flex-shrink:0}
-  .shop-tab{color:#7a9bb5;font-weight:800;font-size:15px;padding-bottom:12px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
-  .shop-tab.active{color:#38c8ff;border-bottom-color:#38c8ff;text-shadow:0 0 12px rgba(56,200,255,.6)}
+  
+  .shop-tabs{display:flex;gap:12px;margin-bottom:20px;width:90%;max-width:400px;justify-content:center;flex-shrink:0}
+  
+  .shop-tab{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 6px;
+    background: linear-gradient(180deg, rgba(25,45,75,.6), rgba(10,20,40,.85));
+    border: 1.5px solid rgba(90,170,220,.4);
+    border-radius: 16px;
+    color: #7a9bb5;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,.4);
+  }
+  .shop-tab svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: all .2s;
+  }
+  .shop-tab.active {
+    background: linear-gradient(180deg, rgba(56,200,255,.2), rgba(10,30,60,.9));
+    border-color: #38c8ff;
+    color: #a8f3ff;
+    box-shadow: 0 0 20px rgba(56,200,255,.4), inset 0 0 15px rgba(56,200,255,.15);
+  }
+  .shop-tab.active svg {
+    filter: drop-shadow(0 0 8px #38c8ff);
+    transform: scale(1.1);
+  }
+
   #shopContent{width:90%;max-width:400px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:40px;scrollbar-width:none}
   #shopContent::-webkit-scrollbar{display:none}
+  
+  .coming-soon-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(30,10,50,.8), rgba(5,12,26,.95));
+    border: 1.5px dashed rgba(200,100,255,.5);
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: inset 0 0 30px rgba(200,100,255,.1);
+  }
+  .coming-soon-box .icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 20px rgba(200,100,255,.6));
+    animation: floatIcon 3s ease-in-out infinite;
+  }
+  @keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .coming-soon-box .title {
+    color: #e0c0ff;
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(200,100,255,.6);
+  }
+  .coming-soon-box .desc {
+    color: #a090b0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
   .weapon-card{background:linear-gradient(135deg,rgba(8,25,20,.95),rgba(12,30,25,.95));border:1px solid rgba(50,200,100,.6);border-radius:18px;padding:16px;position:relative;box-shadow:0 6px 20px rgba(0,0,0,.6), inset 0 0 20px rgba(50,200,100,.1)}
   .w-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
   .w-name{color:#fff;font-size:19px;font-weight:900;text-shadow:0 2px 6px rgba(0,0,0,.8)}
@@ -76,6 +154,7 @@
   .btn-equip.active{background:linear-gradient(180deg,#0fb,#008f70);color:#001018;box-shadow:0 0 20px #0fb;border-color:#0fb}
   .price-row{font-size:12px;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;color:#ffd700;text-shadow:0 1px 3px #000}
   .max-level{color:#ffd700;font-size:15px;text-shadow:0 0 12px #ffd700;font-weight:900;margin-top:10px;text-align:center;display:flex;align-items:center;justify-content:center;flex:1}
+  
   .ship-card{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
   .ship-info{display:flex;flex-direction:column;align-items:flex-start;gap:6px;flex:1}
   .ship-img-box{width:74px;height:74px;border-radius:16px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-right:12px;box-shadow:inset 0 0 20px rgba(0,0,0,.8)}
@@ -83,7 +162,7 @@
 
   #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.8),rgba(0,0,0,.98));backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;overflow-y:auto;padding:70px 16px 30px}
   #simpleModal.show{opacity:1;pointer-events:auto}
-  .simple-card{background:linear-gradient(180deg,rgba(25,45,75,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:24px;padding:26px 20px;box-shadow:0 0 60px rgba(56,200,255,.6),inset 0 0 40px rgba(56,200,255,.15);text-align:center;max-width:92vw;width:380px;margin:auto}
+  .simple-card{background:linear-gradient(180deg,rgba(25,45,75,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:24px;padding:26px 20px;box-shadow:0 0 60px rgba(56,200,255,.6),inset 0 0 40px rgba(56,200,255,.15);text-align:center;max-width:92vw;width:380px;margin:auto;position:relative}
   .simple-card h2{color:#a8f0ff;font-size:24px;margin-bottom:16px;text-shadow:0 0 20px #38c8ff;font-weight:900}
   .simple-card p{color:#cdeaff;font-size:15px;margin-bottom:20px;line-height:1.8}
 
@@ -108,6 +187,38 @@
   .recovery-code{background:rgba(0,0,0,.6);color:#fff;font-family:'Orbitron',sans-serif;font-size:20px;letter-spacing:3px;padding:12px;border-radius:10px;display:flex;justify-content:center;align-items:center;gap:12px;border:1px solid rgba(255,215,0,.2)}
   .restore-btn{background:transparent;color:#ff4d6d;border:1.5px solid rgba(255,77,109,.7);padding:12px 20px;border-radius:10px;font-weight:bold;font-family:'Vazirmatn';cursor:pointer;width:100%;font-size:14px;margin-top:12px;transition:all .2s}
   .restore-btn:active{background:rgba(255,77,109,.2)}
+
+  /* لیدربرد */
+  .refresh-btn {
+    background: linear-gradient(180deg, #38c8ff, #0077ff);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 14px;
+    font-family: 'Vazirmatn', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(56,200,255,.5), inset 0 -3px 0 rgba(0,0,0,.2);
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 15px;
+  }
+  .refresh-btn:active {
+    transform: scale(.95);
+    box-shadow: 0 0 25px rgba(56,200,255,.8), inset 0 -3px 0 rgba(0,0,0,.2);
+  }
+  .refresh-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 
   .lb-table{width:100%;border-collapse:collapse;margin-top:12px;direction:rtl}
   .lb-table th{color:#8ab2c8;font-size:13px;padding:10px;border-bottom:2px solid rgba(56,200,255,.3);text-align:right;font-weight:800}
@@ -134,7 +245,6 @@
   .reset-btn:active{transform:scale(0.95)}
   .server-reset-btn{background:linear-gradient(180deg,#ff8800,#cc5500);box-shadow:0 0 20px rgba(255,136,0,0.5)}
 
-  /* دکمه بازگشت شیک پشتیبانی */
   .support-back-btn {
     margin-top: 20px;
     background: linear-gradient(180deg, rgba(40,80,140,.8), rgba(10,20,40,.9));
@@ -163,12 +273,16 @@
 <body>
 <canvas id="cv"></canvas>
 <div id="toast">✅ کپی شد!</div>
+
+<!-- تب‌های نوار بالا (اضافه شدن لابی) -->
 <div id="tabs">
+  <div class="tab" id="tabLobby"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>لابی</span></div>
   <div class="tab active" id="tabGame"><svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1.2"/><circle cx="18.5" cy="13" r="1.2"/><path d="M17.5 2c2 3 2 6-1 9l-2-2c2-2 2-5 3-7z"/><path d="M6 2C4 5 4 8 7 11l2-2C7 7 7 4 6 2z"/></svg><span>بازی</span></div>
   <div class="tab" id="tabShop"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>فروشگاه</span></div>
   <div class="tab" id="tabRank"><svg viewBox="0 0 24 24"><path d="M8 21l4-9 4 9M12 12v9M6 3h12v6a6 6 0 0 1-12 0V3z"/></svg><span>رتبه بندی</span></div>
   <div class="tab" id="tabProfile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>پروفایل</span></div>
 </div>
+
 <div id="ui">
   <div id="rightUI"><div class="heart" id="h1"></div><div class="heart" id="h2"></div><div class="heart" id="h3"></div></div>
   <div id="leftUI">
@@ -177,20 +291,35 @@
     <div class="pill coinBox" id="coins">💰 0</div>
   </div>
 </div>
+
 <div id="message"></div>
+
 <div id="shopPanel">
+  <!-- تب‌های مربعی فروشگاه -->
   <div class="shop-tabs">
-    <div class="shop-tab active" id="stWeapons">🔫 اسلحه‌ها</div>
-    <div class="shop-tab" id="stShips">🚀 سفینه‌ها</div>
+    <div class="shop-tab active" id="stWeapons">
+      <svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1.2"/><circle cx="18.5" cy="13" r="1.2"/><path d="M17.5 2c2 3 2 6-1 9l-2-2c2-2 2-5 3-7z"/><path d="M6 2C4 5 4 8 7 11l2-2C7 7 7 4 6 2z"/></svg>
+      <span>اسلحه‌ها</span>
+    </div>
+    <div class="shop-tab" id="stShips">
+      <svg viewBox="0 0 24 24"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/></svg>
+      <span>سفینه‌ها</span>
+    </div>
+    <div class="shop-tab" id="stCompanions">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+      <span>همراه 🛸</span>
+    </div>
   </div>
   <div id="shopContent"></div>
 </div>
+
 <div id="simpleModal">
   <div class="simple-card">
     <h2 id="smTitle">🏆</h2>
     <div id="smContent" style="color:#cdeaff;font-size:15px;line-height:1.8;min-height:50px;">در حال دریافت اطلاعات...</div>
   </div>
 </div>
+
 <div id="lobby">
   <div id="lobbyTitle">تیراندازی فضایی 🚀</div>
   <div id="lobbyShip"></div>
@@ -207,6 +336,7 @@
     <span>پشتیبانی</span>
   </div>
 </div>
+
 <div id="gameOver">
   <div class="go-title"><svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5H22L15.8 13.8L18.3 21.5L12 17.2L5.7 21.5L8.2 13.8L2 9.5H9.5L12 2Z"/></svg>بازی تمام شد!</div>
   <div class="go-sub">جونات تموم شد...</div>
@@ -214,16 +344,19 @@
   <div class="go-reward">پاداش سکه: <span id="goReward">0</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700" stroke="#b8860b" stroke-width="2"/></svg></div>
   <button id="restartBtn">شروع مجدد</button>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 window.copyToClipboard = function(text) {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(text).then(() => showToast('✅ آیدی کپی شد!')).catch(() => fallbackCopy(text));
   } else { fallbackCopy(text); }
 };
+
 function fallbackCopy(text) {
   const textArea = document.createElement("textarea");
   textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px";
@@ -231,6 +364,7 @@ function fallbackCopy(text) {
   try { document.execCommand('copy'); showToast('✅ آیدی کپی شد!'); } catch (err) { showToast('❌ کپی نشد!'); }
   document.body.removeChild(textArea);
 }
+
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -238,6 +372,7 @@ function showToast(msg) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
+
 <script>
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d', { alpha:false });
@@ -246,6 +381,7 @@ const player={x:0,y:0,scale:1,hitCooldown:0};
 const minis=[{offset:-60,fireTimer:0},{offset:60,fireTimer:0}];
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+
 function resize(){
   DPR = Math.min(window.devicePixelRatio || 1, 3);
   W = innerWidth; H = innerHeight;
@@ -257,7 +393,6 @@ function resize(){
 }
 addEventListener('resize', resize);
 
-// ====== لیست اسلحه‌های آپدیت شده ======
 const WEAPONS = [
   { id:'laser1', name:'لیزر ساده', price:0, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:1, color:'#38b6ff' },
   { id:'double', name:'شلیک دوقلو', price:50, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:2, color:'#ffd84d' },
@@ -277,7 +412,9 @@ const SHIPS = [
   { id:'golden_shield', name:'سپر طلایی', price:2500 },
   { id:'crystal_star', name:'ستاره کریستالی', price:5000 }
 ];
+
 const AVATARS = ['👽','🤖','👾','👻','🚀','⭐','💎','🛸','👨‍🚀','👩‍🚀'];
+
 const store = {
   get record(){ return +(localStorage.sp_record||0); },
   set record(v){ localStorage.sp_record = v; },
@@ -322,11 +459,13 @@ const store = {
   get profileId(){ return localStorage.getItem('sp_profile_id') || ''; },
   set profileId(v){ localStorage.setItem('sp_profile_id', v); }
 };
+
 function genCode() {
   const p1 = Math.random().toString(36).substring(2, 6).toUpperCase();
   const p2 = Math.random().toString(36).substring(2, 6).toUpperCase();
   return `${p1}-${p2}`;
 }
+
 async function autoSaveProfile() {
   const pName = store.playerName; const pAvatar = store.playerAvatar; const pCode = store.recoveryCode;
   try {
@@ -341,9 +480,11 @@ async function autoSaveProfile() {
     if (store.profileId) { await sb.from('leaderboard').update({ player_name: pName, profile_id: store.profileId }).eq('profile_id', store.profileId); }
   } catch (err) { console.warn('خطا در ذخیره خودکار:', err); }
 }
+
 function resetAllData() {
   if(confirm('⚠️ آیا مطمئنید؟ تمام اطلاعات بازی روی این دستگاه پاک می‌شود.')) { localStorage.clear(); alert('✅ ریست شد!'); location.reload(); }
 }
+
 async function clearAllLeaderboard() {
   if(confirm('⚠️ آیا مطمئنید می‌خواهید تمام رکوردهای سرور را پاک کنید؟')) {
     try {
@@ -352,27 +493,46 @@ async function clearAllLeaderboard() {
     } catch (err) { console.error(err); showToast('❌ خطا در پاک کردن!'); }
   }
 }
+
 function getWeaponStats(id) {
   const base = WEAPONS.find(w=>w.id===id) || WEAPONS[0];
   const st = store.weapons[id] || {level:1};
   const dmg = base.baseDmg + (st.level - 1);
   return { ...base, level: st.level, dmg };
 }
+
 function calcUpgPrice(w) {
   const st = store.weapons[w.id] || {level:1};
   if(st.level >= 10) return 0;
   return Math.floor(w.baseUpgPrice * Math.pow(w.upgMul, st.level - 1));
 }
+
 const shopPanel = document.getElementById('shopPanel');
 const shopContent = document.getElementById('shopContent');
 const stWeapons = document.getElementById('stWeapons');
 const stShips = document.getElementById('stShips');
+const stCompanions = document.getElementById('stCompanions');
 const simpleModal = document.getElementById('simpleModal');
 const smTitle = document.getElementById('smTitle');
 const smContent = document.getElementById('smContent');
+
 let currentShopTab = 'weapons';
+
 function renderShop() {
   shopContent.innerHTML = '';
+  
+  if(currentShopTab === 'companions') {
+    // حالت همراه (به زودی)
+    shopContent.innerHTML = `
+      <div class="coming-soon-box">
+        <div class="icon">🛸</div>
+        <div class="title">همراه‌های فضایی</div>
+        <div class="desc">به زودی می‌توانید همراه‌های وفادار و قدرتمند را به خدمه خود اضافه کنید.<br>منتظر بمانید...</div>
+      </div>
+    `;
+    return;
+  }
+
   if(currentShopTab === 'weapons') {
     WEAPONS.forEach(w => {
       const st = store.weapons[w.id]; const owned = st && st.owned; const level = st ? st.level : 0;
@@ -393,7 +553,7 @@ function renderShop() {
       }
       html += `</div>`; card.innerHTML = html; shopContent.appendChild(card);
     });
-  } else {
+  } else if(currentShopTab === 'ships') {
     SHIPS.forEach(s => {
       const sData = store.ships[s.id]; const owned = sData && sData.owned; const equipped = store.equippedShip === s.id;
       const card = document.createElement('div'); card.className = 'weapon-card ship-card';
@@ -418,6 +578,7 @@ function renderShop() {
       });
     }, 10);
   }
+
   shopContent.querySelectorAll('.w-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action; const id = btn.dataset.id;
@@ -436,11 +597,29 @@ function renderShop() {
     });
   });
 }
-stWeapons.addEventListener('click', () => { currentShopTab = 'weapons'; stWeapons.classList.add('active'); stShips.classList.remove('active'); renderShop(); });
-stShips.addEventListener('click', () => { currentShopTab = 'ships'; stShips.classList.add('active'); stWeapons.classList.remove('active'); renderShop(); });
+
+// مدیریت کلیک روی تب‌های مربعی فروشگاه
+function setShopTab(tabName) {
+  currentShopTab = tabName;
+  stWeapons.classList.remove('active');
+  stShips.classList.remove('active');
+  stCompanions.classList.remove('active');
+  
+  if(tabName === 'weapons') stWeapons.classList.add('active');
+  else if(tabName === 'ships') stShips.classList.add('active');
+  else if(tabName === 'companions') stCompanions.classList.add('active');
+  
+  renderShop();
+}
+
+stWeapons.addEventListener('click', () => setShopTab('weapons'));
+stShips.addEventListener('click', () => setShopTab('ships'));
+stCompanions.addEventListener('click', () => setShopTab('companions'));
+
 function showSimpleModal(title, contentHTML) {
   smTitle.textContent = title; smContent.innerHTML = contentHTML; simpleModal.classList.add('show'); G.running = false;
 }
+
 window.showSupportModal = function() {
   const supportHTML = `
     <div style="text-align:center;">
@@ -453,13 +632,14 @@ window.showSupportModal = function() {
   `;
   showSimpleModal('پشتیبانی بازی', supportHTML);
 }
+
 window.closeSupportModal = function() {
   simpleModal.classList.remove('show');
   lobbyEl.classList.remove('hidden');
-  G.inLobby = true;
-  G.running = false;
-  setTab('tabGame');
+  G.inLobby = true; G.running = false;
+  setTab('tabLobby');
 }
+
 const G = {
   running:false, over:false, inLobby:true, ending:false,
   score:0, lives:3, runCoins:0,
@@ -472,9 +652,11 @@ const G = {
   keysLeft:false, keysRight:false, keysFire:false,
   MAX_PARTICLES:200
 };
+
 const caches={ships:{}};
 const mkC=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;};
 const hexA=(hex,a)=>{const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
+
 function glow(color,radius,intensity=1){
   const size=radius*2,c=mkC(size,size),g=c.getContext('2d');
   const grad=g.createRadialGradient(radius,radius,1,radius,radius,radius);
@@ -483,6 +665,7 @@ function glow(color,radius,intensity=1){
   grad.addColorStop(1,hexA(color,0));
   g.fillStyle=grad;g.fillRect(0,0,size,size);return c;
 }
+
 function drawShipBase(g, N, T, WY, WX, fill1, fill2, stroke) {
   const body=()=>{
     g.beginPath(); g.moveTo(0,N);
@@ -498,6 +681,7 @@ function drawShipBase(g, N, T, WY, WX, fill1, fill2, stroke) {
   fill.addColorStop(0,fill1); fill.addColorStop(0.5,fill2); fill.addColorStop(1,'#000');
   g.fillStyle=fill; g.fill(); g.lineWidth=3; g.strokeStyle=stroke; body(); g.stroke();
 }
+
 function makeRedWing(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
@@ -520,6 +704,7 @@ function makeRedWing(scale){
   g.beginPath(); g.arc(WX-2, WY, 4, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
 }
+
 function makeGalaxyHawk(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
@@ -538,6 +723,7 @@ function makeGalaxyHawk(scale){
   g.beginPath(); g.arc(WX*0.8, WY, 5, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
 }
+
 function makePurpleGhost(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
@@ -559,6 +745,7 @@ function makePurpleGhost(scale){
   g.fillStyle='#fff'; g.beginPath(); g.arc(0,-10,6,0,Math.PI*2); g.fill();
   return c;
 }
+
 function makeGoldenShield(scale){
   const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
@@ -576,6 +763,7 @@ function makeGoldenShield(scale){
   g.beginPath(); g.arc(0,-15, 5, 0, Math.PI*2); g.fill();
   g.shadowBlur=0; return c;
 }
+
 function makeCrystalStar(scale){
   const sw=160, sh=180, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
   g.scale(scale,scale); g.translate(sw/2, sh/2);
@@ -597,6 +785,7 @@ function makeCrystalStar(scale){
   g.fillStyle=cpGrad; g.beginPath(); g.arc(0,0,24,0,Math.PI*2); g.fill();
   return c;
 }
+
 function makeMiniSprite(scale, shipId){
   const c=mkC(60*scale,70*scale),g=c.getContext('2d');
   g.scale(scale,scale); g.translate(30,35);
@@ -614,6 +803,7 @@ function makeMiniSprite(scale, shipId){
   g.fillStyle=cp; g.beginPath(); g.ellipse(0,-6, 4, 9, 0, 0, Math.PI*2); g.fill();
   return c;
 }
+
 function makeHexSprite(r){
   const size = r * 4.5;
   const c = mkC(size, size), g = c.getContext('2d');
@@ -654,6 +844,7 @@ function makeHexSprite(r){
   g.fillStyle = '#ffffff'; g.beginPath(); g.arc(-r*0.1, -r*0.1, r*0.15, 0, Math.PI*2); g.fill();
   return c;
 }
+
 function makeNebula(){
   const c=mkC(W||1, H||1); const g=c.getContext('2d'); g.fillStyle='#020006'; g.fillRect(0,0,W,H);
   for(let i=0;i<10;i++){
@@ -665,6 +856,7 @@ function makeNebula(){
   }
   return c;
 }
+
 function makeBossSprite(w,h,variant){
   const pad=100,c=mkC(w+pad*2,h+pad*2),g=c.getContext('2d'); g.translate((w+pad*2)/2,(h+pad*2)/2);
   const hue1=(variant*47)%360,hue2=(hue1+50)%360;
@@ -726,6 +918,7 @@ function makeBossSprite(w,h,variant){
   g.fillStyle='#fff'; g.beginPath(); g.arc(0,0,coreR*0.3,0,Math.PI*2); g.fill();
   return c;
 }
+
 function buildCaches(){
   caches.stars=[];
   for(let i=0;i<4;i++){
@@ -756,6 +949,7 @@ function buildCaches(){
   if(G.boss) caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
   makeStars();
 }
+
 function makeStars(){
   G.stars=[]; const count=Math.floor((W*H)/3000);
   for(let i=0;i<count;i++){
@@ -770,6 +964,7 @@ function makeStars(){
     });
   }
 }
+
 function resetPlayer(){
   if(!W || !H) return;
   player.x=W/2; player.y=H-90;
@@ -777,6 +972,7 @@ function resetPlayer(){
   player.hitCooldown=0;
   minis.forEach(m=>m.fireTimer=0);
 }
+
 function shoot(){
   if(G.fireCooldown>0)return;
   const wStats = getWeaponStats(store.equipped);
@@ -792,7 +988,6 @@ function shoot(){
   if(wStats.shots === 1) {
     fireB(player.x, player.y-30*s, 0, wStats.dmg, true);
   } else {
-    // محاسبه هوشمند زاویه پخش برای تعداد تیرهای بالا (4، 5، 7)
     const totalSpread = wStats.shots > 3 ? 0.35 : (wStats.shots === 3 ? 0.2 : 0.15);
     const startAngle = -totalSpread / 2;
     const angleStep = wStats.shots > 1 ? totalSpread / (wStats.shots - 1) : 0;
@@ -808,11 +1003,14 @@ function shoot(){
   
   if(G.particles.length<G.MAX_PARTICLES) burst(player.x,player.y-32*s,'#38b6ff',6,120);
 }
+
 function shootMini(m){
   const s=player.scale;
   G.miniBullets.push({x:player.x+m.offset*s,y:player.y+8*s,r:5*s,vy:-700,vx:0,dmg:1});
 }
+
 function enemyRadius(){return clamp(Math.min(W,H)*0.045,22,46);}
+
 function spawnEnemy(){
   const wave = 1 + Math.floor(G.score/1000);
   const r=enemyRadius()*rnd(0.9,1.1);
@@ -823,6 +1021,7 @@ function spawnEnemy(){
     rot:Math.random()*Math.PI, rotSpeed:rnd(-2,2), hp:1
   });
 }
+
 function spawnBoss(){
   if(G.bossPhase || G.boss) return;
   G.bossPhase=true;
@@ -833,17 +1032,20 @@ function spawnBoss(){
   caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
   showMessage('⚠️ خطر! رئیس نزدیک است ⚠️',1800);
 }
+
 function burst(x,y,color,n,spd){
   if(G.particles.length>=G.MAX_PARTICLES)n=Math.max(1,n>>1);
   for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2,s=Math.random()*spd+40; G.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rnd(.4,.9),max:.9,color,r:rnd(1.5,4)}); }
 }
 function shockwave(x,y,color,rMax){G.shockwaves.push({x,y,color,r:4,rMax,life:1,max:1});}
 function floatText(x,y,txt,color){G.floatTexts.push({x,y,txt,color,life:1.2,max:1.2});}
+
 let msgTimer=null;
 function showMessage(txt,dur=1600){
   const el=document.getElementById('message'); el.textContent=txt;el.classList.add('show');
   clearTimeout(msgTimer); msgTimer=setTimeout(()=>el.classList.remove('show'),dur);
 }
+
 function onDown(e){
   if(G.over||G.inLobby||!G.running)return;
   const t=e.touches?e.touches[0]:e;
@@ -860,11 +1062,13 @@ function onMove(e){
   if(e.cancelable)e.preventDefault();
 }
 const onUp=()=>G.touch.active=false;
+
 cv.addEventListener('touchstart',onDown,{passive:false}); cv.addEventListener('touchmove',onMove,{passive:false});
 cv.addEventListener('touchend',onUp); cv.addEventListener('touchcancel',onUp); cv.addEventListener('mousedown',onDown);
 addEventListener('mousemove',e=>{if(G.touch.active)onMove(e);}); addEventListener('mouseup',onUp);
 addEventListener('keydown',e=>{ if(e.code==='ArrowLeft'||e.code==='KeyA')G.keysLeft=true; if(e.code==='ArrowRight'||e.code==='KeyD')G.keysRight=true; if(e.code==='Space')G.keysFire=true; });
 addEventListener('keyup',e=>{ if(e.code==='ArrowLeft'||e.code==='KeyA')G.keysLeft=false; if(e.code==='ArrowRight'||e.code==='KeyD')G.keysRight=false; if(e.code==='Space')G.keysFire=false; });
+
 const heartsEls=['h1','h2','h3'].map(id=>document.getElementById(id));
 const scoreEl=document.getElementById('score');
 const coinsEl=document.getElementById('coins');
@@ -872,6 +1076,7 @@ const recordEl=document.getElementById('record');
 const tabsEl=document.getElementById('tabs');
 const uiEl=document.getElementById('ui');
 const lobbyEl=document.getElementById('lobby');
+
 function updateUI(){
   heartsEls.forEach((h,i)=>h.classList.toggle('dead',i>=G.lives));
   scoreEl.textContent='امتیاز '+G.score;
@@ -880,6 +1085,7 @@ function updateUI(){
   if(G.score>store.record)store.record=G.score;
   recordEl.textContent='رکورد '+store.record;
 }
+
 function drawLobbyShip(){
   const div=document.getElementById('lobbyShip');
   const shipId = store.equippedShip;
@@ -892,45 +1098,95 @@ function drawLobbyShip(){
   c.style.width='190px'; c.style.height='216px';
   div.appendChild(c);
 }
-const tabs=['tabGame','tabShop','tabRank','tabProfile'].map(id=>document.getElementById(id));
+
+// مدیریت تب‌های بالا (شامل لابی)
+const tabs = {
+  'tabLobby': document.getElementById('tabLobby'),
+  'tabGame': document.getElementById('tabGame'),
+  'tabShop': document.getElementById('tabShop'),
+  'tabRank': document.getElementById('tabRank'),
+  'tabProfile': document.getElementById('tabProfile')
+};
+
 function setTab(id){
-  tabs.forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  Object.values(tabs).forEach(t=>t.classList.remove('active'));
+  if(tabs[id]) tabs[id].classList.add('active');
 }
-tabs[0].addEventListener('click',()=>{
+
+tabs['tabLobby'].addEventListener('click',()=>{
+  setTab('tabLobby'); shopPanel.classList.remove('show'); simpleModal.classList.remove('show');
+  lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show');
+  G.inLobby = true; G.running = false;
+});
+
+tabs['tabGame'].addEventListener('click',()=>{
   setTab('tabGame'); shopPanel.classList.remove('show'); simpleModal.classList.remove('show');
-  if(G.inLobby){ lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); G.running=false; }
-  else if (G.over) { lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); }
-  else { lobbyEl.classList.add('hidden'); uiEl.classList.add('show'); G.running=true; }
+  if(G.inLobby){ 
+    lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); G.running=false; 
+  }
+  else if (G.over) { 
+    lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); 
+  }
+  else { 
+    lobbyEl.classList.add('hidden'); uiEl.classList.add('show'); G.running=true; 
+  }
 });
-tabs[1].addEventListener('click',()=>{
-  setTab('tabShop'); simpleModal.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show'); shopPanel.classList.add('show'); G.running=false; renderShop();
+
+tabs['tabShop'].addEventListener('click',()=>{
+  setTab('tabShop'); simpleModal.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show'); 
+  shopPanel.classList.add('show'); G.running=false; 
+  // اگر تب فعلی همراه بود و از قبل انتخاب شده بود دوباره رندر میشود
+  setShopTab(currentShopTab);
 });
-tabs[2].addEventListener('click', async () => {
-  setTab('tabRank'); shopPanel.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show');
-  const contentHTML = '<p style="color:#8ab2c8;">در حال دریافت اطلاعات...</p>';
-  showSimpleModal('🏆 رتبه بندی', contentHTML);
+
+// تابع جداول لیدربرد که با دکمه بروزرسانی هم فراخوانی میشه
+async function loadLeaderboard() {
+  smContent.innerHTML = '<p style="color:#8ab2c8;">در حال دریافت اطلاعات...</p>';
   try {
     const { data: lbData, error: lbError } = await sb.from('leaderboard').select('id, player_name, score, profile_id').order('score', { ascending: false }).limit(10);
     if (lbError) throw lbError;
-    if (!lbData || lbData.length === 0) { smContent.innerHTML = '<p style="color:#cdeaff;">هنوز رکوردی ثبت نشده! شما اولین نفر باشید.</p>'; return; }
+    
+    let refreshBtnHTML = `
+      <button class="refresh-btn" onclick="loadLeaderboard()">
+        <svg viewBox="0 0 24 24"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        بروزرسانی لیست
+      </button>
+    `;
+
+    if (!lbData || lbData.length === 0) { 
+      smContent.innerHTML = refreshBtnHTML + '<p style="color:#cdeaff;">هنوز رکوردی ثبت نشده! شما اولین نفر باشید.</p>'; 
+      return; 
+    }
+    
     const profileIds = lbData.filter(r => r.profile_id).map(r => r.profile_id);
     let avatarMap = {};
     if (profileIds.length > 0) {
       const { data: profs } = await sb.from('profiles').select('id, avatar_id').in('id', profileIds);
       if (profs) profs.forEach(p => avatarMap[p.id] = p.avatar_id);
     }
-    let tableHTML = `<table class="lb-table"><thead><tr><th>رتبه</th><th>بازیکن</th><th style="text-align:left;">امتیاز</th></tr></thead><tbody>`;
+    
+    let tableHTML = refreshBtnHTML + `<table class="lb-table"><thead><tr><th>رتبه</th><th>بازیکن</th><th style="text-align:left;">امتیاز</th></tr></thead><tbody>`;
+    
     lbData.forEach((row, i) => {
       const avatarEmoji = row.profile_id && avatarMap[row.profile_id] !== undefined ? AVATARS[avatarMap[row.profile_id]] : '👽';
       const name = row.player_name || 'ناشناس';
       tableHTML += `<tr class="lb-row" onclick="showPlayerProfile('${name}', ${row.score}, '${avatarEmoji}')"><td>${i + 1}</td><td><div style="display:flex;align-items:center;"><span class="lb-avatar">${avatarEmoji}</span>${name}</div></td><td>${row.score}</td></tr>`;
     });
-    tableHTML += `</tbody></table>`; smContent.innerHTML = tableHTML;
+    tableHTML += `</tbody></table>`; 
+    smContent.innerHTML = tableHTML;
   } catch (err) {
-    console.error(err); smContent.innerHTML = `<p style="color:#cdeaff;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
+    console.error(err); 
+    smContent.innerHTML = `<p style="color:#cdeaff;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
   }
+}
+window.loadLeaderboard = loadLeaderboard;
+
+tabs['tabRank'].addEventListener('click', async () => {
+  setTab('tabRank'); shopPanel.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show');
+  showSimpleModal('🏆 رتبه بندی', '<p style="color:#8ab2c8;">در حال دریافت اطلاعات...</p>');
+  await loadLeaderboard();
 });
+
 window.showPlayerProfile = function(name, score, avatar) {
   const profileHTML = `
     <div class="profile-header" style="margin-bottom:10px;">
@@ -938,11 +1194,12 @@ window.showPlayerProfile = function(name, score, avatar) {
       <div class="profile-info"><div class="profile-name">${name}</div><div class="profile-score">⭐ بالاترین امتیاز: ${score}</div></div>
     </div>
     <p style="color:#8ab2c8;font-size:13px;margin-top:15px;border-top:1px solid rgba(255,255,255,.1);padding-top:15px;">این بازیکن یکی از فرماندهان برتر کهکشان است 🚀</p>
-    <button onclick="tabs[2].click()" style="margin-top:15px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);color:#001018;border:none;padding:12px 25px;border-radius:12px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 0 15px rgba(24,168,255,.5);">🔙 بازگشت به جدول</button>
+    <button onclick="tabs['tabRank'].click()" style="margin-top:15px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);color:#001018;border:none;padding:12px 25px;border-radius:12px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 0 15px rgba(24,168,255,.5);">🔙 بازگشت به جدول</button>
   `;
   showSimpleModal('👤 پروفایل بازیکن', profileHTML);
 }
-tabs[3].addEventListener('click',()=>{
+
+tabs['tabProfile'].addEventListener('click',()=>{
   setTab('tabProfile'); shopPanel.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show');
   const urlParams = new URLSearchParams(window.location.search);
   const isOwner = urlParams.get('admin') === '1';
@@ -961,7 +1218,9 @@ tabs[3].addEventListener('click',()=>{
   }
   showSimpleModal('👤 پروفایل شما', profileHTML);
 });
+
 let tempAvatarSelection = null;
+
 window.onNameChange = function(newName) {
   if(newName.trim()) { store.playerName = newName.trim(); document.getElementById('mainName').textContent = newName.trim(); autoSaveProfile(); showToast('✅ اسم ذخیره شد!'); }
 }
@@ -975,28 +1234,36 @@ window.showRestoreInput = function() { const area = document.getElementById('res
 window.restoreProfile = async function() {
   const inputCode = document.getElementById('restoreCodeInput').value.trim().toUpperCase();
   if(!inputCode) { alert('لطفاً کد بازیابی را وارد کنید!'); return; }
-  if(inputCode === 'YAAX-8PUF') { store.recoveryCode = inputCode; store.coins = 999999999; updateUI(); tabs[3].click(); showToast('👑 سکه بی‌نهایت فعال شد!'); return; }
+  if(inputCode === 'YAAX-8PUF') { store.recoveryCode = inputCode; store.coins = 999999999; updateUI(); tabs['tabProfile'].click(); showToast('👑 سکه بی‌نهایت فعال شد!'); return; }
   try {
     const { data, error } = await sb.from('profiles').select('*').eq('recovery_code', inputCode).single();
     if (error || !data) { alert('❌ کد بازیابی نامعتبر است!'); return; }
     store.playerName = data.player_name; store.playerAvatar = data.avatar_id; store.recoveryCode = data.recovery_code; store.profileId = data.id; store.record = data.best_score;
-    updateUI(); tabs[3].click(); showToast('✅ اکانت بازیابی شد!');
+    updateUI(); tabs['tabProfile'].click(); showToast('✅ اکانت بازیابی شد!');
   } catch (err) { console.error(err); alert('❌ خطا در ارتباط با سرور!'); }
 }
+
 document.getElementById('startBtn').addEventListener('click',()=>{
   lobbyEl.classList.add('hidden'); G.inLobby=false;G.running=true;
-  tabsEl.classList.add('active'); uiEl.classList.add('show'); startGame();
+  tabsEl.classList.add('active'); uiEl.classList.add('show'); 
+  setTab('tabGame');
+  startGame();
 });
+
 ['lobbyShop','lobbyRank','lobbyProfile'].forEach((id,i)=>{
   document.getElementById(id).addEventListener('click',()=>{
     lobbyEl.classList.add('hidden'); tabsEl.classList.add('active');
-    if (i===0) tabs[1].click(); else if (i===1) tabs[2].click(); else tabs[3].click();
+    if (i===0) tabs['tabShop'].click(); 
+    else if (i===1) tabs['tabRank'].click(); 
+    else tabs['tabProfile'].click();
   });
 });
+
 const gameOverEl=document.getElementById('gameOver');
 const goScoreEl=document.getElementById('goScore');
 const goRewardEl=document.getElementById('goReward');
 const restartBtn=document.getElementById('restartBtn');
+
 function startGame(){
   G.running=true;G.over=false;G.ending=false; G.score=0;G.lives=3;G.runCoins=0;
   G.time=0;G.spawnTimer=0.4;G.spawnInterval=0.7; G.bossPhase=false;G.boss=null;G.nextBossScore=1000;
@@ -1008,6 +1275,7 @@ function startGame(){
   resetPlayer();updateUI();
   gameOverEl.classList.remove('show'); showMessage('🚀 بازی شروع شد',1800);
 }
+
 async function endGame(){
   if(G.ending) return;
   G.ending=true; G.running=false;G.over=true;
@@ -1031,10 +1299,12 @@ async function endGame(){
   }
   setTimeout(()=>{
     gameOverEl.classList.remove('show'); lobbyEl.classList.remove('hidden');
-    G.inLobby=true;G.ending=false;tabsEl.classList.remove('active');uiEl.classList.remove('show'); setTab('tabGame');
+    G.inLobby=true;G.ending=false;tabsEl.classList.remove('active');uiEl.classList.remove('show'); setTab('tabLobby');
   },4000);
 }
+
 restartBtn.addEventListener('click',()=>{gameOverEl.classList.remove('show');startGame();});
+
 function addEnemyKill(e){
   burst(e.x,e.y,'#ff5d8f',16,300); shockwave(e.x,e.y,'#ff5d8f',e.r*2.5);
   G.score+=30;store.coins+=3;G.runCoins+=3; floatText(e.x,e.y,'+30','#7ef0ff'); floatText(e.x,e.y-25,'+3💰','#ffe066');
@@ -1086,6 +1356,7 @@ function drawBoss(bs){
   ctx.fillStyle=g2;ctx.fillRect(W/2-150,44,300*pct,14); ctx.strokeStyle='#ff4d7d';ctx.lineWidth=2;ctx.strokeRect(W/2-150,44,300,14);
   ctx.restore();
 }
+
 function update(dt){
   if(G.over||G.ending) return;
   G.time+=dt;
@@ -1137,6 +1408,7 @@ function update(dt){
   for(let i=G.floatTexts.length-1;i>=0;i--){ const f=G.floatTexts[i]; f.y-=55*dt;f.life-=dt; if(f.life<=0)G.floatTexts.splice(i,1); }
   for(const st of G.stars){ st.y+=st.s*dt; if(st.y>H+4){st.y=-4;st.x=Math.random()*W;} st.twPhase += dt * st.twSpeed; }
 }
+
 function draw(){
   if(!caches.nebula) return;
   ctx.drawImage(caches.nebula,0,0,W,H);
@@ -1179,6 +1451,7 @@ function draw(){
   for(const f of G.floatTexts){ ctx.globalAlpha=f.life/f.max; ctx.fillStyle=f.color; ctx.shadowColor=f.color; ctx.shadowBlur=10; ctx.fillText(f.txt,f.x,f.y); }
   ctx.shadowBlur=0; ctx.globalAlpha=1; ctx.restore();
 }
+
 let last=performance.now();
 function loop(now){
   const dt=Math.min((now-last)/1000,0.05); last=now;
@@ -1186,6 +1459,7 @@ function loop(now){
   else{ for(const s of G.stars){ s.y+=s.s*dt*0.2; if(s.y>H){s.y=-4;s.x=Math.random()*W;} s.twPhase += dt * s.twSpeed; } }
   draw(); requestAnimationFrame(loop);
 }
+
 resize();resetPlayer();updateUI();
 requestAnimationFrame(loop);
 </script>
