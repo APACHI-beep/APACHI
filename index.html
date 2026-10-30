@@ -167,13 +167,6 @@
     cursor: pointer;
   }
 
-  .countries-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  .countries-header h3 { color: #facc15; }
   .country-item {
     background: #1e293b;
     padding: 12px 15px;
@@ -240,9 +233,16 @@
 // ============ تنظیمات Supabase ============
 const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============ لیست کامل کشورها و گروهک‌ها ============
+// این خط رو داخل try قرار دادم که اگه خطا داد، کل سایت خراب نشه
+let supabaseClient = null;
+try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch (e) {
+    console.error("خطا در اتصال به Supabase:", e);
+}
+
+// ============ لیست کامل کشورها ============
 const ALL_ENTITIES = [
   "ایران","افغانستان","عراق","ترکیه","پاکستان","عربستان","امارات","قطر","کویت","عمان",
   "بحرین","یمن","سوریه","لبنان","اردن","فلسطین","مصر","لیبی","تونس","الجزایر",
@@ -310,6 +310,11 @@ async function sendChat() {
   input.value = '';
   addMsg('user', text);
 
+  if (!supabaseClient) {
+    setTimeout(() => addMsg('bot', 'خطا در اتصال به دیتابیس ❌'), 400);
+    return;
+  }
+
   if (playerCountry) {
     setTimeout(() => addMsg('bot', 'شما قبلاً کشور گرفته‌اید. منتظر سیزن بعد باشید ⏳'), 400);
     return;
@@ -321,7 +326,7 @@ async function sendChat() {
     return;
   }
 
-  const { data: existing, error: exErr } = await supabase
+  const { data: existing, error: exErr } = await supabaseClient
     .from('player_countries')
     .select('country')
     .eq('country', found)
@@ -335,7 +340,7 @@ async function sendChat() {
 
   const code = Math.floor(1000 + Math.random() * 9000);
 
-  const { error } = await supabase.from('player_countries').insert({
+  const { error } = await supabaseClient.from('player_countries').insert({
     player_name: playerName,
     country: found,
     code: code
@@ -361,7 +366,12 @@ async function openCountries() {
   const list = document.getElementById('countriesList');
   list.innerHTML = '<p style="text-align:center;color:#888">در حال دریافت...</p>';
 
-  const { data, error } = await supabase.from('player_countries').select('country');
+  if (!supabaseClient) {
+     list.innerHTML = '<p style="text-align:center;color:red">خطا در اتصال به دیتابیس</p>';
+     return;
+  }
+
+  const { data, error } = await supabaseClient.from('player_countries').select('country');
   if (error) { console.error(error); }
 
   const takenSet = new Set((data || []).map(r => r.country));
@@ -377,4 +387,4 @@ async function openCountries() {
 </script>
 
 </body>
-</html>
+   </html>
