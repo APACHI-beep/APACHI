@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ایران وار | شروع ماجرا</title>
+<title>ایران وار | بازی متنی</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,209 +15,101 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 15px;
   }
-  .screen { display: none; width: 100%; max-width: 450px; animation: fadeIn 0.4s ease-out; }
-  .screen.active { display: block; }
-
+  .screen { display: none; width: 100%; max-width: 500px; height: 90vh; display: flex; flex-direction: column; }
+  .screen.active { display: flex; animation: fadeIn 0.3s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* استایل صفحه اول */
+  /* صفحه ورود */
   .welcome-box {
     background: rgba(30, 41, 59, 0.8);
-    padding: 30px 20px;
-    border-radius: 20px;
-    border: 1px solid #334155;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-  }
-  .welcome-title {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #facc15;
-    margin-bottom: 10px;
-    text-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
-  }
-  .welcome-sub { color: #94a3b8; margin-bottom: 20px; font-size: 0.95em; }
-  
-  .name-input {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1em;
-    border-radius: 12px;
-    border: 2px solid #334155;
-    background: #0f172a;
-    color: #fff;
-    text-align: center;
-    outline: none;
-    transition: 0.3s;
-  }
-  .name-input:focus { border-color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
-  
-  .btn {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1em;
-    border: none;
-    border-radius: 12px;
-    background: #facc15;
-    color: #0f172a;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: 0.2s;
-    box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
-  }
-  .btn:active { transform: scale(0.98); }
-  .btn:hover { background: #eab308; }
-
-  /* پیام خوش آمدگویی */
-  .congrats {
-    text-align: center;
-    font-size: 1.4em;
-    color: #4ade80;
-    line-height: 1.8;
-    background: rgba(20, 41, 29, 0.8);
     padding: 40px 20px;
     border-radius: 20px;
-    border: 1px solid #22c55e;
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
-  }
-
-  /* منوی اصلی */
-  .menu-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-  .menu-btn {
-    padding: 20px;
-    font-size: 1.2em;
-    border: 1px solid #facc15;
-    border-radius: 15px;
-    background: linear-gradient(145deg, #1e293b, #0f172a);
-    color: #facc15;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  }
-  .menu-btn:hover { background: #facc15; color: #0f172a; transform: translateY(-2px); }
-
-  /* استایل چت */
-  .chat-container {
-    background: #0f172a;
-    border-radius: 20px;
     border: 1px solid #334155;
-    overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    height: 70vh;
+    text-align: center;
+    margin: auto;
+    width: 100%;
+  }
+  .welcome-title { font-size: 2em; font-weight: bold; color: #facc15; margin-bottom: 15px; text-shadow: 0 0 20px rgba(250, 204, 21, 0.5); }
+  .welcome-sub { color: #94a3b8; margin-bottom: 25px; }
+  .name-input {
+    width: 100%; padding: 15px; font-size: 1.1em; border-radius: 12px; border: 2px solid #334155;
+    background: #0f172a; color: #fff; text-align: center; outline: none; transition: 0.3s;
+  }
+  .name-input:focus { border-color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+  .btn-main {
+    width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 12px;
+    background: #facc15; color: #0f172a; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s;
+  }
+  .btn-main:active { transform: scale(0.98); }
+
+  /* تبریک */
+  .congrats { text-align: center; font-size: 1.4em; color: #4ade80; background: rgba(20, 41, 29, 0.8); padding: 40px 20px; border-radius: 20px; margin: auto; width: 100%; border: 1px solid #22c55e; }
+
+  /* چت */
+  .chat-container {
+    background: #0f172a; border-radius: 20px; border: 1px solid #334155; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; height: 100%;
   }
   .chat-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #1e293b;
-    padding: 15px;
-    border-bottom: 1px solid #334155;
+    display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 15px; border-bottom: 1px solid #334155;
   }
-  .chat-header .title { font-weight: bold; color: #facc15; }
+  .chat-header .title { font-weight: bold; color: #facc15; font-size: 1.1em;}
   .back-btn { background: none; border: none; color: #facc15; font-size: 1.4em; cursor: pointer; }
-  
-  .chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .msg {
-    max-width: 85%;
-    padding: 12px 16px;
-    border-radius: 16px;
-    font-size: 0.95em;
-    line-height: 1.5;
-    word-wrap: break-word;
-  }
+  .chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95em; line-height: 1.5; word-wrap: break-word; }
   .msg.bot { background: #1e293b; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
   .msg.user { background: #facc15; color: #0f172a; align-self: flex-end; border-bottom-left-radius: 4px; font-weight: bold; }
-  
-  .chat-input-row {
-    display: flex;
-    gap: 10px;
-    padding: 15px;
-    background: #1e293b;
-    border-top: 1px solid #334155;
-  }
-  .chat-input-row input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #334155;
-    background: #0f172a;
-    color: #fff;
-    font-size: 1em;
-    outline: none;
-  }
-  .chat-input-row button {
-    padding: 0 20px;
-    background: #facc15;
-    color: #0f172a;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+  .chat-input-row { display: flex; gap: 10px; padding: 15px; background: #1e293b; border-top: 1px solid #334155; }
+  .chat-input-row input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; outline: none; }
+  .chat-input-row button { padding: 0 20px; background: #facc15; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-  /* استایل کشورها */
-  .countries-list {
-    height: 65vh;
-    overflow-y: auto;
-    padding: 10px;
-    background: #0f172a;
-    border-radius: 20px;
-    border: 1px solid #334155;
-  }
-  .country-item {
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #334155;
-    transition: 0.2s;
-  }
+  /* لیست کشورها */
+  .countries-list { flex: 1; overflow-y: auto; padding: 10px; background: #0f172a; border-radius: 20px; border: 1px solid #334155; }
+  .country-item { background: #1e293b; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #334155; }
   .country-item.taken { border-color: #22c55e; background: rgba(20, 41, 29, 0.5); }
-  .check { color: #22c55e; font-weight: bold; font-size: 1.2em; }
+  .check { color: #22c55e; font-weight: bold; }
+
+  /* منوی پایین */
+  .bottom-menu {
+    display: flex; justify-content: space-around; gap: 8px; margin-top: auto; padding-top: 20px; width: 100%;
+  }
+  .menu-btn {
+    flex: 1; padding: 10px 5px; font-size: 0.85em; border: 1px solid #facc15; border-radius: 10px;
+    background: #1e293b; color: #facc15; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center;
+  }
+  .menu-btn:hover { background: #facc15; color: #0f172a; }
 </style>
 </head>
 <body>
 
-<!-- صفحه ۱: ورود و نام -->
+<!-- صفحه ۱: ورود -->
 <div id="screen-welcome" class="screen active">
   <div class="welcome-box">
     <div class="welcome-title">به ایران وار خوش آمدید!</div>
-    <div class="welcome-sub">لطفاً اسم خود را وارد کنید تا ماجراجویی آغاز شود</div>
+    <div class="welcome-sub">لطفاً اسم خود را وارد کنید</div>
     <input id="nameInput" class="name-input" type="text" placeholder="نام شما..." autocomplete="off" onkeydown="if(event.key==='Enter') submitName()">
-    <button class="btn" onclick="submitName()">شروع بازی</button>
+    <button class="btn-main" onclick="submitName()">تایید</button>
   </div>
 </div>
 
 <!-- صفحه ۲: تبریک -->
 <div id="screen-congrats" class="screen">
-  <div class="congrats" id="congratsText"></div>
+  <div class="congrats" id="congratsText" style="margin: auto;"></div>
 </div>
 
-<!-- صفحه ۳: منو -->
+<!-- صفحه ۳: منوی اصلی -->
 <div id="screen-menu" class="screen">
-  <div class="menu-buttons">
-    <button class="menu-btn" onclick="openChat()">🧑‍💻 بات کشور گیری</button>
-    <button class="menu-btn" onclick="openCountries()">🌍 کشورهای دنیا</button>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+    <h2 style="color:#facc15; font-size:1.8em; text-align:center; margin-bottom:10px;">منوی اصلی</h2>
+    <p style="color:#94a3b8; text-align:center;">یک گزینه را از پایین انتخاب کنید</p>
+  </div>
+  <div class="bottom-menu">
+    <button class="menu-btn" onclick="openChat('country')">🧑‍💻 بات کشور گیری</button>
+    <button class="menu-btn" onclick="openCountries()">🌍 کشورها</button>
+    <button class="menu-btn" onclick="openChat('equipment')">🚀 بات تجهیزات</button>
   </div>
 </div>
 
@@ -225,12 +117,12 @@
 <div id="screen-chat" class="screen">
   <div class="chat-container">
     <div class="chat-header">
-      <span class="title">بات کشورگیری</span>
+      <span class="title" id="chatTitle">چت</span>
       <button class="back-btn" onclick="backToMenu()">↩</button>
     </div>
     <div class="chat-box" id="chatBox"></div>
     <div class="chat-input-row">
-      <input id="chatInput" type="text" placeholder="اسم کشور..." autocomplete="off" onkeydown="if(event.key==='Enter') sendChat()">
+      <input id="chatInput" type="text" placeholder="پیام خود را بنویسید..." autocomplete="off" onkeydown="if(event.key==='Enter') sendChat()">
       <button onclick="sendChat()">ارسال</button>
     </div>
   </div>
@@ -239,21 +131,20 @@
 <!-- صفحه ۵: کشورها -->
 <div id="screen-countries" class="screen">
   <div class="chat-header" style="border-radius: 20px; margin-bottom: 10px;">
-    <span class="title">🌍 کشورهای دنیا</span>
+    <span class="title">🌍 کشورهای دنیا و گروهک‌ها</span>
     <button class="back-btn" onclick="backToMenu()">↩</button>
   </div>
   <div class="countries-list" id="countriesList"></div>
 </div>
 
 <script>
-// ============ اتصال به دیتابیس ============
+// ============ اتصال به Supabase ============
 const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
-let db = null;
-try { db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) { console.log("DB offline mode"); }
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============ لیست کشورها ============
-const ALL_COUNTRIES = [
+// ============ لیست کشورها و گروهک‌ها ============
+const ALL_ENTITIES = [
   "ایران","افغانستان","عراق","ترکیه","پاکستان","عربستان","امارات","قطر","کویت","عمان",
   "بحرین","یمن","سوریه","لبنان","اردن","فلسطین","مصر","لیبی","تونس","الجزایر",
   "مراکش","سودان","اتیوپی","سومالی","کنیا","تانزانیا","اوگاندا","نیجریه","غنا","سنگال",
@@ -268,42 +159,94 @@ const ALL_COUNTRIES = [
   "استرالیا","نیوزیلند","فیجی","پاپوآ گینه نو","سودان جنوبی","اریتره","جیبوتی","گابن",
   "کنگو","رواندا","بوروندی","مالاوی","زامبیا","بوتسوانا","ناميبيا","لسوتو","اسواتینی","گینه",
   "سیرالئون","لیبریا","ساحل عاج","بورکینافاسو","توگو","بنین","گامبیا","گینه بیسائو","کیپ ورد","سیشل",
-  "موریس","کومور","سائوتومه","برونئی","تیمور شرقی","مالدیو","بوتان","نپال","بنگلادش","سریلانکا"
+  "موریس","کومور","سائوتومه","برونئی","تیمور شرقی","مالدیو","بوتان","نپال","بنگلادش","سریلانکا",
+  "داعش", "حزب‌الله", "طالبان", "القاعده", "حماس", "انصارالله"
 ];
 
+// ============ دیتابیس تجهیزات (بر اساس قدرت کشورها) ============
+const EQUIPMENT_DB = {
+  "ایران": "موشک بالستیک خیبرشکن، پهپاد شاهد ۱۳۶، تانک کرار",
+  "آمریکا": "جنگنده F-35، ناو هواپیمابر جورج واشنگتن، بمب‌افکن B-2",
+  "روسیه": "موشک هایپرسونیک آوانگارد، تانک T-14 آرماتا، جنگنده سوخو ۵۷",
+  "چین": "جنگنده J-20، موشک دانگ‌فنگ ۴۱، ناوشکن تایپ ۰۵۵",
+  "اسرائیل": "سیستم گنبد آهنین، جنگنده F-35I، ماهواره جاسوسی اوفک",
+  "انگلیس": "تانک چلنجر ۲، جنگنده تایفون، زیردریایی هسته‌ای آستوت",
+  "فرانسه": "جنگنده رافال، ناو هواپیمابر شارل دوگل، موشک اگزوست",
+  "داعش": "تویوتا هایلوکس مسلح، سلاح‌های سبک انفرادی، بمب‌های دست‌ساز",
+  "حزب‌الله": "موشک‌های نقطه‌زن فاتح ۱۱۰، پهپادهای انتحاری، راکت‌های کاتیوشا",
+  "طالبان": "هلیکوپتر بلک هاوک، سلاح‌های باقی‌مانده ارتش آمریکا، زره‌پوش هاموی"
+};
+
+// ============ متغیرهای بازی ============
 let playerName = '';
-let hasCountry = false;
+let playerCountry = null;
+let playerCode = null;
+let hasEquipment = false;
+let currentChatType = 'country'; // country یا equipment
+
+// ============ حافظه مرورگر (LocalStorage) ============
+function saveGame() {
+  localStorage.setItem('iranwar_data', JSON.stringify({
+    name: playerName,
+    country: playerCountry,
+    code: playerCode,
+    hasEquipment: hasEquipment
+  }));
+}
+
+function loadGame() {
+  const data = localStorage.getItem('iranwar_data');
+  if (data) {
+    const parsed = JSON.parse(data);
+    if (parsed.name) {
+      playerName = parsed.name;
+      playerCountry = parsed.country;
+      playerCode = parsed.code;
+      hasEquipment = parsed.hasEquipment || false;
+      showScreen('screen-menu');
+    }
+  }
+}
 
 // ============ ناوبری ============
-function show(id) {
+function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function backToMenu() { show('screen-menu'); }
+function backToMenu() { showScreen('screen-menu'); }
 
 // ============ ثبت نام ============
 function submitName() {
   const name = document.getElementById('nameInput').value.trim();
-  if (!name) {
-    alert('لطفاً یک اسم واقعی یا مستعار وارد کن!');
-    return;
-  }
+  if (!name) { alert('لطفاً اسم خود را وارد کنید'); return; }
   playerName = name;
+  saveGame();
+  
   document.getElementById('congratsText').innerHTML = 
     `🎉 <b>${name}</b> عزیز،<br><br>تبریک می‌گم!<br>به دنیای <span style="color:#facc15">ایران وار</span> خوش اومدی.`;
   
-  show('screen-congrats');
-  
-  // بعد از ۲.۵ ثانیه میره به منو
-  setTimeout(() => show('screen-menu'), 2500);
+  showScreen('screen-congrats');
+  setTimeout(() => showScreen('screen-menu'), 2500);
 }
 
-// ============ چت بات ============
-function openChat() {
-  show('screen-chat');
+// ============ چت ============
+function openChat(type) {
+  currentChatType = type;
+  showScreen('screen-chat');
+  
+  const title = document.getElementById('chatTitle');
   const box = document.getElementById('chatBox');
-  if (box.children.length === 0) {
-    addMsg('bot', `سلام ${playerName}! 👋 خوش اومدی. اسم یک کشور رو بفرست تا برات ثبت کنم.`);
+  
+  if (type === 'country') {
+    title.textContent = '🧑‍💻 بات کشورگیری';
+    if (box.children.length === 0) {
+      addMsg('bot', `سلام ${playerName}! 👋 اسم یک کشور یا گروهک رو بفرست تا برات ثبت کنم.`);
+    }
+  } else if (type === 'equipment') {
+    title.textContent = '🚀 بات تجهیزات';
+    if (box.children.length === 0) {
+      addMsg('bot', `سلام ${playerName} خوش اومدی 👋<br>کد کشور خودت رو بده تا تجهیزات کشورت رو بهت بدم 🚀`);
+    }
   }
 }
 
@@ -311,7 +254,7 @@ function addMsg(role, text) {
   const box = document.getElementById('chatBox');
   const div = document.createElement('div');
   div.className = 'msg ' + role;
-  div.innerHTML = text; // از innerHTML برای پشتیبانی از استایل استفاده میکنیم
+  div.innerHTML = text;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
@@ -321,71 +264,112 @@ async function sendChat() {
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
-  
   addMsg('user', text);
-  
-  // بررسی اینکه آیا قبلا گرفته یا نه
-  if (hasCountry) {
+
+  if (currentChatType === 'country') {
+    handleCountryChat(text);
+  } else {
+    handleEquipmentChat(text);
+  }
+}
+
+// ============ منطق بات کشورگیری ============
+async function handleCountryChat(text) {
+  if (playerCountry) {
     setTimeout(() => addMsg('bot', 'شما قبلاً کشور گرفته‌اید. منتظر سیزن بعد باشید ⏳'), 400);
     return;
   }
 
-  // پیدا کردن کشور در لیست
-  const found = ALL_COUNTRIES.find(c => c === text);
+  const found = ALL_ENTITIES.find(e => e === text);
   if (!found) {
     setTimeout(() => addMsg('bot', 'کشور یافت نشد ❌'), 400);
     return;
   }
 
-  // بررسی و ثبت در دیتابیس
-  if (db) {
-    try {
-      const { data: existing } = await db.from('player_countries').select('country').eq('country', found).maybeSingle();
-      
-      if (existing) {
-        setTimeout(() => addMsg('bot', 'این کشور قبلاً توسط بازیکن دیگری گرفته شده است ❌'), 400);
-        return;
-      }
-
-      const code = Math.floor(1000 + Math.random() * 9000);
-      const { error } = await db.from('player_countries').insert([{ player_name: playerName, country: found, code: code }]);
-      
-      if (error) throw error;
-      
-      hasCountry = true;
-      setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅'), 400);
-      setTimeout(() => addMsg('bot', `🔑 کد اختصاصی شما: <b>${code}</b>`), 900);
-      setTimeout(() => addMsg('bot', 'منتظر سیزن بعد باشید ⏳'), 1400);
-
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => addMsg('bot', 'خطا در ثبت اطلاعات ❌'), 400);
+  try {
+    const { data: existing } = await db.from('player_countries').select('country').eq('country', found).maybeSingle();
+    
+    if (existing) {
+      setTimeout(() => addMsg('bot', 'این کشور از قبل گرفته شده است ❌'), 400);
+      return;
     }
-  } else {
-    // حالت آفلاین برای تست
-    hasCountry = true;
+
     const code = Math.floor(1000 + Math.random() * 9000);
-    setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅ (حالت آزمایشی)'), 400);
+    const { error } = await db.from('player_countries').insert([{ player_name: playerName, country: found, code: code }]);
+    
+    if (error) throw error;
+    
+    playerCountry = found;
+    playerCode = code;
+    saveGame(); // ذخیره در حافظه مرورگر
+
+    setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅'), 400);
     setTimeout(() => addMsg('bot', `🔑 کد اختصاصی شما: <b>${code}</b>`), 900);
+    setTimeout(() => addMsg('bot', 'منتظر سیزن بعد باشید ⏳'), 1400);
+
+  } catch (err) {
+    console.error(err);
+    setTimeout(() => addMsg('bot', 'خطا در ثبت اطلاعات ❌'), 400);
+  }
+}
+
+// ============ منطق بات تجهیزات ============
+async function handleEquipmentChat(inputCode) {
+  if (hasEquipment) {
+    setTimeout(() => addMsg('bot', 'شما قبلاً تجهیزات خود را دریافت کرده‌اید. ⏳'), 400);
+    return;
+  }
+
+  if (!playerCountry || !playerCode) {
+    setTimeout(() => addMsg('bot', 'شما هنوز کشوری نگرفته‌اید! اول از بات کشورگیری یک کشور بگیرید ❌'), 400);
+    return;
+  }
+
+  if (parseInt(inputCode) !== playerCode) {
+    setTimeout(() => addMsg('bot', 'کد اشتباه است! کدی که بات کشورگیری به شما داد را وارد کنید ❌'), 400);
+    return;
+  }
+
+  // پیدا کردن تجهیزات بر اساس کشور
+  let equipment = EQUIPMENT_DB[playerCountry];
+  if (!equipment) {
+    equipment = "تجهیزات پایه نظامی، سلاح‌های سبک و مهمات تاکتیکی";
+  }
+
+  try {
+    await db.from('equipment_claims').insert([{ 
+      player_name: playerName, 
+      country: playerCountry, 
+      equipment: equipment 
+    }]);
+
+    hasEquipment = true;
+    saveGame();
+
+    setTimeout(() => addMsg('bot', `کد تایید شد ✅<br>کشور شما: <b>${playerCountry}</b>`), 400);
+    setTimeout(() => addMsg('bot', `🚀 تجهیزات شما:<br><span style="color:#22c55e">${equipment}</span>`), 900);
+    setTimeout(() => addMsg('bot', 'موفق باشی فرمانده! 🫡'), 1400);
+
+  } catch (err) {
+    console.error(err);
+    setTimeout(() => addMsg('bot', 'خطا در دریافت تجهیزات ❌'), 400);
   }
 }
 
 // ============ صفحه کشورها ============
 async function openCountries() {
-  show('screen-countries');
+  showScreen('screen-countries');
   const list = document.getElementById('countriesList');
   list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">در حال دریافت اطلاعات...</p>';
 
   let takenSet = new Set();
-  if (db) {
-    try {
-      const { data } = await db.from('player_countries').select('country');
-      if (data) takenSet = new Set(data.map(r => r.country));
-    } catch(e) { console.log(e); }
-  }
+  try {
+    const { data } = await db.from('player_countries').select('country');
+    if (data) takenSet = new Set(data.map(r => r.country));
+  } catch(e) { console.log(e); }
 
   list.innerHTML = '';
-  ALL_COUNTRIES.forEach(c => {
+  ALL_ENTITIES.forEach(c => {
     const isTaken = takenSet.has(c);
     const div = document.createElement('div');
     div.className = 'country-item' + (isTaken ? ' taken' : '');
@@ -393,6 +377,9 @@ async function openCountries() {
     list.appendChild(div);
   });
 }
+
+// ============ شروع بازی ============
+loadGame(); // چک کردن اینکه بازیکن قبلا اومده یا نه
 </script>
 
 </body>
