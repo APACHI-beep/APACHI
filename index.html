@@ -2,1466 +2,379 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>تیراندازی فضایی 🚀</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Vazirmatn:wght@600;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ایران وار</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Vazirmatn',sans-serif;touch-action:none;user-select:none}
-  canvas{display:block;width:100%;height:100%}
-  
-  /* نوار تب‌های بالا */
-  #tabs{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;gap:6px;padding:8px;z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;background:linear-gradient(180deg,rgba(0,10,25,.95),transparent);flex-wrap:wrap}
-  #tabs.active{opacity:1;pointer-events:auto}
-  .tab{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:14px;font-weight:800;font-size:12px;color:#9fd4ec;background:rgba(15,35,60,.75);border:1px solid rgba(90,170,220,.4);cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.3)}
-  .tab svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .tab.active{color:#001018;background:linear-gradient(180deg,#a8f3ff,#2bb5ff);border-color:#a8f3ff;box-shadow:0 0 20px rgba(56,200,255,.9),inset 0 0 10px rgba(255,255,255,.5)}
-  .tab:active{transform:scale(.95)}
-
-  #toast{position:fixed;top:-50px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#0fb,#008f70);color:#fff;padding:12px 24px;border-radius:30px;font-weight:bold;font-size:15px;box-shadow:0 5px 25px rgba(0,255,187,0.6);z-index:999;transition:top .4s cubic-bezier(.2,1.4,.4,1);pointer-events:none;display:flex;align-items:center;gap:8px}
-  #toast.show{top:20px}
-
-  #ui{position:fixed;inset:0;pointer-events:none;padding:80px 12px 12px;z-index:15;display:none}
-  #ui.show{display:block}
-  #rightUI{position:absolute;top:80px;right:12px;display:flex;gap:8px}
-  .heart{width:26px;height:26px;background:radial-gradient(circle at 35% 30%,#fff0f3,#ff4d6d 22%,#d8002f 60%,#5a0016);clip-path:path('M12,22 C-2,12 -2,4 5,2 C9,1 12,3 12,6 C12,3 15,1 19,2 C26,4 26,12 12,22 Z');filter:drop-shadow(0 0 12px #ff4d6d);transition:opacity .3s}
-  .heart.dead{opacity:0}
-  #leftUI{position:absolute;top:80px;left:12px;display:flex;flex-direction:column;gap:6px}
-  .pill{padding:6px 14px;border-radius:14px;background:linear-gradient(180deg,rgba(40,80,140,.7),rgba(10,20,40,.85));border:1px solid rgba(120,210,255,.6);box-shadow:inset 0 0 10px rgba(120,210,255,.3),0 3px 15px rgba(56,200,255,.4);backdrop-filter:blur(8px);font-family:'Orbitron',sans-serif;font-weight:800;white-space:nowrap;direction:ltr}
-  .recordBox{color:#ffd84d;font-size:13px;text-shadow:0 0 10px #ff9d00}
-  .scoreBox{color:#dff4ff;font-size:18px;text-shadow:0 0 10px #38c8ff}
-  .coinBox{color:#ffe27a;font-size:18px;text-shadow:0 0 10px #ffb300}
-
-  #lobby{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 16px 100px;z-index:10;transition:opacity .4s;overflow:hidden;
-    background:radial-gradient(circle at 50% 18%, rgba(0,90,180,.45), transparent 55%),radial-gradient(circle at 80% 85%, rgba(140,30,220,.35), transparent 60%),radial-gradient(circle at 15% 75%, rgba(0,180,255,.22), transparent 60%),radial-gradient(circle at 50% 50%, #000814 0%, #000 100%);}
-  #lobby.hidden{opacity:0;pointer-events:none}
-  #lobby::before{content:'';position:absolute;inset:0;background-image:radial-gradient(2.4px 2.4px at 15% 25%,#fff,transparent),radial-gradient(2px 2px at 82% 18%,#fff,transparent),radial-gradient(1.5px 1.5px at 35% 65%,#cfe8ff,transparent),radial-gradient(2.4px 2.4px at 70% 75%,#fff,transparent),radial-gradient(1.2px 1.2px at 55% 35%,#fff,transparent),radial-gradient(1.8px 1.8px at 10% 85%,#fff,transparent),radial-gradient(1.2px 1.2px at 90% 55%,#cfe8ff,transparent),radial-gradient(1.8px 1.8px at 25% 15%,#fff,transparent),radial-gradient(2.2px 2.2px at 60% 90%,#fff,transparent),radial-gradient(1.6px 1.6px at 45% 8%,#fff,transparent),radial-gradient(1.4px 1.4px at 5% 45%,#fff,transparent),radial-gradient(1.8px 1.8px at 95% 25%,#fff,transparent);opacity:.9;animation:tw 4s ease-in-out infinite alternate}
-  @keyframes tw{0%{opacity:.55;transform:scale(1)}100%{opacity:.98;transform:scale(1.06)}}
-
-  #lobbyTitle{font-size:clamp(26px,7vw,42px);font-weight:900;color:#eaf7ff;text-align:center;text-shadow:0 0 10px #38c8ff,0 0 28px #0090ff,0 0 60px #0060ff,0 0 100px rgba(0,120,255,.7);letter-spacing:5px;font-family:'Orbitron',sans-serif;z-index:2;margin-bottom:8px}
-  #lobbyShip{position:relative;z-index:2;animation:fl 3s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(255,80,120,.65)) drop-shadow(0 0 60px rgba(255,40,90,.45));margin:6px 0 10px}
-  @keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-
-  .lobby-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;z-index:10}
-  #startBtn{cursor:pointer;border:none;padding:16px 0;font-size:21px;font-weight:900;color:#001018;border-radius:50px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);box-shadow:0 0 30px #18a8ff,0 0 70px rgba(24,168,255,.8),inset 0 -4px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.4);letter-spacing:2px;transition:transform .1s}
-  #startBtn:active{transform:scale(.95)}
-  .secondary-btns{display:flex;gap:10px}
-  .secBtn{flex:1;cursor:pointer;border:1px solid rgba(90,170,220,.55);background:linear-gradient(180deg,rgba(20,45,75,.85),rgba(8,18,35,.9));color:#a9d8f0;padding:12px 0;border-radius:16px;font-size:12px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:6px;backdrop-filter:blur(6px);transition:transform .1s}
-  .secBtn:active{transform:scale(.95)}
-  .secBtn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  #supportBtn{position:absolute;bottom:16px;right:16px;background:linear-gradient(180deg,rgba(30,60,90,0.9),rgba(10,20,40,0.95));border:1px solid #38c8ff;color:#38c8ff;padding:10px 14px;border-radius:30px;font-weight:800;font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 0 15px rgba(56,200,255,0.4);z-index:12;transition:all 0.2s}
-  #supportBtn:active{transform:scale(0.95);box-shadow:0 0 25px rgba(56,200,255,0.8)}
-  #supportBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-  #message{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%) scale(.7);color:#fff;font-size:clamp(20px,6vw,34px);font-weight:900;font-family:'Orbitron',sans-serif;text-shadow:0 0 15px #ff2b6d,0 0 35px #ff2b6d,0 0 70px #ff2b6d;opacity:0;transition:all .45s cubic-bezier(.2,1.4,.4,1);pointer-events:none;white-space:nowrap;z-index:25;letter-spacing:2px;text-align:center;max-width:95vw}
-  #message.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-
-  /* ====== استایل جدید فروشگاه (تب‌های مربعی) ====== */
-  #shopPanel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.95),rgba(0,0,0,.98));backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:25;padding-top:64px}
-  #shopPanel.show{opacity:1;pointer-events:auto}
-  
-  .shop-tabs{display:flex;gap:12px;margin-bottom:20px;width:90%;max-width:400px;justify-content:center;flex-shrink:0}
-  
-  .shop-tab{
-    flex: 1;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Tahoma, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #eee;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 6px;
-    background: linear-gradient(180deg, rgba(25,45,75,.6), rgba(10,20,40,.85));
-    border: 1.5px solid rgba(90,170,220,.4);
-    border-radius: 16px;
-    color: #7a9bb5;
-    font-weight: 800;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .2s;
-    box-shadow: 0 4px 10px rgba(0,0,0,.4);
+    align-items: center;
+    padding: 15px;
   }
-  .shop-tab svg {
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: all .2s;
-  }
-  .shop-tab.active {
-    background: linear-gradient(180deg, rgba(56,200,255,.2), rgba(10,30,60,.9));
-    border-color: #38c8ff;
-    color: #a8f3ff;
-    box-shadow: 0 0 20px rgba(56,200,255,.4), inset 0 0 15px rgba(56,200,255,.15);
-  }
-  .shop-tab.active svg {
-    filter: drop-shadow(0 0 8px #38c8ff);
-    transform: scale(1.1);
-  }
+  .screen { display: none; width: 100%; max-width: 500px; }
+  .screen.active { display: block; }
 
-  #shopContent{width:90%;max-width:400px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:40px;scrollbar-width:none}
-  #shopContent::-webkit-scrollbar{display:none}
-  
-  .coming-soon-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    background: linear-gradient(135deg, rgba(30,10,50,.8), rgba(5,12,26,.95));
-    border: 1.5px dashed rgba(200,100,255,.5);
-    border-radius: 20px;
+  .welcome-title {
+    font-size: 2em;
+    font-weight: bold;
+    color: #facc15;
     text-align: center;
-    box-shadow: inset 0 0 30px rgba(200,100,255,.1);
+    margin-bottom: 20px;
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.6);
   }
-  .coming-soon-box .icon {
-    font-size: 60px;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 20px rgba(200,100,255,.6));
-    animation: floatIcon 3s ease-in-out infinite;
-  }
-  @keyframes floatIcon {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .coming-soon-box .title {
-    color: #e0c0ff;
-    font-size: 22px;
-    font-weight: 900;
+  .welcome-sub {
+    text-align: center;
+    color: #cbd5e1;
     margin-bottom: 10px;
-    text-shadow: 0 0 15px rgba(200,100,255,.6);
+    font-size: 1em;
   }
-  .coming-soon-box .desc {
-    color: #a090b0;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .weapon-card{background:linear-gradient(135deg,rgba(8,25,20,.95),rgba(12,30,25,.95));border:1px solid rgba(50,200,100,.6);border-radius:18px;padding:16px;position:relative;box-shadow:0 6px 20px rgba(0,0,0,.6), inset 0 0 20px rgba(50,200,100,.1)}
-  .w-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-  .w-name{color:#fff;font-size:19px;font-weight:900;text-shadow:0 2px 6px rgba(0,0,0,.8)}
-  .w-info{color:#8ab2c8;font-size:12px;font-weight:600;background:rgba(0,0,0,.3);padding:4px 8px;border-radius:8px}
-  .w-actions{display:flex;gap:8px;margin-top:12px;align-items:stretch}
-  .w-btn{flex:1;border:none;border-radius:14px;padding:12px;font-size:14px;font-weight:900;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'Vazirmatn',sans-serif;transition:transform .15s}
-  .w-btn:active{transform:scale(.95)}
-  .btn-equip{background:transparent;border:2px solid #0fb;color:#0fb;box-shadow:inset 0 0 15px rgba(0,255,187,.2);flex:0.8}
-  .btn-buy{background:linear-gradient(180deg,#ff4df0,#a010a0);box-shadow:0 0 20px rgba(255,77,240,.6);font-size:13px}
-  .btn-buy.disabled{background:#333;box-shadow:none;opacity:0.6;cursor:not-allowed}
-  .btn-equip.active{background:linear-gradient(180deg,#0fb,#008f70);color:#001018;box-shadow:0 0 20px #0fb;border-color:#0fb}
-  .price-row{font-size:12px;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;color:#ffd700;text-shadow:0 1px 3px #000}
-  .max-level{color:#ffd700;font-size:15px;text-shadow:0 0 12px #ffd700;font-weight:900;margin-top:10px;text-align:center;display:flex;align-items:center;justify-content:center;flex:1}
-  
-  .ship-card{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
-  .ship-info{display:flex;flex-direction:column;align-items:flex-start;gap:6px;flex:1}
-  .ship-img-box{width:74px;height:74px;border-radius:16px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-right:12px;box-shadow:inset 0 0 20px rgba(0,0,0,.8)}
-  .ship-img-box canvas{width:100%;height:100%;object-fit:contain}
-
-  #simpleModal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,40,90,.8),rgba(0,0,0,.98));backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40;overflow-y:auto;padding:70px 16px 30px}
-  #simpleModal.show{opacity:1;pointer-events:auto}
-  .simple-card{background:linear-gradient(180deg,rgba(25,45,75,.98),rgba(5,12,26,.98));border:1px solid #38c8ff;border-radius:24px;padding:26px 20px;box-shadow:0 0 60px rgba(56,200,255,.6),inset 0 0 40px rgba(56,200,255,.15);text-align:center;max-width:92vw;width:380px;margin:auto;position:relative}
-  .simple-card h2{color:#a8f0ff;font-size:24px;margin-bottom:16px;text-shadow:0 0 20px #38c8ff;font-weight:900}
-  .simple-card p{color:#cdeaff;font-size:15px;margin-bottom:20px;line-height:1.8}
-
-  .profile-header{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:22px}
-  .profile-avatar-big{width:78px;height:78px;border-radius:50%;border:3px solid #38c8ff;box-shadow:0 0 25px rgba(56,200,255,.6);display:flex;align-items:center;justify-content:center;font-size:40px;background:rgba(0,0,0,.3)}
-  .profile-info{text-align:right}
-  .profile-name{color:#fff;font-size:22px;font-weight:900;text-shadow:0 0 15px rgba(255,255,255,.4)}
-  .profile-score{color:#ffd700;font-size:16px;font-weight:800;text-shadow:0 0 15px rgba(255,215,0,.6);display:flex;align-items:center;gap:6px;margin-top:6px}
-
-  .input-group{text-align:right;margin-bottom:18px}
-  .input-group label{display:block;color:#8ab2c8;font-size:13px;margin-bottom:8px;font-weight:bold}
-  .input-group input{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(56,200,255,.4);background:rgba(0,0,0,.6);color:#fff;font-family:'Vazirmatn',sans-serif;font-size:16px;text-align:center;outline:none;transition:all .2s}
-  .input-group input:focus{border-color:#38c8ff;box-shadow:0 0 15px rgba(56,200,255,.4);background:rgba(0,0,0,.8)}
-
-  .avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px;margin-bottom:20px}
-  .avatar-item{font-size:24px;width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(255,255,255,.05);border:2px solid transparent;cursor:pointer;transition:all .2s}
-  .avatar-item.active{border-color:#38c8ff;background:rgba(56,200,255,.25);box-shadow:0 0 15px rgba(56,200,255,.6);transform:scale(1.05)}
-  .avatar-item:active{transform:scale(.9)}
-
-  .recovery-box{background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,.5);border-radius:16px;padding:16px;margin-top:18px;margin-bottom:18px;box-shadow:inset 0 0 20px rgba(255,215,0,.05)}
-  .recovery-title{color:#ffd700;font-weight:bold;font-size:14px;margin-bottom:10px;text-shadow:0 0 10px rgba(255,215,0,.4)}
-  .recovery-code{background:rgba(0,0,0,.6);color:#fff;font-family:'Orbitron',sans-serif;font-size:20px;letter-spacing:3px;padding:12px;border-radius:10px;display:flex;justify-content:center;align-items:center;gap:12px;border:1px solid rgba(255,215,0,.2)}
-  .restore-btn{background:transparent;color:#ff4d6d;border:1.5px solid rgba(255,77,109,.7);padding:12px 20px;border-radius:10px;font-weight:bold;font-family:'Vazirmatn';cursor:pointer;width:100%;font-size:14px;margin-top:12px;transition:all .2s}
-  .restore-btn:active{background:rgba(255,77,109,.2)}
-
-  /* لیدربرد */
-  .refresh-btn {
-    background: linear-gradient(180deg, #38c8ff, #0077ff);
+  .name-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1em;
+    border-radius: 10px;
+    border: 2px solid #334155;
+    background: #1e293b;
     color: #fff;
+    text-align: center;
+    margin-top: 15px;
+    outline: none;
+  }
+  .name-input:focus { border-color: #facc15; }
+  .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1em;
     border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: 900;
-    font-size: 14px;
-    font-family: 'Vazirmatn', sans-serif;
+    border-radius: 10px;
+    background: #facc15;
+    color: #0f172a;
+    font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(56,200,255,.5), inset 0 -3px 0 rgba(0,0,0,.2);
-    transition: all .2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 15px;
+    margin-top: 15px;
+    transition: transform 0.15s;
   }
-  .refresh-btn:active {
-    transform: scale(.95);
-    box-shadow: 0 0 25px rgba(56,200,255,.8), inset 0 -3px 0 rgba(0,0,0,.2);
-  }
-  .refresh-btn svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  .btn:hover { transform: scale(1.02); }
+
+  .congrats {
+    text-align: center;
+    font-size: 1.3em;
+    color: #4ade80;
+    line-height: 1.8;
   }
 
-  .lb-table{width:100%;border-collapse:collapse;margin-top:12px;direction:rtl}
-  .lb-table th{color:#8ab2c8;font-size:13px;padding:10px;border-bottom:2px solid rgba(56,200,255,.3);text-align:right;font-weight:800}
-  .lb-table td{color:#fff;font-size:14px;padding:12px 8px;border-bottom:1px solid rgba(255,255,255,.05);font-weight:700}
-  .lb-table tr:nth-child(1) td{color:#ffd700;text-shadow:0 0 12px rgba(255,215,0,.6);font-size:16px}
-  .lb-table tr:nth-child(2) td{color:#e0e0e0}
-  .lb-table tr:nth-child(3) td{color:#cd7f32}
-  .lb-table td:last-child{text-align:left;font-family:'Orbitron',sans-serif;color:#38c8ff;text-shadow:0 0 10px rgba(56,200,255,.4)}
-  .lb-avatar{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:rgba(56,200,255,0.15);font-size:16px;margin-left:8px;border:1px solid rgba(56,200,255,0.4);box-shadow:0 0 10px rgba(56,200,255,.2)}
-  .lb-row{cursor:pointer;transition:all .15s}
-  .lb-row:active{background:rgba(56,200,255,.1);transform:scale(.99)}
-
-  #gameOver{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(0,20,40,.95),rgba(0,0,0,.99));backdrop-filter:blur(10px);transition:opacity .3s;z-index:30;opacity:0;pointer-events:none;padding:20px}
-  #gameOver.show{opacity:1;pointer-events:auto}
-  .go-title{font-size:clamp(28px,8vw,44px);font-weight:900;color:#ff3355;text-shadow:0 0 25px #ff1744,0 0 60px #ff1744;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-family:'Orbitron',sans-serif}
-  .go-title svg{width:38px;height:38px;fill:#ff3355}
-  .go-sub{color:#fff;font-size:18px;font-weight:800;margin-bottom:20px}
-  .go-score{color:#fff;font-size:20px;font-weight:800;margin-bottom:14px;display:flex;gap:8px}
-  .go-reward{color:#ffe000;font-size:20px;font-weight:800;margin-bottom:36px;display:flex;gap:10px;align-items:center;text-shadow:0 0 20px #ffe000}
-  .go-reward svg{width:26px;height:26px;fill:#ffe000;filter:drop-shadow(0 0 10px #ffe000)}
-  #restartBtn{cursor:pointer;border:none;padding:16px 60px;font-size:20px;font-weight:900;color:#fff;border-radius:50px;background:linear-gradient(180deg,#ff5588,#e91e63);box-shadow:0 0 30px #e91e63,inset 0 -4px 0 rgba(0,0,0,.25);letter-spacing:2px;transition:transform .1s}
-  #restartBtn:active{transform:scale(.95)}
-  .reset-btn{background:linear-gradient(180deg,#ff4d4d,#cc0000);color:#fff;border:none;padding:14px 20px;border-radius:14px;font-weight:900;font-size:15px;margin-top:12px;cursor:pointer;width:100%;box-shadow:0 0 20px rgba(255,0,0,0.5);font-family:'Vazirmatn',sans-serif}
-  .reset-btn:active{transform:scale(0.95)}
-  .server-reset-btn{background:linear-gradient(180deg,#ff8800,#cc5500);box-shadow:0 0 20px rgba(255,136,0,0.5)}
-
-  .support-back-btn {
-    margin-top: 20px;
-    background: linear-gradient(180deg, rgba(40,80,140,.8), rgba(10,20,40,.9));
-    border: 1.5px solid #38c8ff;
-    color: #a8f3ff;
-    padding: 12px 30px;
+  .menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  .menu-btn {
+    padding: 20px;
+    font-size: 1.2em;
+    border: 2px solid #facc15;
     border-radius: 14px;
-    font-weight: 900;
-    font-size: 15px;
-    font-family: 'Vazirmatn', sans-serif;
+    background: #1e293b;
+    color: #facc15;
+    font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 0 20px rgba(56,200,255,.4), inset 0 0 15px rgba(56,200,255,.1);
-    transition: all .2s;
-    display: inline-flex;
+    transition: 0.2s;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    width: 100%;
+    gap: 10px;
   }
-  .support-back-btn:active {
-    transform: scale(.95);
-    box-shadow: 0 0 30px rgba(56,200,255,.8), inset 0 0 20px rgba(56,200,255,.3);
+  .menu-btn:hover { background: #facc15; color: #0f172a; }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e293b;
+    padding: 12px 15px;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid #334155;
+  }
+  .chat-header .title { font-weight: bold; color: #facc15; }
+  .back-btn {
+    background: none;
+    border: none;
+    color: #facc15;
+    font-size: 1.4em;
+    cursor: pointer;
+    padding: 0 8px;
+  }
+  .chat-box {
+    background: #0f172a;
+    height: 60vh;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .msg {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 0.95em;
+    line-height: 1.6;
+    word-wrap: break-word;
+  }
+  .msg.bot {
+    background: #1e293b;
+    color: #e2e8f0;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.user {
+    background: #facc15;
+    color: #0f172a;
+    align-self: flex-end;
+    border-bottom-left-radius: 4px;
+    font-weight: bold;
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    background: #1e293b;
+    border-radius: 0 0 10px 10px;
+  }
+  .chat-input-row input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #fff;
+    font-size: 1em;
+    outline: none;
+  }
+  .chat-input-row button {
+    padding: 0 18px;
+    background: #facc15;
+    color: #0f172a;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .countries-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .countries-header h3 { color: #facc15; }
+  .country-item {
+    background: #1e293b;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #334155;
+  }
+  .country-item.taken {
+    border-color: #22c55e;
+    background: #14291d;
+  }
+  .check { color: #22c55e; font-weight: bold; }
+  .countries-list {
+    height: 60vh;
+    overflow-y: auto;
+    padding-right: 5px;
   }
 </style>
 </head>
 <body>
-<canvas id="cv"></canvas>
-<div id="toast">✅ کپی شد!</div>
 
-<!-- تب‌های نوار بالا (اضافه شدن لابی) -->
-<div id="tabs">
-  <div class="tab" id="tabLobby"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>لابی</span></div>
-  <div class="tab active" id="tabGame"><svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1.2"/><circle cx="18.5" cy="13" r="1.2"/><path d="M17.5 2c2 3 2 6-1 9l-2-2c2-2 2-5 3-7z"/><path d="M6 2C4 5 4 8 7 11l2-2C7 7 7 4 6 2z"/></svg><span>بازی</span></div>
-  <div class="tab" id="tabShop"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>فروشگاه</span></div>
-  <div class="tab" id="tabRank"><svg viewBox="0 0 24 24"><path d="M8 21l4-9 4 9M12 12v9M6 3h12v6a6 6 0 0 1-12 0V3z"/></svg><span>رتبه بندی</span></div>
-  <div class="tab" id="tabProfile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg><span>پروفایل</span></div>
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-title">به ایران وار خوش آمدید!</div>
+  <div class="welcome-sub">لطفاً اسم خود را وارد کنید</div>
+  <input id="nameInput" class="name-input" type="text" placeholder="نام شما..." autocomplete="off">
+  <button class="btn" onclick="submitName()">تایید</button>
 </div>
 
-<div id="ui">
-  <div id="rightUI"><div class="heart" id="h1"></div><div class="heart" id="h2"></div><div class="heart" id="h3"></div></div>
-  <div id="leftUI">
-    <div class="pill recordBox" id="record">رکورد 0</div>
-    <div class="pill scoreBox" id="score">امتیاز 0</div>
-    <div class="pill coinBox" id="coins">💰 0</div>
+<div id="screen-congrats" class="screen">
+  <div class="congrats" id="congratsText"></div>
+</div>
+
+<div id="screen-menu" class="screen">
+  <div class="menu-buttons">
+    <button class="menu-btn" onclick="openChat()">🧑‍💻 بات کشور گیری</button>
+    <button class="menu-btn" onclick="openCountries()">🌍 کشورها</button>
   </div>
 </div>
 
-<div id="message"></div>
-
-<div id="shopPanel">
-  <!-- تب‌های مربعی فروشگاه -->
-  <div class="shop-tabs">
-    <div class="shop-tab active" id="stWeapons">
-      <svg viewBox="0 0 24 24"><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r="1.2"/><circle cx="18.5" cy="13" r="1.2"/><path d="M17.5 2c2 3 2 6-1 9l-2-2c2-2 2-5 3-7z"/><path d="M6 2C4 5 4 8 7 11l2-2C7 7 7 4 6 2z"/></svg>
-      <span>اسلحه‌ها</span>
-    </div>
-    <div class="shop-tab" id="stShips">
-      <svg viewBox="0 0 24 24"><path d="M12 2L15 9H22L16 14L18 21L12 17L6 21L8 14L2 9H9L12 2Z"/></svg>
-      <span>سفینه‌ها</span>
-    </div>
-    <div class="shop-tab" id="stCompanions">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-      <span>همراه 🛸</span>
-    </div>
+<div id="screen-chat" class="screen">
+  <div class="chat-header">
+    <span class="title">بات کشورگیری</span>
+    <button class="back-btn" onclick="backToMenu()">↩</button>
   </div>
-  <div id="shopContent"></div>
-</div>
-
-<div id="simpleModal">
-  <div class="simple-card">
-    <h2 id="smTitle">🏆</h2>
-    <div id="smContent" style="color:#cdeaff;font-size:15px;line-height:1.8;min-height:50px;">در حال دریافت اطلاعات...</div>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="chat-input-row">
+    <input id="chatInput" type="text" placeholder="اسم کشور یا گروهک..." autocomplete="off" onkeydown="if(event.key==='Enter') sendChat()">
+    <button onclick="sendChat()">ارسال</button>
   </div>
 </div>
 
-<div id="lobby">
-  <div id="lobbyTitle">تیراندازی فضایی 🚀</div>
-  <div id="lobbyShip"></div>
-  <div class="lobby-btns">
-    <button id="startBtn">شروع بازی</button>
-    <div class="secondary-btns">
-      <div class="secBtn" id="lobbyShop"><svg viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>فروشگاه</div>
-      <div class="secBtn" id="lobbyRank"><svg viewBox="0 0 24 24"><path d="M8 21l4-9 4 9M12 12v9M6 3h12v6a6 6 0 0 1-12 0V3z"/></svg>رتبه بندی</div>
-      <div class="secBtn" id="lobbyProfile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/></svg>پروفایل</div>
-    </div>
+<div id="screen-countries" class="screen">
+  <div class="chat-header">
+    <span class="title">🌍 کشورهای دنیا</span>
+    <button class="back-btn" onclick="backToMenu()">↩</button>
   </div>
-  <div id="supportBtn" onclick="showSupportModal()">
-    <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-    <span>پشتیبانی</span>
-  </div>
+  <div class="countries-list" id="countriesList"></div>
 </div>
 
-<div id="gameOver">
-  <div class="go-title"><svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5H22L15.8 13.8L18.3 21.5L12 17.2L5.7 21.5L8.2 13.8L2 9.5H9.5L12 2Z"/></svg>بازی تمام شد!</div>
-  <div class="go-sub">جونات تموم شد...</div>
-  <div class="go-score">امتیاز این دست: <span id="goScore">0</span></div>
-  <div class="go-reward">پاداش سکه: <span id="goReward">0</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffd700" stroke="#b8860b" stroke-width="2"/></svg></div>
-  <button id="restartBtn">شروع مجدد</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ============ تنظیمات Supabase ============
 const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-window.copyToClipboard = function(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => showToast('✅ آیدی کپی شد!')).catch(() => fallbackCopy(text));
-  } else { fallbackCopy(text); }
-};
-
-function fallbackCopy(text) {
-  const textArea = document.createElement("textarea");
-  textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-9999px";
-  document.body.appendChild(textArea); textArea.focus(); textArea.select();
-  try { document.execCommand('copy'); showToast('✅ آیدی کپی شد!'); } catch (err) { showToast('❌ کپی نشد!'); }
-  document.body.removeChild(textArea);
-}
-
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
-}
-</script>
-
-<script>
-const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d', { alpha:false });
-let W=0,H=0,DPR=1;
-const player={x:0,y:0,scale:1,hitCooldown:0};
-const minis=[{offset:-60,fireTimer:0},{offset:60,fireTimer:0}];
-const rnd=(a,b)=>a+Math.random()*(b-a);
-const clamp=(v,a,b)=>v<a?a:v>b?b:v;
-
-function resize(){
-  DPR = Math.min(window.devicePixelRatio || 1, 3);
-  W = innerWidth; H = innerHeight;
-  cv.width = W*DPR|0; cv.height = H*DPR|0;
-  cv.style.width = W+'px'; cv.style.height = H+'px';
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-  ctx.imageSmoothingQuality = 'high';
-  buildCaches(); drawLobbyShip(); resetPlayer();
-}
-addEventListener('resize', resize);
-
-const WEAPONS = [
-  { id:'laser1', name:'لیزر ساده', price:0, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:1, color:'#38b6ff' },
-  { id:'double', name:'شلیک دوقلو', price:50, baseUpgPrice:200, upgMul:1.5, baseDmg:1, shots:2, color:'#ffd84d' },
-  { id:'red', name:'لیزر سرخ', price:150, baseUpgPrice:300, upgMul:1.5, baseDmg:2, shots:1, color:'#ff3355' },
-  { id:'triple', name:'سه گانه', price:300, baseUpgPrice:400, upgMul:1.5, baseDmg:1, shots:3, color:'#00ff00' },
-  { id:'plasma', name:'پلاسما', price:600, baseUpgPrice:200, upgMul:1.8, baseDmg:4, shots:1, color:'#ff00ff' },
-  { id:'quad', name:'چهارگانه', price:1000, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:4, color:'#00ffff' },
-  { id:'neon_mg', name:'مسلسل نئونی', price:1800, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:1, color:'#ffff00', isAuto:true },
-  { id:'space_shotgun', name:'شاتگان فضایی', price:3000, baseUpgPrice:200, upgMul:1.8, baseDmg:1, shots:5, color:'#ff8800' },
-  { id:'supernova', name:'ابرنواختر', price:8000, baseUpgPrice:500, upgMul:1.8, baseDmg:2, shots:7, color:'#ff0044' }
+// ============ لیست کامل کشورها و گروهک‌ها ============
+const ALL_ENTITIES = [
+  "ایران","افغانستان","عراق","ترکیه","پاکستان","عربستان","امارات","قطر","کویت","عمان",
+  "بحرین","یمن","سوریه","لبنان","اردن","فلسطین","مصر","لیبی","تونس","الجزایر",
+  "مراکش","سودان","اتیوپی","سومالی","کنیا","تانزانیا","اوگاندا","نیجریه","غنا","سنگال",
+  "آفریقای جنوبی","زیمبابوه","آنگولا","موزامبیک","ماداگاسکار","کامرون","چاد","نیجر","مالی","موریتانی",
+  "روسیه","اوکراین","بلاروس","لهستان","آلمان","فرانسه","انگلیس","ایتالیا","اسپانیا","پرتغال",
+  "هلند","بلژیک","سوئیس","اتریش","سوئد","نروژ","فنلاند","دانمارک","یونان","بلغارستان",
+  "رومانی","مجارستان","چک","اسلواکی","صربستان","کرواسی","بوسنی","آلبانی","مقدونیه","اسلوونی",
+  "چین","ژاپن","کره جنوبی","کره شمالی","هند","اندونزی","مالزی","تایلند","ویتنام","فیلیپین",
+  "سنگاپور","برمه","کامبوج","لائوس","مغولستان","قزاقستان","ازبکستان","ترکمنستان","قرقیزستان","تاجیکستان",
+  "آذربایجان","ارمنستان","گرجستان","آمریکا","کانادا","مکزیک","برزیل","آرژانتین","شیلی","پرو",
+  "کلمبیا","ونزوئلا","اکوادور","بولیوی","پاراگوئه","اروگوئه","کوبا","جامائیکا","هائیتی","دومینیکن",
+  "استرالیا","نیوزیلند","فیجی","پاپوآ گینه نو","سودان جنوبی","اریتره","جیبوتی","گابن",
+  "کنگو","رواندا","بوروندی","مالاوی","زامبیا","بوتسوانا","ناميبيا","لسوتو","اسواتینی","گینه",
+  "سیرالئون","لیبریا","ساحل عاج","بورکینافاسو","توگو","بنین","گامبیا","گینه بیسائو","کیپ ورد","سیشل",
+  "موریس","کومور","سائوتومه","برونئی","تیمور شرقی","مالدیو","بوتان","نپال","بنگلادش",
+  "سریلانکا"
 ];
 
-const SHIPS = [
-  { id:'red_wing', name:'بال قرمز', price:0 },
-  { id:'galaxy_hawk', name:'شاهین کهکشانی', price:1000 },
-  { id:'purple_ghost', name:'شبح بنفش', price:1500 },
-  { id:'golden_shield', name:'سپر طلایی', price:2500 },
-  { id:'crystal_star', name:'ستاره کریستالی', price:5000 }
-];
+// ============ وضعیت بازی ============
+let playerName = '';
+let playerCountry = null;
+let playerCode = null;
 
-const AVATARS = ['👽','🤖','👾','👻','🚀','⭐','💎','🛸','👨‍🚀','👩‍🚀'];
-
-const store = {
-  get record(){ return +(localStorage.sp_record||0); },
-  set record(v){ localStorage.sp_record = v; },
-  get coins(){
-    if(localStorage.getItem('sp_recovery_code') === 'YAAX-8PUF') return 999999999;
-    return +(localStorage.sp_coins||0);
-  },
-  set coins(v){
-    if(localStorage.getItem('sp_recovery_code') === 'YAAX-8PUF') return;
-    localStorage.sp_coins = v;
-  },
-  get weapons(){
-    let w = JSON.parse(localStorage.getItem('sp_weapons') || '{}');
-    if(!w['laser1']) w['laser1'] = { level: 1, owned: true };
-    return w;
-  },
-  saveWeapons(w){ localStorage.setItem('sp_weapons', JSON.stringify(w)); },
-  get equipped(){ return localStorage.sp_equipped || 'laser1'; },
-  set equipped(id){ localStorage.sp_equipped = id; },
-  get ships(){
-    let s = JSON.parse(localStorage.getItem('sp_ships') || '{}');
-    if(!s['red_wing']) s['red_wing'] = { owned: true };
-    return s;
-  },
-  saveShips(s){ localStorage.setItem('sp_ships', JSON.stringify(s)); },
-  get equippedShip(){ return localStorage.sp_equipped_ship || 'red_wing'; },
-  set equippedShip(id){ localStorage.sp_equipped_ship = id; },
-  get playerName(){
-    let name = localStorage.getItem('sp_player_name');
-    if (!name) { name = 'Player_' + Math.floor(Math.random()*9000+1000); localStorage.setItem('sp_player_name', name); }
-    return name;
-  },
-  set playerName(v){ localStorage.setItem('sp_player_name', v); },
-  get playerAvatar(){ return +(localStorage.getItem('sp_player_avatar')||0); },
-  set playerAvatar(v){ localStorage.setItem('sp_player_avatar', v); },
-  get recoveryCode(){
-    let code = localStorage.getItem('sp_recovery_code');
-    if (!code || code === 'هنوز ذخیره نشده') { code = genCode(); localStorage.setItem('sp_recovery_code', code); setTimeout(() => autoSaveProfile(), 100); }
-    return code;
-  },
-  set recoveryCode(v){ localStorage.setItem('sp_recovery_code', v); },
-  get profileId(){ return localStorage.getItem('sp_profile_id') || ''; },
-  set profileId(v){ localStorage.setItem('sp_profile_id', v); }
-};
-
-function genCode() {
-  const p1 = Math.random().toString(36).substring(2, 6).toUpperCase();
-  const p2 = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `${p1}-${p2}`;
+// ============ توابع صفحه ============
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-async function autoSaveProfile() {
-  const pName = store.playerName; const pAvatar = store.playerAvatar; const pCode = store.recoveryCode;
-  try {
-    if(store.profileId) {
-      const { error } = await sb.from('profiles').update({ player_name: pName, avatar_id: pAvatar, recovery_code: pCode, best_score: store.record }).eq('id', store.profileId);
-      if(error) throw error;
-    } else {
-      const { data, error } = await sb.from('profiles').insert([{ player_name: pName, avatar_id: pAvatar, recovery_code: pCode, best_score: store.record }]).select();
-      if(error) throw error;
-      if(data && data.length > 0) store.profileId = data[0].id;
-    }
-    if (store.profileId) { await sb.from('leaderboard').update({ player_name: pName, profile_id: store.profileId }).eq('profile_id', store.profileId); }
-  } catch (err) { console.warn('خطا در ذخیره خودکار:', err); }
+function submitName() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) { alert('لطفاً اسم خود را وارد کنید'); return; }
+  playerName = name;
+  document.getElementById('congratsText').innerHTML =
+    `${name} عزیز،<br>تبریک می‌گم به ایران وار خوش اومدی 🎉`;
+  showScreen('screen-congrats');
+  setTimeout(() => showScreen('screen-menu'), 2500);
 }
 
-function resetAllData() {
-  if(confirm('⚠️ آیا مطمئنید؟ تمام اطلاعات بازی روی این دستگاه پاک می‌شود.')) { localStorage.clear(); alert('✅ ریست شد!'); location.reload(); }
-}
+function backToMenu() { showScreen('screen-menu'); }
 
-async function clearAllLeaderboard() {
-  if(confirm('⚠️ آیا مطمئنید می‌خواهید تمام رکوردهای سرور را پاک کنید؟')) {
-    try {
-      const { error } = await sb.from('leaderboard').delete().gte('score', 0);
-      if (error) throw error; showToast('✅ رکوردهای سرور پاک شد!');
-    } catch (err) { console.error(err); showToast('❌ خطا در پاک کردن!'); }
+// ============ چت بات ============
+function openChat() {
+  showScreen('screen-chat');
+  const box = document.getElementById('chatBox');
+  if (box.children.length === 0) {
+    addMsg('bot', `سلام ${playerName}! 👋 اسم یک کشور یا گروهک رو بفرست تا بررسی کنم.`);
   }
 }
 
-function getWeaponStats(id) {
-  const base = WEAPONS.find(w=>w.id===id) || WEAPONS[0];
-  const st = store.weapons[id] || {level:1};
-  const dmg = base.baseDmg + (st.level - 1);
-  return { ...base, level: st.level, dmg };
+function addMsg(type, text) {
+  const box = document.getElementById('chatBox');
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
 }
 
-function calcUpgPrice(w) {
-  const st = store.weapons[w.id] || {level:1};
-  if(st.level >= 10) return 0;
-  return Math.floor(w.baseUpgPrice * Math.pow(w.upgMul, st.level - 1));
-}
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addMsg('user', text);
 
-const shopPanel = document.getElementById('shopPanel');
-const shopContent = document.getElementById('shopContent');
-const stWeapons = document.getElementById('stWeapons');
-const stShips = document.getElementById('stShips');
-const stCompanions = document.getElementById('stCompanions');
-const simpleModal = document.getElementById('simpleModal');
-const smTitle = document.getElementById('smTitle');
-const smContent = document.getElementById('smContent');
-
-let currentShopTab = 'weapons';
-
-function renderShop() {
-  shopContent.innerHTML = '';
-  
-  if(currentShopTab === 'companions') {
-    // حالت همراه (به زودی)
-    shopContent.innerHTML = `
-      <div class="coming-soon-box">
-        <div class="icon">🛸</div>
-        <div class="title">همراه‌های فضایی</div>
-        <div class="desc">به زودی می‌توانید همراه‌های وفادار و قدرتمند را به خدمه خود اضافه کنید.<br>منتظر بمانید...</div>
-      </div>
-    `;
+  if (playerCountry) {
+    setTimeout(() => addMsg('bot', 'شما قبلاً کشور گرفته‌اید. منتظر سیزن بعد باشید ⏳'), 400);
     return;
   }
 
-  if(currentShopTab === 'weapons') {
-    WEAPONS.forEach(w => {
-      const st = store.weapons[w.id]; const owned = st && st.owned; const level = st ? st.level : 0;
-      const equipped = store.equipped === w.id; const upgPrice = calcUpgPrice(w); const isMax = level >= 10; const stats = getWeaponStats(w.id);
-      const card = document.createElement('div'); card.className = 'weapon-card';
-      let html = `<div class="w-header"><div class="w-name">${w.name}</div><div class="w-info">دمیج: ${owned ? stats.dmg : w.baseDmg} | تیر: ${w.shots}</div></div>`;
-      html += `<div class="w-actions">`;
-      if(!owned) {
-        const canBuy = store.coins >= w.price;
-        html += `<button class="w-btn btn-buy ${canBuy?'':'disabled'}" data-action="buy" data-id="${w.id}" style="flex:1;">خرید<div class="price-row">💰 ${w.price}</div></button>`;
-      } else {
-        html += `<button class="w-btn btn-equip ${equipped?'active':''}" data-action="equip" data-id="${w.id}">${equipped ? 'مجهز' : 'مجهز کردن'}</button>`;
-        if(isMax) { html += `<div class="max-level">سطح ۱۰ (حداکثر)</div>`; }
-        else {
-          const canUpg = store.coins >= upgPrice;
-          html += `<button class="w-btn btn-buy ${canUpg?'':'disabled'}" data-action="upgrade" data-id="${w.id}" style="flex:1;">🎇 ارتقا - سطح ${level}<div class="price-row">💰 ${upgPrice}</div></button>`;
-        }
-      }
-      html += `</div>`; card.innerHTML = html; shopContent.appendChild(card);
-    });
-  } else if(currentShopTab === 'ships') {
-    SHIPS.forEach(s => {
-      const sData = store.ships[s.id]; const owned = sData && sData.owned; const equipped = store.equippedShip === s.id;
-      const card = document.createElement('div'); card.className = 'weapon-card ship-card';
-      let html = `<div class="ship-info"><div class="w-name">${s.name}</div><div class="w-info">ظاهر سفینه</div></div><div class="ship-img-box" id="img-${s.id}"></div>`;
-      let btnsHtml = `<div style="display:flex;flex-direction:column;gap:8px;width:120px;margin-right:12px;">`;
-      if(!owned) {
-        const canBuy = store.coins >= s.price;
-        btnsHtml += `<button class="w-btn btn-buy ${canBuy?'':'disabled'}" data-action="buy-ship" data-id="${s.id}" style="padding:14px 10px;width:100%;">خرید<div class="price-row">💰 ${s.price}</div></button>`;
-      } else {
-        btnsHtml += `<button class="w-btn btn-equip ${equipped?'active':''}" data-action="equip-ship" data-id="${s.id}" style="padding:14px 10px;width:100%;">${equipped ? 'مجهز شده' : 'مجهز کردن'}</button>`;
-      }
-      btnsHtml += `</div>`; card.innerHTML = html + btnsHtml; shopContent.appendChild(card);
-    });
-    setTimeout(() => {
-      SHIPS.forEach(s => {
-        const box = document.getElementById('img-'+s.id);
-        if(box && caches.ships[s.id]) {
-          const c = mkC(caches.ships[s.id].width, caches.ships[s.id].height);
-          const g = c.getContext('2d'); g.drawImage(caches.ships[s.id], 0, 0);
-          c.style.width = '100%'; c.style.height = '100%'; box.appendChild(c);
-        }
-      });
-    }, 10);
+  const found = ALL_ENTITIES.find(e => e === text);
+  if (!found) {
+    setTimeout(() => addMsg('bot', 'کشور یافت نشد ❌'), 400);
+    return;
   }
 
-  shopContent.querySelectorAll('.w-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const action = btn.dataset.action; const id = btn.dataset.id;
-      if(btn.classList.contains('disabled')) return;
-      if(action === 'buy') {
-        const w = WEAPONS.find(x=>x.id===id);
-        if(store.coins >= w.price) { store.coins -= w.price; let wData = store.weapons; wData[id] = { level: 1, owned: true }; store.saveWeapons(wData); store.equipped = id; updateUI(); renderShop(); }
-      } else if(action === 'equip') { store.equipped = id; renderShop(); }
-      else if(action === 'upgrade') {
-        const w = WEAPONS.find(x=>x.id===id); const price = calcUpgPrice(w);
-        if(store.coins >= price) { store.coins -= price; let wData = store.weapons; wData[id].level++; store.saveWeapons(wData); updateUI(); renderShop(); }
-      } else if(action === 'buy-ship') {
-        const s = SHIPS.find(x=>x.id===id);
-        if(store.coins >= s.price) { store.coins -= s.price; let sData = store.ships; sData[id] = { owned: true }; store.saveShips(sData); store.equippedShip = id; updateUI(); renderShop(); drawLobbyShip(); }
-      } else if(action === 'equip-ship') { store.equippedShip = id; renderShop(); drawLobbyShip(); }
-    });
+  const { data: existing, error: exErr } = await supabase
+    .from('player_countries')
+    .select('country')
+    .eq('country', found)
+    .maybeSingle();
+
+  if (exErr) { console.error(exErr); }
+  if (existing) {
+    setTimeout(() => addMsg('bot', 'این کشور قبلاً گرفته شده است ❌'), 400);
+    return;
+  }
+
+  const code = Math.floor(1000 + Math.random() * 9000);
+
+  const { error } = await supabase.from('player_countries').insert({
+    player_name: playerName,
+    country: found,
+    code: code
+  });
+
+  if (error) {
+    console.error(error);
+    setTimeout(() => addMsg('bot', 'خطا در ثبت. دوباره تلاش کنید ❌'), 400);
+    return;
+  }
+
+  playerCountry = found;
+  playerCode = code;
+
+  setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅'), 400);
+  setTimeout(() => addMsg('bot', `کد شما این است: ${code}`), 900);
+  setTimeout(() => addMsg('bot', 'منتظر سیزن بعد باشید ⏳'), 1400);
+}
+
+// ============ صفحه کشورها ============
+async function openCountries() {
+  showScreen('screen-countries');
+  const list = document.getElementById('countriesList');
+  list.innerHTML = '<p style="text-align:center;color:#888">در حال دریافت...</p>';
+
+  const { data, error } = await supabase.from('player_countries').select('country');
+  if (error) { console.error(error); }
+
+  const takenSet = new Set((data || []).map(r => r.country));
+
+  list.innerHTML = '';
+  ALL_ENTITIES.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'country-item' + (takenSet.has(c) ? ' taken' : '');
+    div.innerHTML = `<span>${c}</span>` + (takenSet.has(c) ? '<span class="check">✅</span>' : '');
+    list.appendChild(div);
   });
 }
-
-// مدیریت کلیک روی تب‌های مربعی فروشگاه
-function setShopTab(tabName) {
-  currentShopTab = tabName;
-  stWeapons.classList.remove('active');
-  stShips.classList.remove('active');
-  stCompanions.classList.remove('active');
-  
-  if(tabName === 'weapons') stWeapons.classList.add('active');
-  else if(tabName === 'ships') stShips.classList.add('active');
-  else if(tabName === 'companions') stCompanions.classList.add('active');
-  
-  renderShop();
-}
-
-stWeapons.addEventListener('click', () => setShopTab('weapons'));
-stShips.addEventListener('click', () => setShopTab('ships'));
-stCompanions.addEventListener('click', () => setShopTab('companions'));
-
-function showSimpleModal(title, contentHTML) {
-  smTitle.textContent = title; smContent.innerHTML = contentHTML; simpleModal.classList.add('show'); G.running = false;
-}
-
-window.showSupportModal = function() {
-  const supportHTML = `
-    <div style="text-align:center;">
-      <div style="font-size:50px; margin-bottom:10px; filter:drop-shadow(0 0 15px #38c8ff);">🎧</div>
-      <p style="color:#eaf7ff; font-size:16px; font-weight:bold; margin-bottom:15px;">برای ارتباط با پشتیبانی، به آیدی زیر در پیام‌رسان سروش پیام دهید:</p>
-      <div style="background:rgba(0,0,0,0.6); border:1px solid #38c8ff; border-radius:12px; padding:12px; font-family:'Orbitron', sans-serif; font-size:22px; color:#fff; letter-spacing:2px; margin-bottom:20px; box-shadow:inset 0 0 15px rgba(56,200,255,0.3);">APACHI1@</div>
-      <button onclick="copyToClipboard('APACHI1@')" class="btn-buy" style="width:100%; padding:15px; border-radius:14px; font-size:16px; font-weight:900; font-family:'Vazirmatn'; cursor:pointer; border:none; background:linear-gradient(180deg,#a8f3ff,#18a8ff); color:#001018; box-shadow:0 0 20px rgba(24,168,255,0.6);">📋 کپی کردن آیدی</button>
-      <button onclick="closeSupportModal()" class="support-back-btn">🔙 بازگشت به لابی</button>
-    </div>
-  `;
-  showSimpleModal('پشتیبانی بازی', supportHTML);
-}
-
-window.closeSupportModal = function() {
-  simpleModal.classList.remove('show');
-  lobbyEl.classList.remove('hidden');
-  G.inLobby = true; G.running = false;
-  setTab('tabLobby');
-}
-
-const G = {
-  running:false, over:false, inLobby:true, ending:false,
-  score:0, lives:3, runCoins:0,
-  time:0, spawnTimer:0.4, spawnInterval:0.75,
-  bossPhase:false, boss:null, nextBossScore:1000,
-  bullets:[], miniBullets:[], enemies:[], enemyBullets:[],
-  particles:[], stars:[], floatTexts:[], shockwaves:[], shootingStars:[],
-  touch:{active:false,x:0,y:0},
-  fireCooldown:0, miniFireCooldown:0, shake:0, flash:0, enemyPassCooldown:0,
-  keysLeft:false, keysRight:false, keysFire:false,
-  MAX_PARTICLES:200
-};
-
-const caches={ships:{}};
-const mkC=(w,h)=>{const c=document.createElement('canvas');c.width=Math.max(1,w);c.height=Math.max(1,h);return c;};
-const hexA=(hex,a)=>{const h=hex.replace('#','');const n=parseInt(h.length===3?h.split('').map(x=>x+x).join(''):h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
-
-function glow(color,radius,intensity=1){
-  const size=radius*2,c=mkC(size,size),g=c.getContext('2d');
-  const grad=g.createRadialGradient(radius,radius,1,radius,radius,radius);
-  grad.addColorStop(0,hexA(color,intensity));
-  grad.addColorStop(0.45,hexA(color,.55*intensity));
-  grad.addColorStop(1,hexA(color,0));
-  g.fillStyle=grad;g.fillRect(0,0,size,size);return c;
-}
-
-function drawShipBase(g, N, T, WY, WX, fill1, fill2, stroke) {
-  const body=()=>{
-    g.beginPath(); g.moveTo(0,N);
-    g.bezierCurveTo(-8,-40, -WX*0.4,WY*0.2, -WX,WY);
-    g.lineTo(-WX*0.65,WY+6); g.lineTo(-WX*0.35,WY+18); g.lineTo(-24,T-10); g.lineTo(0,T);
-    g.lineTo(24,T-10); g.lineTo(WX*0.35,WY+18); g.lineTo(WX*0.65,WY+6); g.lineTo(WX,WY);
-    g.bezierCurveTo(WX*0.4,WY*0.2, 8,-40, 0,N);
-    g.closePath();
-  };
-  body(); g.lineWidth=14; g.strokeStyle=hexA(stroke,0.15); g.stroke();
-  body(); g.lineWidth=6; g.strokeStyle=hexA(stroke,0.6); g.stroke();
-  body(); const fill=g.createLinearGradient(0,N,0,T);
-  fill.addColorStop(0,fill1); fill.addColorStop(0.5,fill2); fill.addColorStop(1,'#000');
-  g.fillStyle=fill; g.fill(); g.lineWidth=3; g.strokeStyle=stroke; body(); g.stroke();
-}
-
-function makeRedWing(scale){
-  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(sw/2, sh/2);
-  const N=-60, T=50, WY=22, WX=52;
-  const engOuter=g.createRadialGradient(0,42,2,0,42,55);
-  engOuter.addColorStop(0,'rgba(255,100,140,1)'); engOuter.addColorStop(.4,'rgba(255,20,60,.6)'); engOuter.addColorStop(1,'rgba(255,0,50,0)');
-  g.fillStyle=engOuter; g.beginPath(); g.arc(0,42,55,0,Math.PI*2); g.fill();
-  const engInner=g.createRadialGradient(0,42,2,0,42,22);
-  engInner.addColorStop(0,'#fff'); engInner.addColorStop(.2,'#ffb3c6'); engInner.addColorStop(1,'rgba(255,20,60,0)');
-  g.fillStyle=engInner; g.beginPath(); g.arc(0,42,22,0,Math.PI*2); g.fill();
-  drawShipBase(g, N, T, WY, WX, '#4a1525', '#9e2a46', '#ff8095');
-  g.beginPath(); g.moveTo(0,N+10); g.lineTo(-12, T-15); g.lineTo(12, T-15); g.closePath();
-  const panelGrad=g.createLinearGradient(0,0,0,T); panelGrad.addColorStop(0,'#c93a5c'); panelGrad.addColorStop(1,'#4a0a15');
-  g.fillStyle=panelGrad; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(255,180,200,.9)'; g.stroke();
-  const cpGrad=g.createLinearGradient(0,-26,0,-4); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.4,'#ffd1dc'); cpGrad.addColorStop(1,'#ff4d6d');
-  g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-18, 10, 22, 0, 0, Math.PI*2); g.fill();
-  g.lineWidth=2.5; g.strokeStyle='#fff'; g.stroke();
-  g.fillStyle='#ffebf0'; g.shadowColor='#ff4d6d'; g.shadowBlur=15;
-  g.beginPath(); g.arc(-WX+2, WY, 4, 0, Math.PI*2); g.fill();
-  g.beginPath(); g.arc(WX-2, WY, 4, 0, Math.PI*2); g.fill();
-  g.shadowBlur=0; return c;
-}
-
-function makeGalaxyHawk(scale){
-  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(sw/2, sh/2);
-  const N=-65, T=55, WY=25, WX=60;
-  const engOuter=g.createRadialGradient(0,45,2,0,45,65);
-  engOuter.addColorStop(0,'rgba(0,220,255,1)'); engOuter.addColorStop(.5,'rgba(0,100,255,.5)'); engOuter.addColorStop(1,'rgba(0,50,255,0)');
-  g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,65,0,Math.PI*2); g.fill();
-  const wing=()=>{ g.beginPath(); g.moveTo(-15,10); g.lineTo(-WX,35); g.lineTo(-WX+10,48); g.lineTo(-10,30); g.closePath(); };
-  wing(); g.fillStyle='#003355'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#00d4ff'; g.stroke();
-  drawShipBase(g, N, T, WY, WX, '#002244', '#005599', '#00d4ff');
-  const cpGrad=g.createLinearGradient(0,-30,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#00d4ff'); cpGrad.addColorStop(1,'#004488');
-  g.fillStyle=cpGrad; g.beginPath(); g.ellipse(0,-15, 9, 24, 0, 0, Math.PI*2); g.fill();
-  g.lineWidth=2.5; g.strokeStyle='#aaffff'; g.stroke();
-  g.shadowColor='#00d4ff'; g.shadowBlur=18; g.fillStyle='#e0ffff';
-  g.beginPath(); g.arc(-WX*0.8, WY, 5, 0, Math.PI*2); g.fill();
-  g.beginPath(); g.arc(WX*0.8, WY, 5, 0, Math.PI*2); g.fill();
-  g.shadowBlur=0; return c;
-}
-
-function makePurpleGhost(scale){
-  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(sw/2, sh/2);
-  const engOuter=g.createRadialGradient(0,40,5,0,40,70);
-  engOuter.addColorStop(0,'rgba(220,0,255,1)'); engOuter.addColorStop(.6,'rgba(140,0,200,.5)'); engOuter.addColorStop(1,'rgba(80,0,120,0)');
-  g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,70,0,Math.PI*2); g.fill();
-  const shape=()=>{
-    g.beginPath(); g.moveTo(0,-65);
-    g.bezierCurveTo(15,-50, 42, 0, 58, 32);
-    g.lineTo(32,26); g.lineTo(22,52); g.lineTo(0,42); g.lineTo(-22,52); g.lineTo(-32,26); g.lineTo(-58,32);
-    g.bezierCurveTo(-42,0, -15,-50, 0,-65);
-    g.closePath();
-  };
-  shape(); g.lineWidth=12; g.strokeStyle='rgba(220,0,255,.3)'; g.stroke();
-  shape(); g.fillStyle='#2a0033'; g.fill();
-  shape(); g.lineWidth=3; g.strokeStyle='#e055ff'; g.stroke();
-  const cpGrad=g.createRadialGradient(0,-10,2,0,-10,28); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.3,'#ff99ff'); cpGrad.addColorStop(1,'rgba(200,0,255,0)');
-  g.fillStyle=cpGrad; g.beginPath(); g.arc(0,-10,28,0,Math.PI*2); g.fill();
-  g.fillStyle='#fff'; g.beginPath(); g.arc(0,-10,6,0,Math.PI*2); g.fill();
-  return c;
-}
-
-function makeGoldenShield(scale){
-  const sw=140, sh=160, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(sw/2, sh/2);
-  const engOuter=g.createRadialGradient(0,45,5,0,45,65);
-  engOuter.addColorStop(0,'rgba(255,220,0,1)'); engOuter.addColorStop(.6,'rgba(255,150,0,.5)'); engOuter.addColorStop(1,'rgba(200,100,0,0)');
-  g.fillStyle=engOuter; g.beginPath(); g.arc(0,45,65,0,Math.PI*2); g.fill();
-  drawShipBase(g, -55, 50, 25, 50, '#5a4000', '#ccaa00', '#ffcc00');
-  const shield=()=>{ g.beginPath(); g.moveTo(-62,10); g.lineTo(-32,22); g.lineTo(-32,48); g.lineTo(-62,38); g.closePath(); };
-  shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#ffeeaa'; g.stroke();
-  g.save(); g.scale(-1,1); shield(); g.fillStyle='#ffb300'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#ffeeaa'; g.stroke(); g.restore();
-  g.beginPath(); g.ellipse(0,-15, 9, 26, 0, 0, Math.PI*2);
-  const cpGrad=g.createLinearGradient(0,-40,0,10); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(0.5,'#ffdd55'); cpGrad.addColorStop(1,'#ff8800');
-  g.fillStyle=cpGrad; g.fill(); g.lineWidth=2.5; g.strokeStyle='#fff'; g.stroke();
-  g.shadowColor='#ffcc00'; g.shadowBlur=22; g.fillStyle='#ffffaa';
-  g.beginPath(); g.arc(0,-15, 5, 0, Math.PI*2); g.fill();
-  g.shadowBlur=0; return c;
-}
-
-function makeCrystalStar(scale){
-  const sw=160, sh=180, c=mkC(sw*scale,sh*scale), g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(sw/2, sh/2);
-  const engOuter=g.createRadialGradient(0,40,5,0,40,75);
-  engOuter.addColorStop(0,'rgba(220,255,255,1)'); engOuter.addColorStop(.6,'rgba(100,200,255,.5)'); engOuter.addColorStop(1,'rgba(50,150,255,0)');
-  g.fillStyle=engOuter; g.beginPath(); g.arc(0,40,75,0,Math.PI*2); g.fill();
-  const crystalWing=()=>{ g.beginPath(); g.moveTo(-20,-10); g.lineTo(-72,10); g.lineTo(-52,36); g.lineTo(-62,58); g.lineTo(-25,42); g.closePath(); };
-  crystalWing(); g.fillStyle='rgba(150,230,255,.6)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke();
-  g.save(); g.scale(-1,1); crystalWing(); g.fillStyle='rgba(150,230,255,.6)'; g.fill(); g.lineWidth=2.5; g.strokeStyle='#e0ffff'; g.stroke(); g.restore();
-  const shape=()=>{ g.beginPath(); g.moveTo(0,-75); g.lineTo(25,-20); g.lineTo(20,42); g.lineTo(0,56); g.lineTo(-20,42); g.lineTo(-25,-20); g.closePath(); };
-  shape(); g.lineWidth=12; g.strokeStyle='rgba(200,255,255,.3)'; g.stroke();
-  const fill=g.createLinearGradient(0,-75,0,56);
-  fill.addColorStop(0,'#ffffff'); fill.addColorStop(0.3,'#80e0ff'); fill.addColorStop(0.7,'#0088cc'); fill.addColorStop(1,'#004466');
-  shape(); g.fillStyle=fill; g.fill(); g.lineWidth=3; g.strokeStyle='#e0ffff'; g.stroke();
-  g.strokeStyle='rgba(255,255,255,.8)'; g.lineWidth=2;
-  g.beginPath(); g.moveTo(0,-75); g.lineTo(0,56); g.stroke();
-  g.beginPath(); g.moveTo(-20,42); g.lineTo(25,-20); g.stroke();
-  const cpGrad=g.createRadialGradient(0,0,2,0,0,24); cpGrad.addColorStop(0,'#fff'); cpGrad.addColorStop(1,'rgba(200,255,255,0)');
-  g.fillStyle=cpGrad; g.beginPath(); g.arc(0,0,24,0,Math.PI*2); g.fill();
-  return c;
-}
-
-function makeMiniSprite(scale, shipId){
-  const c=mkC(60*scale,70*scale),g=c.getContext('2d');
-  g.scale(scale,scale); g.translate(30,35);
-  let color = '#ff6b85'; let cpColor = '#ff4d6d';
-  if(shipId === 'galaxy_hawk') { color = '#00d4ff'; cpColor = '#00aaff'; }
-  else if(shipId === 'purple_ghost') { color = '#d400ff'; cpColor = '#aa00cc'; }
-  else if(shipId === 'golden_shield') { color = '#ffcc00'; cpColor = '#ffaa00'; }
-  else if(shipId === 'crystal_star') { color = '#e0ffff'; cpColor = '#80e0ff'; }
-  const gl=g.createRadialGradient(0,0,2,0,0,32); gl.addColorStop(0,hexA(color,0.8)); gl.addColorStop(1,hexA(color,0));
-  g.fillStyle=gl; g.beginPath(); g.arc(0,0,32,0,Math.PI*2); g.fill();
-  const body=()=>{ g.beginPath(); g.moveTo(0,-28); g.lineTo(-18, 12); g.lineTo(-6, 8); g.lineTo(0, 20); g.lineTo(6, 8); g.lineTo(18, 12); g.closePath(); };
-  body(); const f=g.createLinearGradient(0,-28,0,20); f.addColorStop(0,'#222'); f.addColorStop(0.5,color); f.addColorStop(1,'#000');
-  g.fillStyle=f; g.fill(); g.lineWidth=2.5; g.strokeStyle=color; body(); g.stroke();
-  const cp=g.createLinearGradient(0,-14,0,0); cp.addColorStop(0,'#fff'); cp.addColorStop(1,cpColor);
-  g.fillStyle=cp; g.beginPath(); g.ellipse(0,-6, 4, 9, 0, 0, Math.PI*2); g.fill();
-  return c;
-}
-
-function makeHexSprite(r){
-  const size = r * 4.5;
-  const c = mkC(size, size), g = c.getContext('2d');
-  g.translate(size/2, size/2);
-  const halo = g.createRadialGradient(0,0,r*0.2, 0,0,r*1.6);
-  halo.addColorStop(0,'rgba(255,60,120,0.6)');
-  halo.addColorStop(0.5,'rgba(200,20,80,0.3)');
-  halo.addColorStop(1,'rgba(100,0,40,0)');
-  g.fillStyle = halo; g.beginPath(); g.arc(0,0,r*1.6,0,Math.PI*2); g.fill();
-  const drawPoly = (rad, rot, fill, stroke, lw) => {
-    g.beginPath();
-    for(let i=0; i<6; i++){
-      const a = (Math.PI/3)*i - Math.PI/2 + rot;
-      const px = Math.cos(a)*rad, py = Math.sin(a)*rad;
-      if(i===0) g.moveTo(px,py); else g.lineTo(px,py);
-    }
-    g.closePath();
-    if(fill) { g.fillStyle = fill; g.fill(); }
-    if(stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(); }
-  };
-  const bodyGrad = g.createLinearGradient(-r, -r, r, r);
-  bodyGrad.addColorStop(0, '#4a001a');
-  bodyGrad.addColorStop(0.5, '#8a002a');
-  bodyGrad.addColorStop(1, '#2a000a');
-  drawPoly(r, 0, bodyGrad, '#ff3377', 3);
-  drawPoly(r*0.75, Math.PI/6, null, 'rgba(255,120,160,0.8)', 2);
-  g.strokeStyle = 'rgba(255,200,220,0.4)'; g.lineWidth = 1.5;
-  for(let i=0; i<6; i++){
-    const a = (Math.PI/3)*i - Math.PI/2;
-    g.beginPath(); g.moveTo(0,0); g.lineTo(Math.cos(a)*r, Math.sin(a)*r); g.stroke();
-  }
-  const coreGrad = g.createRadialGradient(0,0,1, 0,0,r*0.5);
-  coreGrad.addColorStop(0, '#fff');
-  coreGrad.addColorStop(0.3, '#ffaacc');
-  coreGrad.addColorStop(0.7, '#ff3366');
-  coreGrad.addColorStop(1, 'rgba(255,0,80,0)');
-  g.fillStyle = coreGrad; g.beginPath(); g.arc(0,0,r*0.5,0,Math.PI*2); g.fill();
-  g.fillStyle = '#ffffff'; g.beginPath(); g.arc(-r*0.1, -r*0.1, r*0.15, 0, Math.PI*2); g.fill();
-  return c;
-}
-
-function makeNebula(){
-  const c=mkC(W||1, H||1); const g=c.getContext('2d'); g.fillStyle='#020006'; g.fillRect(0,0,W,H);
-  for(let i=0;i<10;i++){
-    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*W*0.8+W*0.5;
-    const grad=g.createRadialGradient(x,y,0, x,y,r);
-    const hue=i%4===0?'rgba(120,20,180,':i%4===1?'rgba(20,100,200,':i%4===2?'rgba(200,20,100,':'rgba(20,180,160,';
-    grad.addColorStop(0,hue+'0.25)'); grad.addColorStop(1,hue+'0)');
-    g.fillStyle=grad; g.fillRect(0,0,W,H);
-  }
-  return c;
-}
-
-function makeBossSprite(w,h,variant){
-  const pad=100,c=mkC(w+pad*2,h+pad*2),g=c.getContext('2d'); g.translate((w+pad*2)/2,(h+pad*2)/2);
-  const hue1=(variant*47)%360,hue2=(hue1+50)%360;
-  const cM=`hsl(${hue1},90%,45%)`, cD=`hsl(${hue1},85%,15%)`, cL=`hsl(${hue2},100%,70%)`;
-  const au=g.createRadialGradient(0,0,20,0,0,w*0.9); 
-  au.addColorStop(0,`hsla(${hue1},100%,60%,.8)`); 
-  au.addColorStop(0.5,`hsla(${hue1},100%,50%,.3)`); 
-  au.addColorStop(1,`hsla(${hue1},100%,40%,0)`);  
-  g.fillStyle=au; g.beginPath(); g.arc(0,0,w*0.9,0,Math.PI*2); g.fill();
-  const hw=w/2,hh=h/2;
-  const drawArmor = (scale) => {
-    g.beginPath();
-    switch(variant%3){
-      case 0:
-        g.moveTo(0,-hh*scale*1.2); g.lineTo(hw*scale, -hh*scale*0.5); g.lineTo(hw*scale*0.8, hh*scale*0.8);
-        g.lineTo(0, hh*scale*1.1); g.lineTo(-hw*scale*0.8, hh*scale*0.8); g.lineTo(-hw*scale, -hh*scale*0.5);
-        break;
-      case 1:
-        g.moveTo(0,-hh*scale*1.3); g.lineTo(hw*scale*0.6, -hh*scale*0.6); g.lineTo(hw*scale*1.1, 0);
-        g.lineTo(hw*scale*0.6, hh*scale*0.8); g.lineTo(0, hh*scale*1.2); g.lineTo(-hw*scale*0.6, hh*scale*0.8);
-        g.lineTo(-hw*scale*1.1, 0); g.lineTo(-hw*scale*0.6, -hh*scale*0.6);
-        break;
-      case 2:
-        g.moveTo(-hw*scale*1.2, -hh*scale*0.3); g.lineTo(-hw*scale*0.5, -hh*scale*1.1); g.lineTo(0, -hh*scale*0.6);
-        g.lineTo(hw*scale*0.5, -hh*scale*1.1); g.lineTo(hw*scale*1.2, -hh*scale*0.3); g.lineTo(hw*scale*0.7, hh*scale*0.9);
-        g.lineTo(0, hh*scale*1.2); g.lineTo(-hw*scale*0.7, hh*scale*0.9);
-        break;
-    }
-    g.closePath();
-  };
-  drawArmor(1.0);
-  g.lineWidth=18; g.strokeStyle=`hsla(${hue1},100%,60%,.3)`; g.stroke();
-  g.lineWidth=8; g.strokeStyle=`hsla(${hue1},100%,70%,.7)`; g.stroke();
-  drawArmor(1.0);
-  const gr=g.createLinearGradient(0,-hh,0,hh); 
-  gr.addColorStop(0,cD); gr.addColorStop(0.4,cM); gr.addColorStop(0.6,cM); gr.addColorStop(1,cD);
-  g.fillStyle=gr; g.fill();
-  g.lineWidth=3; g.strokeStyle=cL; g.stroke();
-  g.save(); drawArmor(1.0); g.clip();
-  g.strokeStyle=`hsla(${hue2},100%,80%,.4)`; g.lineWidth=2;
-  for(let i=-3;i<=3;i++){
-    g.beginPath(); g.moveTo(-hw,i*hh*0.3); g.lineTo(hw,i*hh*0.3); g.stroke();
-    g.beginPath(); g.moveTo(i*hw*0.3,-hh); g.lineTo(i*hw*0.3,hh); g.stroke();
-  }
-  g.fillStyle=`hsla(${hue2},100%,90%,1)`;
-  for(let i=-2;i<=2;i++) for(let j=-2;j<=2;j++){
-    if(Math.random()>0.5) continue;
-    g.beginPath(); g.arc(i*hw*0.25, j*hh*0.25, 3, 0, Math.PI*2); g.fill();
-  }
-  g.restore();
-  const coreR=Math.min(hw,hh)*0.4; 
-  const core=g.createRadialGradient(0,0,2,0,0,coreR*2.5); 
-  core.addColorStop(0,'#fff'); core.addColorStop(0.2,cL); core.addColorStop(0.6,`hsl(${hue1},100%,55%)`); core.addColorStop(1,`hsla(${hue1},100%,40%,0)`);
-  g.fillStyle=core; g.beginPath(); g.arc(0,0,coreR*2.5,0,Math.PI*2); g.fill();
-  g.strokeStyle=`hsla(${hue2},100%,90%,0.9)`; g.lineWidth=4; 
-  g.beginPath(); g.arc(0,0,coreR*1.2,0,Math.PI*1.5); g.stroke();
-  g.lineWidth=2; 
-  g.beginPath(); g.arc(0,0,coreR*1.6,Math.PI,Math.PI*2.5); g.stroke();
-  g.fillStyle='#fff'; g.beginPath(); g.arc(0,0,coreR*0.3,0,Math.PI*2); g.fill();
-  return c;
-}
-
-function buildCaches(){
-  caches.stars=[];
-  for(let i=0;i<4;i++){
-    const sz = 4 + i*3;
-    const c = mkC(sz*2, sz*2);
-    const g = c.getContext('2d');
-    const grd = g.createRadialGradient(sz, sz, 0, sz, sz, sz);
-    grd.addColorStop(0, 'rgba(255,255,255,1)');
-    grd.addColorStop(0.15, 'rgba(200,240,255,0.9)');
-    grd.addColorStop(0.4, 'rgba(100,200,255,0.4)');
-    grd.addColorStop(1, 'rgba(0,100,255,0)');
-    g.fillStyle = grd; g.fillRect(0,0,sz*2,sz*2);
-    g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 1;
-    g.beginPath(); g.moveTo(sz, 0); g.lineTo(sz, sz*2); g.moveTo(0, sz); g.lineTo(sz*2, sz); g.stroke();
-    caches.stars.push(c);
-  }
-  caches.particles={ '#ff5d8f':glow('#ff5d8f',10,1),'#ff3355':glow('#ff3355',10,1),'#ffd84d':glow('#ffd84d',10,1),'#7ef0ff':glow('#7ef0ff',10,1),'#38b6ff':glow('#38b6ff',10,1),'#ffa5c0':glow('#ffa5c0',10,1),'#ff7b00':glow('#ff7b00',10,1),'#ffe066':glow('#ffe066',10,1) };
-  caches.bulletGlow=glow('#38b6ff',24,1); caches.coreGlow=glow('#ffd84d',50,1); caches.nebula=makeNebula();
-  const baseR=enemyRadius(); 
-  caches.hex={baseR, sprite: makeHexSprite(baseR)};
-  player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2);
-  caches.ships['red_wing'] = makeRedWing(player.scale);
-  caches.ships['galaxy_hawk'] = makeGalaxyHawk(player.scale);
-  caches.ships['purple_ghost'] = makePurpleGhost(player.scale);
-  caches.ships['golden_shield'] = makeGoldenShield(player.scale);
-  caches.ships['crystal_star'] = makeCrystalStar(player.scale);
-  caches.mini = makeMiniSprite(player.scale*.9, store.equippedShip);
-  if(G.boss) caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
-  makeStars();
-}
-
-function makeStars(){
-  G.stars=[]; const count=Math.floor((W*H)/3000);
-  for(let i=0;i<count;i++){
-    const layer=Math.floor(Math.random()*3);
-    G.stars.push({
-      x:Math.random()*W, y:Math.random()*H, layer,
-      r:layer===0?rnd(0.3,0.6):layer===1?rnd(0.6,1.0):rnd(1.0,1.5),
-      s:layer===0?rnd(30,60):layer===1?rnd(80,140):rnd(150,250),
-      a:layer===0?rnd(0.2,0.4):layer===1?rnd(0.4,0.7):rnd(0.7,1.0),
-      twSpeed: rnd(1.5, 3.5),
-      twPhase: Math.random() * Math.PI * 2
-    });
-  }
-}
-
-function resetPlayer(){
-  if(!W || !H) return;
-  player.x=W/2; player.y=H-90;
-  player.scale=Math.min(Math.max(1,Math.min(W,H)/400),2);
-  player.hitCooldown=0;
-  minis.forEach(m=>m.fireTimer=0);
-}
-
-function shoot(){
-  if(G.fireCooldown>0)return;
-  const wStats = getWeaponStats(store.equipped);
-  G.fireCooldown = wStats.isAuto ? 0.08 : 0.15;
-  
-  const s=player.scale;
-  const spreadAngle = 0.15;
-  
-  const fireB = (x, y, vx, dmg, isMain, color) => {
-    G.bullets.push({ x, y, r: (isMain ? 10 : 7) * s, vy: -850, vx, dmg: dmg, color: color || wStats.color });
-  };
-
-  if(wStats.shots === 1) {
-    fireB(player.x, player.y-30*s, 0, wStats.dmg, true);
-  } else {
-    const totalSpread = wStats.shots > 3 ? 0.35 : (wStats.shots === 3 ? 0.2 : 0.15);
-    const startAngle = -totalSpread / 2;
-    const angleStep = wStats.shots > 1 ? totalSpread / (wStats.shots - 1) : 0;
-    
-    for(let i=0; i<wStats.shots; i++){
-      const angle = startAngle + i * angleStep;
-      const vx = Math.sin(angle) * 850;
-      const vy = -Math.cos(angle) * 850;
-      const isCenter = wStats.shots % 2 !== 0 && i === Math.floor(wStats.shots / 2);
-      fireB(player.x, player.y-30*s, vx, wStats.dmg, isCenter);
-    }
-  }
-  
-  if(G.particles.length<G.MAX_PARTICLES) burst(player.x,player.y-32*s,'#38b6ff',6,120);
-}
-
-function shootMini(m){
-  const s=player.scale;
-  G.miniBullets.push({x:player.x+m.offset*s,y:player.y+8*s,r:5*s,vy:-700,vx:0,dmg:1});
-}
-
-function enemyRadius(){return clamp(Math.min(W,H)*0.045,22,46);}
-
-function spawnEnemy(){
-  const wave = 1 + Math.floor(G.score/1000);
-  const r=enemyRadius()*rnd(0.9,1.1);
-  const baseVy = 300 + G.time*1.5 + wave*15;
-  const baseVx = 25 + wave*5;
-  G.enemies.push({
-    x:rnd(r+20,W-r-20),y:-r-20,r, vy:rnd(baseVy*0.85,baseVy*1.15), vx:rnd(-baseVx,baseVx),
-    rot:Math.random()*Math.PI, rotSpeed:rnd(-2,2), hp:1
-  });
-}
-
-function spawnBoss(){
-  if(G.bossPhase || G.boss) return;
-  G.bossPhase=true;
-  const waveIndex=Math.max(1,Math.floor(G.score/1000));
-  const bw=clamp(W*0.45,180,300);
-  const variant=(waveIndex-1)%8;
-  G.boss={ x:W/2,y:-bw*0.6,w:bw,h:bw*0.6, targetY:Math.min(140,H*0.18),dir:1,speed:W*0.25, hp:30+waveIndex*10,maxHp:30+waveIndex*10, entering:true,volleyCount:0,variant,t:0 };
-  caches.boss=makeBossSprite(G.boss.w,G.boss.h,G.boss.variant);
-  showMessage('⚠️ خطر! رئیس نزدیک است ⚠️',1800);
-}
-
-function burst(x,y,color,n,spd){
-  if(G.particles.length>=G.MAX_PARTICLES)n=Math.max(1,n>>1);
-  for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2,s=Math.random()*spd+40; G.particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rnd(.4,.9),max:.9,color,r:rnd(1.5,4)}); }
-}
-function shockwave(x,y,color,rMax){G.shockwaves.push({x,y,color,r:4,rMax,life:1,max:1});}
-function floatText(x,y,txt,color){G.floatTexts.push({x,y,txt,color,life:1.2,max:1.2});}
-
-let msgTimer=null;
-function showMessage(txt,dur=1600){
-  const el=document.getElementById('message'); el.textContent=txt;el.classList.add('show');
-  clearTimeout(msgTimer); msgTimer=setTimeout(()=>el.classList.remove('show'),dur);
-}
-
-function onDown(e){
-  if(G.over||G.inLobby||!G.running)return;
-  const t=e.touches?e.touches[0]:e;
-  G.touch.active=true;G.touch.x=t.clientX;G.touch.y=t.clientY;
-  if(Math.abs(player.x-t.clientX)>40)player.x=t.clientX;
-  if(e.cancelable)e.preventDefault();
-}
-function onMove(e){
-  if(!G.touch.active||G.over||G.inLobby||!G.running)return;
-  const t=e.touches?e.touches[0]:e;
-  G.touch.x=t.clientX;G.touch.y=t.clientY;
-  player.x=clamp(t.clientX, 30, W-30);
-  player.y=clamp(player.y+(Math.min(t.clientY,H-60)-player.y)*0.3, H*0.35, H-60);
-  if(e.cancelable)e.preventDefault();
-}
-const onUp=()=>G.touch.active=false;
-
-cv.addEventListener('touchstart',onDown,{passive:false}); cv.addEventListener('touchmove',onMove,{passive:false});
-cv.addEventListener('touchend',onUp); cv.addEventListener('touchcancel',onUp); cv.addEventListener('mousedown',onDown);
-addEventListener('mousemove',e=>{if(G.touch.active)onMove(e);}); addEventListener('mouseup',onUp);
-addEventListener('keydown',e=>{ if(e.code==='ArrowLeft'||e.code==='KeyA')G.keysLeft=true; if(e.code==='ArrowRight'||e.code==='KeyD')G.keysRight=true; if(e.code==='Space')G.keysFire=true; });
-addEventListener('keyup',e=>{ if(e.code==='ArrowLeft'||e.code==='KeyA')G.keysLeft=false; if(e.code==='ArrowRight'||e.code==='KeyD')G.keysRight=false; if(e.code==='Space')G.keysFire=false; });
-
-const heartsEls=['h1','h2','h3'].map(id=>document.getElementById(id));
-const scoreEl=document.getElementById('score');
-const coinsEl=document.getElementById('coins');
-const recordEl=document.getElementById('record');
-const tabsEl=document.getElementById('tabs');
-const uiEl=document.getElementById('ui');
-const lobbyEl=document.getElementById('lobby');
-
-function updateUI(){
-  heartsEls.forEach((h,i)=>h.classList.toggle('dead',i>=G.lives));
-  scoreEl.textContent='امتیاز '+G.score;
-  if(store.coins === 999999999) { coinsEl.textContent='💰 ∞'; }
-  else { coinsEl.textContent='💰 '+store.coins; }
-  if(G.score>store.record)store.record=G.score;
-  recordEl.textContent='رکورد '+store.record;
-}
-
-function drawLobbyShip(){
-  const div=document.getElementById('lobbyShip');
-  const shipId = store.equippedShip;
-  const shipCache = caches.ships[shipId];
-  if(!shipCache) return;
-  const c=mkC(shipCache.width,shipCache.height);
-  const g=c.getContext('2d');
-  g.drawImage(shipCache,0,0);
-  div.innerHTML='';
-  c.style.width='190px'; c.style.height='216px';
-  div.appendChild(c);
-}
-
-// مدیریت تب‌های بالا (شامل لابی)
-const tabs = {
-  'tabLobby': document.getElementById('tabLobby'),
-  'tabGame': document.getElementById('tabGame'),
-  'tabShop': document.getElementById('tabShop'),
-  'tabRank': document.getElementById('tabRank'),
-  'tabProfile': document.getElementById('tabProfile')
-};
-
-function setTab(id){
-  Object.values(tabs).forEach(t=>t.classList.remove('active'));
-  if(tabs[id]) tabs[id].classList.add('active');
-}
-
-tabs['tabLobby'].addEventListener('click',()=>{
-  setTab('tabLobby'); shopPanel.classList.remove('show'); simpleModal.classList.remove('show');
-  lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show');
-  G.inLobby = true; G.running = false;
-});
-
-tabs['tabGame'].addEventListener('click',()=>{
-  setTab('tabGame'); shopPanel.classList.remove('show'); simpleModal.classList.remove('show');
-  if(G.inLobby){ 
-    lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); G.running=false; 
-  }
-  else if (G.over) { 
-    lobbyEl.classList.remove('hidden'); uiEl.classList.remove('show'); 
-  }
-  else { 
-    lobbyEl.classList.add('hidden'); uiEl.classList.add('show'); G.running=true; 
-  }
-});
-
-tabs['tabShop'].addEventListener('click',()=>{
-  setTab('tabShop'); simpleModal.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show'); 
-  shopPanel.classList.add('show'); G.running=false; 
-  // اگر تب فعلی همراه بود و از قبل انتخاب شده بود دوباره رندر میشود
-  setShopTab(currentShopTab);
-});
-
-// تابع جداول لیدربرد که با دکمه بروزرسانی هم فراخوانی میشه
-async function loadLeaderboard() {
-  smContent.innerHTML = '<p style="color:#8ab2c8;">در حال دریافت اطلاعات...</p>';
-  try {
-    const { data: lbData, error: lbError } = await sb.from('leaderboard').select('id, player_name, score, profile_id').order('score', { ascending: false }).limit(10);
-    if (lbError) throw lbError;
-    
-    let refreshBtnHTML = `
-      <button class="refresh-btn" onclick="loadLeaderboard()">
-        <svg viewBox="0 0 24 24"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-        بروزرسانی لیست
-      </button>
-    `;
-
-    if (!lbData || lbData.length === 0) { 
-      smContent.innerHTML = refreshBtnHTML + '<p style="color:#cdeaff;">هنوز رکوردی ثبت نشده! شما اولین نفر باشید.</p>'; 
-      return; 
-    }
-    
-    const profileIds = lbData.filter(r => r.profile_id).map(r => r.profile_id);
-    let avatarMap = {};
-    if (profileIds.length > 0) {
-      const { data: profs } = await sb.from('profiles').select('id, avatar_id').in('id', profileIds);
-      if (profs) profs.forEach(p => avatarMap[p.id] = p.avatar_id);
-    }
-    
-    let tableHTML = refreshBtnHTML + `<table class="lb-table"><thead><tr><th>رتبه</th><th>بازیکن</th><th style="text-align:left;">امتیاز</th></tr></thead><tbody>`;
-    
-    lbData.forEach((row, i) => {
-      const avatarEmoji = row.profile_id && avatarMap[row.profile_id] !== undefined ? AVATARS[avatarMap[row.profile_id]] : '👽';
-      const name = row.player_name || 'ناشناس';
-      tableHTML += `<tr class="lb-row" onclick="showPlayerProfile('${name}', ${row.score}, '${avatarEmoji}')"><td>${i + 1}</td><td><div style="display:flex;align-items:center;"><span class="lb-avatar">${avatarEmoji}</span>${name}</div></td><td>${row.score}</td></tr>`;
-    });
-    tableHTML += `</tbody></table>`; 
-    smContent.innerHTML = tableHTML;
-  } catch (err) {
-    console.error(err); 
-    smContent.innerHTML = `<p style="color:#cdeaff;">خطا در ارتباط با سرور!<br>لطفاً اینترنت خود را بررسی کنید.</p>`;
-  }
-}
-window.loadLeaderboard = loadLeaderboard;
-
-tabs['tabRank'].addEventListener('click', async () => {
-  setTab('tabRank'); shopPanel.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show');
-  showSimpleModal('🏆 رتبه بندی', '<p style="color:#8ab2c8;">در حال دریافت اطلاعات...</p>');
-  await loadLeaderboard();
-});
-
-window.showPlayerProfile = function(name, score, avatar) {
-  const profileHTML = `
-    <div class="profile-header" style="margin-bottom:10px;">
-      <div class="profile-avatar-big">${avatar}</div>
-      <div class="profile-info"><div class="profile-name">${name}</div><div class="profile-score">⭐ بالاترین امتیاز: ${score}</div></div>
-    </div>
-    <p style="color:#8ab2c8;font-size:13px;margin-top:15px;border-top:1px solid rgba(255,255,255,.1);padding-top:15px;">این بازیکن یکی از فرماندهان برتر کهکشان است 🚀</p>
-    <button onclick="tabs['tabRank'].click()" style="margin-top:15px;background:linear-gradient(180deg,#a8f3ff,#18a8ff);color:#001018;border:none;padding:12px 25px;border-radius:12px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 0 15px rgba(24,168,255,.5);">🔙 بازگشت به جدول</button>
-  `;
-  showSimpleModal('👤 پروفایل بازیکن', profileHTML);
-}
-
-tabs['tabProfile'].addEventListener('click',()=>{
-  setTab('tabProfile'); shopPanel.classList.remove('show'); lobbyEl.classList.add('hidden'); uiEl.classList.remove('show');
-  const urlParams = new URLSearchParams(window.location.search);
-  const isOwner = urlParams.get('admin') === '1';
-  const pName = store.playerName; const pAvatar = store.playerAvatar; const pCode = store.recoveryCode;
-  tempAvatarSelection = pAvatar;
-  let avatarGridHTML = '';
-  AVATARS.forEach((emoji, index) => { avatarGridHTML += `<div class="avatar-item ${index === pAvatar ? 'active' : ''}" onclick="selectAvatar(${index})">${emoji}</div>`; });
-  let profileHTML = `
-    <div class="profile-header"><div class="profile-avatar-big" id="mainAvatar">${AVATARS[pAvatar]}</div><div class="profile-info"><div class="profile-name" id="mainName">${pName}</div><div class="profile-score">⭐ امتیاز: ${store.record}</div></div></div>
-    <div class="input-group"><label>اسم شما (نام فرمانده):</label><input type="text" id="nameInput" value="${pName}" maxlength="15" placeholder="اسم خود را وارد کنید..." onchange="onNameChange(this.value)"></div>
-    <div class="input-group"><label>انتخاب آواتار (نشان فرماندهی):</label><div class="avatar-grid" id="avatarGrid">${avatarGridHTML}</div></div>
-    <div class="recovery-box"><div class="recovery-title">☁️ همگام‌سازی ابری</div><p style="font-size: 12px; color: #8ab2c8; margin-bottom: 8px;">کد بازیابی اختصاصی شما:</p><div class="recovery-code">${pCode}<button onclick="copyToClipboard('${pCode}')" style="background:none;border:none;font-size:22px;cursor:pointer;filter:drop-shadow(0 0 5px #fff)">📋</button></div><button class="restore-btn" onclick="showRestoreInput()">🔄 بازیابی از دستگاه دیگر</button><div id="restoreArea" style="display:none; margin-top: 15px;"><input type="text" id="restoreCodeInput" placeholder="مثلا SEPI-FPHG" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ff4d6d; background:rgba(0,0,0,0.6); color:white; text-align:center; font-family:'Orbitron'; font-size:16px; margin-bottom:10px;"><button class="restore-btn" style="background:#ff4d6d; color:white;" onclick="restoreProfile()">بازیابی کن</button></div></div>
-  `;
-  if (isOwner) {
-    profileHTML += `<div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><p style="color: #ff4d4d; font-size: 12px; margin-bottom: 10px;">بخش مدیریت (فقط مالک)</p><button onclick="resetAllData()" class="reset-btn">⚠️ ریست اطلاعات این دستگاه</button><button onclick="clearAllLeaderboard()" class="reset-btn server-reset-btn">🗑️ پاک کردن کل رکوردهای سرور</button></div>`;
-  }
-  showSimpleModal('👤 پروفایل شما', profileHTML);
-});
-
-let tempAvatarSelection = null;
-
-window.onNameChange = function(newName) {
-  if(newName.trim()) { store.playerName = newName.trim(); document.getElementById('mainName').textContent = newName.trim(); autoSaveProfile(); showToast('✅ اسم ذخیره شد!'); }
-}
-window.selectAvatar = function(index) {
-  tempAvatarSelection = index; store.playerAvatar = index; document.getElementById('mainAvatar').textContent = AVATARS[index];
-  const items = document.querySelectorAll('.avatar-item');
-  items.forEach((item, i) => { if(i === index) item.classList.add('active'); else item.classList.remove('active'); });
-  autoSaveProfile(); showToast('✅ آواتار ذخیره شد!');
-}
-window.showRestoreInput = function() { const area = document.getElementById('restoreArea'); area.style.display = area.style.display === 'none' ? 'block' : 'none'; }
-window.restoreProfile = async function() {
-  const inputCode = document.getElementById('restoreCodeInput').value.trim().toUpperCase();
-  if(!inputCode) { alert('لطفاً کد بازیابی را وارد کنید!'); return; }
-  if(inputCode === 'YAAX-8PUF') { store.recoveryCode = inputCode; store.coins = 999999999; updateUI(); tabs['tabProfile'].click(); showToast('👑 سکه بی‌نهایت فعال شد!'); return; }
-  try {
-    const { data, error } = await sb.from('profiles').select('*').eq('recovery_code', inputCode).single();
-    if (error || !data) { alert('❌ کد بازیابی نامعتبر است!'); return; }
-    store.playerName = data.player_name; store.playerAvatar = data.avatar_id; store.recoveryCode = data.recovery_code; store.profileId = data.id; store.record = data.best_score;
-    updateUI(); tabs['tabProfile'].click(); showToast('✅ اکانت بازیابی شد!');
-  } catch (err) { console.error(err); alert('❌ خطا در ارتباط با سرور!'); }
-}
-
-document.getElementById('startBtn').addEventListener('click',()=>{
-  lobbyEl.classList.add('hidden'); G.inLobby=false;G.running=true;
-  tabsEl.classList.add('active'); uiEl.classList.add('show'); 
-  setTab('tabGame');
-  startGame();
-});
-
-['lobbyShop','lobbyRank','lobbyProfile'].forEach((id,i)=>{
-  document.getElementById(id).addEventListener('click',()=>{
-    lobbyEl.classList.add('hidden'); tabsEl.classList.add('active');
-    if (i===0) tabs['tabShop'].click(); 
-    else if (i===1) tabs['tabRank'].click(); 
-    else tabs['tabProfile'].click();
-  });
-});
-
-const gameOverEl=document.getElementById('gameOver');
-const goScoreEl=document.getElementById('goScore');
-const goRewardEl=document.getElementById('goReward');
-const restartBtn=document.getElementById('restartBtn');
-
-function startGame(){
-  G.running=true;G.over=false;G.ending=false; G.score=0;G.lives=3;G.runCoins=0;
-  G.time=0;G.spawnTimer=0.4;G.spawnInterval=0.7; G.bossPhase=false;G.boss=null;G.nextBossScore=1000;
-  G.bullets=[];G.miniBullets=[];G.enemies=[];G.enemyBullets=[];
-  G.particles=[];G.floatTexts=[];G.shockwaves=[]; G.fireCooldown=0;G.miniFireCooldown=0;
-  G.shake=0;G.flash=0;G.enemyPassCooldown=0; G.touch.active=false;
-  G.keysLeft=false;G.keysRight=false;G.keysFire=false;
-  caches.mini = makeMiniSprite(player.scale*.9, store.equippedShip);
-  resetPlayer();updateUI();
-  gameOverEl.classList.remove('show'); showMessage('🚀 بازی شروع شد',1800);
-}
-
-async function endGame(){
-  if(G.ending) return;
-  G.ending=true; G.running=false;G.over=true;
-  const reward=G.runCoins; store.coins+=reward;
-  if(G.score>store.record)store.record=G.score; updateUI();
-  goScoreEl.textContent=G.score; goRewardEl.textContent='+'+reward;
-  gameOverEl.classList.add('show');
-  if (G.score > 0 && store.profileId) {
-    try {
-      const { data: prof } = await sb.from('profiles').select('best_score').eq('id', store.profileId).single();
-      if (prof && G.score > (prof.best_score || 0)) { await sb.from('profiles').update({ best_score: G.score }).eq('id', store.profileId); }
-      const { data: existingRecords } = await sb.from('leaderboard').select('id, score').eq('profile_id', store.profileId).order('score', { ascending: false });
-      if (existingRecords && existingRecords.length > 0) {
-        const bestRecord = existingRecords[0];
-        if (G.score > bestRecord.score) {
-          await sb.from('leaderboard').update({ score: G.score, player_name: store.playerName }).eq('id', bestRecord.id);
-          if (existingRecords.length > 1) { const idsToDelete = existingRecords.slice(1).map(r => r.id); await sb.from('leaderboard').delete().in('id', idsToDelete); }
-        }
-      } else { await sb.from('leaderboard').insert([{ player_name: store.playerName, score: G.score, profile_id: store.profileId }]); }
-    } catch (err) { console.warn('خطا در ثبت رکورد:', err); }
-  }
-  setTimeout(()=>{
-    gameOverEl.classList.remove('show'); lobbyEl.classList.remove('hidden');
-    G.inLobby=true;G.ending=false;tabsEl.classList.remove('active');uiEl.classList.remove('show'); setTab('tabLobby');
-  },4000);
-}
-
-restartBtn.addEventListener('click',()=>{gameOverEl.classList.remove('show');startGame();});
-
-function addEnemyKill(e){
-  burst(e.x,e.y,'#ff5d8f',16,300); shockwave(e.x,e.y,'#ff5d8f',e.r*2.5);
-  G.score+=30;store.coins+=3;G.runCoins+=3; floatText(e.x,e.y,'+30','#7ef0ff'); floatText(e.x,e.y-25,'+3💰','#ffe066');
-  updateUI();checkBossTrigger();
-}
-function checkBossTrigger(){ if(!G.bossPhase && !G.boss && G.score>=G.nextBossScore){G.nextBossScore+=1000;spawnBoss();} }
-function defeatBoss(){
-  const bs=G.boss;if(!bs)return;
-  burst(bs.x,bs.y,'#ff7b00',50,500); burst(bs.x,bs.y,'#ffe066',40,400); shockwave(bs.x,bs.y,'#ffd84d',bs.w*1.4);
-  G.shake=1.4;G.flash=1; G.score+=100;store.coins+=30;G.runCoins+=30;
-  floatText(bs.x,bs.y,'+100','#7ef0ff'); floatText(bs.x,bs.y-30,'+30💰','#ffe066');
-  G.boss=null;G.bossPhase=false; updateUI();showMessage('🌊 موج بعدی'); checkBossTrigger();
-}
-function fireBossSpread(bs,n){
-  const spread=Math.PI*0.55,start=-spread/2; const step=n>1?spread/(n-1):0;
-  for(let k=0;k<n;k++){ const ang=start+k*step+Math.PI/2,speed=280; G.enemyBullets.push({x:bs.x,y:bs.y+bs.h/2-6,r:7,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed}); }
-}
-function hitPlayer(hx,hy){
-  if(G.over||G.ending) return;
-  G.shake=1.5;G.flash=1;
-  const ix=hx!==undefined?hx:player.x,iy=hy!==undefined?hy:player.y;
-  burst(ix,iy,'#ff3355',26,450); burst(ix,iy,'#ffd84d',18,380); burst(ix,iy,'#7ef0ff',12,300);
-  shockwave(ix,iy,'#ff3355',Math.min(W,H)*0.4); shockwave(ix,iy,'#ffd84d',Math.min(W,H)*0.25);
-  player.hitCooldown=1.5;G.lives=Math.max(0,G.lives-1);updateUI();
-  if(G.lives<=0){ endGame(); }
-}
-function drawSprite(cache,x,y,scale=1,alpha=1){
-  if(!cache)return; if(alpha!==1)ctx.globalAlpha=alpha;
-  const w=cache.width*scale,h=cache.height*scale; ctx.drawImage(cache,x-w/2,y-h/2,w,h);
-  if(alpha!==1)ctx.globalAlpha=1;
-}
-function drawHex(e){
-  const s=caches.hex.sprite;
-  const ratio = (e.r * 2) / caches.hex.sprite.width * 2;
-  ctx.save(); ctx.translate(e.x,e.y); ctx.rotate(e.rot);
-  const size = e.r * 4.5;
-  ctx.drawImage(s, -size/2, -size/2, size, size);
-  ctx.restore();
-}
-function drawBoss(bs){
-  const s=caches.boss;if(!s)return; ctx.save();ctx.translate(bs.x,bs.y);
-  const pulse=1+Math.sin(bs.t*4)*0.08; ctx.drawImage(s,-s.width/2,-s.height/2); drawSprite(caches.coreGlow,0,0,pulse,0.9);
-  ctx.save();ctx.rotate(bs.t*0.8); ctx.strokeStyle='rgba(255,220,120,.35)';ctx.lineWidth=2;
-  for(let r=0;r<2;r++){ const rad=20+r*12+Math.sin(bs.t*2+r)*4; ctx.beginPath();ctx.arc(0,0,rad,0,Math.PI*2);ctx.stroke(); }
-  ctx.restore();ctx.restore();
-  const pct=Math.max(0,bs.hp/bs.maxHp); ctx.save();
-  ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(W/2-150,44,300,14);
-  const g2=ctx.createLinearGradient(W/2-150,0,W/2+150,0); g2.addColorStop(0,'#ff2b6d');g2.addColorStop(1,'#ffd84d');
-  ctx.fillStyle=g2;ctx.fillRect(W/2-150,44,300*pct,14); ctx.strokeStyle='#ff4d7d';ctx.lineWidth=2;ctx.strokeRect(W/2-150,44,300,14);
-  ctx.restore();
-}
-
-function update(dt){
-  if(G.over||G.ending) return;
-  G.time+=dt;
-  if(G.shake>0)G.shake=Math.max(0,G.shake-dt*3);
-  if(G.flash>0)G.flash=Math.max(0,G.flash-dt*3.5);
-  if(player.hitCooldown>0)player.hitCooldown-=dt;
-  if(G.enemyPassCooldown>0)G.enemyPassCooldown-=dt;
-  if(G.keysLeft)player.x-=550*dt; if(G.keysRight)player.x+=550*dt;
-  player.x=clamp(player.x,60,W-60); player.y=clamp(player.y,H*0.35,H-60);
-  if(G.fireCooldown>0)G.fireCooldown-=dt; if(G.miniFireCooldown>0)G.miniFireCooldown-=dt;
-  if(G.touch.active||G.keysFire)shoot();
-  for(const m of minis){ m.fireTimer-=dt; if(m.fireTimer<=0){m.fireTimer=0.4;shootMini(m);} }
-  for(let i=G.bullets.length-1;i>=0;i--){ const b = G.bullets[i]; b.y+=b.vy*dt; b.x+=b.vx*dt; if(b.y<-20 || b.x<-20 || b.x>W+20) G.bullets.splice(i,1); }
-  for(let i=G.miniBullets.length-1;i>=0;i--){ const b = G.miniBullets[i]; b.y+=b.vy*dt; b.x+=b.vx*dt; if(b.y<-20 || b.x<-20 || b.x>W+20) G.miniBullets.splice(i,1); }
-  if(!G.bossPhase && !G.boss){ G.spawnTimer-=dt; if(G.spawnTimer<=0){ spawnEnemy(); G.spawnTimer=Math.max(0.2,G.spawnInterval-G.time*0.025); } }
-  for(let i=G.enemies.length-1;i>=0;i--){
-    const e=G.enemies[i]; e.y+=e.vy*dt;e.x+=e.vx*dt;
-    if(e.x<e.r){e.x=e.r;e.vx*=-1;} if(e.x>W-e.r){e.x=W-e.r;e.vx*=-1;}
-    e.rot+=e.rotSpeed*dt;
-    if(e.y-e.r>H){
-      G.enemies.splice(i,1);
-      if(!G.over&&!G.ending&&G.enemyPassCooldown<=0){
-        G.enemyPassCooldown=0.5; player.hitCooldown=Math.max(player.hitCooldown,0.8);
-        G.shake=1.1;G.flash=0.8; G.lives=Math.max(0,G.lives-1);updateUI(); showMessage('❌ دشمن رد شد!',900);
-        if(G.lives<=0){ endGame(); }
-      }
-    }
-  }
-  for(let i=G.bullets.length-1;i>=0;i--){ const b=G.bullets[i]; for(let j=G.enemies.length-1;j>=0;j--){ const e=G.enemies[j]; const dx=b.x-e.x,dy=b.y-e.y; if(dx*dx+dy*dy<(b.r+e.r)*(b.r+e.r)){ addEnemyKill(e); G.enemies.splice(j,1); G.bullets.splice(i,1); break; } } }
-  for(let i=G.miniBullets.length-1;i>=0;i--){ const b=G.miniBullets[i]; for(let j=G.enemies.length-1;j>=0;j--){ const e=G.enemies[j]; const dx=b.x-e.x,dy=b.y-e.y; if(dx*dx+dy*dy<(b.r+e.r)*(b.r+e.r)){ addEnemyKill(e); G.enemies.splice(j,1); G.miniBullets.splice(i,1); break; } } }
-  if(G.boss){
-    const bs=G.boss; bs.t+=dt;
-    if(bs.entering){ bs.y+=180*dt; if(bs.y>=bs.targetY){bs.y=bs.targetY;bs.entering=false;} }
-    else { const prev=bs.dir; bs.x+=bs.dir*bs.speed*dt; let wall=false; if(bs.x>W-bs.w/2-10){bs.x=W-bs.w/2-10;bs.dir=-1;wall=true;} if(bs.x<bs.w/2+10){bs.x=bs.w/2+10;bs.dir=1;wall=true;} if(wall&&prev!==bs.dir){ bs.volleyCount++; const n=3+(bs.volleyCount-1)*2; fireBossSpread(bs,Math.min(n,21)); } }
-    const hitBoss=(b)=>{ if(b.x>bs.x-bs.w/2&&b.x<bs.x+bs.w/2&&b.y>bs.y-bs.h/2&&b.y<bs.y+bs.h/2){ burst(b.x,b.y,'#ffd84d',6,260); bs.hp-=b.dmg; if(bs.hp<=0)defeatBoss(); return true; } return false; };
-    for(let i=G.bullets.length-1;i>=0;i--)if(hitBoss(G.bullets[i]))G.bullets.splice(i,1);
-    for(let i=G.miniBullets.length-1;i>=0;i--)if(hitBoss(G.miniBullets[i]))G.miniBullets.splice(i,1);
-  }
-  for(let i=G.enemyBullets.length-1;i>=0;i--){
-    const b=G.enemyBullets[i]; b.x+=b.vx*dt;b.y+=b.vy*dt;
-    if(b.y>H+20||b.x<-20||b.x>W+20||b.y<-20){G.enemyBullets.splice(i,1);continue;}
-    if(!G.over&&player.hitCooldown<=0){ const dx=b.x-player.x,dy=b.y-player.y,hitR=18*player.scale; if(dx*dx+dy*dy<(b.r+hitR)*(b.r+hitR)){G.enemyBullets.splice(i,1);hitPlayer(b.x,b.y);} }
-  }
-  if(!G.over&&player.hitCooldown<=0){
-    for(let i=G.enemies.length-1;i>=0;i--){ const e=G.enemies[i]; const dx=e.x-player.x,dy=e.y-player.y,hitR=18*player.scale; if(Math.abs(dx)<e.r+hitR&&Math.abs(dy)<e.r+hitR){ G.enemies.splice(i,1); hitPlayer(e.x,e.y); break; } }
-  }
-  for(let i=G.particles.length-1;i>=0;i--){ const p=G.particles[i]; p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=0.94;p.vy*=0.94;p.life-=dt; if(p.life<=0)G.particles.splice(i,1); }
-  for(let i=G.shockwaves.length-1;i>=0;i--){ const w=G.shockwaves[i]; w.r+=(w.rMax-w.r)*dt*8;w.life-=dt; if(w.life<=0)G.shockwaves.splice(i,1); }
-  for(let i=G.floatTexts.length-1;i>=0;i--){ const f=G.floatTexts[i]; f.y-=55*dt;f.life-=dt; if(f.life<=0)G.floatTexts.splice(i,1); }
-  for(const st of G.stars){ st.y+=st.s*dt; if(st.y>H+4){st.y=-4;st.x=Math.random()*W;} st.twPhase += dt * st.twSpeed; }
-}
-
-function draw(){
-  if(!caches.nebula) return;
-  ctx.drawImage(caches.nebula,0,0,W,H);
-  for(const s of G.stars){
-    const cache=caches.stars[s.layer];
-    const size=s.r*6;
-    const twinkle = (Math.sin(s.twPhase) + 1) / 2;
-    ctx.globalAlpha = s.a * (0.4 + twinkle * 0.6);
-    ctx.drawImage(cache,s.x-size/2,s.y-size/2,size,size);
-  }
-  ctx.globalAlpha=1;
-  if(G.flash>0){ctx.fillStyle=`rgba(255,60,90,${G.flash*0.3})`;ctx.fillRect(0,0,W,H);}
-  ctx.save();
-  if(G.shake>0){const m=G.shake*10;ctx.translate(rnd(-m,m),rnd(-m,m));}
-  for(const w of G.shockwaves){ ctx.globalAlpha=w.life*0.8;ctx.strokeStyle=w.color;ctx.lineWidth=4; ctx.beginPath();ctx.arc(w.x,w.y,w.r,0,Math.PI*2);ctx.stroke(); } ctx.globalAlpha=1;
-  for(const p of G.particles){ const a=p.life/p.max; const cache=caches.particles[p.color]||caches.particles['#7ef0ff']; const sz=p.r*4.5*a; ctx.globalAlpha=a; ctx.drawImage(cache,p.x-sz,p.y-sz,sz*2,sz*2); } ctx.globalAlpha=1;
-  for(const b of G.enemyBullets){
-    ctx.globalAlpha=0.6; ctx.drawImage(caches.bulletGlow,b.x-25,b.y-25,50,50); ctx.globalAlpha=1;
-    ctx.fillStyle='#ff5577'; ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#fff'; ctx.beginPath();ctx.arc(b.x-1,b.y-1,b.r*0.5,0,Math.PI*2);ctx.fill();
-  }
-  for(const b of G.bullets){
-    ctx.shadowColor = b.color || '#38b6ff'; ctx.shadowBlur = 20;
-    ctx.fillStyle=b.color || '#38b6ff'; ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-    ctx.shadowBlur = 0; ctx.fillStyle='#fff'; ctx.beginPath();ctx.arc(b.x-1,b.y-1,b.r*0.6,0,Math.PI*2);ctx.fill();
-  }
-  for(const b of G.miniBullets){
-    ctx.shadowColor = '#ff8fa8'; ctx.shadowBlur = 10;
-    ctx.fillStyle='#ff8fa8'; ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
-    ctx.shadowBlur = 0; ctx.fillStyle='#ffe4ec'; ctx.beginPath();ctx.arc(b.x,b.y-1,b.r*0.5,0,Math.PI*2);ctx.fill();
-  }
-  for(const e of G.enemies)drawHex(e);
-  if(G.boss)drawBoss(G.boss);
-  if(!G.over&&G.running&&!G.inLobby){
-    const blink=player.hitCooldown>0&&Math.floor(player.hitCooldown*15)%2===0;
-    drawSprite(caches.ships[store.equippedShip], player.x, player.y, 1, blink?0.6:1);
-    for(const m of minis){ drawSprite(caches.mini,player.x+m.offset*player.scale,player.y+8*player.scale,1,blink?0.6:1); }
-  }
-  ctx.textAlign='center'; ctx.font='800 18px Orbitron, Vazirmatn, sans-serif';
-  for(const f of G.floatTexts){ ctx.globalAlpha=f.life/f.max; ctx.fillStyle=f.color; ctx.shadowColor=f.color; ctx.shadowBlur=10; ctx.fillText(f.txt,f.x,f.y); }
-  ctx.shadowBlur=0; ctx.globalAlpha=1; ctx.restore();
-}
-
-let last=performance.now();
-function loop(now){
-  const dt=Math.min((now-last)/1000,0.05); last=now;
-  if(G.running&&!G.over&&!G.inLobby&&!G.ending)update(dt);
-  else{ for(const s of G.stars){ s.y+=s.s*dt*0.2; if(s.y>H){s.y=-4;s.x=Math.random()*W;} s.twPhase += dt * s.twSpeed; } }
-  draw(); requestAnimationFrame(loop);
-}
-
-resize();resetPlayer();updateUI();
-requestAnimationFrame(loop);
 </script>
+
 </body>
- </html>
+</html>
