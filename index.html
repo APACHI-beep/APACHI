@@ -10,82 +10,79 @@
   body {
     font-family: Tahoma, sans-serif;
     background: radial-gradient(circle at center, #1e293b, #0f172a);
-    color: #eee;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
+    color: #eee; min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    padding: 15px 15px 95px;
   }
-  .screen { display: none; width: 100%; max-width: 500px; height: 90vh; display: flex; flex-direction: column; }
+  .screen { display: none; width: 100%; max-width: 500px; height: calc(90vh - 95px); flex-direction: column; }
   .screen.active { display: flex; animation: fadeIn 0.3s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* صفحه ورود */
   .welcome-box {
-    background: rgba(30, 41, 59, 0.8);
-    padding: 40px 20px;
-    border-radius: 20px;
-    border: 1px solid #334155;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-    margin: auto;
-    width: 100%;
+    background: rgba(30,41,59,0.8); padding: 40px 20px; border-radius: 20px;
+    border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center; margin: auto; width: 100%;
   }
-  .welcome-title { font-size: 2em; font-weight: bold; color: #facc15; margin-bottom: 15px; text-shadow: 0 0 20px rgba(250, 204, 21, 0.5); }
+  .welcome-title { font-size: 2em; font-weight: bold; color: #facc15; margin-bottom: 15px; text-shadow: 0 0 20px rgba(250,204,21,0.5); }
   .welcome-sub { color: #94a3b8; margin-bottom: 25px; }
   .name-input {
     width: 100%; padding: 15px; font-size: 1.1em; border-radius: 12px; border: 2px solid #334155;
     background: #0f172a; color: #fff; text-align: center; outline: none; transition: 0.3s;
   }
-  .name-input:focus { border-color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+  .name-input:focus { border-color: #facc15; box-shadow: 0 0 10px rgba(250,204,21,0.2); }
   .btn-main {
     width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 12px;
-    background: #facc15; color: #0f172a; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.2s;
+    background: #facc15; color: #0f172a; font-weight: bold; cursor: pointer; margin-top: 20px;
   }
   .btn-main:active { transform: scale(0.98); }
+  .congrats { text-align: center; font-size: 1.4em; color: #4ade80; background: rgba(20,41,29,0.8); padding: 40px 20px; border-radius: 20px; margin: auto; width: 100%; border: 1px solid #22c55e; }
 
-  /* تبریک */
-  .congrats { text-align: center; font-size: 1.4em; color: #4ade80; background: rgba(20, 41, 29, 0.8); padding: 40px 20px; border-radius: 20px; margin: auto; width: 100%; border: 1px solid #22c55e; }
-
-  /* چت */
   .chat-container {
-    background: #0f172a; border-radius: 20px; border: 1px solid #334155; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; height: 100%;
+    background: #0f172a; border-radius: 20px; border: 1px solid #334155;
+    overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; height: 100%;
   }
   .chat-header {
-    display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 15px; border-bottom: 1px solid #334155;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #1e293b; padding: 15px; border-bottom: 1px solid #334155;
   }
-  .chat-header .title { font-weight: bold; color: #facc15; font-size: 1.1em;}
+  .chat-header .title { font-weight: bold; color: #facc15; font-size: 1.1em; }
   .back-btn { background: none; border: none; color: #facc15; font-size: 1.4em; cursor: pointer; }
   .chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-  .msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95em; line-height: 1.5; word-wrap: break-word; }
+  .msg { max-width: 88%; padding: 12px 16px; border-radius: 16px; font-size: 0.95em; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; }
   .msg.bot { background: #1e293b; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
   .msg.user { background: #facc15; color: #0f172a; align-self: flex-end; border-bottom-left-radius: 4px; font-weight: bold; }
+  .copy-btn {
+    display: block; margin-top: 8px; background: #334155; color: #facc15; border: none;
+    padding: 5px 12px; border-radius: 6px; font-size: 0.75em; cursor: pointer; font-family: inherit;
+  }
+  .copy-btn:active { transform: scale(0.95); }
   .chat-input-row { display: flex; gap: 10px; padding: 15px; background: #1e293b; border-top: 1px solid #334155; }
   .chat-input-row input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; outline: none; }
   .chat-input-row button { padding: 0 20px; background: #facc15; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-  /* لیست کشورها */
-  .countries-list { flex: 1; overflow-y: auto; padding: 10px; background: #0f172a; border-radius: 20px; border: 1px solid #334155; }
-  .country-item { background: #1e293b; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #334155; }
-  .country-item.taken { border-color: #22c55e; background: rgba(20, 41, 29, 0.5); }
+  .countries-list { flex: 1; overflow-y: auto; padding: 10px; background: #0f172a; border-radius: 20px; border: 1px solid #334155; }.country-item { background: #1e293b; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #334155; }
+  .country-item.taken { border-color: #22c55e; background: rgba(20,41,29,0.5); }
   .check { color: #22c55e; font-weight: bold; }
 
-  /* منوی پایین */
   .bottom-menu {
-    display: flex; justify-content: space-around; gap: 8px; margin-top: auto; padding-top: 20px; width: 100%;
+    position: fixed; bottom: 15px; left: 15px; right: 15px;
+    display: flex; justify-content: center; gap: 10px;
+    z-index: 100; max-width: 500px; margin: 0 auto;
   }
   .menu-btn {
-    flex: 1; padding: 10px 5px; font-size: 0.85em; border: 1px solid #facc15; border-radius: 10px;
-    background: #1e293b; color: #facc15; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center;
+    flex: 1; padding: 14px 5px; font-size: 0.9em;
+    border: 2px solid #facc15; border-radius: 14px;
+    background: #1e293b; color: #facc15; font-weight: bold;
+    cursor: pointer; text-align: center; font-family: inherit;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.2s;
   }
   .menu-btn:hover { background: #facc15; color: #0f172a; }
+  .menu-btn:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
 
-<!-- صفحه ۱: ورود -->
 <div id="screen-welcome" class="screen active">
   <div class="welcome-box">
     <div class="welcome-title">به ایران وار خوش آمدید!</div>
@@ -95,25 +92,17 @@
   </div>
 </div>
 
-<!-- صفحه ۲: تبریک -->
 <div id="screen-congrats" class="screen">
-  <div class="congrats" id="congratsText" style="margin: auto;"></div>
+  <div class="congrats" id="congratsText" style="margin:auto;"></div>
 </div>
 
-<!-- صفحه ۳: منوی اصلی -->
 <div id="screen-menu" class="screen">
   <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column;">
     <h2 style="color:#facc15; font-size:1.8em; text-align:center; margin-bottom:10px;">منوی اصلی</h2>
     <p style="color:#94a3b8; text-align:center;">یک گزینه را از پایین انتخاب کنید</p>
   </div>
-  <div class="bottom-menu">
-    <button class="menu-btn" onclick="openChat('country')">🧑‍💻 بات کشور گیری</button>
-    <button class="menu-btn" onclick="openCountries()">🌍 کشورها</button>
-    <button class="menu-btn" onclick="openChat('equipment')">🚀 بات تجهیزات</button>
-  </div>
 </div>
 
-<!-- صفحه ۴: چت -->
 <div id="screen-chat" class="screen">
   <div class="chat-container">
     <div class="chat-header">
@@ -128,22 +117,25 @@
   </div>
 </div>
 
-<!-- صفحه ۵: کشورها -->
 <div id="screen-countries" class="screen">
-  <div class="chat-header" style="border-radius: 20px; margin-bottom: 10px;">
+  <div class="chat-header" style="border-radius:20px; margin-bottom:10px; background:#0f172a; border:1px solid #334155;">
     <span class="title">🌍 کشورهای دنیا و گروهک‌ها</span>
     <button class="back-btn" onclick="backToMenu()">↩</button>
   </div>
   <div class="countries-list" id="countriesList"></div>
 </div>
 
+<div class="bottom-menu">
+  <button class="menu-btn" onclick="openChat('country')">🧑‍💻 بات کشورگیری</button>
+  <button class="menu-btn" onclick="openCountries()">🌍 کشورها</button>
+  <button class="menu-btn" onclick="openChat('equipment')">🚀 بات تجهیزات</button>
+</div>
+
 <script>
-// ============ اتصال به Supabase ============
 const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============ لیست کشورها و گروهک‌ها ============
 const ALL_ENTITIES = [
   "ایران","افغانستان","عراق","ترکیه","پاکستان","عربستان","امارات","قطر","کویت","عمان",
   "بحرین","یمن","سوریه","لبنان","اردن","فلسطین","مصر","لیبی","تونس","الجزایر",
@@ -151,8 +143,7 @@ const ALL_ENTITIES = [
   "آفریقای جنوبی","زیمبابوه","آنگولا","موزامبیک","ماداگاسکار","کامرون","چاد","نیجر","مالی","موریتانی",
   "روسیه","اوکراین","بلاروس","لهستان","آلمان","فرانسه","انگلیس","ایتالیا","اسپانیا","پرتغال",
   "هلند","بلژیک","سوئیس","اتریش","سوئد","نروژ","فنلاند","دانمارک","یونان","بلغارستان",
-  "رومانی","مجارستان","چک","اسلواکی","صربستان","کرواسی","بوسنی","آلبانی","مقدونیه","اسلوونی",
-  "چین","ژاپن","کره جنوبی","کره شمالی","هند","اندونزی","مالزی","تایلند","ویتنام","فیلیپین",
+  "رومانی","مجارستان","چک","اسلواکی","صربستان","کرواسی","بوسنی","آلبانی","مقدونیه","اسلوونی","چین","ژاپن","کره جنوبی","کره شمالی","هند","اندونزی","مالزی","تایلند","ویتنام","فیلیپین",
   "سنگاپور","برمه","کامبوج","لائوس","مغولستان","قزاقستان","ازبکستان","ترکمنستان","قرقیزستان","تاجیکستان",
   "آذربایجان","ارمنستان","گرجستان","آمریکا","کانادا","مکزیک","برزیل","آرژانتین","شیلی","پرو",
   "کلمبیا","ونزوئلا","اکوادور","بولیوی","پاراگوئه","اروگوئه","کوبا","جامائیکا","هائیتی","دومینیکن",
@@ -160,31 +151,171 @@ const ALL_ENTITIES = [
   "کنگو","رواندا","بوروندی","مالاوی","زامبیا","بوتسوانا","ناميبيا","لسوتو","اسواتینی","گینه",
   "سیرالئون","لیبریا","ساحل عاج","بورکینافاسو","توگو","بنین","گامبیا","گینه بیسائو","کیپ ورد","سیشل",
   "موریس","کومور","سائوتومه","برونئی","تیمور شرقی","مالدیو","بوتان","نپال","بنگلادش","سریلانکا",
-  "داعش", "حزب‌الله", "طالبان", "القاعده", "حماس", "انصارالله"
+  "داعش","حزب‌الله","طالبان","القاعده","حماس","انصارالله"
 ];
+// ============ تجهیزات کامل داعش (متن طولانی) ============
+const ISIS_TEXT = 🏴 داعش | ISIS
 
-// ============ دیتابیس تجهیزات (بر اساس قدرت کشورها) ============
-const EQUIPMENT_DB = {
-  "ایران": "موشک بالستیک خیبرشکن، پهپاد شاهد ۱۳۶، تانک کرار",
-  "آمریکا": "جنگنده F-35، ناو هواپیمابر جورج واشنگتن، بمب‌افکن B-2",
-  "روسیه": "موشک هایپرسونیک آوانگارد، تانک T-14 آرماتا، جنگنده سوخو ۵۷",
-  "چین": "جنگنده J-20، موشک دانگ‌فنگ ۴۱، ناوشکن تایپ ۰۵۵",
-  "اسرائیل": "سیستم گنبد آهنین، جنگنده F-35I، ماهواره جاسوسی اوفک",
-  "انگلیس": "تانک چلنجر ۲، جنگنده تایفون، زیردریایی هسته‌ای آستوت",
-  "فرانسه": "جنگنده رافال، ناو هواپیمابر شارل دوگل، موشک اگزوست",
-  "داعش": "تویوتا هایلوکس مسلح، سلاح‌های سبک انفرادی، بمب‌های دست‌ساز",
-  "حزب‌الله": "موشک‌های نقطه‌زن فاتح ۱۱۰، پهپادهای انتحاری، راکت‌های کاتیوشا",
-  "طالبان": "هلیکوپتر بلک هاوک، سلاح‌های باقی‌مانده ارتش آمریکا، زره‌پوش هاموی"
+(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)
+
+━━━━━━━━━━━━━━━━━━
+
+📍 مشخصات کلی سازمان
+
+🗺 نام رسمی: دولت اسلامی عراق و شام (ISIS/ISIL)
+👥 اعضا: ≈ ۲۰٬۰۰۰ نفر (برآورد)
+💵 دارایی مالی: ≈ ۵۰ میلیون دلار (برآورد)
+💰 بودجه نظامی: نامشخص
+🏙 مرکز فرماندهی: نامشخص (پراکنده در عراق، سوریه، افغانستان، آفریقا)
+🏢 نوع سازمان: سازمان شبه‌نظامی فراملی
+
+━━━━━━━━━━━━━━━━━━
+
+👤 نیروی انسانی
+
+🪖 جنگجوی فعال — ≈ ۲۰٬۰۰۰ نفر
+🧑‍✈️ نیروی ذخیره — ≈ ۵٬۰۰۰ نفر
+⚔️ نیروهای شبه‌نظامی — ≈ ۳٬۰۰۰ نفر (وابسته)
+
+━━━━━━━━━━━━━━━━━━
+
+🪖 نیروی زمینی
+
+🛡 تانک‌ها
+🛡 T-55 — ۳۰ دستگاه (غنیمتی)
+🛡 T-62 — ۲۰ دستگاه (غنیمتی)
+🛡 T-72 — ۱۰ دستگاه (غنیمتی)
+
+🚙 خودروهای زرهی
+🚙 BMP-1 — ۲۰ دستگاه (غنیمتی)
+🚙 BTR-60 — ۲۰ دستگاه (غنیمتی)
+🚙 M113 — ۱۰ دستگاه (غنیمتی)
+🚙 خودروهای تاکتیکی مسلح (Technical) — ۵۰۰+ دستگاه
+🚙 خودروهای بمب‌گذاری‌شده (VBIED) — ۲۰۰+ دستگاه
+
+━━━━━━━━━━━━━━━━━━
+
+💣 توپخانه
+
+💣 خمپاره‌انداز ۸۲mm — ۱۰۰+ قبضه
+💣 خمپاره‌انداز ۱۲۰mm — ۵۰+ قبضه
+💣 راکت‌انداز ۱۰۷mm — ۵۰+ سامانه
+🚀 BM-21 Grad — ۲۰ سامانه (غنیمتی)
+🚀 Type 63 MLRS — ۱۰ سامانه (غنیمتی)
+
+━━━━━━━━━━━━━━━━━━
+
+🚀 موشک‌ها
+
+🚀 RPG-7 — ۳٬۰۰۰+ فروند
+🚀 RPG-29 — ۳۰۰+ فروند
+🚀 موشک‌های ضدتانک هدایت‌شونده (ATGM) — ۳۰۰+ فروند (TOW، Konkurs، Kornet)
+🚀 موشک‌های دوش‌پرتاب (MANPADS) — ۲۰۰+ فروند (Stinger، Igla، Strela)
+
+━━━━━━━━━━━━━━━━━━
+
+✈️ نیروی هوایی
+
+✈️ MiG-21 — ۵ فروند (غنیمتی، عملیاتی محدود)
+✈️ L-39 — ۳ فروند (غنیمتی)
+✈️ (داعش نیروی هوایی سازمان‌یافته ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+💣 بمب‌افکن‌های راهبردی
+💣 (داعش بمب‌افکن راهبردی ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+✈️ هواپیماهای پشتیبانی
+✈️ (داعش هواپیمای پشتیبانی ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+🚁 بالگردها
+
+🚁 Mi-8/17 — ۵ فروند (غنیمتی، عملیاتی محدود)
+🚁 (داعش بالگرد سازمان‌یافته ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+🛸 پهپادها
+
+🛸 پهپادهای تجاری مسلح — ۱۰۰+ فروند
+🛸 پهپادهای FPV — ۲۰۰+ فروند
+🛸 پهپادهای شناسایی تاکتیکی — ۵۰ فروند
+
+━━━━━━━━━━━━━━━━━━
+
+⚓ نیروی دریایی
+
+🚤 شناورهای تندرو
+🚤 قایق‌های تندرو — ۱۰ فروند
+
+🤿 زیردریایی‌ها
+⚫ (داعش زیردریایی ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+🛡️ پدافند هوایی و موشکی
+
+🛡️ ZU-23 (توپ ۲۳mm) — ۲۰۰+ سامانه
+🛡️ ZSU-23-4 Shilka — ۲۰ سامانه (غنیمتی)
+🛡️ دوش‌پرتاب Stinger — ۵۰+ سامانه
+🛡️ دوش‌پرتاب Igla — ۵۰+ سامانه
+🛡️ دوش‌پرتاب Strela-2 — ۱۰۰+ سامانه
+
+📡 رادارهای راهبردی — ۰ دستگاه
+📡 رادارهای تاکتیکی — محدود
+
+━━━━━━━━━━━━━━━━━━
+
+☢️ توان هسته‌ای
+
+☢️ داعش به دنبال سلاح هسته‌ای بوده اما به آن دست نیافته است. (در سناریوی گیم: ۰ کلاهک)
+
+━━━━━━━━━━━━━━━━━━
+
+💻 جنگ سایبری و فضایی
+
+💻 نیروهای سایبری — ≈ ۲۰۰ نفر
+🛰 ماهواره‌های نظامی — ۰ واحد
+📡 سامانه‌های شناسایی و مراقبت — محدود
+⚡ سامانه‌های جنگ الکترونیک — محدود
+
+━━━━━━━━━━━━━━━━━━
+
+🏭 صنایع دفاعی
+
+🏭 کارگاه‌های بمب‌سازی — تولید IED و VBIED
+🏭 کارگاه‌های سلاح — تولید سلاح سبک و خمپاره
+🏭 کارگاه‌های پهپاد — مونتاژ پهپادهای تجاری مسلح
+🏭 (داعش صنایع دفاعی سازمان‌یافته ندارد)
+
+━━━━━━━━━━━━━━━━━━
+
+🏆 جمع‌بندی گیم
+
+🪖 تانک‌ها — ≈ ۶۰ دستگاه (غنیمتی)
+🚙 خودروهای زرهی — ≈ ۵۵۰+ دستگاه (بیشتر Technical)
+💣 توپخانه — ≈ ۲۲۰+ قبضه/دستگاه"حماس": "🟢 حماس | HAMAS\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n👥 اعضا: ≈ ۳۰٬۰۰۰ نفر\n🚀 موشک‌ها: قسام، رجوم، M-75\n🪖 سلاح‌ها: RPG، سلاح سبک، تونل تاکتیکی\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند.",
+  "انصارالله": "🔴 انصارالله | ANSARALLAH\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n👥 اعضا: ≈ ۲۰۰٬۰۰۰ نفر\n🚀 موشک‌ها: برکان، قدس، فلسطین\n🛸 پهپادها: صماد، قاصف\n🛡 پدافند: دوش‌پرتاب، سامانه غنیمتی\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند."
 };
 
+// ============ تجهیزات پیش‌فرض برای بقیه کشورها ============
+function getDefaultEquipment(country) {
+  return 🌍 ${country}\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n🪖 نیروی زمینی: تجهیزات پایه نظامی، سلاح‌های سبک\n🚀 موشک‌ها: موشک‌های تاکتیکی متعارف\n✈️ نیروی هوایی: جنگنده‌های نسل سوم/چهارم\n🛡 پدافند: سامانه‌های پدافندی متعارف\n☢️ کلاهک هسته‌ای: ۰ (در سناریوی گیم)\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند.;
+}
 // ============ متغیرهای بازی ============
 let playerName = '';
 let playerCountry = null;
 let playerCode = null;
 let hasEquipment = false;
-let currentChatType = 'country'; // country یا equipment
+let currentChatType = 'country';
+let countryChatHistory = [];
+let equipmentChatHistory = [];
 
-// ============ حافظه مرورگر (LocalStorage) ============
+// ============ حافظه مرورگر ============
 function saveGame() {
   localStorage.setItem('iranwar_data', JSON.stringify({
     name: playerName,
@@ -221,58 +352,93 @@ function submitName() {
   if (!name) { alert('لطفاً اسم خود را وارد کنید'); return; }
   playerName = name;
   saveGame();
-  
-  document.getElementById('congratsText').innerHTML = 
-    `🎉 <b>${name}</b> عزیز،<br><br>تبریک می‌گم!<br>به دنیای <span style="color:#facc15">ایران وار</span> خوش اومدی.`;
-  
+
+  document.getElementById('congratsText').innerHTML =
+    🎉 <b>${name}</b> عزیز،<br><br>تبریک می‌گم!<br>به دنیای <span style="color:#facc15">ایران وار</span> خوش اومدی.;
+
   showScreen('screen-congrats');
   setTimeout(() => showScreen('screen-menu'), 2500);
 }
 
-// ============ چت ============
+// ============ مدیریت دو چت کاملاً مجزا ============
 function openChat(type) {
   currentChatType = type;
   showScreen('screen-chat');
-  
   const title = document.getElementById('chatTitle');
   const box = document.getElementById('chatBox');
-  
+  box.innerHTML = '';
+
   if (type === 'country') {
     title.textContent = '🧑‍💻 بات کشورگیری';
-    if (box.children.length === 0) {
-      addMsg('bot', `سلام ${playerName}! 👋 اسم یک کشور یا گروهک رو بفرست تا برات ثبت کنم.`);
+    if (countryChatHistory.length > 0) {
+      countryChatHistory.forEach(m => renderMsg(m.role, m.text, m.copyable));
+    } else {
+      addMsg('bot', سلام ${playerName}! 👋\nاسم یک کشور یا گروهک رو بفرست تا برات ثبت کنم.);
     }
   } else if (type === 'equipment') {
     title.textContent = '🚀 بات تجهیزات';
-    if (box.children.length === 0) {
-      addMsg('bot', `سلام ${playerName} خوش اومدی 👋<br>کد کشور خودت رو بده تا تجهیزات کشورت رو بهت بدم 🚀`);
+    if (equipmentChatHistory.length > 0) {
+      equipmentChatHistory.forEach(m => renderMsg(m.role, m.text, m.copyable));
+    } else {
+      addMsg('bot', سلام ${playerName} خوش اومدی 👋\nکد کشور خودت رو بده تا تجهیزات کشورت رو بهت بدم 🚀);
     }
   }
 }
 
-function addMsg(role, text) {
+// ============ رندر پیام (با دکمه کپی) ============
+function renderMsg(role, text, copyable) {
   const box = document.getElementById('chatBox');
   const div = document.createElement('div');
   div.className = 'msg ' + role;
-  div.innerHTML = text;
+  div.textContent = text;
+
+  if (copyable) {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = '📋 کپی متن';
+    btn.onclick = () => {
+      navigator.clipboard.writeText(text).then(() => {btn.textContent = '✅ کپی شد!';
+        setTimeout(() => { btn.textContent = '📋 کپی متن'; }, 1500);
+      }).catch(() => {
+        // فالبک برای مرورگرهای قدیمی
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = '✅ کپی شد!';
+        setTimeout(() => { btn.textContent = '📋 کپی متن'; }, 1500);
+      });
+    };
+    div.appendChild(btn);
+  }
+
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
 
+// ============ افزودن پیام (ذخیره در تاریخچه) ============
+function addMsg(role, text, copyable = false) {
+  const history = currentChatType === 'country' ? countryChatHistory : equipmentChatHistory;
+  history.push({ role, text, copyable });
+  renderMsg(role, text, copyable);
+}
+
+// ============ ارسال پیام ============
 async function sendChat() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
   if (!text) return;
   input.value = '';
-  addMsg('user', text);
+  addMsg('user', text, false);
 
   if (currentChatType === 'country') {
-    handleCountryChat(text);
+    await handleCountryChat(text);
   } else {
-    handleEquipmentChat(text);
+    await handleEquipmentChat(text);
   }
 }
-
 // ============ منطق بات کشورگیری ============
 async function handleCountryChat(text) {
   if (playerCountry) {
@@ -287,24 +453,26 @@ async function handleCountryChat(text) {
   }
 
   try {
-    const { data: existing } = await db.from('player_countries').select('country').eq('country', found).maybeSingle();
-    
+    const { data: existing } = await db.from('player_countries')
+      .select('country').eq('country', found).maybeSingle();
+
     if (existing) {
       setTimeout(() => addMsg('bot', 'این کشور از قبل گرفته شده است ❌'), 400);
       return;
     }
 
     const code = Math.floor(1000 + Math.random() * 9000);
-    const { error } = await db.from('player_countries').insert([{ player_name: playerName, country: found, code: code }]);
-    
+    const { error } = await db.from('player_countries')
+      .insert([{ player_name: playerName, country: found, code: code }]);
+
     if (error) throw error;
-    
+
     playerCountry = found;
     playerCode = code;
-    saveGame(); // ذخیره در حافظه مرورگر
+    saveGame();
 
     setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅'), 400);
-    setTimeout(() => addMsg('bot', `🔑 کد اختصاصی شما: <b>${code}</b>`), 900);
+    setTimeout(() => addMsg('bot', 🔑 کد اختصاصی شما: ${code}), 900);
     setTimeout(() => addMsg('bot', 'منتظر سیزن بعد باشید ⏳'), 1400);
 
   } catch (err) {
@@ -330,25 +498,28 @@ async function handleEquipmentChat(inputCode) {
     return;
   }
 
-  // پیدا کردن تجهیزات بر اساس کشور
-  let equipment = EQUIPMENT_DB[playerCountry];
-  if (!equipment) {
-    equipment = "تجهیزات پایه نظامی، سلاح‌های سبک و مهمات تاکتیکی";
+  let equipment;
+  if (playerCountry === 'داعش') {
+    equipment = ISIS_TEXT;
+  } else if (EQUIPMENT_DB[playerCountry]) {
+    equipment = EQUIPMENT_DB[playerCountry];
+  } else {
+    equipment = getDefaultEquipment(playerCountry);
   }
 
   try {
-    await db.from('equipment_claims').insert([{ 
-      player_name: playerName, 
-      country: playerCountry, 
-      equipment: equipment 
+    await db.from('equipment_claims').insert([{
+      player_name: playerName,
+      country: playerCountry,
+      equipment: equipment
     }]);
 
     hasEquipment = true;
     saveGame();
 
-    setTimeout(() => addMsg('bot', `کد تایید شد ✅<br>کشور شما: <b>${playerCountry}</b>`), 400);
-    setTimeout(() => addMsg('bot', `🚀 تجهیزات شما:<br><span style="color:#22c55e">${equipment}</span>`), 900);
-    setTimeout(() => addMsg('bot', 'موفق باشی فرمانده! 🫡'), 1400);
+    setTimeout(() => addMsg('bot', کد تایید شد ✅\nکشور شما: ${playerCountry}), 400);
+    setTimeout(() => addMsg('bot', equipment, true), 900);
+    setTimeout(() => addMsg('bot', 'موفق باشی فرمانده! 🫡'), 1600);
 
   } catch (err) {
     console.error(err);
@@ -360,27 +531,26 @@ async function handleEquipmentChat(inputCode) {
 async function openCountries() {
   showScreen('screen-countries');
   const list = document.getElementById('countriesList');
-  list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">در حال دریافت اطلاعات...</p>';
-
-  let takenSet = new Set();
+  list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">در حال دریافت اطلاعات...</p>';let takenSet = new Set();
   try {
     const { data } = await db.from('player_countries').select('country');
     if (data) takenSet = new Set(data.map(r => r.country));
-  } catch(e) { console.log(e); }
+  } catch (e) { console.log(e); }
 
   list.innerHTML = '';
   ALL_ENTITIES.forEach(c => {
     const isTaken = takenSet.has(c);
     const div = document.createElement('div');
     div.className = 'country-item' + (isTaken ? ' taken' : '');
-    div.innerHTML = `<span>${c}</span>` + (isTaken ? '<span class="check">✅</span>' : '<span style="color:#64748b">—</span>');
+    div.innerHTML = <span>${c}</span> +
+      (isTaken ? '<span class="check">✅</span>' : '<span style="color:#64748b">—</span>');
     list.appendChild(div);
   });
 }
 
 // ============ شروع بازی ============
-loadGame(); // چک کردن اینکه بازیکن قبلا اومده یا نه
+loadGame();
 </script>
 
 </body>
- </html>
+</html>
