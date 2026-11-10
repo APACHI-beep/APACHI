@@ -2,546 +2,468 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>نبرد وار ⚔️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>نبرد وار ⚔️ | امپراتوری</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
-    --gold:#ffd700;
-    --gold-2:#ffb300;
-    --green:#22e06a;
-    --bg-1:#080b14;
-    --bg-2:#111a2e;
+    --gold:#ffd700; --gold-2:#ffb300; --gold-3:#ffe873;
+    --green:#22e06a; --red:#ff5c5c; --cyan:#5ce1ff;
+    --bg-1:#05070e; --bg-2:#0b1222;
+    --text:#eef3ff; --text-dim:#9fb0d0; --text-soft:#5a6b8a;
+    --bot-bubble:linear-gradient(180deg,rgba(30,42,69,.95),rgba(22,32,52,.95));
+    --bot-text:#d8e2f5;
+    --input-bg:rgba(8,14,28,.9);
+    --header-bg:linear-gradient(180deg, rgba(15,22,40,.98), rgba(12,18,32,.92));
+    --header-border:rgba(255,215,0,.18);
+    --row-bg:rgba(255,215,0,.07);
+    --row-border:rgba(255,215,0,.16);
+    --modal-bg:linear-gradient(180deg,rgba(18,26,46,.98),rgba(10,16,30,.98));
+    --glow-gold:0 0 30px rgba(255,215,0,.25);
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
-
-  html,body{height:100%;}
+  html,body{height:100%; overscroll-behavior:none;}
   body{
     font-family:'Vazirmatn', Tahoma, sans-serif;
     background:
-      radial-gradient(circle at 15% 15%, rgba(255,215,0,.10), transparent 45%),
-      radial-gradient(circle at 85% 85%, rgba(255,140,0,.10), transparent 45%),
+      radial-gradient(circle at 15% 15%, rgba(255,215,0,.09), transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(92,225,255,.07), transparent 40%),
       linear-gradient(160deg,var(--bg-1),var(--bg-2) 55%,var(--bg-1));
-    color:#e8eefc;
-    overflow:hidden;
-    min-height:100dvh;
+    color:var(--text); overflow:hidden; min-height:100dvh;
+    transition:background .5s, color .5s; position:relative;
   }
-
-  /* ============ صفحه اصلی ============ */
-  .main-screen{
-    position:fixed; inset:0;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    padding:40px 20px;
-  }
-
-  .title-wrap{ text-align:center; margin-bottom:14px; animation:fadeUp .8s ease both; }
-
-  h1{
-    font-size:clamp(2rem, 6.5vw, 4.2rem);
-    font-weight:900;
-    letter-spacing:-1px;
-    line-height:1.4;
-    background:linear-gradient(180deg,#fffbe0 0%, #ffd700 45%, #ff9500 100%);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    filter:drop-shadow(0 0 22px rgba(255,215,0,.45));
-    animation:glow 2.8s ease-in-out infinite;
-  }
-  @keyframes glow{
-    0%,100%{ filter:drop-shadow(0 0 18px rgba(255,215,0,.35)); }
-    50%    { filter:drop-shadow(0 0 38px rgba(255,200,0,.75)); }
-  }
-
-  .subtitle{
-    margin-top:10px;
-    color:#9fb0d0;
-    font-size:clamp(.85rem,2.5vw,1.05rem);
-    letter-spacing:.5px;
-  }
-
-  .buttons{
-    display:flex; flex-wrap:wrap; gap:18px;
-    justify-content:center;
-    margin-top:46px;
-    width:100%; max-width:520px;
-    animation:fadeUp .8s .15s ease both;
-  }
-
-  .btn{
-    font-family:inherit;
-    font-size:1.05rem;
-    font-weight:700;
-    padding:17px 38px;
-    border-radius:16px;
-    cursor:pointer;
+  #bgParticles{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.7;}
+  .corner-tools{position:fixed; top:16px; left:16px; display:flex; gap:10px; z-index:40;}
+  .tool-btn{
+    width:44px; height:44px; border-radius:14px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,215,0,.22);
     color:var(--gold);
-    border:1px solid rgba(255,215,0,.35);
-    background:linear-gradient(180deg, rgba(255,215,0,.16), rgba(255,215,0,.04));
-    backdrop-filter:blur(6px);
-    transition:transform .22s, box-shadow .22s, border-color .22s, background .22s;
-    box-shadow:0 6px 20px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.15rem;
+    transition:all .3s cubic-bezier(.2,.9,.3,1.2);
+    backdrop-filter:blur(14px);
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+  }
+  .tool-btn:hover{background:rgba(255,215,0,.16); border-color:var(--gold); transform:translateY(-3px) scale(1.04);}
+  .tool-btn:active{transform:scale(.92);}
+  .tool-btn.muted{opacity:.5;}
+  .main-screen{
+    position:fixed; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:40px 20px;
+    z-index:10; overflow-y:auto;
+  }
+  .title-wrap{text-align:center; margin-bottom:10px; animation:fadeUp .9s ease both;}
+  h1{
+    font-size:clamp(2rem, 7vw, 4.4rem); font-weight:900;
+    letter-spacing:-1.5px; line-height:1.4;
+    background:linear-gradient(180deg,#fffbe6 0%, #ffd700 40%, #ff9500 70%, #ff6a00 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 28px rgba(255,215,0,.5));
+    animation:titleGlow 3s ease-in-out infinite;
+  }
+  @keyframes titleGlow{
+    0%,100%{filter:drop-shadow(0 0 22px rgba(255,215,0,.4));}
+    50%{filter:drop-shadow(0 0 50px rgba(255,200,0,.8));}
+  }
+  .subtitle{margin-top:12px; color:var(--text-dim); font-size:clamp(.85rem,2.6vw,1.1rem); letter-spacing:.6px;}
+  .stats{margin-top:24px; min-height:26px; color:var(--gold); font-weight:700; font-size:1rem; text-align:center; animation:fadeUp .7s .3s ease both;}
+  .stats:empty{display:none;}
+  .buttons{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:28px; width:100%; max-width:560px; animation:fadeUp .9s .15s ease both;}
+  .btn{
+    font-family:inherit; font-size:1.02rem; font-weight:700;
+    padding:18px 30px; border-radius:18px; cursor:pointer;
+    color:var(--gold);
+    border:1px solid rgba(255,215,0,.3);
+    background:linear-gradient(180deg, rgba(255,215,0,.12), rgba(255,215,0,.03));
+    backdrop-filter:blur(10px);
+    transition:transform .3s cubic-bezier(.2,.9,.3,1.2), box-shadow .3s, border-color .3s;
+    box-shadow:0 6px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
     display:flex; align-items:center; justify-content:center; gap:10px;
+    flex:1 1 220px; position:relative; overflow:hidden;
   }
-  .btn:hover{
-    transform:translateY(-4px);
-    border-color:var(--gold);
-    box-shadow:0 14px 34px rgba(255,215,0,.28);
-  }
-  .btn:active{ transform:translateY(-1px) scale(.98); }
-
-  .btn.primary{
-    color:#1a1200;
-    background:linear-gradient(180deg,#ffe873,#ffb300);
-    border-color:#ffd700;
-    box-shadow:0 10px 28px rgba(255,180,0,.35);
-  }
-  .btn.primary:hover{ box-shadow:0 16px 40px rgba(255,180,0,.5); }
-
-  .reg-badge{
-    display:none;
-    width:24px; height:24px;
-    border-radius:50%;
-    background:linear-gradient(180deg,#2ee87b,#1aab52);
-    color:#002a10;
-    align-items:center; justify-content:center;
-    font-size:.85rem; font-weight:900;
-    box-shadow:0 0 12px rgba(34,224,106,.6);
-  }
-  .reg-badge.show{ display:flex; }
-
-  footer{
-    position:absolute; bottom:18px; left:0; right:0;
-    color:#4a5a7a; font-size:.78rem; text-align:center;
-  }
-
-  @keyframes fadeUp{
-    from{opacity:0; transform:translateY(16px);}
-    to{opacity:1; transform:translateY(0);}
-  }
-
-  /* ============ صفحه چت ============ */
+  .btn:hover{transform:translateY(-5px); border-color:var(--gold); box-shadow:0 18px 40px rgba(255,215,0,.25), var(--glow-gold);}
+  .btn:active{transform:translateY(-2px) scale(.98);}
+  .btn.primary{color:#1a1200; background:linear-gradient(180deg,var(--gold-3),var(--gold-2)); border-color:var(--gold-3); box-shadow:0 12px 32px rgba(255,180,0,.4);}
+  .btn.equip{color:#001a22; background:linear-gradient(180deg,#7df0ff,#22c8e6); border-color:#7df0ff; box-shadow:0 12px 32px rgba(34,200,230,.35);}
+  .reg-badge{display:none; width:24px; height:24px; border-radius:50%; background:linear-gradient(180deg,#2ee87b,#1aab52); color:#002a10; align-items:center; justify-content:center; font-size:.85rem; font-weight:900; box-shadow:0 0 14px rgba(34,224,106,.6);}
+  .reg-badge.show{display:flex;}
+  footer{position:absolute; bottom:18px; left:0; right:0; color:var(--text-soft); font-size:.78rem; text-align:center; padding:0 16px;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
   .chat-screen{
     position:fixed; inset:0;
     background:
-      radial-gradient(circle at 100% 0%, rgba(255,215,0,.06), transparent 40%),
-      linear-gradient(160deg,#0a0f1c,#141d33 55%,#0a0f1c);
-    display:flex; flex-direction:column;
-    z-index:100;
+      radial-gradient(circle at 100% 0%, rgba(255,215,0,.05), transparent 45%),
+      radial-gradient(circle at 0% 100%, rgba(92,225,255,.05), transparent 45%),
+      linear-gradient(160deg,var(--bg-1),var(--bg-2) 55%,var(--bg-1));
+    display:flex; flex-direction:column; z-index:100;
     transform:translateX(-100%);
-    transition:transform .4s cubic-bezier(.4,0,.2,1);
-    height:100dvh;
+    transition:transform .45s cubic-bezier(.4,0,.2,1);
+    height:100dvh; will-change:transform;
   }
-  .chat-screen.open{ transform:translateX(0); }
-
+  .chat-screen.open{transform:translateX(0);}
   .chat-header{
     display:flex; align-items:center; gap:12px;
-    padding:14px 16px;
-    padding-top:calc(14px + env(safe-area-inset-top));
-    background:linear-gradient(180deg, rgba(20,29,51,.98), rgba(20,29,51,.85));
-    backdrop-filter:blur(20px);
-    border-bottom:1px solid rgba(255,215,0,.15);
-    position:relative;
-    z-index:2;
+    padding:14px 16px; padding-top:calc(14px + env(safe-area-inset-top));
+    background:var(--header-bg); backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--header-border);
+    position:relative; z-index:2; flex-shrink:0;
   }
   .chat-header::after{
-    content:'';
-    position:absolute;
-    bottom:-1px; left:0; right:0;
-    height:1px;
-    background:linear-gradient(90deg, transparent, rgba(255,215,0,.5), transparent);
+    content:''; position:absolute; bottom:-1px; left:0; right:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,215,0,.6), rgba(92,225,255,.4), transparent);
   }
-
   .back-btn{
-    width:42px; height:42px;
-    border-radius:12px;
+    width:44px; height:44px; border-radius:14px;
     background:rgba(255,215,0,.08);
     border:1px solid rgba(255,215,0,.22);
-    color:var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    transition:all .2s;
-    flex-shrink:0;
+    color:var(--gold); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .3s; flex-shrink:0;
   }
-  .back-btn:hover{
-    background:rgba(255,215,0,.18);
-    border-color:var(--gold);
-    transform:scale(1.05);
-  }
-  .back-btn:active{ transform:scale(.94); }
-  .back-btn svg{ width:20px; height:20px; }
-
-  .bot-profile{
-    display:flex; align-items:center; gap:12px;
-    flex:1;
-  }
+  .back-btn:hover{background:rgba(255,215,0,.18); border-color:var(--gold); transform:scale(1.06);}
+  .back-btn:active{transform:scale(.92);}
+  .back-btn svg{width:20px; height:20px;}
+  .bot-profile{display:flex; align-items:center; gap:12px; flex:1; min-width:0;}
   .bot-avatar{
-    width:46px; height:46px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#ffd700,#ff9500);
+    width:48px; height:48px; border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),#ff9500);
     display:flex; align-items:center; justify-content:center;
-    font-size:1.4rem;
-    position:relative;
-    box-shadow:0 0 20px rgba(255,200,0,.4);
-    flex-shrink:0;
+    font-size:1.5rem; position:relative;
+    box-shadow:0 0 24px rgba(255,200,0,.45); flex-shrink:0;
   }
+  .bot-avatar.equip-avatar{background:linear-gradient(135deg,#5ce1ff,#7b6cff); box-shadow:0 0 24px rgba(92,225,255,.45);}
   .online-dot{
-    position:absolute;
-    bottom:1px; left:1px;
-    width:13px; height:13px;
-    border-radius:50%;
-    background:var(--green);
-    border:2px solid #141d33;
-    box-shadow:0 0 8px var(--green);
+    position:absolute; bottom:1px; left:1px; width:14px; height:14px;
+    border-radius:50%; background:var(--green);
+    border:2px solid #141d33; box-shadow:0 0 10px var(--green);
   }
-  .bot-info{ line-height:1.35; min-width:0; }
-  .bot-name{
-    font-weight:700;
-    color:#fff;
-    font-size:1rem;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+  .online-dot.offline{background:#ffb300; box-shadow:0 0 10px #ffb300;}
+  .bot-info{line-height:1.35; min-width:0; flex:1;}
+  .bot-name{font-weight:700; color:var(--text); font-size:1.02rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .bot-status{color:var(--green); font-size:.78rem; font-weight:600;}
+  .bot-status.offline{color:#ffb300;}
+  .timer{
+    font-family:'Vazirmatn', monospace; font-weight:900; font-size:1rem;
+    color:var(--gold); padding:8px 14px; border-radius:12px;
+    background:rgba(255,215,0,.1); border:1px solid rgba(255,215,0,.25);
+    white-space:nowrap; letter-spacing:1px; flex-shrink:0; transition:all .3s;
   }
-  .bot-status{
-    color:var(--green);
-    font-size:.78rem;
-    font-weight:600;
-  }
-
-  .header-spacer{ width:42px; flex-shrink:0; }
-
+  .timer.urgent{color:var(--red); border-color:rgba(255,90,90,.5); background:rgba(255,90,90,.12); animation:pulse 1s infinite;}
+  .timer.done{color:var(--green); border-color:rgba(34,224,106,.4); background:rgba(34,224,106,.1); animation:none;}
+  @keyframes pulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.08);}}
   .chat-messages{
-    flex:1;
-    overflow-y:auto;
-    padding:20px 16px 14px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    scroll-behavior:smooth;
-    overscroll-behavior:contain;
+    flex:1; overflow-y:auto; padding:20px 16px 14px;
+    display:flex; flex-direction:column; gap:10px;
+    scroll-behavior:smooth; overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
   }
-  .chat-messages::-webkit-scrollbar{ width:6px; }
-  .chat-messages::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.25); border-radius:10px; }
-  .chat-messages::-webkit-scrollbar-track{ background:transparent; }
-
+  .chat-messages::-webkit-scrollbar{width:6px;}
+  .chat-messages::-webkit-scrollbar-thumb{background:rgba(255,215,0,.25); border-radius:10px;}
   .message{
-    max-width:82%;
-    padding:11px 15px;
-    border-radius:16px;
-    font-size:.95rem;
-    line-height:1.75;
-    animation:msgIn .3s ease both;
-    word-wrap:break-word;
-    white-space:pre-wrap;
-    position:relative;
+    max-width:82%; padding:12px 16px; border-radius:18px;
+    font-size:.95rem; line-height:1.8;
+    animation:msgIn .35s cubic-bezier(.2,.9,.3,1.2) both;
+    word-wrap:break-word; white-space:pre-wrap;
   }
-
-  @keyframes msgIn{
-    from{ opacity:0; transform:translateY(10px) scale(.97); }
-    to{ opacity:1; transform:translateY(0) scale(1); }
-  }
-
+  @keyframes msgIn{from{opacity:0; transform:translateY(12px) scale(.96);} to{opacity:1; transform:translateY(0) scale(1);}}
   .message.bot{
     align-self:flex-end;
-    background:linear-gradient(180deg,#1e2a45,#1a2438);
+    background:var(--bot-bubble);
     border:1px solid rgba(255,215,0,.12);
-    color:#d8e2f5;
-    border-bottom-right-radius:6px;
-    margin-left:40px;
-    box-shadow:0 3px 10px rgba(0,0,0,.25);
+    color:var(--bot-text);
+    border-bottom-right-radius:6px; margin-left:40px;
+    box-shadow:0 4px 16px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter:blur(10px);
   }
-
   .message.user{
     align-self:flex-start;
-    background:linear-gradient(180deg,#ffe873,#ffb300);
-    color:#1a1200;
-    border-bottom-left-radius:6px;
-    font-weight:600;
-    margin-right:40px;
-    box-shadow:0 3px 12px rgba(255,180,0,.25);
+    background:linear-gradient(180deg,var(--gold-3),var(--gold-2));
+    color:#1a1200; border-bottom-left-radius:6px;
+    font-weight:600; margin-right:40px;
+    box-shadow:0 4px 18px rgba(255,180,0,.3);
   }
-
   .message.success{
     background:linear-gradient(180deg, rgba(34,224,106,.15), rgba(34,224,106,.05));
-    border:1px solid rgba(34,224,106,.4);
-    color:#7dffa8;
-    font-weight:600;
+    border:1px solid rgba(34,224,106,.4); color:#7dffa8;
+    font-weight:600; box-shadow:0 0 24px rgba(34,224,106,.1);
   }
-
+  .message.equip-data{
+    background:linear-gradient(180deg, rgba(92,225,255,.1), rgba(123,108,255,.05));
+    border:1px solid rgba(92,225,255,.3); color:#c9f7ff;
+    align-self:flex-end; border-bottom-right-radius:6px;
+    margin-left:20px; max-width:92%;
+    box-shadow:0 0 30px rgba(92,225,255,.08);
+  }
   .code-highlight{
-    display:block;
-    margin-top:10px;
-    padding-top:10px;
-    text-align:center;
-    font-size:1.9rem;
-    font-weight:900;
-    letter-spacing:10px;
+    display:block; margin-top:12px; padding-top:12px; text-align:center;
+    font-size:2rem; font-weight:900; letter-spacing:12px;
     color:var(--gold);
-    text-shadow:0 0 22px rgba(255,215,0,.55);
+    text-shadow:0 0 26px rgba(255,215,0,.65), 0 0 50px rgba(255,200,0,.3);
     border-top:1px dashed rgba(255,215,0,.35);
     font-family:'Vazirmatn', monospace;
   }
-
-  .code-caption{
-    font-size:.85rem;
-    opacity:.85;
-    line-height:1.7;
-    margin-bottom:2px;
+  .code-caption{font-size:.85rem; opacity:.85; line-height:1.7; margin-bottom:2px;}
+  .rank-line{
+    display:inline-block; margin-top:8px; padding:6px 16px; border-radius:20px;
+    background:rgba(255,215,0,.18); color:var(--gold);
+    font-weight:900; font-size:.9rem; border:1px solid rgba(255,215,0,.35);
   }
-
-  /* تایپینگ ایندیکاتور */
+  .equip-table{display:flex; flex-direction:column; gap:6px; margin-top:8px;}
+  .equip-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:7px 10px; border-radius:10px;
+    background:rgba(92,225,255,.06);
+    border:1px solid rgba(92,225,255,.12);
+    font-size:.88rem;
+  }
+  .equip-row .lbl{color:#8fd8e8; font-weight:600;}
+  .equip-row .val{color:#fff; font-weight:900; font-family:'Vazirmatn', monospace; letter-spacing:.5px;}
   .typing-indicator{
-    align-self:flex-end;
-    background:linear-gradient(180deg,#1e2a45,#1a2438);
+    align-self:flex-end; background:var(--bot-bubble);
     border:1px solid rgba(255,215,0,.12);
-    padding:14px 18px;
-    border-radius:16px;
-    border-bottom-right-radius:6px;
-    display:flex; gap:5px;
-    margin-left:40px;
-    box-shadow:0 3px 10px rgba(0,0,0,.25);
+    padding:15px 20px; border-radius:18px;
+    border-bottom-right-radius:6px; display:flex; gap:6px;
+    margin-left:40px; box-shadow:0 4px 16px rgba(0,0,0,.2);
+    backdrop-filter:blur(10px);
   }
-  .typing-indicator span{
-    width:8px; height:8px;
-    border-radius:50%;
-    background:var(--gold);
-    animation:typingBounce 1.2s infinite;
-    opacity:.6;
-  }
-  .typing-indicator span:nth-child(2){ animation-delay:.15s; }
-  .typing-indicator span:nth-child(3){ animation-delay:.3s; }
-
-  @keyframes typingBounce{
-    0%,60%,100%{ transform:translateY(0); opacity:.4; }
-    30%{ transform:translateY(-6px); opacity:1; }
-  }
-
+  .typing-indicator span{width:8px; height:8px; border-radius:50%; background:var(--gold); animation:typingBounce 1.2s infinite; opacity:.6;}
+  .typing-indicator span:nth-child(2){animation-delay:.15s;}
+  .typing-indicator span:nth-child(3){animation-delay:.3s;}
+  @keyframes typingBounce{0%,60%,100%{transform:translateY(0); opacity:.4;} 30%{transform:translateY(-7px); opacity:1;}}
   .chat-input-bar{
-    display:flex;
-    gap:10px;
-    padding:12px 14px;
+    display:flex; gap:10px; padding:12px 14px;
     padding-bottom:calc(12px + env(safe-area-inset-bottom));
-    background:rgba(13,20,36,.96);
-    backdrop-filter:blur(20px);
-    border-top:1px solid rgba(255,215,0,.12);
-    align-items:center;
+    background:var(--header-bg); backdrop-filter:blur(24px);
+    border-top:1px solid var(--header-border);
+    align-items:center; flex-shrink:0;
   }
-  .input-wrap{ flex:1; }
+  .input-wrap{flex:1;}
   .chat-input-bar input{
-    width:100%;
-    padding:14px 18px;
-    border-radius:14px;
+    width:100%; padding:15px 18px; border-radius:16px;
     border:1px solid rgba(255,215,0,.2);
-    background:#0a1020;
-    color:#fff;
-    font-family:inherit;
-    font-size:.95rem;
-    outline:none;
-    transition:border-color .2s, box-shadow .2s;
+    background:var(--input-bg); color:var(--text);
+    font-family:inherit; font-size:.95rem; outline:none;
+    transition:border-color .25s, box-shadow .25s;
   }
-  .chat-input-bar input::placeholder{ color:#5a6b8a; }
-  .chat-input-bar input:focus{
-    border-color:var(--gold);
-    box-shadow:0 0 0 3px rgba(255,215,0,.1);
-  }
-  .chat-input-bar input:disabled{ opacity:.6; }
-
+  .chat-input-bar input::placeholder{color:var(--text-soft);}
+  .chat-input-bar input:focus{border-color:var(--gold); box-shadow:0 0 0 4px rgba(255,215,0,.1), var(--glow-gold);}
+  .chat-input-bar input:disabled{opacity:.6; cursor:not-allowed;}
   .send-btn{
-    width:50px; height:50px;
-    border-radius:14px;
-    background:linear-gradient(180deg,#ffe873,#ffb300);
-    border:none;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    color:#1a1200;
-    transition:transform .2s, box-shadow .2s, opacity .2s;
-    box-shadow:0 6px 18px rgba(255,180,0,.3);
-    flex-shrink:0;
+    width:52px; height:52px; border-radius:16px;
+    background:linear-gradient(180deg,var(--gold-3),var(--gold-2));
+    border:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:#1a1200;
+    transition:transform .25s, box-shadow .25s, opacity .2s;
+    box-shadow:0 8px 22px rgba(255,180,0,.35); flex-shrink:0;
   }
-  .send-btn:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 10px 24px rgba(255,180,0,.45); }
-  .send-btn:active:not(:disabled){ transform:scale(.94); }
-  .send-btn:disabled{ opacity:.5; cursor:not-allowed; }
-  .send-btn svg{ width:22px; height:22px; }
-
-  /* ============ مودال لیست کشورها ============ */
+  .send-btn:hover:not(:disabled){transform:translateY(-3px); box-shadow:0 14px 32px rgba(255,180,0,.5);}
+  .send-btn:active:not(:disabled){transform:scale(.92);}
+  .send-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .send-btn svg{width:23px; height:23px;}
   .overlay{
-    position:fixed; inset:0;
-    background:rgba(3,6,12,.72);
-    backdrop-filter:blur(7px);
+    position:fixed; inset:0; background:rgba(2,4,10,.78);
+    backdrop-filter:blur(10px);
     display:flex; align-items:center; justify-content:center;
-    padding:20px;
-    opacity:0; pointer-events:none;
-    transition:opacity .25s;
-    z-index:200;
+    padding:20px; opacity:0; pointer-events:none; transition:opacity .3s; z-index:200;
   }
-  .overlay.show{ opacity:1; pointer-events:auto; }
-
+  .overlay.show{opacity:1; pointer-events:auto;}
   .modal{
-    width:100%; max-width:460px;
-    background:linear-gradient(180deg,#141d33,#0d1424);
+    width:100%; max-width:480px;
+    background:var(--modal-bg);
     border:1px solid rgba(255,215,0,.22);
-    border-radius:22px;
-    padding:30px 26px;
-    box-shadow:0 30px 70px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05);
-    transform:translateY(18px) scale(.97);
-    transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
-    max-height:80vh;
-    display:flex; flex-direction:column;
-    position:relative;
+    border-radius:24px; padding:32px 28px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7), var(--glow-gold);
+    transform:translateY(20px) scale(.96);
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+    max-height:82vh; display:flex; flex-direction:column;
+    position:relative; color:var(--text);
   }
-  .overlay.show .modal{ transform:translateY(0) scale(1); }
-
-  .modal h2{
-    color:var(--gold);
-    font-size:1.35rem;
-    margin-bottom:8px;
-    filter:drop-shadow(0 0 12px rgba(255,215,0,.35));
-  }
-  .modal p.hint{ color:#8fa2c4; font-size:.9rem; margin-bottom:20px; line-height:1.8; }
-
-  .close-x{
-    position:absolute; top:14px; left:14px;
-    background:none; border:none; color:#7d8db0;
-    font-size:1.4rem; cursor:pointer; line-height:1;
-    transition:color .2s;
-  }
-  .close-x:hover{ color:var(--gold); }
-
-  .list{
-    overflow-y:auto;
-    margin-top:6px;
-    padding-left:6px;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .list::-webkit-scrollbar{ width:7px; }
-  .list::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.3); border-radius:10px; }
-
+  .overlay.show .modal{transform:translateY(0) scale(1);}
+  .modal h2{color:var(--gold); font-size:1.4rem; margin-bottom:8px; filter:drop-shadow(0 0 16px rgba(255,215,0,.4));}
+  .modal p.hint{color:var(--text-dim); font-size:.9rem; margin-bottom:22px; line-height:1.8;}
+  .close-x{position:absolute; top:16px; left:16px; background:none; border:none; color:var(--text-soft); font-size:1.5rem; cursor:pointer; line-height:1; transition:color .2s, transform .2s;}
+  .close-x:hover{color:var(--gold); transform:rotate(90deg);}
+  .list{overflow-y:auto; margin-top:6px; padding-left:6px; display:flex; flex-direction:column; gap:10px;}
+  .list::-webkit-scrollbar{width:7px;}
+  .list::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3); border-radius:10px;}
   .row{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:10px;
-    padding:13px 16px;
-    border-radius:13px;
-    background:rgba(255,215,0,.06);
-    border:1px solid rgba(255,215,0,.14);
-    animation:fadeUp .35s ease both;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 18px; border-radius:14px;
+    background:var(--row-bg); border:1px solid var(--row-border);
+    animation:fadeUp .4s ease both;
   }
-  .row .name{ font-weight:700; color:#eaf1ff; }
-
+  .row .left{display:flex; align-items:center; gap:12px; min-width:0;}
+  .row .medal{font-size:1.4rem; flex-shrink:0; width:28px; text-align:center;}
+  .row .name{font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .check-mark{
-    width:30px; height:30px;
-    border-radius:50%;
+    width:32px; height:32px; border-radius:50%;
     background:linear-gradient(180deg, rgba(34,224,106,.22), rgba(34,224,106,.08));
     border:1px solid rgba(34,224,106,.5);
     display:flex; align-items:center; justify-content:center;
-    color:#2ee87b;
-    font-size:1rem;
-    font-weight:900;
-    box-shadow:0 0 12px rgba(34,224,106,.25);
-    flex-shrink:0;
+    color:#2ee87b; font-size:1rem; font-weight:900;
+    box-shadow:0 0 14px rgba(34,224,106,.3); flex-shrink:0;
   }
-
-  .empty{
-    text-align:center; color:#7d8db0; padding:26px 10px; line-height:2;
-  }
-
-  .counter{
-    margin-top:16px; text-align:center;
-    color:#8fa2c4; font-size:.85rem;
-  }
-
+  .empty{text-align:center; color:var(--text-dim); padding:30px 10px; line-height:2;}
+  .counter{margin-top:18px; text-align:center; color:var(--text-dim); font-size:.85rem;}
+  #confettiCanvas{position:fixed; inset:0; pointer-events:none; z-index:300; display:none;}
   @media (max-width:480px){
-    .btn{ width:100%; }
-    .buttons{ width:100%; }
-    .message{ max-width:88%; }
+    .btn{width:100%; flex:1 1 100%;}
+    .buttons{width:100%;}
+    .message{max-width:88%;}
+    .timer{font-size:.9rem; padding:6px 10px;}
+    .code-highlight{font-size:1.6rem; letter-spacing:8px;}
   }
 </style>
 </head>
 <body>
 
-  <!-- ============ صفحه اصلی ============ -->
+  <canvas id="bgParticles"></canvas>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="corner-tools">
+    <button class="tool-btn" id="btnTheme" title="تغییر تم">🌙</button>
+    <button class="tool-btn" id="btnSound" title="قطع/وصل صدا">🔊</button>
+  </div>
+
   <div class="main-screen">
     <div class="title-wrap">
-      <h1>به نبرد وار خوش آمدید</h1>
-      <div class="subtitle">⚔️ سرزمین خود را انتخاب کن و پرچمش را برافراز ⚔️</div>
+      <h1>نبرد وار</h1>
+      <div class="subtitle">⚔️ سرزمینت را انتخاب کن و بر جهان حکومت کن ⚔️</div>
     </div>
-
+    <div class="stats" id="stats"></div>
     <div class="buttons">
       <button class="btn primary" id="btnOpenChat">
         <span>🎯 بات کشور گیری</span>
         <span class="reg-badge" id="regBadge">✓</span>
       </button>
+      <button class="btn equip" id="btnEquipChat">🚀 بات تجهیزات</button>
       <button class="btn" id="btnList">🌍 کشورها</button>
     </div>
-
-    <footer>اطلاعات کشورها در حافظه‌ی مرورگر شما ذخیره می‌شود</footer>
+    <footer>داده‌ها بر اساس منابع عمومی و تخمینی است | متصل به Supabase</footer>
   </div>
 
-  <!-- ============ صفحه چت ============ -->
   <div class="chat-screen" id="chatScreen">
-
     <header class="chat-header">
       <button class="back-btn" id="btnBack" aria-label="بازگشت">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="12 5 19 12 12 19"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
-
       <div class="bot-profile">
-        <div class="bot-avatar">
-          ⚔️
-          <div class="online-dot"></div>
-        </div>
+        <div class="bot-avatar">⚔️<div class="online-dot" id="onlineDot1"></div></div>
         <div class="bot-info">
           <div class="bot-name">بات کشور گیری</div>
-          <div class="bot-status">آنلاین • آماده ثبت</div>
+          <div class="bot-status" id="botStatus1">در حال اتصال...</div>
         </div>
       </div>
-
-      <div class="header-spacer"></div>
+      <div class="timer" id="timer">⏱ 01:00</div>
     </header>
-
     <div class="chat-messages" id="chatMessages"></div>
-
     <div class="chat-input-bar">
       <div class="input-wrap">
-        <input type="text" id="chatInput" placeholder="نام کشور را بنویسید..." autocomplete="off" maxlength="40">
+        <input type="text" id="chatInput" placeholder="نام کشور واقعی را بنویسید..." autocomplete="off" maxlength="50">
       </div>
       <button class="send-btn" id="btnSend" aria-label="ارسال">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-
   </div>
 
-  <!-- ============ مودال لیست کشورها ============ -->
+  <div class="chat-screen" id="equipChatScreen">
+    <header class="chat-header">
+      <button class="back-btn" id="btnEquipBack" aria-label="بازگشت">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <div class="bot-profile">
+        <div class="bot-avatar equip-avatar">🚀<div class="online-dot" id="onlineDot2"></div></div>
+        <div class="bot-info">
+          <div class="bot-name">بات تجهیزات</div>
+          <div class="bot-status" id="botStatus2">در حال اتصال...</div>
+        </div>
+      </div>
+      <div class="timer" style="color:var(--cyan); border-color:rgba(92,225,255,.3); background:rgba(92,225,255,.08);">📡 LIVE</div>
+    </header>
+    <div class="chat-messages" id="equipMessages"></div>
+    <div class="chat-input-bar">
+      <div class="input-wrap">
+        <input type="text" id="equipInput" placeholder="کد اختصاصی خود را وارد کنید..." autocomplete="off" maxlength="6" inputmode="numeric">
+      </div>
+      <button class="send-btn" id="btnEquipSend" style="background:linear-gradient(180deg,#7df0ff,#22c8e6);" aria-label="ارسال">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
   <div class="overlay" id="overlayList">
     <div class="modal">
       <button class="close-x" data-close>&times;</button>
       <h2>🌍 کشورهای ثبت‌شده</h2>
-      <p class="hint">لیست کشورهایی که تا الان توسط بازیکنان پر شده‌اند.</p>
+      <p class="hint">کشورهایی که تا الان توسط بازیکنان انتخاب شده‌اند (همه آنلاین).</p>
       <div class="list" id="countryList"></div>
       <div class="counter" id="counter"></div>
     </div>
   </div>
 
 <script>
-/* ================== ذخیره‌سازی ================== */
-const STORAGE_KEY   = 'nabardwar_countries_v2';
-const MY_COUNTRY_KEY = 'nabardwar_my_country_v2';
+/* ============ Supabase ============ */
+const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
 
-const loadCountries = () => {
+let supabaseClient = null;
+let supabaseOnline = false;
+
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch(e){ console.warn('Supabase init:', e); }
+
+/* ============ دیتابیس کشورها ============ */
+const COUNTRY_DB = {
+  "ایران":{aliases:["iran","جمهوری اسلامی ایران","persia"],missiles:1500,missileLaunchers:200,drones:80000,ships:109,frigates:7,submarines:25,destroyers:0,patrolBoats:70,fighterJets:551,tanks:1713,armoredVehicles:65000,population:90000000,militaryBudget:25000000000,note:"تعداد موشک‌های عملیاتی حدود ۱۵۰۰ و پهپادها تا ۸۰ هزار تخمین زده می‌شود."},
+  "آمریکا":{aliases:["usa","united states","ایالات متحده","امریکا"],missiles:4000,missileLaunchers:600,drones:12000,ships:484,frigates:0,submarines:68,destroyers:73,patrolBoats:100,fighterJets:13200,tanks:5500,armoredVehicles:45000,population:335000000,militaryBudget:886000000000,note:"بزرگ‌ترین بودجه نظامی جهان."},
+  "روسیه":{aliases:["russia","فدراسیون روسیه"],missiles:6000,missileLaunchers:800,drones:15000,ships:598,frigates:12,submarines:64,destroyers:15,patrolBoats:80,fighterJets:4200,tanks:12500,armoredVehicles:30000,population:144000000,militaryBudget:109000000000,note:"ذخایر عظیم موشک بالستیک."},
+  "چین":{aliases:["china","prc","جمهوری خلق چین"],missiles:3500,missileLaunchers:500,drones:20000,ships:730,frigates:50,submarines:78,destroyers:50,patrolBoats:120,fighterJets:3300,tanks:5000,armoredVehicles:35000,population:1410000000,militaryBudget:296000000000,note:"سریع‌ترین ناوگان دریایی در حال گسترش."},
+  "عربستان":{aliases:["saudi arabia","عربستان سعودی","ksa","سعودی"],missiles:1200,missileLaunchers:150,drones:800,ships:55,frigates:7,submarines:0,destroyers:3,patrolBoats:30,fighterJets:900,tanks:1000,armoredVehicles:12000,population:36000000,militaryBudget:75000000000,note:"بزرگ‌ترین خریدار تسلیحات غربی در خاورمیانه."},
+  "اسرائیل":{aliases:["israel","رژیم صهیونیستی"],missiles:300,missileLaunchers:50,drones:2000,ships:60,frigates:0,submarines:5,destroyers:0,patrolBoats:45,fighterJets:340,tanks:1300,armoredVehicles:7500,population:9700000,militaryBudget:27000000000,note:"سیستم‌های پدافندی گنبد آهنین."},
+  "ترکیه":{aliases:["turkey","turkiye"],missiles:500,missileLaunchers:70,drones:1500,ships:120,frigates:16,submarines:12,destroyers:4,patrolBoats:40,fighterJets:1050,tanks:2200,armoredVehicles:10000,population:85000000,militaryBudget:25000000000,note:"تولیدکننده پهپادهای بایراکتار."},
+  "پاکستان":{aliases:["pakistan"],missiles:800,missileLaunchers:100,drones:500,ships:100,frigates:10,submarines:8,destroyers:0,patrolBoats:30,fighterJets:1400,tanks:2500,armoredVehicles:9000,population:240000000,militaryBudget:11000000000,note:"دارای کلاهک هسته‌ای."},
+  "هند":{aliases:["india","هندوستان"],missiles:1000,missileLaunchers:150,drones:3000,ships:295,frigates:13,submarines:18,destroyers:10,patrolBoats:60,fighterJets:2200,tanks:4500,armoredVehicles:15000,population:1430000000,militaryBudget:83600000000,note:"چهارمین بودجه نظامی جهان."},
+  "کره شمالی":{aliases:["north korea","dprk","کره‌ی شمالی"],missiles:2500,missileLaunchers:400,drones:5000,ships:500,frigates:3,submarines:70,destroyers:0,patrolBoats:200,fighterJets:600,tanks:3500,armoredVehicles:8000,population:26000000,militaryBudget:4000000000,note:"بزرگ‌ترین ارتش نسبت به جمعیت."},
+  "کره جنوبی":{aliases:["south korea","کره‌ی جنوبی"],missiles:800,missileLaunchers:100,drones:1000,ships:230,frigates:17,submarines:22,destroyers:12,patrolBoats:50,fighterJets:1600,tanks:2600,armoredVehicles:7000,population:52000000,militaryBudget:48000000000,note:"نیروی نظامی مدرن."},
+  "فرانسه":{aliases:["france"],missiles:300,missileLaunchers:40,drones:500,ships:180,frigates:15,submarines:10,destroyers:4,patrolBoats:30,fighterJets:1000,tanks:400,armoredVehicles:6000,population:68000000,militaryBudget:55000000000,note:"دارای سلاح هسته‌ای و ناو شارل دوگل."},
+  "انگلستان":{aliases:["uk","united kingdom","بریتانیا"],missiles:200,missileLaunchers:30,drones:400,ships:75,frigates:12,submarines:10,destroyers:6,patrolBoats:20,fighterJets:700,tanks:300,armoredVehicles:5000,population:67000000,militaryBudget:68000000000,note:"قدرت هسته‌ای."},
+  "آلمان":{aliases:["germany","المان"],missiles:100,missileLaunchers:20,drones:300,ships:80,frigates:11,submarines:6,destroyers:0,patrolBoats:20,fighterJets:600,tanks:300,armoredVehicles:4000,population:84000000,militaryBudget:56000000000,note:"بازسازی ارتش پس از ۲۰۲۲."},
+  "ژاپن":{aliases:["japan"],missiles:400,missileLaunchers:60,drones:500,ships:155,frigates:30,submarines:22,destroyers:40,patrolBoats:20,fighterJets:1500,tanks:600,armoredVehicles:4000,population:125000000,militaryBudget:50000000000,note:"نیروی دفاع از خود."},
+  "برزیل":{aliases:["brazil"],missiles:200,missileLaunchers:30,drones:300,ships:100,frigates:9,submarines:6,destroyers:0,patrolBoats:30,fighterJets:600,tanks:400,armoredVehicles:3000,population:215000000,militaryBudget:20000000000,note:"بزرگ‌ترین ارتش آمریکای جنوبی."},
+  "مصر":{aliases:["egypt"],missiles:600,missileLaunchers:80,drones:400,ships:150,frigates:12,submarines:8,destroyers:0,patrolBoats:40,fighterJets:1100,tanks:4000,armoredVehicles:8000,population:105000000,militaryBudget:10000000000,note:"بزرگ‌ترین ارتش آفریقا."},
+  "امارات":{aliases:["uae","امارات متحده عربی"],missiles:400,missileLaunchers:50,drones:300,ships:70,frigates:6,submarines:0,destroyers:0,patrolBoats:30,fighterJets:500,tanks:400,armoredVehicles:3000,population:10000000,militaryBudget:22000000000,note:"نیروی نظامی کوچک اما مجهز."},
+  "قطر":{aliases:["qatar"],missiles:100,missileLaunchers:15,drones:100,ships:20,frigates:4,submarines:0,destroyers:0,patrolBoats:10,fighterJets:100,tanks:100,armoredVehicles:500,population:3000000,militaryBudget:8000000000,note:"خریدار بزرگ تسلیحات."},
+  "عراق":{aliases:["iraq"],missiles:300,missileLaunchers:40,drones:200,ships:20,frigates:2,submarines:0,destroyers:0,patrolBoats:10,fighterJets:300,tanks:400,armoredVehicles:3000,population:44000000,militaryBudget:10000000000,note:"بازسازی پس از ۲۰۰۳."},
+  "سوریه":{aliases:["syria"],missiles:500,missileLaunchers:80,drones:100,ships:20,frigates:0,submarines:0,destroyers:0,patrolBoats:10,fighterJets:300,tanks:1000,armoredVehicles:4000,population:22000000,militaryBudget:2000000000,note:"تجهیزات عمدتاً روسی."},
+  "افغانستان":{aliases:["afghanistan"],missiles:50,missileLaunchers:10,drones:50,ships:0,frigates:0,submarines:0,destroyers:0,patrolBoats:0,fighterJets:50,tanks:100,armoredVehicles:1000,population:41000000,militaryBudget:1000000000,note:"نیروی محدود پس از ۲۰۲۱."},
+  "اوکراین":{aliases:["ukraine"],missiles:300,missileLaunchers:50,drones:2000,ships:10,frigates:1,submarines:0,destroyers:0,patrolBoats:5,fighterJets:200,tanks:1500,armoredVehicles:5000,population:38000000,militaryBudget:30000000000,note:"درگیر جنگ با روسیه."},
+  "لهستان":{aliases:["poland"],missiles:200,missileLaunchers:30,drones:300,ships:40,frigates:2,submarines:1,destroyers:0,patrolBoats:10,fighterJets:300,tanks:800,armoredVehicles:3000,population:38000000,militaryBudget:25000000000,note:"افزایش سریع توان نظامی."},
+  "اندونزی":{aliases:["indonesia"],missiles:200,missileLaunchers:30,drones:200,ships:250,frigates:10,submarines:4,destroyers:0,patrolBoats:50,fighterJets:400,tanks:400,armoredVehicles:3000,population:275000000,militaryBudget:10000000000,note:"بزرگ‌ترین مجمع‌الجزایر جهان."},
+  "استرالیا":{aliases:["australia"],missiles:200,missileLaunchers:30,drones:300,ships:50,frigates:8,submarines:6,destroyers:3,patrolBoats:10,fighterJets:250,tanks:100,armoredVehicles:2000,population:26000000,militaryBudget:32000000000,note:"متحد نزدیک آمریکا."},
+  "کانادا":{aliases:["canada"],missiles:100,missileLaunchers:20,drones:200,ships:30,frigates:12,submarines:4,destroyers:0,patrolBoats:10,fighterJets:200,tanks:100,armoredVehicles:2000,population:39000000,militaryBudget:27000000000,note:"عضو ناتو."},
+  "مکزیک":{aliases:["mexico"],missiles:50,missileLaunchers:10,drones:100,ships:100,frigates:6,submarines:0,destroyers:0,patrolBoats:30,fighterJets:100,tanks:0,armoredVehicles:2000,population:128000000,militaryBudget:9000000000,note:"تمرکز بر امنیت داخلی."},
+  "آفریقای جنوبی":{aliases:["south africa","افریقای جنوبی"],missiles:100,missileLaunchers:20,drones:100,ships:30,frigates:4,submarines:3,destroyers:0,patrolBoats:10,fighterJets:200,tanks:200,armoredVehicles:2000,population:60000000,militaryBudget:4000000000,note:"پیشرفته‌ترین ارتش جنوب صحرا."},
+  "نیجریه":{aliases:["nigeria"],missiles:50,missileLaunchers:10,drones:100,ships:50,frigates:2,submarines:0,destroyers:0,patrolBoats:20,fighterJets:100,tanks:200,armoredVehicles:1500,population:220000000,militaryBudget:3000000000,note:"بزرگ‌ترین اقتصاد آفریقا."}
+};
+
+/* ============ ذخیره‌سازی ============ */
+const STORAGE_KEY = 'nabardwar_countries_v3';
+const MY_COUNTRY_KEY = 'nabardwar_my_country_v3';
+const THEME_KEY = 'nabardwar_theme';
+const SOUND_KEY = 'nabardwar_sound';
+
+const loadCountriesLocal = () => {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
   catch { return []; }
 };
-const saveCountries = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+const saveCountriesLocal = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 
 const loadMyCountry = () => {
   try { return JSON.parse(localStorage.getItem(MY_COUNTRY_KEY)); }
@@ -549,218 +471,607 @@ const loadMyCountry = () => {
 };
 const saveMyCountry = entry => localStorage.setItem(MY_COUNTRY_KEY, JSON.stringify(entry));
 
-const normalize = s => s
-  .trim()
-  .replace(/\s+/g, ' ')
-  .replace(/ي/g, 'ی')
-  .replace(/ك/g, 'ک')
-  .replace(/ۀ/g, 'ه')
-  .toLowerCase();
+const normalize = s => s.trim().replace(/\s+/g,' ')
+  .replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/ۀ/g,'ه').toLowerCase();
 
-const makeUniqueCode = (list) => {
+function findCountryInDB(rawName){
+  const q = normalize(rawName);
+  for (const [faName, data] of Object.entries(COUNTRY_DB)){
+    if (normalize(faName) === q) return { faName, data };
+    if (data.aliases) for (const a of data.aliases) if (normalize(a) === q) return { faName, data };
+  }
+  return null;
+}
+
+const makeUniqueCode = list => {
   let code;
-  do { code = String(Math.floor(1000 + Math.random() * 9000)); }
-  while (list.some(c => c.code === code));
+  do { code = String(Math.floor(1000 + Math.random()*9000)); }
+  while (list.some(c => String(c.code) === code));
   return code;
 };
 
-/* ================== منطق ثبت ================== */
-function tryRegisterCountry(rawName){
-  const name = rawName.trim().replace(/\s+/g, ' ');
-
-  // کاربر قبلاً ثبت کرده؟
-  const myCountry = loadMyCountry();
-  if (myCountry) {
-    return { status: 'already-user', name: myCountry.name, code: myCountry.code };
+/* ============ Supabase sync ============ */
+async function loadCountriesRemote(){
+  if (!supabaseClient) return null;
+  try {
+    const { data, error } = await supabaseClient
+      .from('countries')
+      .select('name, code, time, rank')
+      .order('time', { ascending: true });
+    if (error) throw error;
+    supabaseOnline = true;
+    updateOnlineUI(true);
+    return (data || []).map(c => ({
+      name: c.name,
+      code: String(c.code),
+      time: Number(c.time),
+      rank: Number(c.rank)
+    }));
+  } catch(e){
+    console.warn('Supabase load:', e);
+    supabaseOnline = false;
+    updateOnlineUI(false);
+    return null;
   }
-
-  if (name.length < 2)  return { status: 'too-short' };
-  if (name.length > 40) return { status: 'too-long' };
-
-  const list = loadCountries();
-  if (list.some(c => normalize(c.name) === normalize(name))) {
-    return { status: 'taken' };
-  }
-
-  const entry = { name, code: makeUniqueCode(list), time: Date.now() };
-  list.push(entry);
-  saveCountries(list);
-  saveMyCountry(entry);
-
-  return { status: 'success', entry };
 }
 
-/* ================== عناصر DOM ================== */
-const chatScreen   = document.getElementById('chatScreen');
-const chatMessages = document.getElementById('chatMessages');
-const chatInput    = document.getElementById('chatInput');
-const btnSend      = document.getElementById('btnSend');
-const regBadge     = document.getElementById('regBadge');
+async function insertCountryRemote(entry){
+  if (!supabaseClient) return { ok:false, reason:'no-client' };
+  try {
+    const { error } = await supabaseClient.from('countries').insert({
+      name: entry.name,
+      code: entry.code,
+      time: entry.time,
+      rank: entry.rank
+    });
+    if (error) return { ok:false, reason: error.code || error.message };
+    supabaseOnline = true;
+    updateOnlineUI(true);
+    return { ok:true };
+  } catch(e){
+    return { ok:false, reason: String(e) };
+  }
+}
 
-const overlayList  = document.getElementById('overlayList');
+let countriesCache = null;
+
+async function getCountries(forceRefresh = false){
+  if (!forceRefresh && countriesCache) return countriesCache;
+  const local = loadCountriesLocal();
+  const remote = await loadCountriesRemote();
+  if (remote !== null) {
+    countriesCache = remote;
+    saveCountriesLocal(remote);
+  } else {
+    countriesCache = local;
+  }
+  return countriesCache;
+}
+
+async function addCountry(entry){
+  let remoteOk = false;
+  if (supabaseClient){
+    for (let attempt = 0; attempt < 6; attempt++){
+      const r = await insertCountryRemote(entry);
+      if (r.ok){ remoteOk = true; break; }
+      if (/23505|duplicate|unique/i.test(r.reason)){
+        // تصادم کد یا نام
+        const existing = await loadCountriesRemote();
+        if (existing){
+          if (existing.some(c => normalize(c.name) === normalize(entry.name))){
+            return { ok:false, reason:'name-taken' };
+          }
+          entry.code = makeUniqueCode(existing);
+          entry.rank = existing.length + 1;
+        } else {
+          entry.code = String(1000 + Math.floor(Math.random()*9000));
+        }
+        continue;
+      }
+      break;
+    }
+  }
+  // ذخیره محلی (کش)
+  const local = loadCountriesLocal();
+  if (!local.some(c => String(c.code) === String(entry.code) || normalize(c.name) === normalize(entry.name))){
+    local.push(entry);
+    saveCountriesLocal(local);
+  }
+  countriesCache = null;
+  return { ok:true, remote: remoteOk, entry };
+}
+
+function subscribeRealtime(){
+  if (!supabaseClient) return;
+  try {
+    supabaseClient
+      .channel('public:countries:inserts')
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'countries' },
+        () => {
+          countriesCache = null;
+          updateStats();
+          if (overlayList.classList.contains('show')) renderList();
+        })
+      .subscribe(status => {
+        if (status === 'SUBSCRIBED'){ supabaseOnline = true; updateOnlineUI(true); }
+      });
+  } catch(e){ console.warn('Realtime:', e); }
+}
+
+function updateOnlineUI(online){
+  const dots = [document.getElementById('onlineDot1'), document.getElementById('onlineDot2')];
+  const stats = [document.getElementById('botStatus1'), document.getElementById('botStatus2')];
+  dots.forEach(d => { if (d) d.classList.toggle('offline', !online); });
+  stats.forEach((s, i) => {
+    if (s){
+      s.textContent = online ? 'آنلاین • متصل به سرور' : 'آفلاین • ذخیره محلی';
+      s.classList.toggle('offline', !online);
+    }
+  });
+}
+
+/* ============ صدا ============ */
+let audioCtx = null;
+let soundEnabled = localStorage.getItem(SOUND_KEY) !== 'off';
+function initAudio(){
+  if (!audioCtx){ try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ audioCtx = null; } }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTone(freq, dur, type='sine', vol=0.12, delay=0){
+  if (!soundEnabled) return;
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime + delay;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(audioCtx.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+const Sound = {
+  click(){ playTone(720,0.08,'sine',0.08); },
+  open(){ playTone(520,0.1,'sine',0.1); playTone(720,0.1,'sine',0.1,0.08); },
+  send(){ playTone(880,0.08,'triangle',0.1); },
+  receive(){ playTone(620,0.09,'sine',0.09); },
+  success(){ playTone(523,0.15,'sine',0.12); playTone(659,0.15,'sine',0.12,0.12); playTone(784,0.15,'sine',0.12,0.24); playTone(1047,0.35,'sine',0.15,0.36); },
+  error(){ playTone(400,0.15,'sawtooth',0.08); playTone(280,0.25,'sawtooth',0.08,0.12); },
+  tick(){ playTone(900,0.04,'sine',0.05); },
+  timeout(){ playTone(400,0.2,'sine',0.1); playTone(300,0.3,'sine',0.1,0.2); }
+};
+
+/* ============ کانفتی ============ */
+const confettiCanvas = document.getElementById('confettiCanvas');
+const confettiCtx = confettiCanvas.getContext('2d');
+function launchConfetti(){
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+  confettiCanvas.style.display = 'block';
+  const colors = ['#ffd700','#ffb300','#ffe873','#fff','#ff9500','#5ce1ff'];
+  const ps = [];
+  for (let i=0;i<160;i++) ps.push({
+    x: confettiCanvas.width/2 + (Math.random()-0.5)*200,
+    y: confettiCanvas.height/2,
+    vx: (Math.random()-0.5)*20, vy: -Math.random()*20-5,
+    size: Math.random()*10+4,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    rotation: Math.random()*Math.PI*2,
+    rotationSpeed: (Math.random()-0.5)*0.4, life:1
+  });
+  function anim(){
+    confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    let alive = false;
+    ps.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.vx *= 0.99; p.life -= 0.01;
+      p.rotation += p.rotationSpeed;
+      confettiCtx.save();
+      confettiCtx.globalAlpha = Math.max(0, p.life);
+      confettiCtx.translate(p.x, p.y); confettiCtx.rotate(p.rotation);
+      confettiCtx.fillStyle = p.color;
+      confettiCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      confettiCtx.restore();
+    });
+    if (alive) requestAnimationFrame(anim);
+    else confettiCanvas.style.display = 'none';
+  }
+  anim();
+}
+
+/* ============ ذرات ============ */
+(function initParticles(){
+  const c = document.getElementById('bgParticles');
+  const ctx = c.getContext('2d');
+  let w,h,ps=[];
+  function resize(){ w=c.width=innerWidth; h=c.height=innerHeight; }
+  function create(){
+    const n = Math.min(90, Math.floor(w*h/18000));
+    ps = Array.from({length:n}, () => ({
+      x: Math.random()*w, y: Math.random()*h,
+      r: Math.random()*1.8+0.4,
+      dx: (Math.random()-0.5)*0.35, dy: (Math.random()-0.5)*0.35,
+      alpha: Math.random()*0.5+0.15,
+      color: Math.random()>0.5 ? '255,215,0' : '92,225,255'
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ps.forEach(p => {
+      p.x+=p.dx; p.y+=p.dy;
+      if (p.x<0) p.x=w; if (p.x>w) p.x=0;
+      if (p.y<0) p.y=h; if (p.y>h) p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(${p.color},${p.alpha})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize(); create(); draw();
+  addEventListener('resize', () => { resize(); create(); });
+})();
+
+/* ============ DOM ============ */
+const chatScreen = document.getElementById('chatScreen');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const btnSend = document.getElementById('btnSend');
+const regBadge = document.getElementById('regBadge');
+const timerEl = document.getElementById('timer');
+const statsEl = document.getElementById('stats');
+
+const equipChatScreen = document.getElementById('equipChatScreen');
+const equipMessages = document.getElementById('equipMessages');
+const equipInput = document.getElementById('equipInput');
+const btnEquipSend = document.getElementById('btnEquipSend');
+
+const overlayList = document.getElementById('overlayList');
 const countryListEl = document.getElementById('countryList');
-const counterEl    = document.getElementById('counter');
+const counterEl = document.getElementById('counter');
 
 let isProcessing = false;
+let timerInterval = null;
+let timeLeft = 60;
 
-/* ================== باز/بسته کردن چت ================== */
-function openChat(){
-  chatScreen.classList.add('open');
-  chatMessages.innerHTML = '';
-  const myCountry = loadMyCountry();
-
-  if (myCountry) {
-    addMessage('bot', `سلام! 👋 خوش برگشتی.\nشما قبلاً کشور «${myCountry.name}» را ثبت کرده‌اید و طبق قوانین هر نفر فقط یک کشور می‌تواند داشته باشد.`);
-    addCodeMessage(myCountry.code, 'کد اختصاصی شما:');
-  } else {
-    addMessage('bot', 'سلام! 👋 به بات کشور گیری خوش آمدید.\n\nلطفاً نام کشور مورد نظر خود را بنویسید تا برای شما ثبت کنم.');
-  }
-
-  setTimeout(() => chatInput.focus(), 420);
+/* ============ تایمر ============ */
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft = 60;
+  timerEl.classList.remove('urgent','done');
+  updateTimer();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft === 20) timerEl.classList.add('urgent');
+    if (timeLeft <= 10 && timeLeft > 0) Sound.tick();
+    if (timeLeft <= 0){ clearInterval(timerInterval); timeUp(); }
+  }, 1000);
+}
+function updateTimer(){
+  const m = String(Math.floor(Math.max(0,timeLeft)/60)).padStart(2,'0');
+  const s = String(Math.max(0,timeLeft)%60).padStart(2,'0');
+  timerEl.textContent = `⏱ ${m}:${s}`;
+}
+function stopTimer(){ clearInterval(timerInterval); timerInterval = null; }
+function timeUp(){
+  timerEl.textContent = '⏰ تموم شد';
+  timerEl.classList.remove('urgent'); timerEl.classList.add('done');
+  chatInput.disabled = true; btnSend.disabled = true;
+  Sound.timeout();
+  addMessage('bot', '⏰ زمان تموم شد!\n\nدکمه برگشت رو بزن و دوباره وارد شو.');
 }
 
+/* ============ باز/بسته ============ */
+function openChat(){
+  Sound.open();
+  chatScreen.classList.add('open');
+  chatMessages.innerHTML = '';
+  chatInput.disabled = false; btnSend.disabled = false; chatInput.value = '';
+  const myCountry = loadMyCountry();
+  if (myCountry){
+    timerEl.textContent = '✓ ثبت شده';
+    timerEl.classList.remove('urgent'); timerEl.classList.add('done');
+    addMessage('bot', `سلام! 👋 خوش برگشتی.\nشما قبلاً کشور «${myCountry.name}» را ثبت کرده‌اید.`);
+    addCodeMessage(myCountry.code, 'کد اختصاصی شما:');
+  } else {
+    addMessage('bot', 'سلام! 👋 به بات کشور گیری خوش آمدید.\n\n⏱ فقط ۶۰ ثانیه وقت داری!\nنام یک کشور واقعی از دنیا را بنویس تا برای تو ثبت کنم.');
+    startTimer();
+  }
+  setTimeout(() => chatInput.focus(), 450);
+}
 function closeChat(){
+  Sound.click();
   chatScreen.classList.remove('open');
-  chatInput.blur();
+  stopTimer(); chatInput.blur();
+}
+function openEquipChat(){
+  Sound.open();
+  equipChatScreen.classList.add('open');
+  equipMessages.innerHTML = '';
+  equipInput.disabled = false; btnEquipSend.disabled = false; equipInput.value = '';
+  addMessageTo(equipMessages, 'bot', 'سلام فرمانده! 🚀\nکد اختصاصی کشورت رو وارد کن تا آرشیو کامل نظامی رو برات باز کنم.\n\n🔑 کد ۴ رقمی رو از بات کشور گیری بگیر.');
+  setTimeout(() => equipInput.focus(), 450);
+}
+function closeEquipChat(){
+  Sound.click();
+  equipChatScreen.classList.remove('open');
+  equipInput.blur();
 }
 
 document.getElementById('btnOpenChat').addEventListener('click', openChat);
 document.getElementById('btnBack').addEventListener('click', closeChat);
+document.getElementById('btnEquipChat').addEventListener('click', openEquipChat);
+document.getElementById('btnEquipBack').addEventListener('click', closeEquipChat);
 
-/* ================== پیام‌ها ================== */
-function scrollToBottom(){
-  requestAnimationFrame(() => {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
+/* ============ پیام‌ها ============ */
+function scrollToBottom(c){ requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; }); }
+function addMessageTo(c, who, text){
+  const d = document.createElement('div');
+  d.className = `message ${who}`;
+  d.textContent = text;
+  c.appendChild(d); scrollToBottom(c);
 }
-
-function addMessage(who, text){
-  const div = document.createElement('div');
-  div.className = `message ${who}`;
-  div.textContent = text;
-  chatMessages.appendChild(div);
-  scrollToBottom();
+function addMessage(who, text){ addMessageTo(chatMessages, who, text); }
+function addCodeMessage(code, caption, rank){
+  const d = document.createElement('div');
+  d.className = 'message bot success';
+  let h = '';
+  if (rank) h += `<div class="rank-line">🏆 بازیکن شماره ${rank}</div>`;
+  if (caption) h += `<div class="code-caption">${escapeHtml(caption)}</div>`;
+  h += `<div class="code-highlight">${escapeHtml(code)}</div>`;
+  d.innerHTML = h;
+  chatMessages.appendChild(d); scrollToBottom(chatMessages);
 }
-
-function addCodeMessage(code, caption){
-  const div = document.createElement('div');
-  div.className = 'message bot success';
-  const cap = caption ? `<div class="code-caption">${escapeHtml(caption)}</div>` : '';
-  div.innerHTML = cap + `<div class="code-highlight">${escapeHtml(code)}</div>`;
-  chatMessages.appendChild(div);
-  scrollToBottom();
-}
-
-function botRespond(text, delay = 750){
-  return new Promise(resolve => {
-    const typing = document.createElement('div');
-    typing.className = 'typing-indicator';
-    typing.innerHTML = '<span></span><span></span><span></span>';
-    chatMessages.appendChild(typing);
-    scrollToBottom();
+function botRespond(text, delay=800){
+  return new Promise(res => {
+    const t = document.createElement('div');
+    t.className = 'typing-indicator';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(t); scrollToBottom(chatMessages);
     setTimeout(() => {
-      typing.remove();
-      addMessage('bot', text);
-      resolve();
+      t.remove(); Sound.receive(); addMessage('bot', text); res();
     }, delay);
   });
 }
-
-function escapeHtml(str){
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatNum(n){
+  if (typeof n !== 'number') return '—';
+  return n.toLocaleString('fa-IR');
+}
+function formatMoney(usd){
+  if (!usd) return '—';
+  if (usd >= 1e12) return (usd/1e12).toFixed(2) + ' تریلیون دلار';
+  if (usd >= 1e9) return (usd/1e9).toFixed(1) + ' میلیارد دلار';
+  return formatNum(usd) + ' دلار';
 }
 
-/* ================== ارسال پیام ================== */
+/* ============ ثبت کشور ============ */
+async function tryRegisterCountry(rawName){
+  const my = loadMyCountry();
+  if (my) return { status:'already-user', name: my.name, code: my.code };
+
+  const found = findCountryInDB(rawName);
+  if (!found) return { status:'invalid-country' };
+
+  const list = await getCountries(true);
+  if (list.some(c => normalize(c.name) === normalize(found.faName)))
+    return { status:'taken', name: found.faName };
+
+  const entry = {
+    name: found.faName,
+    code: makeUniqueCode(list),
+    time: Date.now(),
+    rank: list.length + 1
+  };
+  const result = await addCountry(entry);
+  if (!result.ok){
+    if (result.reason === 'name-taken') return { status:'taken', name: found.faName };
+    return { status:'error' };
+  }
+  saveMyCountry(result.entry);
+  return { status:'success', entry: result.entry, remote: result.remote };
+}
+
 async function handleSend(){
-  if (isProcessing) return;
+  if (isProcessing || chatInput.disabled) return;
   const text = chatInput.value.trim();
   if (!text) return;
 
+  Sound.send();
   chatInput.value = '';
   addMessage('user', text);
+  isProcessing = true; btnSend.disabled = true; chatInput.disabled = true;
 
-  isProcessing = true;
-  btnSend.disabled = true;
-  chatInput.disabled = true;
+  const result = await tryRegisterCountry(text);
 
-  const result = tryRegisterCountry(text);
-
-  if (result.status === 'too-short') {
-    await botRespond('نام کشور باید حداقل ۲ حرف باشد. دوباره تلاش کن 🙂');
-
-  } else if (result.status === 'too-long') {
-    await botRespond('نام کشور خیلی طولانی است. یک نام کوتاه‌تر بنویس.');
-
-  } else if (result.status === 'taken') {
-    await botRespond('کشور از قبل توسط یکی دیگر پر شده است ❌\nیک کشور دیگر انتخاب کن.');
-
-  } else if (result.status === 'already-user') {
+  if (result.status === 'invalid-country'){
+    Sound.error();
+    await botRespond('این کشور در دنیا وجود ندارد یا در دیتابیس ما نیست ❌\nلطفاً نام یک کشور واقعی وارد کن.');
+  } else if (result.status === 'taken'){
+    Sound.error();
+    await botRespond(`کشور «${result.name}» از قبل توسط یکی دیگر پر شده است ❌\nیک کشور دیگر انتخاب کن.`);
+  } else if (result.status === 'already-user'){
+    Sound.error();
     await botRespond(`شما قبلاً کشور «${result.name}» را ثبت کرده‌اید.\nهر نفر فقط یک کشور می‌تواند داشته باشد 🌍`);
     addCodeMessage(result.code, 'کد اختصاصی شما:');
+  } else if (result.status === 'success'){
+    stopTimer();
+    timerEl.textContent = '✓ ثبت شده';
+    timerEl.classList.remove('urgent'); timerEl.classList.add('done');
 
-  } else if (result.status === 'success') {
-    await botRespond(`کشور شما با موفقیت ثبت شد ✅\n\n🏳️ کشور: ${result.entry.name}`);
-    await new Promise(r => setTimeout(r, 350));
-    addCodeMessage(result.entry.code, 'کد اختصاصی شما:\nاین کد را حفظ کن و به کسی نده.');
-    updateBadge();
+    const onlineNote = result.remote ? '' : '\n\n⚠️ اتصال به سرور برقرار نشد؛ کد شما محلی ذخیره شد.';
+    await botRespond(`کشور شما با موفقیت ثبت شد ✅\n\n🏳️ کشور: ${result.entry.name}${onlineNote}`);
+    await new Promise(r => setTimeout(r, 300));
+
+    Sound.success(); launchConfetti();
+    addCodeMessage(result.entry.code, 'کد اختصاصی شما:\nاین کد را حفظ کن و به کسی نده.', result.entry.rank);
+
+    updateBadge(); updateStats();
+  } else {
+    Sound.error();
+    await botRespond('خطا در ثبت کشور. لطفاً دوباره تلاش کن.');
   }
 
   isProcessing = false;
-  btnSend.disabled = false;
-  chatInput.disabled = false;
-  chatInput.focus();
+  if (timeLeft > 0 || result.status !== 'success'){
+    btnSend.disabled = false; chatInput.disabled = false; chatInput.focus();
+  }
 }
-
 btnSend.addEventListener('click', handleSend);
-chatInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter'){ e.preventDefault(); handleSend(); }
-});
+chatInput.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); handleSend(); } });
 
-/* ================== بج وضعیت ثبت ================== */
+/* ============ بات تجهیزات ============ */
+async function handleEquipSend(){
+  const code = equipInput.value.trim();
+  if (!code) return;
+
+  Sound.send();
+  equipInput.value = '';
+  addMessageTo(equipMessages, 'user', code);
+  equipInput.disabled = true; btnEquipSend.disabled = true;
+
+  const list = await getCountries(true);
+  const entry = list.find(c => String(c.code) === code);
+
+  if (!entry){
+    Sound.error();
+    await new Promise(r => setTimeout(r, 600));
+    addMessageTo(equipMessages, 'bot', 'کد وارد شده معتبر نیست ❌\nلطفاً کد ۴ رقمی اختصاصی خود را دوباره بررسی کن.');
+  } else {
+    const found = findCountryInDB(entry.name);
+    if (!found){
+      addMessageTo(equipMessages, 'bot', `کشور «${entry.name}» در آرشیو نظامی موجود نیست.`);
+    } else {
+      const d = found.data;
+      Sound.success();
+      const html = `
+        <div style="font-weight:900; font-size:1.05rem; margin-bottom:8px; color:#7df0ff;">🏳️ ${entry.name}</div>
+        <div class="equip-table">
+          <div class="equip-row"><span class="lbl">🚀 موشک‌های بالستیک/کروز</span><span class="val">${formatNum(d.missiles)}</span></div>
+          <div class="equip-row"><span class="lbl">🎯 پرتاب‌کننده موشک</span><span class="val">${formatNum(d.missileLaunchers)}</span></div>
+          <div class="equip-row"><span class="lbl">🛸 پهپاد</span><span class="val">${formatNum(d.drones)}</span></div>
+          <div class="equip-row"><span class="lbl">🚢 کل ناوهای جنگی</span><span class="val">${formatNum(d.ships)}</span></div>
+          <div class="equip-row"><span class="lbl">⛴️ ناوچه (Frigate)</span><span class="val">${formatNum(d.frigates)}</span></div>
+          <div class="equip-row"><span class="lbl">🛥️ زیردریایی</span><span class="val">${formatNum(d.submarines)}</span></div>
+          <div class="equip-row"><span class="lbl">⚓ ناوشکن (Destroyer)</span><span class="val">${formatNum(d.destroyers)}</span></div>
+          <div class="equip-row"><span class="lbl">✈️ جنگنده</span><span class="val">${formatNum(d.fighterJets)}</span></div>
+          <div class="equip-row"><span class="lbl">🛡️ تانک</span><span class="val">${formatNum(d.tanks)}</span></div>
+          <div class="equip-row"><span class="lbl">🚙 خودروی زرهی</span><span class="val">${formatNum(d.armoredVehicles)}</span></div>
+          <div class="equip-row"><span class="lbl">👥 جمعیت</span><span class="val">${formatNum(d.population)}</span></div>
+          <div class="equip-row"><span class="lbl">💰 بودجه نظامی</span><span class="val">${formatMoney(d.militaryBudget)}</span></div>
+        </div>
+        ${d.note ? `<div style="margin-top:10px; font-size:.8rem; color:#8fd8e8; line-height:1.7;">📝 ${escapeHtml(d.note)}</div>` : ''}
+      `;
+      const div = document.createElement('div');
+      div.className = 'message equip-data';
+      div.innerHTML = html;
+      equipMessages.appendChild(div);
+      scrollToBottom(equipMessages);
+    }
+  }
+  equipInput.disabled = false; btnEquipSend.disabled = false; equipInput.focus();
+}
+btnEquipSend.addEventListener('click', handleEquipSend);
+equipInput.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); handleEquipSend(); } });
+
+/* ============ بج و آمار ============ */
 function updateBadge(){
   if (loadMyCountry()) regBadge.classList.add('show');
   else regBadge.classList.remove('show');
 }
+async function updateStats(){
+  const list = await getCountries();
+  const online = supabaseOnline;
+  statsEl.textContent = list.length > 0
+    ? `🏆 ${list.length} کشور ثبت شده ${online ? '• 🟢 آنلاین' : '• 🟡 محلی'}`
+    : (online ? '🟢 متصل به سرور' : '🟡 حالت محلی');
+}
 
-/* ================== لیست کشورها ================== */
-document.getElementById('btnList').addEventListener('click', () => {
-  renderList();
+/* ============ لیست ============ */
+document.getElementById('btnList').addEventListener('click', async () => {
+  Sound.open();
+  await renderList();
   overlayList.classList.add('show');
 });
+document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { Sound.click(); overlayList.classList.remove('show'); }));
+overlayList.addEventListener('click', e => { if (e.target === overlayList) overlayList.classList.remove('show'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') overlayList.classList.remove('show'); });
 
-document.querySelectorAll('[data-close]').forEach(btn =>
-  btn.addEventListener('click', () => overlayList.classList.remove('show'))
-);
-overlayList.addEventListener('click', e => {
-  if (e.target === overlayList) overlayList.classList.remove('show');
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') overlayList.classList.remove('show');
-});
-
-function renderList(){
-  const list = loadCountries().slice().sort((a,b) => a.time - b.time);
-
-  if (list.length === 0) {
+async function renderList(){
+  countryListEl.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
+  const list = (await getCountries(true)).slice().sort((a,b) => a.time - b.time);
+  if (list.length === 0){
     countryListEl.innerHTML = '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱<br>اولین نفر باش!</div>';
     counterEl.textContent = '';
     return;
   }
-
-  countryListEl.innerHTML = list.map((c, i) => `
-    <div class="row" style="animation-delay:${i * 0.04}s">
-      <span class="name">${escapeHtml(c.name)}</span>
-      <span class="check-mark">✓</span>
-    </div>
-  `).join('');
-
-  counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}`;
+  const medals = ['🥇','🥈','🥉'];
+  countryListEl.innerHTML = list.map((c,i) => {
+    const m = medals[i] || '🏅';
+    return `<div class="row" style="animation-delay:${i*0.04}s"><div class="left"><span class="medal">${m}</span><span class="name">${escapeHtml(c.name)}</span></div><span class="check-mark">✓</span></div>`;
+  }).join('');
+  counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}${supabaseOnline ? ' • آنلاین' : ''}`;
 }
 
-/* ================== راه‌اندازی ================== */
+/* ============ تم و صدا ============ */
+const btnTheme = document.getElementById('btnTheme');
+function applyTheme(t){
+  document.body.classList.toggle('light', t === 'light');
+  btnTheme.textContent = t === 'light' ? '☀️' : '🌙';
+}
+btnTheme.addEventListener('click', () => {
+  Sound.click();
+  const cur = document.body.classList.contains('light') ? 'light' : 'dark';
+  const next = cur === 'light' ? 'dark' : 'light';
+  localStorage.setItem(THEME_KEY, next); applyTheme(next);
+});
+
+const btnSound = document.getElementById('btnSound');
+function applySound(){
+  btnSound.textContent = soundEnabled ? '🔊' : '🔇';
+  btnSound.classList.toggle('muted', !soundEnabled);
+}
+btnSound.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem(SOUND_KEY, soundEnabled ? 'on' : 'off');
+  applySound();
+  if (soundEnabled) Sound.click();
+});
+
+/* ============ رفع مشکل کیبورد ============ */
+function setupKeyboardFix(){
+  if (!window.visualViewport) return;
+  const vv = window.visualViewport;
+  const screens = [chatScreen, equipChatScreen];
+  function adjust(){
+    screens.forEach(s => {
+      if (s.classList.contains('open')) s.style.height = vv.height + 'px';
+      else s.style.height = '';
+    });
+    const active = document.activeElement;
+    if (active === chatInput) scrollToBottom(chatMessages);
+    if (active === equipInput) scrollToBottom(equipMessages);
+  }
+  vv.addEventListener('resize', adjust);
+  vv.addEventListener('scroll', adjust);
+  adjust();
+}
+
+/* ============ راه‌اندازی ============ */
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+applySound();
 updateBadge();
+updateOnlineUI(false);
+setupKeyboardFix();
+
+// پیش‌بارگذاری داده‌ها + اشتراک Realtime
+(async () => {
+  await getCountries(true);
+  updateStats();
+  subscribeRealtime();
+})();
 </script>
 </body>
-  </html>
+      </html>
