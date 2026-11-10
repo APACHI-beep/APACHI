@@ -23,6 +23,7 @@
     --row-border:rgba(255,215,0,.16);
     --modal-bg:linear-gradient(180deg,rgba(18,26,46,.98),rgba(10,16,30,.98));
     --glow-gold:0 0 30px rgba(255,215,0,.25);
+    --glow-cyan:0 0 30px rgba(92,225,255,.3);
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%; overscroll-behavior:none;}
@@ -36,7 +37,25 @@
     transition:background .5s, color .5s; position:relative;
   }
   #bgParticles{position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.7;}
-  .corner-tools{position:fixed; top:16px; left:16px; display:flex; gap:10px; z-index:40;}
+  #confettiCanvas{position:fixed; inset:0; pointer-events:none; z-index:300; display:none;}
+
+  /* ==== مخفی کردن همه‌چیز قبل از انتخاب اسم ==== */
+  body.not-ready .main-screen .title-wrap,
+  body.not-ready .main-screen .stats,
+  body.not-ready .main-screen .buttons,
+  body.not-ready .main-screen footer,
+  body.not-ready .profile-btn,
+  body.not-ready .chat-toggle-btn {
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .6s;
+  }
+
+  /* ==== دکمه‌های بالا ==== */
+  .top-tools{
+    position:fixed; top:16px; right:16px;
+    display:flex; gap:10px; z-index:40;
+  }
   .tool-btn{
     width:44px; height:44px; border-radius:14px;
     background:rgba(255,255,255,.04);
@@ -48,12 +67,42 @@
     backdrop-filter:blur(14px);
     box-shadow:0 4px 14px rgba(0,0,0,.3);
   }
-  .tool-btn:hover{background:rgba(255,215,0,.16); border-color:var(--gold); transform:translateY(-3px) scale(1.04);}
-  .tool-btn:active{transform:scale(.92);}
+  .tool-btn:hover{background:rgba(255,215,0,.16); border-color:var(--gold); transform:translateY(-3px);}
   .tool-btn.muted{opacity:.5;}
+
+  /* ==== پروفایل بالا چپ ==== */
+  .profile-btn{
+    position:fixed; top:16px; left:16px;
+    display:flex; align-items:center; gap:10px;
+    padding:8px 14px 8px 8px;
+    border-radius:50px;
+    background:linear-gradient(180deg, rgba(30,42,69,.9), rgba(20,30,50,.9));
+    border:1px solid rgba(255,215,0,.3);
+    backdrop-filter:blur(16px);
+    box-shadow:0 6px 22px rgba(0,0,0,.4), 0 0 20px rgba(255,215,0,.1);
+    cursor:pointer; z-index:40;
+    transition:all .3s cubic-bezier(.2,.9,.3,1.2);
+    color:var(--text); font-family:inherit;
+  }
+  .profile-btn:hover{border-color:var(--gold); transform:translateY(-2px);}
+  .profile-avatar{
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),#ff9500);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem;
+    box-shadow:0 0 14px rgba(255,200,0,.5);
+    flex-shrink:0;
+  }
+  .profile-name{
+    font-size:.9rem; font-weight:700;
+    max-width:110px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  /* ==== صفحه اصلی ==== */
   .main-screen{
     position:fixed; inset:0; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; padding:40px 20px;
+    align-items:center; justify-content:center; padding:80px 20px 100px;
     z-index:10; overflow-y:auto;
   }
   .title-wrap{text-align:center; margin-bottom:10px; animation:fadeUp .9s ease both;}
@@ -69,7 +118,7 @@
     0%,100%{filter:drop-shadow(0 0 22px rgba(255,215,0,.4));}
     50%{filter:drop-shadow(0 0 50px rgba(255,200,0,.8));}
   }
-  .subtitle{margin-top:12px; color:var(--text-dim); font-size:clamp(.85rem,2.6vw,1.1rem); letter-spacing:.6px;}
+  .subtitle{margin-top:12px; color:var(--text-dim); font-size:clamp(.85rem,2.6vw,1.1rem);}
   .stats{margin-top:24px; min-height:26px; color:var(--gold); font-weight:700; font-size:1rem; text-align:center; animation:fadeUp .7s .3s ease both;}
   .stats:empty{display:none;}
   .buttons{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:28px; width:100%; max-width:560px; animation:fadeUp .9s .15s ease both;}
@@ -85,14 +134,349 @@
     display:flex; align-items:center; justify-content:center; gap:10px;
     flex:1 1 220px; position:relative; overflow:hidden;
   }
-  .btn:hover{transform:translateY(-5px); border-color:var(--gold); box-shadow:0 18px 40px rgba(255,215,0,.25), var(--glow-gold);}
+  .btn:hover{transform:translateY(-5px); border-color:var(--gold); box-shadow:0 18px 40px rgba(255,215,0,.25);}
   .btn:active{transform:translateY(-2px) scale(.98);}
   .btn.primary{color:#1a1200; background:linear-gradient(180deg,var(--gold-3),var(--gold-2)); border-color:var(--gold-3); box-shadow:0 12px 32px rgba(255,180,0,.4);}
   .btn.equip{color:#001a22; background:linear-gradient(180deg,#7df0ff,#22c8e6); border-color:#7df0ff; box-shadow:0 12px 32px rgba(34,200,230,.35);}
   .reg-badge{display:none; width:24px; height:24px; border-radius:50%; background:linear-gradient(180deg,#2ee87b,#1aab52); color:#002a10; align-items:center; justify-content:center; font-size:.85rem; font-weight:900; box-shadow:0 0 14px rgba(34,224,106,.6);}
   .reg-badge.show{display:flex;}
-  footer{position:absolute; bottom:18px; left:0; right:0; color:var(--text-soft); font-size:.78rem; text-align:center; padding:0 16px;}
+  footer{position:absolute; bottom:90px; left:0; right:0; color:var(--text-soft); font-size:.78rem; text-align:center; padding:0 16px;}
   @keyframes fadeUp{from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ==== چت جهانی دکمه پایین ==== */
+  .chat-toggle-btn{
+    position:fixed; bottom:24px; left:50%;
+    transform:translateX(-50%);
+    padding:14px 28px;
+    border-radius:50px;
+    background:linear-gradient(180deg,#7df0ff,#22a8e6);
+    color:#001a22; font-family:inherit; font-weight:900;
+    font-size:1rem;
+    border:2px solid #7df0ff;
+    box-shadow:0 8px 30px rgba(92,225,255,.5), 0 0 20px rgba(92,225,255,.3);
+    cursor:pointer; z-index:50;
+    display:flex; align-items:center; gap:10px;
+    transition:transform .3s, box-shadow .3s, opacity .4s;
+    animation:chatPulse 2.5s infinite;
+  }
+  @keyframes chatPulse{
+    0%,100%{box-shadow:0 8px 30px rgba(92,225,255,.5), 0 0 20px rgba(92,225,255,.3);}
+    50%{box-shadow:0 8px 40px rgba(92,225,255,.7), 0 0 35px rgba(92,225,255,.6);}
+  }
+  .chat-toggle-btn:hover{transform:translateX(-50%) translateY(-4px);}
+  .chat-toggle-btn:active{transform:translateX(-50%) scale(.96);}
+  .chat-toggle-btn.hidden{display:none;}
+  .chat-badge{
+    background:#ff3b5c; color:#fff;
+    min-width:22px; height:22px;
+    border-radius:11px;
+    font-size:.75rem; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 6px;
+    box-shadow:0 0 10px rgba(255,59,92,.6);
+  }
+
+  /* ==== پنل چت جهانی ==== */
+  .global-chat-panel{
+    position:fixed; bottom:0; left:0; right:0;
+    height:78vh;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(92,225,255,.08), transparent 50%),
+      linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border-radius:26px 26px 0 0;
+    border-top:2px solid rgba(92,225,255,.45);
+    box-shadow:0 -20px 60px rgba(0,0,0,.7), 0 0 40px rgba(92,225,255,.2);
+    transform:translateY(100%);
+    transition:transform .4s cubic-bezier(.4,0,.2,1);
+    z-index:150; display:flex; flex-direction:column;
+    will-change:transform;
+  }
+  .global-chat-panel.open{transform:translateY(0);}
+  .global-chat-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+    border-bottom:1px solid rgba(92,225,255,.15);
+    background:linear-gradient(180deg, rgba(20,30,50,.95), rgba(15,22,40,.9));
+    border-radius:26px 26px 0 0;
+    flex-shrink:0;
+  }
+  .global-chat-header h3{
+    color:var(--cyan); font-size:1.1rem;
+    display:flex; align-items:center; gap:8px;
+    filter:drop-shadow(0 0 12px rgba(92,225,255,.4));
+  }
+  .global-chat-close{
+    width:36px; height:36px;
+    border-radius:10px;
+    background:rgba(92,225,255,.1);
+    border:1px solid rgba(92,225,255,.3);
+    color:var(--cyan);
+    font-size:1.3rem; line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .2s;
+  }
+  .global-chat-close:hover{background:rgba(92,225,255,.25);}
+  .global-chat-messages{
+    flex:1; overflow-y:auto;
+    padding:16px;
+    display:flex; flex-direction:column; gap:10px;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  .global-chat-messages::-webkit-scrollbar{width:6px;}
+  .global-chat-messages::-webkit-scrollbar-thumb{background:rgba(92,225,255,.3); border-radius:10px;}
+  .chat-empty{
+    text-align:center; color:var(--text-dim);
+    padding:40px 20px; font-size:.9rem; line-height:2;
+  }
+  .chat-msg{
+    display:flex; gap:10px; align-items:flex-start;
+    animation:msgIn .3s ease both;
+    max-width:85%;
+    align-self:flex-start;
+  }
+  .chat-msg.mine{align-self:flex-end; flex-direction:row-reverse;}
+  @keyframes msgIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  .chat-msg-avatar{
+    width:38px; height:38px; border-radius:50%;
+    background:linear-gradient(135deg,var(--cyan),#22a8e6);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.15rem; flex-shrink:0;
+    box-shadow:0 0 12px rgba(92,225,255,.35);
+  }
+  .chat-msg.mine .chat-msg-avatar{background:linear-gradient(135deg,var(--gold),#ff9500); box-shadow:0 0 12px rgba(255,200,0,.4);}
+  .chat-msg-body{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .chat-msg.mine .chat-msg-body{align-items:flex-end;}
+  .chat-msg-name{
+    font-size:.72rem; font-weight:700;
+    color:var(--cyan); opacity:.95;
+    padding:0 4px;
+  }
+  .chat-msg.mine .chat-msg-name{color:var(--gold);}
+  .chat-msg-country{
+    color:#7dffa8;
+    font-weight:600;
+    opacity:.85;
+    margin-right:2px;
+  }
+  .chat-msg-text{
+    padding:9px 14px;
+    border-radius:14px;
+    background:linear-gradient(180deg, rgba(30,42,69,.95), rgba(22,32,52,.95));
+    border:1px solid rgba(92,225,255,.15);
+    font-size:.9rem; line-height:1.7;
+    color:var(--text);
+    word-wrap:break-word; white-space:pre-wrap;
+    border-top-left-radius:4px;
+  }
+  .chat-msg.mine .chat-msg-text{
+    background:linear-gradient(180deg, rgba(255,215,0,.18), rgba(255,180,0,.1));
+    border-color:rgba(255,215,0,.25);
+    border-top-left-radius:14px;
+    border-top-right-radius:4px;
+  }
+  .global-chat-input{
+    display:flex; gap:10px;
+    padding:12px 16px;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid rgba(92,225,255,.15);
+    background:rgba(10,16,30,.95);
+    backdrop-filter:blur(20px);
+    flex-shrink:0;
+  }
+  .global-chat-input input{
+    flex:1;
+    padding:14px 18px;
+    border-radius:14px;
+    border:1px solid rgba(92,225,255,.25);
+    background:rgba(8,14,28,.9);
+    color:var(--text);
+    font-family:inherit; font-size:.95rem;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .global-chat-input input:focus{
+    border-color:var(--cyan);
+    box-shadow:0 0 0 3px rgba(92,225,255,.1), var(--glow-cyan);
+  }
+  .global-chat-input button{
+    width:50px; height:50px;
+    border-radius:14px;
+    background:linear-gradient(180deg,#7df0ff,#22a8e6);
+    border:none; color:#001a22;
+    font-size:1.3rem; cursor:pointer;
+    box-shadow:0 6px 20px rgba(92,225,255,.4);
+    transition:transform .2s;
+    flex-shrink:0;
+  }
+  .global-chat-input button:active{transform:scale(.94);}
+  .global-chat-input button:disabled{opacity:.5;}
+
+  /* ==== صفحه شروع (اولین ورود) ==== */
+  .start-screen{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    z-index:250;
+    background:
+      radial-gradient(circle at 50% 25%, rgba(255,215,0,.22), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(92,225,255,.12), transparent 45%),
+      radial-gradient(circle at 20% 90%, rgba(179,136,255,.1), transparent 45%),
+      linear-gradient(160deg, #05070e, #0b1222 55%, #05070e);
+    opacity:1;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  .start-screen.hidden{opacity:0; visibility:hidden; pointer-events:none;}
+  .start-inner{
+    width:100%; max-width:520px;
+    background:linear-gradient(180deg, rgba(20,30,50,.85), rgba(10,16,30,.9));
+    border:1.5px solid rgba(255,215,0,.35);
+    border-radius:26px;
+    padding:36px 28px;
+    box-shadow:0 0 60px rgba(255,215,0,.25), 0 30px 80px rgba(0,0,0,.75);
+    backdrop-filter:blur(18px);
+    animation:startIn .8s cubic-bezier(.2,.9,.3,1.2) both;
+    max-height:92vh;
+    overflow-y:auto;
+  }
+  @keyframes startIn{from{opacity:0; transform:scale(.92) translateY(30px);} to{opacity:1; transform:scale(1) translateY(0);}}
+  .start-inner::-webkit-scrollbar{width:6px;}
+  .start-inner::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3); border-radius:10px;}
+  .start-title{
+    font-size:clamp(1.8rem, 6vw, 2.8rem);
+    font-weight:900;
+    text-align:center;
+    letter-spacing:-1px;
+    line-height:1.3;
+    background:linear-gradient(180deg,#fffbe6 0%, #ffd700 40%, #ff9500 70%, #ff6a00 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 25px rgba(255,215,0,.5));
+    animation:titleGlow 3s ease-in-out infinite;
+    margin-bottom:10px;
+  }
+  .start-subtitle{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:.95rem;
+    margin-bottom:24px;
+    letter-spacing:.5px;
+  }
+  .start-label{
+    color:var(--gold);
+    font-weight:700;
+    font-size:.9rem;
+    margin-bottom:10px;
+    padding-right:4px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .start-inner input{
+    width:100%;
+    padding:14px 18px;
+    border-radius:14px;
+    border:1.5px solid rgba(255,215,0,.3);
+    background:rgba(8,14,28,.9);
+    color:var(--text);
+    font-family:inherit; font-size:1rem;
+    outline:none;
+    margin-bottom:20px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .start-inner input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 4px rgba(255,215,0,.12), 0 0 25px rgba(255,215,0,.2);
+  }
+  .start-btn{
+    width:100%;
+    margin-top:8px;
+    font-size:1.05rem;
+    padding:16px;
+  }
+
+  /* ==== مودال‌ها ==== */
+  .overlay{
+    position:fixed; inset:0; background:rgba(2,4,10,.82);
+    backdrop-filter:blur(10px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; opacity:0; pointer-events:none;
+    transition:opacity .3s; z-index:200;
+  }
+  .overlay.show{opacity:1; pointer-events:auto;}
+  .modal{
+    width:100%; max-width:480px;
+    background:var(--modal-bg);
+    border:1px solid rgba(255,215,0,.22);
+    border-radius:24px; padding:32px 26px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7), var(--glow-gold);
+    transform:translateY(20px) scale(.96);
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+    max-height:85vh; display:flex; flex-direction:column;
+    position:relative; color:var(--text);
+  }
+  .overlay.show .modal{transform:translateY(0) scale(1);}
+  .modal h2{color:var(--gold); font-size:1.35rem; margin-bottom:8px; filter:drop-shadow(0 0 16px rgba(255,215,0,.4));}
+  .modal p.hint{color:var(--text-dim); font-size:.88rem; margin-bottom:20px; line-height:1.8;}
+  .modal input{
+    width:100%; padding:14px 18px; border-radius:14px;
+    border:1px solid rgba(255,215,0,.25);
+    background:var(--input-bg); color:var(--text);
+    font-family:inherit; font-size:1rem; outline:none;
+    margin-bottom:18px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .modal input:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(255,215,0,.12);}
+  .close-x{
+    position:absolute; top:16px; left:16px;
+    background:none; border:none; color:var(--text-soft);
+    font-size:1.5rem; cursor:pointer; line-height:1;
+    transition:color .2s, transform .2s;
+  }
+  .close-x:hover{color:var(--gold); transform:rotate(90deg);}
+
+  /* ==== گرید آواتار ==== */
+  .avatar-grid{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:8px;
+    margin-bottom:20px;
+    max-height:220px;
+    overflow-y:auto;
+    padding:4px;
+  }
+  .avatar-grid::-webkit-scrollbar{width:6px;}
+  .avatar-grid::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3); border-radius:10px;}
+  .avatar-option{
+    aspect-ratio:1;
+    border-radius:12px;
+    background:rgba(255,215,0,.06);
+    border:2px solid rgba(255,215,0,.2);
+    font-size:1.5rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:all .2s cubic-bezier(.2,.9,.3,1.2);
+    user-select:none;
+  }
+  .avatar-option:hover{background:rgba(255,215,0,.15); transform:scale(1.08);}
+  .avatar-option.selected{
+    background:linear-gradient(180deg, rgba(255,215,0,.35), rgba(255,180,0,.15));
+    border-color:var(--gold);
+    box-shadow:0 0 20px rgba(255,215,0,.6), inset 0 0 15px rgba(255,215,0,.2);
+    transform:scale(1.05);
+  }
+
+  .profile-info-line{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px;
+    background:rgba(255,215,0,.06);
+    border:1px solid rgba(255,215,0,.15);
+    border-radius:12px;
+    margin-bottom:14px;
+    font-size:.88rem;
+  }
+  .profile-info-line .lbl{color:var(--text-dim);}
+  .profile-info-line .val{color:var(--gold); font-weight:900; font-family:'Vazirmatn', monospace; letter-spacing:2px;}
+
+  /* ==== چت‌های بات ==== */
   .chat-screen{
     position:fixed; inset:0;
     background:
@@ -124,7 +508,6 @@
     cursor:pointer; transition:all .3s; flex-shrink:0;
   }
   .back-btn:hover{background:rgba(255,215,0,.18); border-color:var(--gold); transform:scale(1.06);}
-  .back-btn:active{transform:scale(.92);}
   .back-btn svg{width:20px; height:20px;}
   .bot-profile{display:flex; align-items:center; gap:12px; flex:1; min-width:0;}
   .bot-avatar{
@@ -168,7 +551,6 @@
     animation:msgIn .35s cubic-bezier(.2,.9,.3,1.2) both;
     word-wrap:break-word; white-space:pre-wrap;
   }
-  @keyframes msgIn{from{opacity:0; transform:translateY(12px) scale(.96);} to{opacity:1; transform:translateY(0) scale(1);}}
   .message.bot{
     align-self:flex-end;
     background:var(--bot-bubble);
@@ -195,7 +577,6 @@
     border:1px solid rgba(92,225,255,.3); color:#c9f7ff;
     align-self:flex-end; border-bottom-right-radius:6px;
     margin-left:20px; max-width:92%;
-    box-shadow:0 0 30px rgba(92,225,255,.08);
   }
   .code-highlight{
     display:block; margin-top:12px; padding-top:12px; text-align:center;
@@ -220,14 +601,13 @@
     font-size:.88rem;
   }
   .equip-row .lbl{color:#8fd8e8; font-weight:600;}
-  .equip-row .val{color:#fff; font-weight:900; font-family:'Vazirmatn', monospace; letter-spacing:.5px;}
+  .equip-row .val{color:#fff; font-weight:900; font-family:'Vazirmatn', monospace;}
   .typing-indicator{
     align-self:flex-end; background:var(--bot-bubble);
     border:1px solid rgba(255,215,0,.12);
     padding:15px 20px; border-radius:18px;
     border-bottom-right-radius:6px; display:flex; gap:6px;
     margin-left:40px; box-shadow:0 4px 16px rgba(0,0,0,.2);
-    backdrop-filter:blur(10px);
   }
   .typing-indicator span{width:8px; height:8px; border-radius:50%; background:var(--gold); animation:typingBounce 1.2s infinite; opacity:.6;}
   .typing-indicator span:nth-child(2){animation-delay:.15s;}
@@ -248,9 +628,8 @@
     font-family:inherit; font-size:.95rem; outline:none;
     transition:border-color .25s, box-shadow .25s;
   }
-  .chat-input-bar input::placeholder{color:var(--text-soft);}
-  .chat-input-bar input:focus{border-color:var(--gold); box-shadow:0 0 0 4px rgba(255,215,0,.1), var(--glow-gold);}
-  .chat-input-bar input:disabled{opacity:.6; cursor:not-allowed;}
+  .chat-input-bar input:focus{border-color:var(--gold); box-shadow:0 0 0 4px rgba(255,215,0,.1);}
+  .chat-input-bar input:disabled{opacity:.6;}
   .send-btn{
     width:52px; height:52px; border-radius:16px;
     background:linear-gradient(180deg,var(--gold-3),var(--gold-2));
@@ -259,33 +638,9 @@
     transition:transform .25s, box-shadow .25s, opacity .2s;
     box-shadow:0 8px 22px rgba(255,180,0,.35); flex-shrink:0;
   }
-  .send-btn:hover:not(:disabled){transform:translateY(-3px); box-shadow:0 14px 32px rgba(255,180,0,.5);}
-  .send-btn:active:not(:disabled){transform:scale(.92);}
-  .send-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .send-btn:disabled{opacity:.5;}
   .send-btn svg{width:23px; height:23px;}
-  .overlay{
-    position:fixed; inset:0; background:rgba(2,4,10,.78);
-    backdrop-filter:blur(10px);
-    display:flex; align-items:center; justify-content:center;
-    padding:20px; opacity:0; pointer-events:none; transition:opacity .3s; z-index:200;
-  }
-  .overlay.show{opacity:1; pointer-events:auto;}
-  .modal{
-    width:100%; max-width:480px;
-    background:var(--modal-bg);
-    border:1px solid rgba(255,215,0,.22);
-    border-radius:24px; padding:32px 28px;
-    box-shadow:0 30px 80px rgba(0,0,0,.7), var(--glow-gold);
-    transform:translateY(20px) scale(.96);
-    transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
-    max-height:82vh; display:flex; flex-direction:column;
-    position:relative; color:var(--text);
-  }
-  .overlay.show .modal{transform:translateY(0) scale(1);}
-  .modal h2{color:var(--gold); font-size:1.4rem; margin-bottom:8px; filter:drop-shadow(0 0 16px rgba(255,215,0,.4));}
-  .modal p.hint{color:var(--text-dim); font-size:.9rem; margin-bottom:22px; line-height:1.8;}
-  .close-x{position:absolute; top:16px; left:16px; background:none; border:none; color:var(--text-soft); font-size:1.5rem; cursor:pointer; line-height:1; transition:color .2s, transform .2s;}
-  .close-x:hover{color:var(--gold); transform:rotate(90deg);}
+
   .list{overflow-y:auto; margin-top:6px; padding-left:6px; display:flex; flex-direction:column; gap:10px;}
   .list::-webkit-scrollbar{width:7px;}
   .list::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3); border-radius:10px;}
@@ -308,26 +663,50 @@
   }
   .empty{text-align:center; color:var(--text-dim); padding:30px 10px; line-height:2;}
   .counter{margin-top:18px; text-align:center; color:var(--text-dim); font-size:.85rem;}
-  #confettiCanvas{position:fixed; inset:0; pointer-events:none; z-index:300; display:none;}
+
   @media (max-width:480px){
     .btn{width:100%; flex:1 1 100%;}
     .buttons{width:100%;}
     .message{max-width:88%;}
     .timer{font-size:.9rem; padding:6px 10px;}
     .code-highlight{font-size:1.6rem; letter-spacing:8px;}
+    .profile-name{max-width:80px; font-size:.82rem;}
+    .avatar-grid{grid-template-columns:repeat(5, 1fr);}
+    .start-inner{padding:28px 20px;}
   }
 </style>
 </head>
-<body>
+<body class="not-ready">
 
   <canvas id="bgParticles"></canvas>
   <canvas id="confettiCanvas"></canvas>
 
-  <div class="corner-tools">
+  <!-- صفحه شروع (اولین ورود) -->
+  <div class="start-screen" id="welcomeOverlay">
+    <div class="start-inner">
+      <h1 class="start-title">نبرد وار</h1>
+      <div class="start-subtitle">⚔️ سرزمینت را انتخاب کن و بر جهان حکومت کن ⚔️</div>
+      <p class="start-label">👤 اسم جنگی‌ات را انتخاب کن:</p>
+      <input id="welcomeName" placeholder="مثلاً: شاهین" maxlength="20" autocomplete="off">
+      <p class="start-label">🎭 نماد جنگی‌ات:</p>
+      <div class="avatar-grid" id="welcomeAvatars"></div>
+      <button class="btn primary start-btn" id="btnWelcomeStart">🚀 ورود به میدان نبرد</button>
+    </div>
+  </div>
+
+  <!-- پروفایل بالا چپ -->
+  <button class="profile-btn" id="profileBtn">
+    <span class="profile-avatar" id="profileAvatar">⚔️</span>
+    <span class="profile-name" id="profileName">فرمانده</span>
+  </button>
+
+  <!-- ابزار بالا راست -->
+  <div class="top-tools">
     <button class="tool-btn" id="btnTheme" title="تغییر تم">🌙</button>
     <button class="tool-btn" id="btnSound" title="قطع/وصل صدا">🔊</button>
   </div>
 
+  <!-- صفحه اصلی -->
   <div class="main-screen">
     <div class="title-wrap">
       <h1>نبرد وار</h1>
@@ -342,12 +721,33 @@
       <button class="btn equip" id="btnEquipChat">🚀 بات تجهیزات</button>
       <button class="btn" id="btnList">🌍 کشورها</button>
     </div>
-    <footer>داده‌ها بر اساس منابع عمومی و تخمینی است | متصل به Supabase</footer>
+    <footer>داده‌ها بر اساس منابع عمومی و تخمینی است | آنلاین با Supabase</footer>
   </div>
 
+  <!-- دکمه چت جهانی -->
+  <button class="chat-toggle-btn hidden" id="chatToggleBtn">
+    <span>🌍</span>
+    <span>چت جهانی</span>
+    <span class="chat-badge" id="chatBadge" style="display:none">0</span>
+  </button>
+
+  <!-- پنل چت جهانی -->
+  <div class="global-chat-panel" id="globalChatPanel">
+    <header class="global-chat-header">
+      <h3>🌍 چت جهانی</h3>
+      <button class="global-chat-close" id="closeGlobalChat">×</button>
+    </header>
+    <div class="global-chat-messages" id="globalChatMessages"></div>
+    <div class="global-chat-input">
+      <input id="globalChatInput" placeholder="پیامت رو بنویس..." maxlength="300" autocomplete="off">
+      <button id="globalChatSend" aria-label="ارسال">📤</button>
+    </div>
+  </div>
+
+  <!-- چت کشورگیری -->
   <div class="chat-screen" id="chatScreen">
     <header class="chat-header">
-      <button class="back-btn" id="btnBack" aria-label="بازگشت">
+      <button class="back-btn" id="btnBack">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
       <div class="bot-profile">
@@ -364,15 +764,16 @@
       <div class="input-wrap">
         <input type="text" id="chatInput" placeholder="نام کشور واقعی را بنویسید..." autocomplete="off" maxlength="50">
       </div>
-      <button class="send-btn" id="btnSend" aria-label="ارسال">
+      <button class="send-btn" id="btnSend">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
 
+  <!-- چت تجهیزات -->
   <div class="chat-screen" id="equipChatScreen">
     <header class="chat-header">
-      <button class="back-btn" id="btnEquipBack" aria-label="بازگشت">
+      <button class="back-btn" id="btnEquipBack">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
       <div class="bot-profile">
@@ -389,17 +790,39 @@
       <div class="input-wrap">
         <input type="text" id="equipInput" placeholder="کد اختصاصی خود را وارد کنید..." autocomplete="off" maxlength="6" inputmode="numeric">
       </div>
-      <button class="send-btn" id="btnEquipSend" style="background:linear-gradient(180deg,#7df0ff,#22c8e6);" aria-label="ارسال">
+      <button class="send-btn" id="btnEquipSend" style="background:linear-gradient(180deg,#7df0ff,#22c8e6);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
 
+  <!-- مودال پروفایل -->
+  <div class="overlay" id="profileOverlay">
+    <div class="modal">
+      <button class="close-x" data-close-profile>&times;</button>
+      <h2>👤 پروفایل فرمانده</h2>
+      <p class="hint">اسم و نماد جنگی‌ات رو می‌تونی اینجا تغییر بدی.</p>
+      <input id="profileNameInput" placeholder="اسم..." maxlength="20">
+      <p class="hint" style="margin-bottom:10px;">نماد جنگی:</p>
+      <div class="avatar-grid" id="profileAvatars"></div>
+      <div class="profile-info-line" id="profileCountryInfo" style="display:none;">
+        <span class="lbl">🏳️ کشور:</span>
+        <span class="val" id="profileCountryName">—</span>
+      </div>
+      <div class="profile-info-line" id="profileCodeInfo" style="display:none;">
+        <span class="lbl">🔑 کد:</span>
+        <span class="val" id="profileCodeValue">—</span>
+      </div>
+      <button class="btn primary" id="btnSaveProfile" style="margin-top:6px;">💾 ذخیره تغییرات</button>
+    </div>
+  </div>
+
+  <!-- مودال لیست -->
   <div class="overlay" id="overlayList">
     <div class="modal">
       <button class="close-x" data-close>&times;</button>
       <h2>🌍 کشورهای ثبت‌شده</h2>
-      <p class="hint">کشورهایی که تا الان توسط بازیکنان انتخاب شده‌اند (همه آنلاین).</p>
+      <p class="hint">کشورهایی که تا الان توسط بازیکنان انتخاب شده‌اند.</p>
       <div class="list" id="countryList"></div>
       <div class="counter" id="counter"></div>
     </div>
@@ -412,12 +835,26 @@ const SUPABASE_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
 
 let supabaseClient = null;
 let supabaseOnline = false;
-
 try {
   if (window.supabase && typeof window.supabase.createClient === 'function') {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
 } catch(e){ console.warn('Supabase init:', e); }
+
+/* ============ کلیدها ============ */
+const STORAGE_KEY = 'nabardwar_countries_v3';
+const MY_COUNTRY_KEY = 'nabardwar_my_country_v3';
+const THEME_KEY = 'nabardwar_theme';
+const SOUND_KEY = 'nabardwar_sound';
+const USERNAME_KEY = 'nabardwar_username';
+const AVATAR_KEY = 'nabardwar_avatar';
+
+const AVATARS = ['⚔️','🗡️','🛡️','🏹','🎯','💣','🚀','🥷','🪖','💂','🦸','🧙','👑','💀','🐺','🦁','🦅','🐉','🔥','⚡','🪂','🧨','🎖️','🥇'];
+
+const getUsername = () => localStorage.getItem(USERNAME_KEY) || '';
+const setUsername = n => localStorage.setItem(USERNAME_KEY, n);
+const getAvatar = () => localStorage.getItem(AVATAR_KEY) || '⚔️';
+const setAvatar = a => localStorage.setItem(AVATAR_KEY, a);
 
 /* ============ دیتابیس کشورها ============ */
 const COUNTRY_DB = {
@@ -454,20 +891,12 @@ const COUNTRY_DB = {
 };
 
 /* ============ ذخیره‌سازی ============ */
-const STORAGE_KEY = 'nabardwar_countries_v3';
-const MY_COUNTRY_KEY = 'nabardwar_my_country_v3';
-const THEME_KEY = 'nabardwar_theme';
-const SOUND_KEY = 'nabardwar_sound';
-
 const loadCountriesLocal = () => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
 };
 const saveCountriesLocal = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-
 const loadMyCountry = () => {
-  try { return JSON.parse(localStorage.getItem(MY_COUNTRY_KEY)); }
-  catch { return null; }
+  try { return JSON.parse(localStorage.getItem(MY_COUNTRY_KEY)); } catch { return null; }
 };
 const saveMyCountry = entry => localStorage.setItem(MY_COUNTRY_KEY, JSON.stringify(entry));
 
@@ -482,7 +911,6 @@ function findCountryInDB(rawName){
   }
   return null;
 }
-
 const makeUniqueCode = list => {
   let code;
   do { code = String(Math.floor(1000 + Math.random()*9000)); }
@@ -490,7 +918,7 @@ const makeUniqueCode = list => {
   return code;
 };
 
-/* ============ Supabase sync ============ */
+/* ============ Supabase: کشورها ============ */
 async function loadCountriesRemote(){
   if (!supabaseClient) return null;
   try {
@@ -499,55 +927,35 @@ async function loadCountriesRemote(){
       .select('name, code, time, rank')
       .order('time', { ascending: true });
     if (error) throw error;
-    supabaseOnline = true;
-    updateOnlineUI(true);
+    supabaseOnline = true; updateOnlineUI(true);
     return (data || []).map(c => ({
-      name: c.name,
-      code: String(c.code),
-      time: Number(c.time),
-      rank: Number(c.rank)
+      name: c.name, code: String(c.code), time: Number(c.time), rank: Number(c.rank)
     }));
   } catch(e){
-    console.warn('Supabase load:', e);
-    supabaseOnline = false;
-    updateOnlineUI(false);
+    supabaseOnline = false; updateOnlineUI(false);
     return null;
   }
 }
-
 async function insertCountryRemote(entry){
   if (!supabaseClient) return { ok:false, reason:'no-client' };
   try {
     const { error } = await supabaseClient.from('countries').insert({
-      name: entry.name,
-      code: entry.code,
-      time: entry.time,
-      rank: entry.rank
+      name: entry.name, code: entry.code, time: entry.time, rank: entry.rank
     });
     if (error) return { ok:false, reason: error.code || error.message };
-    supabaseOnline = true;
-    updateOnlineUI(true);
+    supabaseOnline = true; updateOnlineUI(true);
     return { ok:true };
-  } catch(e){
-    return { ok:false, reason: String(e) };
-  }
+  } catch(e){ return { ok:false, reason: String(e) }; }
 }
-
 let countriesCache = null;
-
 async function getCountries(forceRefresh = false){
   if (!forceRefresh && countriesCache) return countriesCache;
   const local = loadCountriesLocal();
   const remote = await loadCountriesRemote();
-  if (remote !== null) {
-    countriesCache = remote;
-    saveCountriesLocal(remote);
-  } else {
-    countriesCache = local;
-  }
+  if (remote !== null){ countriesCache = remote; saveCountriesLocal(remote); }
+  else { countriesCache = local; }
   return countriesCache;
 }
-
 async function addCountry(entry){
   let remoteOk = false;
   if (supabaseClient){
@@ -555,60 +963,147 @@ async function addCountry(entry){
       const r = await insertCountryRemote(entry);
       if (r.ok){ remoteOk = true; break; }
       if (/23505|duplicate|unique/i.test(r.reason)){
-        // تصادم کد یا نام
         const existing = await loadCountriesRemote();
         if (existing){
-          if (existing.some(c => normalize(c.name) === normalize(entry.name))){
+          if (existing.some(c => normalize(c.name) === normalize(entry.name)))
             return { ok:false, reason:'name-taken' };
-          }
           entry.code = makeUniqueCode(existing);
           entry.rank = existing.length + 1;
-        } else {
-          entry.code = String(1000 + Math.floor(Math.random()*9000));
-        }
+        } else { entry.code = String(1000 + Math.floor(Math.random()*9000)); }
         continue;
       }
       break;
     }
   }
-  // ذخیره محلی (کش)
   const local = loadCountriesLocal();
   if (!local.some(c => String(c.code) === String(entry.code) || normalize(c.name) === normalize(entry.name))){
-    local.push(entry);
-    saveCountriesLocal(local);
+    local.push(entry); saveCountriesLocal(local);
   }
   countriesCache = null;
   return { ok:true, remote: remoteOk, entry };
 }
-
-function subscribeRealtime(){
+function subscribeCountries(){
   if (!supabaseClient) return;
   try {
-    supabaseClient
-      .channel('public:countries:inserts')
-      .on('postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'countries' },
-        () => {
-          countriesCache = null;
-          updateStats();
-          if (overlayList.classList.contains('show')) renderList();
-        })
+    supabaseClient.channel('public:countries:inserts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'countries' }, () => {
+        countriesCache = null; updateStats();
+        if (overlayList.classList.contains('show')) renderList();
+      })
       .subscribe(status => {
         if (status === 'SUBSCRIBED'){ supabaseOnline = true; updateOnlineUI(true); }
       });
-  } catch(e){ console.warn('Realtime:', e); }
+  } catch(e){ console.warn('Realtime countries:', e); }
 }
 
-function updateOnlineUI(online){
-  const dots = [document.getElementById('onlineDot1'), document.getElementById('onlineDot2')];
-  const stats = [document.getElementById('botStatus1'), document.getElementById('botStatus2')];
-  dots.forEach(d => { if (d) d.classList.toggle('offline', !online); });
-  stats.forEach((s, i) => {
-    if (s){
-      s.textContent = online ? 'آنلاین • متصل به سرور' : 'آفلاین • ذخیره محلی';
-      s.classList.toggle('offline', !online);
-    }
-  });
+/* ============ چت جهانی ============ */
+let lastMessages = [];
+let chatUnread = 0;
+let chatOpen = false;
+let lastSendTime = 0;
+
+async function loadMessages(){
+  if (!supabaseClient) return;
+  try {
+    const { data, error } = await supabaseClient
+      .from('messages').select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    lastMessages = (data || []).reverse();
+    renderMessages();
+  } catch(e){
+    console.warn('load messages:', e);
+    globalChatMessages.innerHTML = '<div class="chat-empty">خطا در بارگذاری پیام‌ها</div>';
+  }
+}
+
+function renderMessages(){
+  if (lastMessages.length === 0){
+    globalChatMessages.innerHTML = '<div class="chat-empty">هنوز پیامی نیست 🌱<br>اولین نفر باش!</div>';
+    return;
+  }
+  const me = getUsername();
+  globalChatMessages.innerHTML = lastMessages.map(m => {
+    const isMe = m.username === me;
+    const countryPart = m.country
+      ? ` <span class="chat-msg-country">(${escapeHtml(m.country)})</span>`
+      : '';
+    return `
+      <div class="chat-msg ${isMe ? 'mine' : ''}">
+        <div class="chat-msg-avatar">${escapeHtml(m.avatar || '⚔️')}</div>
+        <div class="chat-msg-body">
+          <div class="chat-msg-name">${escapeHtml(m.username)}${countryPart}</div>
+          <div class="chat-msg-text">${escapeHtml(m.content)}</div>
+        </div>
+      </div>`;
+  }).join('');
+  scrollToBottom(globalChatMessages);
+}
+
+async function sendGlobalMessage(){
+  const username = getUsername();
+  const content = globalChatInput.value.trim();
+  if (!content || !username) return;
+  if (!supabaseClient) return;
+  if (Date.now() - lastSendTime < 1200) return;
+  lastSendTime = Date.now();
+  globalChatInput.value = '';
+  Sound.send();
+  const myCountry = loadMyCountry();
+  const country = myCountry ? myCountry.name : null;
+  try {
+    const { error } = await supabaseClient.from('messages').insert({
+      username, avatar: getAvatar(), country, content
+    });
+    if (error) console.warn(error);
+  } catch(e){ console.warn(e); }
+}
+
+function subscribeMessages(){
+  if (!supabaseClient) return;
+  try {
+    supabaseClient.channel('public:messages:all')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' },
+        payload => {
+          const msg = payload.new;
+          if (lastMessages.some(m => m.id === msg.id)) return;
+          lastMessages.push(msg);
+          if (lastMessages.length > 50) lastMessages.shift();
+          renderMessages();
+          if (!chatOpen){
+            chatUnread++;
+            updateChatBadge();
+          }
+          if (msg.username !== getUsername()) Sound.receive();
+        })
+      .subscribe();
+  } catch(e){ console.warn('Realtime messages:', e); }
+}
+
+function updateChatBadge(){
+  if (chatUnread > 0){
+    chatBadge.textContent = chatUnread > 99 ? '99+' : chatUnread;
+    chatBadge.style.display = 'flex';
+  } else {
+    chatBadge.style.display = 'none';
+  }
+}
+
+function openGlobalChat(){
+  chatOpen = true;
+  globalChatPanel.classList.add('open');
+  chatUnread = 0; updateChatBadge();
+  loadMessages();
+  setTimeout(() => {
+    globalChatInput.focus();
+    scrollToBottom(globalChatMessages);
+  }, 420);
+}
+function closeGlobalChatFn(){
+  chatOpen = false;
+  globalChatPanel.classList.remove('open');
+  globalChatInput.blur();
 }
 
 /* ============ صدا ============ */
@@ -645,19 +1140,15 @@ const Sound = {
 const confettiCanvas = document.getElementById('confettiCanvas');
 const confettiCtx = confettiCanvas.getContext('2d');
 function launchConfetti(){
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
+  confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
   confettiCanvas.style.display = 'block';
   const colors = ['#ffd700','#ffb300','#ffe873','#fff','#ff9500','#5ce1ff'];
   const ps = [];
   for (let i=0;i<160;i++) ps.push({
-    x: confettiCanvas.width/2 + (Math.random()-0.5)*200,
-    y: confettiCanvas.height/2,
+    x: innerWidth/2 + (Math.random()-0.5)*200, y: innerHeight/2,
     vx: (Math.random()-0.5)*20, vy: -Math.random()*20-5,
-    size: Math.random()*10+4,
-    color: colors[Math.floor(Math.random()*colors.length)],
-    rotation: Math.random()*Math.PI*2,
-    rotationSpeed: (Math.random()-0.5)*0.4, life:1
+    size: Math.random()*10+4, color: colors[Math.floor(Math.random()*colors.length)],
+    rotation: Math.random()*Math.PI*2, rotationSpeed: (Math.random()-0.5)*0.4, life:1
   });
   function anim(){
     confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
@@ -729,19 +1220,40 @@ const overlayList = document.getElementById('overlayList');
 const countryListEl = document.getElementById('countryList');
 const counterEl = document.getElementById('counter');
 
+const welcomeOverlay = document.getElementById('welcomeOverlay');
+const welcomeName = document.getElementById('welcomeName');
+const welcomeAvatars = document.getElementById('welcomeAvatars');
+const btnWelcomeStart = document.getElementById('btnWelcomeStart');
+
+const profileOverlay = document.getElementById('profileOverlay');
+const profileBtn = document.getElementById('profileBtn');
+const profileAvatar = document.getElementById('profileAvatar');
+const profileName = document.getElementById('profileName');
+const profileNameInput = document.getElementById('profileNameInput');
+const profileAvatars = document.getElementById('profileAvatars');
+const btnSaveProfile = document.getElementById('btnSaveProfile');
+const profileCountryInfo = document.getElementById('profileCountryInfo');
+const profileCodeInfo = document.getElementById('profileCodeInfo');
+const profileCountryName = document.getElementById('profileCountryName');
+const profileCodeValue = document.getElementById('profileCodeValue');
+
+const chatToggleBtn = document.getElementById('chatToggleBtn');
+const chatBadge = document.getElementById('chatBadge');
+const globalChatPanel = document.getElementById('globalChatPanel');
+const globalChatMessages = document.getElementById('globalChatMessages');
+const globalChatInput = document.getElementById('globalChatInput');
+const globalChatSend = document.getElementById('globalChatSend');
+
 let isProcessing = false;
 let timerInterval = null;
 let timeLeft = 60;
 
 /* ============ تایمر ============ */
 function startTimer(){
-  clearInterval(timerInterval);
-  timeLeft = 60;
-  timerEl.classList.remove('urgent','done');
-  updateTimer();
+  clearInterval(timerInterval); timeLeft = 60;
+  timerEl.classList.remove('urgent','done'); updateTimer();
   timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimer();
+    timeLeft--; updateTimer();
     if (timeLeft === 20) timerEl.classList.add('urgent');
     if (timeLeft <= 10 && timeLeft > 0) Sound.tick();
     if (timeLeft <= 0){ clearInterval(timerInterval); timeUp(); }
@@ -761,7 +1273,7 @@ function timeUp(){
   addMessage('bot', '⏰ زمان تموم شد!\n\nدکمه برگشت رو بزن و دوباره وارد شو.');
 }
 
-/* ============ باز/بسته ============ */
+/* ============ چت‌ها ============ */
 function openChat(){
   Sound.open();
   chatScreen.classList.add('open');
@@ -771,39 +1283,32 @@ function openChat(){
   if (myCountry){
     timerEl.textContent = '✓ ثبت شده';
     timerEl.classList.remove('urgent'); timerEl.classList.add('done');
-    addMessage('bot', `سلام! 👋 خوش برگشتی.\nشما قبلاً کشور «${myCountry.name}» را ثبت کرده‌اید.`);
+    addMessage('bot', `سلام ${getUsername() || 'فرمانده'}! 👋\nشما قبلاً کشور «${myCountry.name}» را ثبت کرده‌اید.`);
     addCodeMessage(myCountry.code, 'کد اختصاصی شما:');
   } else {
-    addMessage('bot', 'سلام! 👋 به بات کشور گیری خوش آمدید.\n\n⏱ فقط ۶۰ ثانیه وقت داری!\nنام یک کشور واقعی از دنیا را بنویس تا برای تو ثبت کنم.');
+    addMessage('bot', `سلام ${getUsername() || 'فرمانده'}! 👋\n\n⏱ فقط ۶۰ ثانیه وقت داری!\nنام یک کشور واقعی از دنیا را بنویس.`);
     startTimer();
   }
   setTimeout(() => chatInput.focus(), 450);
 }
-function closeChat(){
-  Sound.click();
-  chatScreen.classList.remove('open');
-  stopTimer(); chatInput.blur();
-}
+function closeChat(){ Sound.click(); chatScreen.classList.remove('open'); stopTimer(); chatInput.blur(); }
+
 function openEquipChat(){
   Sound.open();
   equipChatScreen.classList.add('open');
   equipMessages.innerHTML = '';
   equipInput.disabled = false; btnEquipSend.disabled = false; equipInput.value = '';
-  addMessageTo(equipMessages, 'bot', 'سلام فرمانده! 🚀\nکد اختصاصی کشورت رو وارد کن تا آرشیو کامل نظامی رو برات باز کنم.\n\n🔑 کد ۴ رقمی رو از بات کشور گیری بگیر.');
+  addMessageTo(equipMessages, 'bot', 'سلام فرمانده! 🚀\nکد اختصاصی کشورت رو وارد کن تا آرشیو کامل نظامی رو برات باز کنم.');
   setTimeout(() => equipInput.focus(), 450);
 }
-function closeEquipChat(){
-  Sound.click();
-  equipChatScreen.classList.remove('open');
-  equipInput.blur();
-}
+function closeEquipChat(){ Sound.click(); equipChatScreen.classList.remove('open'); equipInput.blur(); }
 
 document.getElementById('btnOpenChat').addEventListener('click', openChat);
 document.getElementById('btnBack').addEventListener('click', closeChat);
 document.getElementById('btnEquipChat').addEventListener('click', openEquipChat);
 document.getElementById('btnEquipBack').addEventListener('click', closeEquipChat);
 
-/* ============ پیام‌ها ============ */
+/* ============ پیام‌های بات ============ */
 function scrollToBottom(c){ requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; }); }
 function addMessageTo(c, who, text){
   const d = document.createElement('div');
@@ -828,18 +1333,11 @@ function botRespond(text, delay=800){
     t.className = 'typing-indicator';
     t.innerHTML = '<span></span><span></span><span></span>';
     chatMessages.appendChild(t); scrollToBottom(chatMessages);
-    setTimeout(() => {
-      t.remove(); Sound.receive(); addMessage('bot', text); res();
-    }, delay);
+    setTimeout(() => { t.remove(); Sound.receive(); addMessage('bot', text); res(); }, delay);
   });
 }
-function escapeHtml(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function formatNum(n){
-  if (typeof n !== 'number') return '—';
-  return n.toLocaleString('fa-IR');
-}
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatNum(n){ return typeof n === 'number' ? n.toLocaleString('fa-IR') : '—'; }
 function formatMoney(usd){
   if (!usd) return '—';
   if (usd >= 1e12) return (usd/1e12).toFixed(2) + ' تریلیون دلار';
@@ -851,20 +1349,12 @@ function formatMoney(usd){
 async function tryRegisterCountry(rawName){
   const my = loadMyCountry();
   if (my) return { status:'already-user', name: my.name, code: my.code };
-
   const found = findCountryInDB(rawName);
   if (!found) return { status:'invalid-country' };
-
   const list = await getCountries(true);
   if (list.some(c => normalize(c.name) === normalize(found.faName)))
     return { status:'taken', name: found.faName };
-
-  const entry = {
-    name: found.faName,
-    code: makeUniqueCode(list),
-    time: Date.now(),
-    rank: list.length + 1
-  };
+  const entry = { name: found.faName, code: makeUniqueCode(list), time: Date.now(), rank: list.length + 1 };
   const result = await addCountry(entry);
   if (!result.ok){
     if (result.reason === 'name-taken') return { status:'taken', name: found.faName };
@@ -878,42 +1368,30 @@ async function handleSend(){
   if (isProcessing || chatInput.disabled) return;
   const text = chatInput.value.trim();
   if (!text) return;
-
-  Sound.send();
-  chatInput.value = '';
-  addMessage('user', text);
+  Sound.send(); chatInput.value = ''; addMessage('user', text);
   isProcessing = true; btnSend.disabled = true; chatInput.disabled = true;
-
   const result = await tryRegisterCountry(text);
 
   if (result.status === 'invalid-country'){
-    Sound.error();
-    await botRespond('این کشور در دنیا وجود ندارد یا در دیتابیس ما نیست ❌\nلطفاً نام یک کشور واقعی وارد کن.');
+    Sound.error(); await botRespond('این کشور در دنیا وجود ندارد یا در دیتابیس ما نیست ❌');
   } else if (result.status === 'taken'){
-    Sound.error();
-    await botRespond(`کشور «${result.name}» از قبل توسط یکی دیگر پر شده است ❌\nیک کشور دیگر انتخاب کن.`);
+    Sound.error(); await botRespond(`کشور «${result.name}» از قبل توسط یکی دیگر پر شده است ❌`);
   } else if (result.status === 'already-user'){
-    Sound.error();
-    await botRespond(`شما قبلاً کشور «${result.name}» را ثبت کرده‌اید.\nهر نفر فقط یک کشور می‌تواند داشته باشد 🌍`);
+    Sound.error(); await botRespond(`شما قبلاً کشور «${result.name}» را ثبت کرده‌اید.`);
     addCodeMessage(result.code, 'کد اختصاصی شما:');
   } else if (result.status === 'success'){
     stopTimer();
     timerEl.textContent = '✓ ثبت شده';
     timerEl.classList.remove('urgent'); timerEl.classList.add('done');
-
     const onlineNote = result.remote ? '' : '\n\n⚠️ اتصال به سرور برقرار نشد؛ کد شما محلی ذخیره شد.';
     await botRespond(`کشور شما با موفقیت ثبت شد ✅\n\n🏳️ کشور: ${result.entry.name}${onlineNote}`);
     await new Promise(r => setTimeout(r, 300));
-
     Sound.success(); launchConfetti();
-    addCodeMessage(result.entry.code, 'کد اختصاصی شما:\nاین کد را حفظ کن و به کسی نده.', result.entry.rank);
-
+    addCodeMessage(result.entry.code, 'کد اختصاصی شما:\nاین کد را حفظ کن.', result.entry.rank);
     updateBadge(); updateStats();
   } else {
-    Sound.error();
-    await botRespond('خطا در ثبت کشور. لطفاً دوباره تلاش کن.');
+    Sound.error(); await botRespond('خطا در ثبت کشور.');
   }
-
   isProcessing = false;
   if (timeLeft > 0 || result.status !== 'success'){
     btnSend.disabled = false; chatInput.disabled = false; chatInput.focus();
@@ -926,19 +1404,15 @@ chatInput.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDe
 async function handleEquipSend(){
   const code = equipInput.value.trim();
   if (!code) return;
-
-  Sound.send();
-  equipInput.value = '';
+  Sound.send(); equipInput.value = '';
   addMessageTo(equipMessages, 'user', code);
   equipInput.disabled = true; btnEquipSend.disabled = true;
-
   const list = await getCountries(true);
   const entry = list.find(c => String(c.code) === code);
-
   if (!entry){
     Sound.error();
     await new Promise(r => setTimeout(r, 600));
-    addMessageTo(equipMessages, 'bot', 'کد وارد شده معتبر نیست ❌\nلطفاً کد ۴ رقمی اختصاصی خود را دوباره بررسی کن.');
+    addMessageTo(equipMessages, 'bot', 'کد وارد شده معتبر نیست ❌\nدوباره بررسی کن.');
   } else {
     const found = findCountryInDB(entry.name);
     if (!found){
@@ -949,13 +1423,13 @@ async function handleEquipSend(){
       const html = `
         <div style="font-weight:900; font-size:1.05rem; margin-bottom:8px; color:#7df0ff;">🏳️ ${entry.name}</div>
         <div class="equip-table">
-          <div class="equip-row"><span class="lbl">🚀 موشک‌های بالستیک/کروز</span><span class="val">${formatNum(d.missiles)}</span></div>
+          <div class="equip-row"><span class="lbl">🚀 موشک</span><span class="val">${formatNum(d.missiles)}</span></div>
           <div class="equip-row"><span class="lbl">🎯 پرتاب‌کننده موشک</span><span class="val">${formatNum(d.missileLaunchers)}</span></div>
           <div class="equip-row"><span class="lbl">🛸 پهپاد</span><span class="val">${formatNum(d.drones)}</span></div>
-          <div class="equip-row"><span class="lbl">🚢 کل ناوهای جنگی</span><span class="val">${formatNum(d.ships)}</span></div>
-          <div class="equip-row"><span class="lbl">⛴️ ناوچه (Frigate)</span><span class="val">${formatNum(d.frigates)}</span></div>
+          <div class="equip-row"><span class="lbl">🚢 کل ناوها</span><span class="val">${formatNum(d.ships)}</span></div>
+          <div class="equip-row"><span class="lbl">⛴️ ناوچه</span><span class="val">${formatNum(d.frigates)}</span></div>
           <div class="equip-row"><span class="lbl">🛥️ زیردریایی</span><span class="val">${formatNum(d.submarines)}</span></div>
-          <div class="equip-row"><span class="lbl">⚓ ناوشکن (Destroyer)</span><span class="val">${formatNum(d.destroyers)}</span></div>
+          <div class="equip-row"><span class="lbl">⚓ ناوشکن</span><span class="val">${formatNum(d.destroyers)}</span></div>
           <div class="equip-row"><span class="lbl">✈️ جنگنده</span><span class="val">${formatNum(d.fighterJets)}</span></div>
           <div class="equip-row"><span class="lbl">🛡️ تانک</span><span class="val">${formatNum(d.tanks)}</span></div>
           <div class="equip-row"><span class="lbl">🚙 خودروی زرهی</span><span class="val">${formatNum(d.armoredVehicles)}</span></div>
@@ -978,22 +1452,29 @@ equipInput.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventD
 
 /* ============ بج و آمار ============ */
 function updateBadge(){
-  if (loadMyCountry()) regBadge.classList.add('show');
-  else regBadge.classList.remove('show');
+  regBadge.classList.toggle('show', !!loadMyCountry());
 }
 async function updateStats(){
   const list = await getCountries();
-  const online = supabaseOnline;
   statsEl.textContent = list.length > 0
-    ? `🏆 ${list.length} کشور ثبت شده ${online ? '• 🟢 آنلاین' : '• 🟡 محلی'}`
-    : (online ? '🟢 متصل به سرور' : '🟡 حالت محلی');
+    ? `🏆 ${list.length} کشور ثبت شده ${supabaseOnline ? '• 🟢 آنلاین' : '• 🟡 محلی'}`
+    : (supabaseOnline ? '🟢 متصل به سرور' : '🟡 حالت محلی');
+}
+function updateOnlineUI(online){
+  [document.getElementById('onlineDot1'), document.getElementById('onlineDot2')].forEach(d => {
+    if (d) d.classList.toggle('offline', !online);
+  });
+  [document.getElementById('botStatus1'), document.getElementById('botStatus2')].forEach(s => {
+    if (s){
+      s.textContent = online ? 'آنلاین • متصل به سرور' : 'آفلاین • ذخیره محلی';
+      s.classList.toggle('offline', !online);
+    }
+  });
 }
 
 /* ============ لیست ============ */
 document.getElementById('btnList').addEventListener('click', async () => {
-  Sound.open();
-  await renderList();
-  overlayList.classList.add('show');
+  Sound.open(); await renderList(); overlayList.classList.add('show');
 });
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => { Sound.click(); overlayList.classList.remove('show'); }));
 overlayList.addEventListener('click', e => { if (e.target === overlayList) overlayList.classList.remove('show'); });
@@ -1003,16 +1484,15 @@ async function renderList(){
   countryListEl.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
   const list = (await getCountries(true)).slice().sort((a,b) => a.time - b.time);
   if (list.length === 0){
-    countryListEl.innerHTML = '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱<br>اولین نفر باش!</div>';
-    counterEl.textContent = '';
-    return;
+    countryListEl.innerHTML = '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱</div>';
+    counterEl.textContent = ''; return;
   }
   const medals = ['🥇','🥈','🥉'];
   countryListEl.innerHTML = list.map((c,i) => {
     const m = medals[i] || '🏅';
     return `<div class="row" style="animation-delay:${i*0.04}s"><div class="left"><span class="medal">${m}</span><span class="name">${escapeHtml(c.name)}</span></div><span class="check-mark">✓</span></div>`;
   }).join('');
-  counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}${supabaseOnline ? ' • آنلاین' : ''}`;
+  counterEl.textContent = `تعداد: ${list.length}${supabaseOnline ? ' • آنلاین' : ''}`;
 }
 
 /* ============ تم و صدا ============ */
@@ -1027,7 +1507,6 @@ btnTheme.addEventListener('click', () => {
   const next = cur === 'light' ? 'dark' : 'light';
   localStorage.setItem(THEME_KEY, next); applyTheme(next);
 });
-
 const btnSound = document.getElementById('btnSound');
 function applySound(){
   btnSound.textContent = soundEnabled ? '🔊' : '🔇';
@@ -1040,19 +1519,121 @@ btnSound.addEventListener('click', () => {
   if (soundEnabled) Sound.click();
 });
 
-/* ============ رفع مشکل کیبورد ============ */
+/* ============ پروفایل ============ */
+function renderAvatarGrid(container, selected){
+  container.innerHTML = AVATARS.map(a =>
+    `<div class="avatar-option ${a === selected ? 'selected' : ''}" data-avatar="${a}">${a}</div>`
+  ).join('');
+  container.querySelectorAll('.avatar-option').forEach(el => {
+    el.addEventListener('click', () => {
+      container.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+}
+
+function updateProfileUI(){
+  profileAvatar.textContent = getAvatar();
+  profileName.textContent = getUsername() || 'فرمانده';
+}
+
+/* ============ صفحه شروع ============ */
+function showStartScreen(){
+  welcomeOverlay.classList.remove('hidden');
+  document.body.classList.add('not-ready');
+  chatToggleBtn.classList.add('hidden');
+  renderAvatarGrid(welcomeAvatars, getAvatar());
+  setTimeout(() => welcomeName.focus(), 400);
+}
+
+function hideStartScreen(){
+  welcomeOverlay.classList.add('hidden');
+  document.body.classList.remove('not-ready');
+  chatToggleBtn.classList.remove('hidden');
+}
+
+btnWelcomeStart.addEventListener('click', () => {
+  const name = welcomeName.value.trim();
+  if (name.length < 2){
+    welcomeName.focus();
+    welcomeName.style.borderColor = '#ff5c5c';
+    setTimeout(() => { welcomeName.style.borderColor = ''; }, 800);
+    return;
+  }
+  setUsername(name);
+  const sel = welcomeAvatars.querySelector('.avatar-option.selected');
+  if (sel) setAvatar(sel.dataset.avatar);
+  hideStartScreen();
+  updateProfileUI();
+  Sound.success();
+  launchConfetti();
+});
+welcomeName.addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); btnWelcomeStart.click(); }
+});
+
+/* ============ مودال پروفایل ============ */
+profileBtn.addEventListener('click', () => {
+  if (!getUsername()){ showStartScreen(); return; }
+  Sound.open();
+  profileNameInput.value = getUsername();
+  renderAvatarGrid(profileAvatars, getAvatar());
+  const my = loadMyCountry();
+  if (my){
+    profileCountryInfo.style.display = 'flex';
+    profileCodeInfo.style.display = 'flex';
+    profileCountryName.textContent = my.name;
+    profileCodeValue.textContent = my.code;
+  } else {
+    profileCountryInfo.style.display = 'none';
+    profileCodeInfo.style.display = 'none';
+  }
+  profileOverlay.classList.add('show');
+});
+
+profileOverlay.addEventListener('click', e => {
+  if (e.target === profileOverlay) profileOverlay.classList.remove('show');
+});
+document.querySelectorAll('[data-close-profile]').forEach(b =>
+  b.addEventListener('click', () => profileOverlay.classList.remove('show'))
+);
+
+btnSaveProfile.addEventListener('click', () => {
+  const name = profileNameInput.value.trim();
+  if (name.length < 2){ profileNameInput.focus(); return; }
+  setUsername(name);
+  const sel = profileAvatars.querySelector('.avatar-option.selected');
+  if (sel) setAvatar(sel.dataset.avatar);
+  updateProfileUI();
+  profileOverlay.classList.remove('show');
+  Sound.success();
+});
+
+/* ============ چت جهانی ============ */
+chatToggleBtn.addEventListener('click', openGlobalChat);
+document.getElementById('closeGlobalChat').addEventListener('click', closeGlobalChatFn);
+globalChatSend.addEventListener('click', sendGlobalMessage);
+globalChatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); sendGlobalMessage(); }
+});
+globalChatPanel.addEventListener('click', e => {
+  if (e.target === globalChatPanel) closeGlobalChatFn();
+});
+
+/* ============ کیبورد ============ */
 function setupKeyboardFix(){
   if (!window.visualViewport) return;
   const vv = window.visualViewport;
-  const screens = [chatScreen, equipChatScreen];
   function adjust(){
-    screens.forEach(s => {
+    [chatScreen, equipChatScreen].forEach(s => {
       if (s.classList.contains('open')) s.style.height = vv.height + 'px';
       else s.style.height = '';
     });
+    if (chatOpen) globalChatPanel.style.height = Math.min(vv.height * 0.85, 700) + 'px';
     const active = document.activeElement;
     if (active === chatInput) scrollToBottom(chatMessages);
     if (active === equipInput) scrollToBottom(equipMessages);
+    if (active === globalChatInput) scrollToBottom(globalChatMessages);
   }
   vv.addEventListener('resize', adjust);
   vv.addEventListener('scroll', adjust);
@@ -1066,12 +1647,23 @@ updateBadge();
 updateOnlineUI(false);
 setupKeyboardFix();
 
-// پیش‌بارگذاری داده‌ها + اشتراک Realtime
+if (getUsername()){
+  // کاربر برگشتی
+  hideStartScreen();
+  updateProfileUI();
+} else {
+  // اولین ورود
+  updateProfileUI();
+  showStartScreen();
+}
+
 (async () => {
   await getCountries(true);
   updateStats();
-  subscribeRealtime();
+  subscribeCountries();
+  subscribeMessages();
+  if (getUsername()) loadMessages();
 })();
 </script>
 </body>
-      </html>
+  </html>
