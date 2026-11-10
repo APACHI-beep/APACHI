@@ -3,554 +3,480 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ایران وار | بازی متنی</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>نبرد وار ⚔️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: Tahoma, sans-serif;
-    background: radial-gradient(circle at center, #1e293b, #0f172a);
-    color: #eee; min-height: 100vh;
-    display: flex; justify-content: center; align-items: center;
-    padding: 15px 15px 95px;
+  :root{
+    --gold:#ffd700;
+    --gold-2:#ffb300;
   }
-  .screen { display: none; width: 100%; max-width: 500px; height: calc(90vh - 95px); flex-direction: column; }
-  .screen.active { display: flex; animation: fadeIn 0.3s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  *{box-sizing:border-box; margin:0; padding:0;}
 
-  .welcome-box {
-    background: rgba(30,41,59,0.8); padding: 40px 20px; border-radius: 20px;
-    border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center; margin: auto; width: 100%;
+  body{
+    min-height:100vh;
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,215,0,.10), transparent 45%),
+      radial-gradient(circle at 85% 85%, rgba(255,140,0,.10), transparent 45%),
+      linear-gradient(160deg,#080b14,#111a2e 55%,#080b14);
+    color:#e8eefc;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:40px 20px;
+    overflow-x:hidden;
   }
-  .welcome-title { font-size: 2em; font-weight: bold; color: #facc15; margin-bottom: 15px; text-shadow: 0 0 20px rgba(250,204,21,0.5); }
-  .welcome-sub { color: #94a3b8; margin-bottom: 25px; }
-  .name-input {
-    width: 100%; padding: 15px; font-size: 1.1em; border-radius: 12px; border: 2px solid #334155;
-    background: #0f172a; color: #fff; text-align: center; outline: none; transition: 0.3s;
-  }
-  .name-input:focus { border-color: #facc15; box-shadow: 0 0 10px rgba(250,204,21,0.2); }
-  .btn-main {
-    width: 100%; padding: 15px; font-size: 1.1em; border: none; border-radius: 12px;
-    background: #facc15; color: #0f172a; font-weight: bold; cursor: pointer; margin-top: 20px;
-  }
-  .btn-main:active { transform: scale(0.98); }
-  .congrats { text-align: center; font-size: 1.4em; color: #4ade80; background: rgba(20,41,29,0.8); padding: 40px 20px; border-radius: 20px; margin: auto; width: 100%; border: 1px solid #22c55e; }
 
-  .chat-container {
-    background: #0f172a; border-radius: 20px; border: 1px solid #334155;
-    overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex; flex-direction: column; height: 100%;
-  }
-  .chat-header {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #1e293b; padding: 15px; border-bottom: 1px solid #334155;
-  }
-  .chat-header .title { font-weight: bold; color: #facc15; font-size: 1.1em; }
-  .back-btn { background: none; border: none; color: #facc15; font-size: 1.4em; cursor: pointer; }
-  .chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-  .msg { max-width: 88%; padding: 12px 16px; border-radius: 16px; font-size: 0.95em; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; }
-  .msg.bot { background: #1e293b; color: #e2e8f0; align-self: flex-start; border-bottom-right-radius: 4px; }
-  .msg.user { background: #facc15; color: #0f172a; align-self: flex-end; border-bottom-left-radius: 4px; font-weight: bold; }
-  .copy-btn {
-    display: block; margin-top: 8px; background: #334155; color: #facc15; border: none;
-    padding: 5px 12px; border-radius: 6px; font-size: 0.75em; cursor: pointer; font-family: inherit;
-  }
-  .copy-btn:active { transform: scale(0.95); }
-  .chat-input-row { display: flex; gap: 10px; padding: 15px; background: #1e293b; border-top: 1px solid #334155; }
-  .chat-input-row input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; outline: none; }
-  .chat-input-row button { padding: 0 20px; background: #facc15; color: #0f172a; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+  /* ===== عنوان ===== */
+  .title-wrap{ text-align:center; margin-bottom:14px; animation:fadeUp .8s ease both; }
 
-  .countries-list { flex: 1; overflow-y: auto; padding: 10px; background: #0f172a; border-radius: 20px; border: 1px solid #334155; }.country-item { background: #1e293b; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid #334155; }
-  .country-item.taken { border-color: #22c55e; background: rgba(20,41,29,0.5); }
-  .check { color: #22c55e; font-weight: bold; }
+  h1{
+    font-size:clamp(2rem, 6.5vw, 4.2rem);
+    font-weight:900;
+    letter-spacing:-1px;
+    line-height:1.4;
+    background:linear-gradient(180deg,#fffbe0 0%, #ffd700 45%, #ff9500 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 0 22px rgba(255,215,0,.45));
+    animation:glow 2.8s ease-in-out infinite;
+  }
+  @keyframes glow{
+    0%,100%{ filter:drop-shadow(0 0 18px rgba(255,215,0,.35)); }
+    50%    { filter:drop-shadow(0 0 38px rgba(255,200,0,.75)); }
+  }
 
-  .bottom-menu {
-    position: fixed; bottom: 15px; left: 15px; right: 15px;
-    display: flex; justify-content: center; gap: 10px;
-    z-index: 100; max-width: 500px; margin: 0 auto;
+  .subtitle{
+    margin-top:10px;
+    color:#9fb0d0;
+    font-size:clamp(.85rem,2.5vw,1.05rem);
+    letter-spacing:.5px;
   }
-  .menu-btn {
-    flex: 1; padding: 14px 5px; font-size: 0.9em;
-    border: 2px solid #facc15; border-radius: 14px;
-    background: #1e293b; color: #facc15; font-weight: bold;
-    cursor: pointer; text-align: center; font-family: inherit;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.2s;
+
+  /* ===== دکمه‌ها ===== */
+  .buttons{
+    display:flex; flex-wrap:wrap; gap:18px;
+    justify-content:center;
+    margin-top:46px;
+    animation:fadeUp .8s .15s ease both;
   }
-  .menu-btn:hover { background: #facc15; color: #0f172a; }
-  .menu-btn:active { transform: scale(0.97); }
+
+  .btn{
+    font-family:inherit;
+    font-size:1.05rem;
+    font-weight:700;
+    padding:17px 38px;
+    border-radius:16px;
+    cursor:pointer;
+    color:var(--gold);
+    border:1px solid rgba(255,215,0,.35);
+    background:linear-gradient(180deg, rgba(255,215,0,.16), rgba(255,215,0,.04));
+    backdrop-filter:blur(6px);
+    transition:transform .22s, box-shadow .22s, border-color .22s, background .22s;
+    box-shadow:0 6px 20px rgba(0,0,0,.35);
+  }
+  .btn:hover{
+    transform:translateY(-4px);
+    border-color:var(--gold);
+    box-shadow:0 14px 34px rgba(255,215,0,.28);
+  }
+  .btn:active{ transform:translateY(-1px) scale(.98); }
+
+  .btn.primary{
+    color:#1a1200;
+    background:linear-gradient(180deg,#ffe873,#ffb300);
+    border-color:#ffd700;
+    box-shadow:0 10px 28px rgba(255,180,0,.35);
+  }
+  .btn.primary:hover{ box-shadow:0 16px 40px rgba(255,180,0,.5); }
+
+  /* ===== مودال ===== */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(3,6,12,.72);
+    backdrop-filter:blur(7px);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s;
+    z-index:50;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+
+  .modal{
+    width:100%; max-width:460px;
+    background:linear-gradient(180deg,#141d33,#0d1424);
+    border:1px solid rgba(255,215,0,.22);
+    border-radius:22px;
+    padding:30px 26px;
+    box-shadow:0 30px 70px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.05);
+    transform:translateY(18px) scale(.97);
+    transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
+    max-height:80vh;
+    display:flex; flex-direction:column;
+  }
+  .overlay.show .modal{ transform:translateY(0) scale(1); }
+
+  .modal h2{
+    color:var(--gold);
+    font-size:1.35rem;
+    margin-bottom:8px;
+    filter:drop-shadow(0 0 12px rgba(255,215,0,.35));
+  }
+  .modal p.hint{ color:#8fa2c4; font-size:.9rem; margin-bottom:20px; line-height:1.8; }
+
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:15px 18px;
+    border-radius:14px;
+    border:1px solid rgba(255,215,0,.25);
+    background:#0a1020;
+    color:#fff;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  input[type="text"]:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 4px rgba(255,215,0,.12);
+  }
+
+  .modal-actions{
+    display:flex; gap:12px; margin-top:20px;
+  }
+  .modal-actions .btn{ flex:1; padding:14px 10px; font-size:.98rem; }
+
+  .close-x{
+    position:absolute; top:14px; left:14px;
+    background:none; border:none; color:#7d8db0;
+    font-size:1.4rem; cursor:pointer; line-height:1;
+    transition:color .2s;
+  }
+  .close-x:hover{ color:var(--gold); }
+  .modal{ position:relative; }
+
+  /* ===== پیام خطا / موفقیت ===== */
+  .msg{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:12px;
+    font-size:.95rem;
+    font-weight:700;
+    line-height:1.9;
+    display:none;
+  }
+  .msg.error{
+    display:block;
+    background:rgba(255,60,60,.10);
+    border:1px solid rgba(255,80,80,.4);
+    color:#ff8b8b;
+    animation:shake .4s;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-7px)}
+    75%{transform:translateX(7px)}
+  }
+
+  /* ===== صفحه موفقیت ===== */
+  .success{ text-align:center; display:none; }
+  .success.show{ display:block; animation:fadeUp .4s ease both; }
+  .success .check{ font-size:2.6rem; }
+  .success .ok-text{
+    color:#7dffa8; font-weight:700; font-size:1.1rem;
+    margin:10px 0 24px;
+  }
+  .code-box{
+    background:linear-gradient(180deg,#1b2745,#121a2e);
+    border:1px dashed rgba(255,215,0,.45);
+    border-radius:16px;
+    padding:18px;
+  }
+  .code-box .label{ color:#8fa2c4; font-size:.82rem; margin-bottom:8px; }
+  .code-box .code{
+    font-size:2.4rem; font-weight:900; letter-spacing:10px;
+    color:var(--gold);
+    filter:drop-shadow(0 0 16px rgba(255,215,0,.5));
+    font-family:'Vazirmatn', monospace;
+  }
+
+  /* ===== لیست کشورها ===== */
+  .list{
+    overflow-y:auto;
+    margin-top:6px;
+    padding-left:6px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .list::-webkit-scrollbar{ width:7px; }
+  .list::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.3); border-radius:10px; }
+
+  .row{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    padding:13px 16px;
+    border-radius:13px;
+    background:rgba(255,215,0,.06);
+    border:1px solid rgba(255,215,0,.14);
+    animation:fadeUp .35s ease both;
+  }
+  .row .name{ font-weight:700; color:#eaf1ff; }
+  .row .code-tag{
+    font-weight:900; color:#1a1200;
+    background:linear-gradient(180deg,#ffe873,#ffb300);
+    padding:4px 12px; border-radius:8px; font-size:.9rem;
+    letter-spacing:2px;
+  }
+
+  .empty{
+    text-align:center; color:#7d8db0; padding:26px 10px; line-height:2;
+  }
+
+  .counter{
+    margin-top:16px; text-align:center;
+    color:#8fa2c4; font-size:.85rem;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  footer{
+    margin-top:60px; color:#4a5a7a; font-size:.78rem; text-align:center;
+    animation:fadeUp .8s .3s ease both;
+  }
+
+  @media (max-width:480px){
+    .btn{ width:100%; }
+    .buttons{ width:100%; }
+  }
 </style>
 </head>
 <body>
 
-<div id="screen-welcome" class="screen active">
-  <div class="welcome-box">
-    <div class="welcome-title">به ایران وار خوش آمدید!</div>
-    <div class="welcome-sub">لطفاً اسم خود را وارد کنید</div>
-    <input id="nameInput" class="name-input" type="text" placeholder="نام شما..." autocomplete="off" onkeydown="if(event.key==='Enter') submitName()">
-    <button class="btn-main" onclick="submitName()">تایید</button>
+  <div class="title-wrap">
+    <h1>به نبرد وار خوش آمدید</h1>
+    <div class="subtitle">⚔️ سرزمین خود را انتخاب کن و پرچمش را برافراز ⚔️</div>
   </div>
-</div>
 
-<div id="screen-congrats" class="screen">
-  <div class="congrats" id="congratsText" style="margin:auto;"></div>
-</div>
-
-<div id="screen-menu" class="screen">
-  <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-    <h2 style="color:#facc15; font-size:1.8em; text-align:center; margin-bottom:10px;">منوی اصلی</h2>
-    <p style="color:#94a3b8; text-align:center;">یک گزینه را از پایین انتخاب کنید</p>
+  <div class="buttons">
+    <button class="btn primary" id="btnRegister">🎯 بات کشور گیری</button>
+    <button class="btn" id="btnList">🌍 کشورها</button>
   </div>
-</div>
 
-<div id="screen-chat" class="screen">
-  <div class="chat-container">
-    <div class="chat-header">
-      <span class="title" id="chatTitle">چت</span>
-      <button class="back-btn" onclick="backToMenu()">↩</button>
+  <footer>اطلاعات کشورها در حافظه‌ی مرورگر شما ذخیره می‌شود</footer>
+
+  <!-- ===== مودال ثبت کشور ===== -->
+  <div class="overlay" id="overlayRegister">
+    <div class="modal">
+      <button class="close-x" data-close>&times;</button>
+
+      <div id="registerForm">
+        <h2>ثبت کشور</h2>
+        <p class="hint">نام کشور مورد نظرت رو بنویس تا برای تو ثبت بشه.</p>
+        <input type="text" id="countryInput" placeholder="مثلاً: ایران" autocomplete="off">
+        <div class="msg error" id="regError"></div>
+        <div class="modal-actions">
+          <button class="btn primary" id="btnSubmit">ثبت کشور</button>
+        </div>
+      </div>
+
+      <div class="success" id="registerSuccess">
+        <div class="check">✅</div>
+        <div class="ok-text">کشور شما با موفقیت ثبت شد ✅</div>
+        <div class="code-box">
+          <div class="label">کد ۴ رقمی شما (این کد را حفظ کنید)</div>
+          <div class="code" id="codeValue">----</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn" id="btnCopy">📋 کپی کد</button>
+          <button class="btn primary" data-close>باشه</button>
+        </div>
+      </div>
+
     </div>
-    <div class="chat-box" id="chatBox"></div>
-    <div class="chat-input-row">
-      <input id="chatInput" type="text" placeholder="پیام خود را بنویسید..." autocomplete="off" onkeydown="if(event.key==='Enter') sendChat()">
-      <button onclick="sendChat()">ارسال</button>
+  </div>
+
+  <!-- ===== مودال لیست کشورها ===== -->
+  <div class="overlay" id="overlayList">
+    <div class="modal">
+      <button class="close-x" data-close>&times;</button>
+      <h2>کشورهای ثبت‌شده</h2>
+      <p class="hint">لیست کشورهایی که تا الان پر شده‌اند.</p>
+      <div class="list" id="countryList"></div>
+      <div class="counter" id="counter"></div>
     </div>
   </div>
-</div>
-
-<div id="screen-countries" class="screen">
-  <div class="chat-header" style="border-radius:20px; margin-bottom:10px; background:#0f172a; border:1px solid #334155;">
-    <span class="title">🌍 کشورهای دنیا و گروهک‌ها</span>
-    <button class="back-btn" onclick="backToMenu()">↩</button>
-  </div>
-  <div class="countries-list" id="countriesList"></div>
-</div>
-
-<div class="bottom-menu">
-  <button class="menu-btn" onclick="openChat('country')">🧑‍💻 بات کشورگیری</button>
-  <button class="menu-btn" onclick="openCountries()">🌍 کشورها</button>
-  <button class="menu-btn" onclick="openChat('equipment')">🚀 بات تجهیزات</button>
-</div>
 
 <script>
-const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  /* ============ ذخیره‌سازی ============ */
+  const STORAGE_KEY = 'nabardwar_countries_v1';
 
-const ALL_ENTITIES = [
-  "ایران","افغانستان","عراق","ترکیه","پاکستان","عربستان","امارات","قطر","کویت","عمان",
-  "بحرین","یمن","سوریه","لبنان","اردن","فلسطین","مصر","لیبی","تونس","الجزایر",
-  "مراکش","سودان","اتیوپی","سومالی","کنیا","تانزانیا","اوگاندا","نیجریه","غنا","سنگال",
-  "آفریقای جنوبی","زیمبابوه","آنگولا","موزامبیک","ماداگاسکار","کامرون","چاد","نیجر","مالی","موریتانی",
-  "روسیه","اوکراین","بلاروس","لهستان","آلمان","فرانسه","انگلیس","ایتالیا","اسپانیا","پرتغال",
-  "هلند","بلژیک","سوئیس","اتریش","سوئد","نروژ","فنلاند","دانمارک","یونان","بلغارستان",
-  "رومانی","مجارستان","چک","اسلواکی","صربستان","کرواسی","بوسنی","آلبانی","مقدونیه","اسلوونی","چین","ژاپن","کره جنوبی","کره شمالی","هند","اندونزی","مالزی","تایلند","ویتنام","فیلیپین",
-  "سنگاپور","برمه","کامبوج","لائوس","مغولستان","قزاقستان","ازبکستان","ترکمنستان","قرقیزستان","تاجیکستان",
-  "آذربایجان","ارمنستان","گرجستان","آمریکا","کانادا","مکزیک","برزیل","آرژانتین","شیلی","پرو",
-  "کلمبیا","ونزوئلا","اکوادور","بولیوی","پاراگوئه","اروگوئه","کوبا","جامائیکا","هائیتی","دومینیکن",
-  "استرالیا","نیوزیلند","فیجی","پاپوآ گینه نو","سودان جنوبی","اریتره","جیبوتی","گابن",
-  "کنگو","رواندا","بوروندی","مالاوی","زامبیا","بوتسوانا","ناميبيا","لسوتو","اسواتینی","گینه",
-  "سیرالئون","لیبریا","ساحل عاج","بورکینافاسو","توگو","بنین","گامبیا","گینه بیسائو","کیپ ورد","سیشل",
-  "موریس","کومور","سائوتومه","برونئی","تیمور شرقی","مالدیو","بوتان","نپال","بنگلادش","سریلانکا",
-  "داعش","حزب‌الله","طالبان","القاعده","حماس","انصارالله"
-];
-// ============ تجهیزات کامل داعش (متن طولانی) ============
-const ISIS_TEXT = 🏴 داعش | ISIS
+  const loadCountries = () => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  };
+  const saveCountries = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 
-(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)
+  /* یکسان‌سازی نام: حذف فاصله اضافه، تبدیل ي/ك عربی به فارسی، حروف کوچک */
+  const normalize = s => s
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/ي/g, 'ی')
+    .replace(/ك/g, 'ک')
+    .toLowerCase();
 
-━━━━━━━━━━━━━━━━━━
+  /* ساخت کد ۴ رقمی یکتا */
+  const makeUniqueCode = (list) => {
+    let code;
+    do {
+      code = String(Math.floor(1000 + Math.random() * 9000));
+    } while (list.some(c => c.code === code));
+    return code;
+  };
 
-📍 مشخصات کلی سازمان
+  /* ثبت کشور */
+  function registerCountry(rawName){
+    const name = rawName.trim().replace(/\s+/g, ' ');
 
-🗺 نام رسمی: دولت اسلامی عراق و شام (ISIS/ISIL)
-👥 اعضا: ≈ ۲۰٬۰۰۰ نفر (برآورد)
-💵 دارایی مالی: ≈ ۵۰ میلیون دلار (برآورد)
-💰 بودجه نظامی: نامشخص
-🏙 مرکز فرماندهی: نامشخص (پراکنده در عراق، سوریه، افغانستان، آفریقا)
-🏢 نوع سازمان: سازمان شبه‌نظامی فراملی
+    if (name.length < 2)
+      return { ok:false, msg:'نام کشور باید حداقل ۲ حرف باشد.' };
 
-━━━━━━━━━━━━━━━━━━
+    if (name.length > 40)
+      return { ok:false, msg:'نام کشور خیلی طولانی است.' };
 
-👤 نیروی انسانی
+    const list = loadCountries();
 
-🪖 جنگجوی فعال — ≈ ۲۰٬۰۰۰ نفر
-🧑‍✈️ نیروی ذخیره — ≈ ۵٬۰۰۰ نفر
-⚔️ نیروهای شبه‌نظامی — ≈ ۳٬۰۰۰ نفر (وابسته)
+    if (list.some(c => normalize(c.name) === normalize(name)))
+      return { ok:false, msg:'کشور از قبل توسط یکی دیگر پر شده است ❌' };
 
-━━━━━━━━━━━━━━━━━━
+    const entry = { name, code: makeUniqueCode(list), time: Date.now() };
+    list.push(entry);
+    saveCountries(list);
 
-🪖 نیروی زمینی
-
-🛡 تانک‌ها
-🛡 T-55 — ۳۰ دستگاه (غنیمتی)
-🛡 T-62 — ۲۰ دستگاه (غنیمتی)
-🛡 T-72 — ۱۰ دستگاه (غنیمتی)
-
-🚙 خودروهای زرهی
-🚙 BMP-1 — ۲۰ دستگاه (غنیمتی)
-🚙 BTR-60 — ۲۰ دستگاه (غنیمتی)
-🚙 M113 — ۱۰ دستگاه (غنیمتی)
-🚙 خودروهای تاکتیکی مسلح (Technical) — ۵۰۰+ دستگاه
-🚙 خودروهای بمب‌گذاری‌شده (VBIED) — ۲۰۰+ دستگاه
-
-━━━━━━━━━━━━━━━━━━
-
-💣 توپخانه
-
-💣 خمپاره‌انداز ۸۲mm — ۱۰۰+ قبضه
-💣 خمپاره‌انداز ۱۲۰mm — ۵۰+ قبضه
-💣 راکت‌انداز ۱۰۷mm — ۵۰+ سامانه
-🚀 BM-21 Grad — ۲۰ سامانه (غنیمتی)
-🚀 Type 63 MLRS — ۱۰ سامانه (غنیمتی)
-
-━━━━━━━━━━━━━━━━━━
-
-🚀 موشک‌ها
-
-🚀 RPG-7 — ۳٬۰۰۰+ فروند
-🚀 RPG-29 — ۳۰۰+ فروند
-🚀 موشک‌های ضدتانک هدایت‌شونده (ATGM) — ۳۰۰+ فروند (TOW، Konkurs، Kornet)
-🚀 موشک‌های دوش‌پرتاب (MANPADS) — ۲۰۰+ فروند (Stinger، Igla، Strela)
-
-━━━━━━━━━━━━━━━━━━
-
-✈️ نیروی هوایی
-
-✈️ MiG-21 — ۵ فروند (غنیمتی، عملیاتی محدود)
-✈️ L-39 — ۳ فروند (غنیمتی)
-✈️ (داعش نیروی هوایی سازمان‌یافته ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-💣 بمب‌افکن‌های راهبردی
-💣 (داعش بمب‌افکن راهبردی ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-✈️ هواپیماهای پشتیبانی
-✈️ (داعش هواپیمای پشتیبانی ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-🚁 بالگردها
-
-🚁 Mi-8/17 — ۵ فروند (غنیمتی، عملیاتی محدود)
-🚁 (داعش بالگرد سازمان‌یافته ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-🛸 پهپادها
-
-🛸 پهپادهای تجاری مسلح — ۱۰۰+ فروند
-🛸 پهپادهای FPV — ۲۰۰+ فروند
-🛸 پهپادهای شناسایی تاکتیکی — ۵۰ فروند
-
-━━━━━━━━━━━━━━━━━━
-
-⚓ نیروی دریایی
-
-🚤 شناورهای تندرو
-🚤 قایق‌های تندرو — ۱۰ فروند
-
-🤿 زیردریایی‌ها
-⚫ (داعش زیردریایی ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-🛡️ پدافند هوایی و موشکی
-
-🛡️ ZU-23 (توپ ۲۳mm) — ۲۰۰+ سامانه
-🛡️ ZSU-23-4 Shilka — ۲۰ سامانه (غنیمتی)
-🛡️ دوش‌پرتاب Stinger — ۵۰+ سامانه
-🛡️ دوش‌پرتاب Igla — ۵۰+ سامانه
-🛡️ دوش‌پرتاب Strela-2 — ۱۰۰+ سامانه
-
-📡 رادارهای راهبردی — ۰ دستگاه
-📡 رادارهای تاکتیکی — محدود
-
-━━━━━━━━━━━━━━━━━━
-
-☢️ توان هسته‌ای
-
-☢️ داعش به دنبال سلاح هسته‌ای بوده اما به آن دست نیافته است. (در سناریوی گیم: ۰ کلاهک)
-
-━━━━━━━━━━━━━━━━━━
-
-💻 جنگ سایبری و فضایی
-
-💻 نیروهای سایبری — ≈ ۲۰۰ نفر
-🛰 ماهواره‌های نظامی — ۰ واحد
-📡 سامانه‌های شناسایی و مراقبت — محدود
-⚡ سامانه‌های جنگ الکترونیک — محدود
-
-━━━━━━━━━━━━━━━━━━
-
-🏭 صنایع دفاعی
-
-🏭 کارگاه‌های بمب‌سازی — تولید IED و VBIED
-🏭 کارگاه‌های سلاح — تولید سلاح سبک و خمپاره
-🏭 کارگاه‌های پهپاد — مونتاژ پهپادهای تجاری مسلح
-🏭 (داعش صنایع دفاعی سازمان‌یافته ندارد)
-
-━━━━━━━━━━━━━━━━━━
-
-🏆 جمع‌بندی گیم
-
-🪖 تانک‌ها — ≈ ۶۰ دستگاه (غنیمتی)
-🚙 خودروهای زرهی — ≈ ۵۵۰+ دستگاه (بیشتر Technical)
-💣 توپخانه — ≈ ۲۲۰+ قبضه/دستگاه"حماس": "🟢 حماس | HAMAS\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n👥 اعضا: ≈ ۳۰٬۰۰۰ نفر\n🚀 موشک‌ها: قسام، رجوم، M-75\n🪖 سلاح‌ها: RPG، سلاح سبک، تونل تاکتیکی\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند.",
-  "انصارالله": "🔴 انصارالله | ANSARALLAH\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n👥 اعضا: ≈ ۲۰۰٬۰۰۰ نفر\n🚀 موشک‌ها: برکان، قدس، فلسطین\n🛸 پهپادها: صماد، قاصف\n🛡 پدافند: دوش‌پرتاب، سامانه غنیمتی\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند."
-};
-
-// ============ تجهیزات پیش‌فرض برای بقیه کشورها ============
-function getDefaultEquipment(country) {
-  return 🌍 ${country}\n\n(سناریوی تخیلی ۲۰۲۶ - مخصوص گیم)\n\n━━━━━━━━━━━━━━━━━━\n\n🪖 نیروی زمینی: تجهیزات پایه نظامی، سلاح‌های سبک\n🚀 موشک‌ها: موشک‌های تاکتیکی متعارف\n✈️ نیروی هوایی: جنگنده‌های نسل سوم/چهارم\n🛡 پدافند: سامانه‌های پدافندی متعارف\n☢️ کلاهک هسته‌ای: ۰ (در سناریوی گیم)\n\n⚠️ اعداد تخیلی و مخصوص گیم هستند.;
-}
-// ============ متغیرهای بازی ============
-let playerName = '';
-let playerCountry = null;
-let playerCode = null;
-let hasEquipment = false;
-let currentChatType = 'country';
-let countryChatHistory = [];
-let equipmentChatHistory = [];
-
-// ============ حافظه مرورگر ============
-function saveGame() {
-  localStorage.setItem('iranwar_data', JSON.stringify({
-    name: playerName,
-    country: playerCountry,
-    code: playerCode,
-    hasEquipment: hasEquipment
-  }));
-}
-
-function loadGame() {
-  const data = localStorage.getItem('iranwar_data');
-  if (data) {
-    const parsed = JSON.parse(data);
-    if (parsed.name) {
-      playerName = parsed.name;
-      playerCountry = parsed.country;
-      playerCode = parsed.code;
-      hasEquipment = parsed.hasEquipment || false;
-      showScreen('screen-menu');
-    }
-  }
-}
-
-// ============ ناوبری ============
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-function backToMenu() { showScreen('screen-menu'); }
-
-// ============ ثبت نام ============
-function submitName() {
-  const name = document.getElementById('nameInput').value.trim();
-  if (!name) { alert('لطفاً اسم خود را وارد کنید'); return; }
-  playerName = name;
-  saveGame();
-
-  document.getElementById('congratsText').innerHTML =
-    🎉 <b>${name}</b> عزیز،<br><br>تبریک می‌گم!<br>به دنیای <span style="color:#facc15">ایران وار</span> خوش اومدی.;
-
-  showScreen('screen-congrats');
-  setTimeout(() => showScreen('screen-menu'), 2500);
-}
-
-// ============ مدیریت دو چت کاملاً مجزا ============
-function openChat(type) {
-  currentChatType = type;
-  showScreen('screen-chat');
-  const title = document.getElementById('chatTitle');
-  const box = document.getElementById('chatBox');
-  box.innerHTML = '';
-
-  if (type === 'country') {
-    title.textContent = '🧑‍💻 بات کشورگیری';
-    if (countryChatHistory.length > 0) {
-      countryChatHistory.forEach(m => renderMsg(m.role, m.text, m.copyable));
-    } else {
-      addMsg('bot', سلام ${playerName}! 👋\nاسم یک کشور یا گروهک رو بفرست تا برات ثبت کنم.);
-    }
-  } else if (type === 'equipment') {
-    title.textContent = '🚀 بات تجهیزات';
-    if (equipmentChatHistory.length > 0) {
-      equipmentChatHistory.forEach(m => renderMsg(m.role, m.text, m.copyable));
-    } else {
-      addMsg('bot', سلام ${playerName} خوش اومدی 👋\nکد کشور خودت رو بده تا تجهیزات کشورت رو بهت بدم 🚀);
-    }
-  }
-}
-
-// ============ رندر پیام (با دکمه کپی) ============
-function renderMsg(role, text, copyable) {
-  const box = document.getElementById('chatBox');
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  div.textContent = text;
-
-  if (copyable) {
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.textContent = '📋 کپی متن';
-    btn.onclick = () => {
-      navigator.clipboard.writeText(text).then(() => {btn.textContent = '✅ کپی شد!';
-        setTimeout(() => { btn.textContent = '📋 کپی متن'; }, 1500);
-      }).catch(() => {
-        // فالبک برای مرورگرهای قدیمی
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        btn.textContent = '✅ کپی شد!';
-        setTimeout(() => { btn.textContent = '📋 کپی متن'; }, 1500);
-      });
-    };
-    div.appendChild(btn);
+    return { ok:true, entry };
   }
 
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
+  /* ============ عناصر DOM ============ */
+  const overlayRegister = document.getElementById('overlayRegister');
+  const overlayList     = document.getElementById('overlayList');
 
-// ============ افزودن پیام (ذخیره در تاریخچه) ============
-function addMsg(role, text, copyable = false) {
-  const history = currentChatType === 'country' ? countryChatHistory : equipmentChatHistory;
-  history.push({ role, text, copyable });
-  renderMsg(role, text, copyable);
-}
+  const registerForm    = document.getElementById('registerForm');
+  const registerSuccess = document.getElementById('registerSuccess');
+  const countryInput    = document.getElementById('countryInput');
+  const regError        = document.getElementById('regError');
+  const codeValue       = document.getElementById('codeValue');
 
-// ============ ارسال پیام ============
-async function sendChat() {
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  addMsg('user', text, false);
+  const countryListEl   = document.getElementById('countryList');
+  const counterEl       = document.getElementById('counter');
 
-  if (currentChatType === 'country') {
-    await handleCountryChat(text);
-  } else {
-    await handleEquipmentChat(text);
+  /* ============ باز/بسته کردن مودال‌ها ============ */
+  function openModal(overlay){
+    closeAllModals();
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
   }
-}
-// ============ منطق بات کشورگیری ============
-async function handleCountryChat(text) {
-  if (playerCountry) {
-    setTimeout(() => addMsg('bot', 'شما قبلاً کشور گرفته‌اید. منتظر سیزن بعد باشید ⏳'), 400);
-    return;
+  function closeAllModals(){
+    document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
+    document.body.style.overflow = '';
   }
 
-  const found = ALL_ENTITIES.find(e => e === text);
-  if (!found) {
-    setTimeout(() => addMsg('bot', 'کشور یافت نشد ❌'), 400);
-    return;
-  }
+  document.querySelectorAll('[data-close]').forEach(btn =>
+    btn.addEventListener('click', closeAllModals)
+  );
 
-  try {
-    const { data: existing } = await db.from('player_countries')
-      .select('country').eq('country', found).maybeSingle();
+  document.querySelectorAll('.overlay').forEach(ov =>
+    ov.addEventListener('click', e => { if (e.target === ov) closeAllModals(); })
+  );
 
-    if (existing) {
-      setTimeout(() => addMsg('bot', 'این کشور از قبل گرفته شده است ❌'), 400);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAllModals();
+  });
+
+  /* ============ دکمه ثبت کشور ============ */
+  document.getElementById('btnRegister').addEventListener('click', () => {
+    registerForm.style.display = 'block';
+    registerSuccess.classList.remove('show');
+    countryInput.value = '';
+    regError.className = 'msg error';
+    regError.textContent = '';
+    openModal(overlayRegister);
+    setTimeout(() => countryInput.focus(), 250);
+  });
+
+  function handleSubmit(){
+    const result = registerCountry(countryInput.value);
+
+    if (!result.ok){
+      regError.textContent = result.msg;
+      regError.className = 'msg error';
+      /* ری‌استارت انیمیشن لرزش */
+      regError.style.animation = 'none';
+      void regError.offsetWidth;
+      regError.style.animation = '';
       return;
     }
 
-    const code = Math.floor(1000 + Math.random() * 9000);
-    const { error } = await db.from('player_countries')
-      .insert([{ player_name: playerName, country: found, code: code }]);
-
-    if (error) throw error;
-
-    playerCountry = found;
-    playerCode = code;
-    saveGame();
-
-    setTimeout(() => addMsg('bot', 'کشور شما با موفقیت ثبت شد ✅'), 400);
-    setTimeout(() => addMsg('bot', 🔑 کد اختصاصی شما: ${code}), 900);
-    setTimeout(() => addMsg('bot', 'منتظر سیزن بعد باشید ⏳'), 1400);
-
-  } catch (err) {
-    console.error(err);
-    setTimeout(() => addMsg('bot', 'خطا در ثبت اطلاعات ❌'), 400);
-  }
-}
-
-// ============ منطق بات تجهیزات ============
-async function handleEquipmentChat(inputCode) {
-  if (hasEquipment) {
-    setTimeout(() => addMsg('bot', 'شما قبلاً تجهیزات خود را دریافت کرده‌اید. ⏳'), 400);
-    return;
+    /* موفقیت */
+    registerForm.style.display = 'none';
+    codeValue.textContent = result.entry.code;
+    registerSuccess.classList.add('show');
   }
 
-  if (!playerCountry || !playerCode) {
-    setTimeout(() => addMsg('bot', 'شما هنوز کشوری نگرفته‌اید! اول از بات کشورگیری یک کشور بگیرید ❌'), 400);
-    return;
-  }
+  document.getElementById('btnSubmit').addEventListener('click', handleSubmit);
 
-  if (parseInt(inputCode) !== playerCode) {
-    setTimeout(() => addMsg('bot', 'کد اشتباه است! کدی که بات کشورگیری به شما داد را وارد کنید ❌'), 400);
-    return;
-  }
-
-  let equipment;
-  if (playerCountry === 'داعش') {
-    equipment = ISIS_TEXT;
-  } else if (EQUIPMENT_DB[playerCountry]) {
-    equipment = EQUIPMENT_DB[playerCountry];
-  } else {
-    equipment = getDefaultEquipment(playerCountry);
-  }
-
-  try {
-    await db.from('equipment_claims').insert([{
-      player_name: playerName,
-      country: playerCountry,
-      equipment: equipment
-    }]);
-
-    hasEquipment = true;
-    saveGame();
-
-    setTimeout(() => addMsg('bot', کد تایید شد ✅\nکشور شما: ${playerCountry}), 400);
-    setTimeout(() => addMsg('bot', equipment, true), 900);
-    setTimeout(() => addMsg('bot', 'موفق باشی فرمانده! 🫡'), 1600);
-
-  } catch (err) {
-    console.error(err);
-    setTimeout(() => addMsg('bot', 'خطا در دریافت تجهیزات ❌'), 400);
-  }
-}
-
-// ============ صفحه کشورها ============
-async function openCountries() {
-  showScreen('screen-countries');
-  const list = document.getElementById('countriesList');
-  list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">در حال دریافت اطلاعات...</p>';let takenSet = new Set();
-  try {
-    const { data } = await db.from('player_countries').select('country');
-    if (data) takenSet = new Set(data.map(r => r.country));
-  } catch (e) { console.log(e); }
-
-  list.innerHTML = '';
-  ALL_ENTITIES.forEach(c => {
-    const isTaken = takenSet.has(c);
-    const div = document.createElement('div');
-    div.className = 'country-item' + (isTaken ? ' taken' : '');
-    div.innerHTML = <span>${c}</span> +
-      (isTaken ? '<span class="check">✅</span>' : '<span style="color:#64748b">—</span>');
-    list.appendChild(div);
+  countryInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSubmit();
   });
-}
 
-// ============ شروع بازی ============
-loadGame();
+  /* کپی کد */
+  document.getElementById('btnCopy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(codeValue.textContent);
+      const btn = document.getElementById('btnCopy');
+      const original = btn.textContent;
+      btn.textContent = '✅ کپی شد';
+      setTimeout(() => btn.textContent = original, 1500);
+    } catch {
+      alert('کپی نشد، کد را دستی یادداشت کنید: ' + codeValue.textContent);
+    }
+  });
+
+  /* ============ دکمه لیست کشورها ============ */
+  document.getElementById('btnList').addEventListener('click', () => {
+    renderList();
+    openModal(overlayList);
+  });
+
+  function renderList(){
+    const list = loadCountries().slice().sort((a,b) => a.time - b.time);
+
+    if (list.length === 0){
+      countryListEl.innerHTML =
+        '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱<br>اولین نفر باش!</div>';
+      counterEl.textContent = '';
+      return;
+    }
+
+    countryListEl.innerHTML = list.map((c, i) => `
+      <div class="row" style="animation-delay:${i * 0.04}s">
+        <span class="name">${escapeHtml(c.name)}</span>
+        <span class="code-tag">${escapeHtml(c.code)}</span>
+      </div>
+    `).join('');
+
+    counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}`;
+  }
+
+  /* جلوگیری از تزریق HTML */
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 </script>
-
 </body>
 </html>
