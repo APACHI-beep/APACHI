@@ -2,33 +2,41 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>نبرد وار ⚔️</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --gold:#ffd700;
     --gold-2:#ffb300;
+    --green:#22e06a;
+    --bg-1:#080b14;
+    --bg-2:#111a2e;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
 
+  html,body{height:100%;}
   body{
-    min-height:100vh;
     font-family:'Vazirmatn', Tahoma, sans-serif;
     background:
       radial-gradient(circle at 15% 15%, rgba(255,215,0,.10), transparent 45%),
       radial-gradient(circle at 85% 85%, rgba(255,140,0,.10), transparent 45%),
-      linear-gradient(160deg,#080b14,#111a2e 55%,#080b14);
+      linear-gradient(160deg,var(--bg-1),var(--bg-2) 55%,var(--bg-1));
     color:#e8eefc;
+    overflow:hidden;
+    min-height:100dvh;
+  }
+
+  /* ============ صفحه اصلی ============ */
+  .main-screen{
+    position:fixed; inset:0;
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
     padding:40px 20px;
-    overflow-x:hidden;
   }
 
-  /* ===== عنوان ===== */
   .title-wrap{ text-align:center; margin-bottom:14px; animation:fadeUp .8s ease both; }
 
   h1{
@@ -55,11 +63,11 @@
     letter-spacing:.5px;
   }
 
-  /* ===== دکمه‌ها ===== */
   .buttons{
     display:flex; flex-wrap:wrap; gap:18px;
     justify-content:center;
     margin-top:46px;
+    width:100%; max-width:520px;
     animation:fadeUp .8s .15s ease both;
   }
 
@@ -76,6 +84,7 @@
     backdrop-filter:blur(6px);
     transition:transform .22s, box-shadow .22s, border-color .22s, background .22s;
     box-shadow:0 6px 20px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:center; gap:10px;
   }
   .btn:hover{
     transform:translateY(-4px);
@@ -92,7 +101,273 @@
   }
   .btn.primary:hover{ box-shadow:0 16px 40px rgba(255,180,0,.5); }
 
-  /* ===== مودال ===== */
+  .reg-badge{
+    display:none;
+    width:24px; height:24px;
+    border-radius:50%;
+    background:linear-gradient(180deg,#2ee87b,#1aab52);
+    color:#002a10;
+    align-items:center; justify-content:center;
+    font-size:.85rem; font-weight:900;
+    box-shadow:0 0 12px rgba(34,224,106,.6);
+  }
+  .reg-badge.show{ display:flex; }
+
+  footer{
+    position:absolute; bottom:18px; left:0; right:0;
+    color:#4a5a7a; font-size:.78rem; text-align:center;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ============ صفحه چت ============ */
+  .chat-screen{
+    position:fixed; inset:0;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(255,215,0,.06), transparent 40%),
+      linear-gradient(160deg,#0a0f1c,#141d33 55%,#0a0f1c);
+    display:flex; flex-direction:column;
+    z-index:100;
+    transform:translateX(-100%);
+    transition:transform .4s cubic-bezier(.4,0,.2,1);
+    height:100dvh;
+  }
+  .chat-screen.open{ transform:translateX(0); }
+
+  .chat-header{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px;
+    padding-top:calc(14px + env(safe-area-inset-top));
+    background:linear-gradient(180deg, rgba(20,29,51,.98), rgba(20,29,51,.85));
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(255,215,0,.15);
+    position:relative;
+    z-index:2;
+  }
+  .chat-header::after{
+    content:'';
+    position:absolute;
+    bottom:-1px; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,215,0,.5), transparent);
+  }
+
+  .back-btn{
+    width:42px; height:42px;
+    border-radius:12px;
+    background:rgba(255,215,0,.08);
+    border:1px solid rgba(255,215,0,.22);
+    color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:all .2s;
+    flex-shrink:0;
+  }
+  .back-btn:hover{
+    background:rgba(255,215,0,.18);
+    border-color:var(--gold);
+    transform:scale(1.05);
+  }
+  .back-btn:active{ transform:scale(.94); }
+  .back-btn svg{ width:20px; height:20px; }
+
+  .bot-profile{
+    display:flex; align-items:center; gap:12px;
+    flex:1;
+  }
+  .bot-avatar{
+    width:46px; height:46px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ffd700,#ff9500);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem;
+    position:relative;
+    box-shadow:0 0 20px rgba(255,200,0,.4);
+    flex-shrink:0;
+  }
+  .online-dot{
+    position:absolute;
+    bottom:1px; left:1px;
+    width:13px; height:13px;
+    border-radius:50%;
+    background:var(--green);
+    border:2px solid #141d33;
+    box-shadow:0 0 8px var(--green);
+  }
+  .bot-info{ line-height:1.35; min-width:0; }
+  .bot-name{
+    font-weight:700;
+    color:#fff;
+    font-size:1rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .bot-status{
+    color:var(--green);
+    font-size:.78rem;
+    font-weight:600;
+  }
+
+  .header-spacer{ width:42px; flex-shrink:0; }
+
+  .chat-messages{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 16px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    scroll-behavior:smooth;
+    overscroll-behavior:contain;
+  }
+  .chat-messages::-webkit-scrollbar{ width:6px; }
+  .chat-messages::-webkit-scrollbar-thumb{ background:rgba(255,215,0,.25); border-radius:10px; }
+  .chat-messages::-webkit-scrollbar-track{ background:transparent; }
+
+  .message{
+    max-width:82%;
+    padding:11px 15px;
+    border-radius:16px;
+    font-size:.95rem;
+    line-height:1.75;
+    animation:msgIn .3s ease both;
+    word-wrap:break-word;
+    white-space:pre-wrap;
+    position:relative;
+  }
+
+  @keyframes msgIn{
+    from{ opacity:0; transform:translateY(10px) scale(.97); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .message.bot{
+    align-self:flex-end;
+    background:linear-gradient(180deg,#1e2a45,#1a2438);
+    border:1px solid rgba(255,215,0,.12);
+    color:#d8e2f5;
+    border-bottom-right-radius:6px;
+    margin-left:40px;
+    box-shadow:0 3px 10px rgba(0,0,0,.25);
+  }
+
+  .message.user{
+    align-self:flex-start;
+    background:linear-gradient(180deg,#ffe873,#ffb300);
+    color:#1a1200;
+    border-bottom-left-radius:6px;
+    font-weight:600;
+    margin-right:40px;
+    box-shadow:0 3px 12px rgba(255,180,0,.25);
+  }
+
+  .message.success{
+    background:linear-gradient(180deg, rgba(34,224,106,.15), rgba(34,224,106,.05));
+    border:1px solid rgba(34,224,106,.4);
+    color:#7dffa8;
+    font-weight:600;
+  }
+
+  .code-highlight{
+    display:block;
+    margin-top:10px;
+    padding-top:10px;
+    text-align:center;
+    font-size:1.9rem;
+    font-weight:900;
+    letter-spacing:10px;
+    color:var(--gold);
+    text-shadow:0 0 22px rgba(255,215,0,.55);
+    border-top:1px dashed rgba(255,215,0,.35);
+    font-family:'Vazirmatn', monospace;
+  }
+
+  .code-caption{
+    font-size:.85rem;
+    opacity:.85;
+    line-height:1.7;
+    margin-bottom:2px;
+  }
+
+  /* تایپینگ ایندیکاتور */
+  .typing-indicator{
+    align-self:flex-end;
+    background:linear-gradient(180deg,#1e2a45,#1a2438);
+    border:1px solid rgba(255,215,0,.12);
+    padding:14px 18px;
+    border-radius:16px;
+    border-bottom-right-radius:6px;
+    display:flex; gap:5px;
+    margin-left:40px;
+    box-shadow:0 3px 10px rgba(0,0,0,.25);
+  }
+  .typing-indicator span{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--gold);
+    animation:typingBounce 1.2s infinite;
+    opacity:.6;
+  }
+  .typing-indicator span:nth-child(2){ animation-delay:.15s; }
+  .typing-indicator span:nth-child(3){ animation-delay:.3s; }
+
+  @keyframes typingBounce{
+    0%,60%,100%{ transform:translateY(0); opacity:.4; }
+    30%{ transform:translateY(-6px); opacity:1; }
+  }
+
+  .chat-input-bar{
+    display:flex;
+    gap:10px;
+    padding:12px 14px;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom));
+    background:rgba(13,20,36,.96);
+    backdrop-filter:blur(20px);
+    border-top:1px solid rgba(255,215,0,.12);
+    align-items:center;
+  }
+  .input-wrap{ flex:1; }
+  .chat-input-bar input{
+    width:100%;
+    padding:14px 18px;
+    border-radius:14px;
+    border:1px solid rgba(255,215,0,.2);
+    background:#0a1020;
+    color:#fff;
+    font-family:inherit;
+    font-size:.95rem;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .chat-input-bar input::placeholder{ color:#5a6b8a; }
+  .chat-input-bar input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(255,215,0,.1);
+  }
+  .chat-input-bar input:disabled{ opacity:.6; }
+
+  .send-btn{
+    width:50px; height:50px;
+    border-radius:14px;
+    background:linear-gradient(180deg,#ffe873,#ffb300);
+    border:none;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color:#1a1200;
+    transition:transform .2s, box-shadow .2s, opacity .2s;
+    box-shadow:0 6px 18px rgba(255,180,0,.3);
+    flex-shrink:0;
+  }
+  .send-btn:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 10px 24px rgba(255,180,0,.45); }
+  .send-btn:active:not(:disabled){ transform:scale(.94); }
+  .send-btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .send-btn svg{ width:22px; height:22px; }
+
+  /* ============ مودال لیست کشورها ============ */
   .overlay{
     position:fixed; inset:0;
     background:rgba(3,6,12,.72);
@@ -101,7 +376,7 @@
     padding:20px;
     opacity:0; pointer-events:none;
     transition:opacity .25s;
-    z-index:50;
+    z-index:200;
   }
   .overlay.show{ opacity:1; pointer-events:auto; }
 
@@ -116,6 +391,7 @@
     transition:transform .3s cubic-bezier(.2,.9,.3,1.2);
     max-height:80vh;
     display:flex; flex-direction:column;
+    position:relative;
   }
   .overlay.show .modal{ transform:translateY(0) scale(1); }
 
@@ -127,28 +403,6 @@
   }
   .modal p.hint{ color:#8fa2c4; font-size:.9rem; margin-bottom:20px; line-height:1.8; }
 
-  input[type="text"]{
-    width:100%;
-    font-family:inherit;
-    font-size:1.05rem;
-    padding:15px 18px;
-    border-radius:14px;
-    border:1px solid rgba(255,215,0,.25);
-    background:#0a1020;
-    color:#fff;
-    outline:none;
-    transition:border-color .2s, box-shadow .2s;
-  }
-  input[type="text"]:focus{
-    border-color:var(--gold);
-    box-shadow:0 0 0 4px rgba(255,215,0,.12);
-  }
-
-  .modal-actions{
-    display:flex; gap:12px; margin-top:20px;
-  }
-  .modal-actions .btn{ flex:1; padding:14px 10px; font-size:.98rem; }
-
   .close-x{
     position:absolute; top:14px; left:14px;
     background:none; border:none; color:#7d8db0;
@@ -156,54 +410,7 @@
     transition:color .2s;
   }
   .close-x:hover{ color:var(--gold); }
-  .modal{ position:relative; }
 
-  /* ===== پیام خطا / موفقیت ===== */
-  .msg{
-    margin-top:16px;
-    padding:14px 16px;
-    border-radius:12px;
-    font-size:.95rem;
-    font-weight:700;
-    line-height:1.9;
-    display:none;
-  }
-  .msg.error{
-    display:block;
-    background:rgba(255,60,60,.10);
-    border:1px solid rgba(255,80,80,.4);
-    color:#ff8b8b;
-    animation:shake .4s;
-  }
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-7px)}
-    75%{transform:translateX(7px)}
-  }
-
-  /* ===== صفحه موفقیت ===== */
-  .success{ text-align:center; display:none; }
-  .success.show{ display:block; animation:fadeUp .4s ease both; }
-  .success .check{ font-size:2.6rem; }
-  .success .ok-text{
-    color:#7dffa8; font-weight:700; font-size:1.1rem;
-    margin:10px 0 24px;
-  }
-  .code-box{
-    background:linear-gradient(180deg,#1b2745,#121a2e);
-    border:1px dashed rgba(255,215,0,.45);
-    border-radius:16px;
-    padding:18px;
-  }
-  .code-box .label{ color:#8fa2c4; font-size:.82rem; margin-bottom:8px; }
-  .code-box .code{
-    font-size:2.4rem; font-weight:900; letter-spacing:10px;
-    color:var(--gold);
-    filter:drop-shadow(0 0 16px rgba(255,215,0,.5));
-    font-family:'Vazirmatn', monospace;
-  }
-
-  /* ===== لیست کشورها ===== */
   .list{
     overflow-y:auto;
     margin-top:6px;
@@ -223,11 +430,18 @@
     animation:fadeUp .35s ease both;
   }
   .row .name{ font-weight:700; color:#eaf1ff; }
-  .row .code-tag{
-    font-weight:900; color:#1a1200;
-    background:linear-gradient(180deg,#ffe873,#ffb300);
-    padding:4px 12px; border-radius:8px; font-size:.9rem;
-    letter-spacing:2px;
+
+  .check-mark{
+    width:30px; height:30px;
+    border-radius:50%;
+    background:linear-gradient(180deg, rgba(34,224,106,.22), rgba(34,224,106,.08));
+    border:1px solid rgba(34,224,106,.5);
+    display:flex; align-items:center; justify-content:center;
+    color:#2ee87b;
+    font-size:1rem;
+    font-weight:900;
+    box-shadow:0 0 12px rgba(34,224,106,.25);
+    flex-shrink:0;
   }
 
   .empty{
@@ -239,244 +453,314 @@
     color:#8fa2c4; font-size:.85rem;
   }
 
-  @keyframes fadeUp{
-    from{opacity:0; transform:translateY(16px);}
-    to{opacity:1; transform:translateY(0);}
-  }
-
-  footer{
-    margin-top:60px; color:#4a5a7a; font-size:.78rem; text-align:center;
-    animation:fadeUp .8s .3s ease both;
-  }
-
   @media (max-width:480px){
     .btn{ width:100%; }
     .buttons{ width:100%; }
+    .message{ max-width:88%; }
   }
 </style>
 </head>
 <body>
 
-  <div class="title-wrap">
-    <h1>به نبرد وار خوش آمدید</h1>
-    <div class="subtitle">⚔️ سرزمین خود را انتخاب کن و پرچمش را برافراز ⚔️</div>
-  </div>
-
-  <div class="buttons">
-    <button class="btn primary" id="btnRegister">🎯 بات کشور گیری</button>
-    <button class="btn" id="btnList">🌍 کشورها</button>
-  </div>
-
-  <footer>اطلاعات کشورها در حافظه‌ی مرورگر شما ذخیره می‌شود</footer>
-
-  <!-- ===== مودال ثبت کشور ===== -->
-  <div class="overlay" id="overlayRegister">
-    <div class="modal">
-      <button class="close-x" data-close>&times;</button>
-
-      <div id="registerForm">
-        <h2>ثبت کشور</h2>
-        <p class="hint">نام کشور مورد نظرت رو بنویس تا برای تو ثبت بشه.</p>
-        <input type="text" id="countryInput" placeholder="مثلاً: ایران" autocomplete="off">
-        <div class="msg error" id="regError"></div>
-        <div class="modal-actions">
-          <button class="btn primary" id="btnSubmit">ثبت کشور</button>
-        </div>
-      </div>
-
-      <div class="success" id="registerSuccess">
-        <div class="check">✅</div>
-        <div class="ok-text">کشور شما با موفقیت ثبت شد ✅</div>
-        <div class="code-box">
-          <div class="label">کد ۴ رقمی شما (این کد را حفظ کنید)</div>
-          <div class="code" id="codeValue">----</div>
-        </div>
-        <div class="modal-actions">
-          <button class="btn" id="btnCopy">📋 کپی کد</button>
-          <button class="btn primary" data-close>باشه</button>
-        </div>
-      </div>
-
+  <!-- ============ صفحه اصلی ============ -->
+  <div class="main-screen">
+    <div class="title-wrap">
+      <h1>به نبرد وار خوش آمدید</h1>
+      <div class="subtitle">⚔️ سرزمین خود را انتخاب کن و پرچمش را برافراز ⚔️</div>
     </div>
+
+    <div class="buttons">
+      <button class="btn primary" id="btnOpenChat">
+        <span>🎯 بات کشور گیری</span>
+        <span class="reg-badge" id="regBadge">✓</span>
+      </button>
+      <button class="btn" id="btnList">🌍 کشورها</button>
+    </div>
+
+    <footer>اطلاعات کشورها در حافظه‌ی مرورگر شما ذخیره می‌شود</footer>
   </div>
 
-  <!-- ===== مودال لیست کشورها ===== -->
+  <!-- ============ صفحه چت ============ -->
+  <div class="chat-screen" id="chatScreen">
+
+    <header class="chat-header">
+      <button class="back-btn" id="btnBack" aria-label="بازگشت">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+
+      <div class="bot-profile">
+        <div class="bot-avatar">
+          ⚔️
+          <div class="online-dot"></div>
+        </div>
+        <div class="bot-info">
+          <div class="bot-name">بات کشور گیری</div>
+          <div class="bot-status">آنلاین • آماده ثبت</div>
+        </div>
+      </div>
+
+      <div class="header-spacer"></div>
+    </header>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-bar">
+      <div class="input-wrap">
+        <input type="text" id="chatInput" placeholder="نام کشور را بنویسید..." autocomplete="off" maxlength="40">
+      </div>
+      <button class="send-btn" id="btnSend" aria-label="ارسال">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ============ مودال لیست کشورها ============ -->
   <div class="overlay" id="overlayList">
     <div class="modal">
       <button class="close-x" data-close>&times;</button>
-      <h2>کشورهای ثبت‌شده</h2>
-      <p class="hint">لیست کشورهایی که تا الان پر شده‌اند.</p>
+      <h2>🌍 کشورهای ثبت‌شده</h2>
+      <p class="hint">لیست کشورهایی که تا الان توسط بازیکنان پر شده‌اند.</p>
       <div class="list" id="countryList"></div>
       <div class="counter" id="counter"></div>
     </div>
   </div>
 
 <script>
-  /* ============ ذخیره‌سازی ============ */
-  const STORAGE_KEY = 'nabardwar_countries_v1';
+/* ================== ذخیره‌سازی ================== */
+const STORAGE_KEY   = 'nabardwar_countries_v2';
+const MY_COUNTRY_KEY = 'nabardwar_my_country_v2';
 
-  const loadCountries = () => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  };
-  const saveCountries = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+const loadCountries = () => {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+};
+const saveCountries = list => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 
-  /* یکسان‌سازی نام: حذف فاصله اضافه، تبدیل ي/ك عربی به فارسی، حروف کوچک */
-  const normalize = s => s
-    .trim()
-    .replace(/\s+/g, ' ')
-    .replace(/ي/g, 'ی')
-    .replace(/ك/g, 'ک')
-    .toLowerCase();
+const loadMyCountry = () => {
+  try { return JSON.parse(localStorage.getItem(MY_COUNTRY_KEY)); }
+  catch { return null; }
+};
+const saveMyCountry = entry => localStorage.setItem(MY_COUNTRY_KEY, JSON.stringify(entry));
 
-  /* ساخت کد ۴ رقمی یکتا */
-  const makeUniqueCode = (list) => {
-    let code;
-    do {
-      code = String(Math.floor(1000 + Math.random() * 9000));
-    } while (list.some(c => c.code === code));
-    return code;
-  };
+const normalize = s => s
+  .trim()
+  .replace(/\s+/g, ' ')
+  .replace(/ي/g, 'ی')
+  .replace(/ك/g, 'ک')
+  .replace(/ۀ/g, 'ه')
+  .toLowerCase();
 
-  /* ثبت کشور */
-  function registerCountry(rawName){
-    const name = rawName.trim().replace(/\s+/g, ' ');
+const makeUniqueCode = (list) => {
+  let code;
+  do { code = String(Math.floor(1000 + Math.random() * 9000)); }
+  while (list.some(c => c.code === code));
+  return code;
+};
 
-    if (name.length < 2)
-      return { ok:false, msg:'نام کشور باید حداقل ۲ حرف باشد.' };
+/* ================== منطق ثبت ================== */
+function tryRegisterCountry(rawName){
+  const name = rawName.trim().replace(/\s+/g, ' ');
 
-    if (name.length > 40)
-      return { ok:false, msg:'نام کشور خیلی طولانی است.' };
-
-    const list = loadCountries();
-
-    if (list.some(c => normalize(c.name) === normalize(name)))
-      return { ok:false, msg:'کشور از قبل توسط یکی دیگر پر شده است ❌' };
-
-    const entry = { name, code: makeUniqueCode(list), time: Date.now() };
-    list.push(entry);
-    saveCountries(list);
-
-    return { ok:true, entry };
+  // کاربر قبلاً ثبت کرده؟
+  const myCountry = loadMyCountry();
+  if (myCountry) {
+    return { status: 'already-user', name: myCountry.name, code: myCountry.code };
   }
 
-  /* ============ عناصر DOM ============ */
-  const overlayRegister = document.getElementById('overlayRegister');
-  const overlayList     = document.getElementById('overlayList');
+  if (name.length < 2)  return { status: 'too-short' };
+  if (name.length > 40) return { status: 'too-long' };
 
-  const registerForm    = document.getElementById('registerForm');
-  const registerSuccess = document.getElementById('registerSuccess');
-  const countryInput    = document.getElementById('countryInput');
-  const regError        = document.getElementById('regError');
-  const codeValue       = document.getElementById('codeValue');
-
-  const countryListEl   = document.getElementById('countryList');
-  const counterEl       = document.getElementById('counter');
-
-  /* ============ باز/بسته کردن مودال‌ها ============ */
-  function openModal(overlay){
-    closeAllModals();
-    overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeAllModals(){
-    document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
-    document.body.style.overflow = '';
+  const list = loadCountries();
+  if (list.some(c => normalize(c.name) === normalize(name))) {
+    return { status: 'taken' };
   }
 
-  document.querySelectorAll('[data-close]').forEach(btn =>
-    btn.addEventListener('click', closeAllModals)
-  );
+  const entry = { name, code: makeUniqueCode(list), time: Date.now() };
+  list.push(entry);
+  saveCountries(list);
+  saveMyCountry(entry);
 
-  document.querySelectorAll('.overlay').forEach(ov =>
-    ov.addEventListener('click', e => { if (e.target === ov) closeAllModals(); })
-  );
+  return { status: 'success', entry };
+}
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeAllModals();
+/* ================== عناصر DOM ================== */
+const chatScreen   = document.getElementById('chatScreen');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput    = document.getElementById('chatInput');
+const btnSend      = document.getElementById('btnSend');
+const regBadge     = document.getElementById('regBadge');
+
+const overlayList  = document.getElementById('overlayList');
+const countryListEl = document.getElementById('countryList');
+const counterEl    = document.getElementById('counter');
+
+let isProcessing = false;
+
+/* ================== باز/بسته کردن چت ================== */
+function openChat(){
+  chatScreen.classList.add('open');
+  chatMessages.innerHTML = '';
+  const myCountry = loadMyCountry();
+
+  if (myCountry) {
+    addMessage('bot', `سلام! 👋 خوش برگشتی.\nشما قبلاً کشور «${myCountry.name}» را ثبت کرده‌اید و طبق قوانین هر نفر فقط یک کشور می‌تواند داشته باشد.`);
+    addCodeMessage(myCountry.code, 'کد اختصاصی شما:');
+  } else {
+    addMessage('bot', 'سلام! 👋 به بات کشور گیری خوش آمدید.\n\nلطفاً نام کشور مورد نظر خود را بنویسید تا برای شما ثبت کنم.');
+  }
+
+  setTimeout(() => chatInput.focus(), 420);
+}
+
+function closeChat(){
+  chatScreen.classList.remove('open');
+  chatInput.blur();
+}
+
+document.getElementById('btnOpenChat').addEventListener('click', openChat);
+document.getElementById('btnBack').addEventListener('click', closeChat);
+
+/* ================== پیام‌ها ================== */
+function scrollToBottom(){
+  requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   });
+}
 
-  /* ============ دکمه ثبت کشور ============ */
-  document.getElementById('btnRegister').addEventListener('click', () => {
-    registerForm.style.display = 'block';
-    registerSuccess.classList.remove('show');
-    countryInput.value = '';
-    regError.className = 'msg error';
-    regError.textContent = '';
-    openModal(overlayRegister);
-    setTimeout(() => countryInput.focus(), 250);
+function addMessage(who, text){
+  const div = document.createElement('div');
+  div.className = `message ${who}`;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  scrollToBottom();
+}
+
+function addCodeMessage(code, caption){
+  const div = document.createElement('div');
+  div.className = 'message bot success';
+  const cap = caption ? `<div class="code-caption">${escapeHtml(caption)}</div>` : '';
+  div.innerHTML = cap + `<div class="code-highlight">${escapeHtml(code)}</div>`;
+  chatMessages.appendChild(div);
+  scrollToBottom();
+}
+
+function botRespond(text, delay = 750){
+  return new Promise(resolve => {
+    const typing = document.createElement('div');
+    typing.className = 'typing-indicator';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(typing);
+    scrollToBottom();
+    setTimeout(() => {
+      typing.remove();
+      addMessage('bot', text);
+      resolve();
+    }, delay);
   });
+}
 
-  function handleSubmit(){
-    const result = registerCountry(countryInput.value);
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-    if (!result.ok){
-      regError.textContent = result.msg;
-      regError.className = 'msg error';
-      /* ری‌استارت انیمیشن لرزش */
-      regError.style.animation = 'none';
-      void regError.offsetWidth;
-      regError.style.animation = '';
-      return;
-    }
+/* ================== ارسال پیام ================== */
+async function handleSend(){
+  if (isProcessing) return;
+  const text = chatInput.value.trim();
+  if (!text) return;
 
-    /* موفقیت */
-    registerForm.style.display = 'none';
-    codeValue.textContent = result.entry.code;
-    registerSuccess.classList.add('show');
+  chatInput.value = '';
+  addMessage('user', text);
+
+  isProcessing = true;
+  btnSend.disabled = true;
+  chatInput.disabled = true;
+
+  const result = tryRegisterCountry(text);
+
+  if (result.status === 'too-short') {
+    await botRespond('نام کشور باید حداقل ۲ حرف باشد. دوباره تلاش کن 🙂');
+
+  } else if (result.status === 'too-long') {
+    await botRespond('نام کشور خیلی طولانی است. یک نام کوتاه‌تر بنویس.');
+
+  } else if (result.status === 'taken') {
+    await botRespond('کشور از قبل توسط یکی دیگر پر شده است ❌\nیک کشور دیگر انتخاب کن.');
+
+  } else if (result.status === 'already-user') {
+    await botRespond(`شما قبلاً کشور «${result.name}» را ثبت کرده‌اید.\nهر نفر فقط یک کشور می‌تواند داشته باشد 🌍`);
+    addCodeMessage(result.code, 'کد اختصاصی شما:');
+
+  } else if (result.status === 'success') {
+    await botRespond(`کشور شما با موفقیت ثبت شد ✅\n\n🏳️ کشور: ${result.entry.name}`);
+    await new Promise(r => setTimeout(r, 350));
+    addCodeMessage(result.entry.code, 'کد اختصاصی شما:\nاین کد را حفظ کن و به کسی نده.');
+    updateBadge();
   }
 
-  document.getElementById('btnSubmit').addEventListener('click', handleSubmit);
+  isProcessing = false;
+  btnSend.disabled = false;
+  chatInput.disabled = false;
+  chatInput.focus();
+}
 
-  countryInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSubmit();
-  });
+btnSend.addEventListener('click', handleSend);
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); handleSend(); }
+});
 
-  /* کپی کد */
-  document.getElementById('btnCopy').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(codeValue.textContent);
-      const btn = document.getElementById('btnCopy');
-      const original = btn.textContent;
-      btn.textContent = '✅ کپی شد';
-      setTimeout(() => btn.textContent = original, 1500);
-    } catch {
-      alert('کپی نشد، کد را دستی یادداشت کنید: ' + codeValue.textContent);
-    }
-  });
+/* ================== بج وضعیت ثبت ================== */
+function updateBadge(){
+  if (loadMyCountry()) regBadge.classList.add('show');
+  else regBadge.classList.remove('show');
+}
 
-  /* ============ دکمه لیست کشورها ============ */
-  document.getElementById('btnList').addEventListener('click', () => {
-    renderList();
-    openModal(overlayList);
-  });
+/* ================== لیست کشورها ================== */
+document.getElementById('btnList').addEventListener('click', () => {
+  renderList();
+  overlayList.classList.add('show');
+});
 
-  function renderList(){
-    const list = loadCountries().slice().sort((a,b) => a.time - b.time);
+document.querySelectorAll('[data-close]').forEach(btn =>
+  btn.addEventListener('click', () => overlayList.classList.remove('show'))
+);
+overlayList.addEventListener('click', e => {
+  if (e.target === overlayList) overlayList.classList.remove('show');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') overlayList.classList.remove('show');
+});
 
-    if (list.length === 0){
-      countryListEl.innerHTML =
-        '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱<br>اولین نفر باش!</div>';
-      counterEl.textContent = '';
-      return;
-    }
+function renderList(){
+  const list = loadCountries().slice().sort((a,b) => a.time - b.time);
 
-    countryListEl.innerHTML = list.map((c, i) => `
-      <div class="row" style="animation-delay:${i * 0.04}s">
-        <span class="name">${escapeHtml(c.name)}</span>
-        <span class="code-tag">${escapeHtml(c.code)}</span>
-      </div>
-    `).join('');
-
-    counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}`;
+  if (list.length === 0) {
+    countryListEl.innerHTML = '<div class="empty">هنوز هیچ کشوری ثبت نشده است 🌱<br>اولین نفر باش!</div>';
+    counterEl.textContent = '';
+    return;
   }
 
-  /* جلوگیری از تزریق HTML */
-  function escapeHtml(str){
-    return String(str)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  countryListEl.innerHTML = list.map((c, i) => `
+    <div class="row" style="animation-delay:${i * 0.04}s">
+      <span class="name">${escapeHtml(c.name)}</span>
+      <span class="check-mark">✓</span>
+    </div>
+  `).join('');
+
+  counterEl.textContent = `تعداد کشورهای ثبت‌شده: ${list.length}`;
+}
+
+/* ================== راه‌اندازی ================== */
+updateBadge();
 </script>
 </body>
-</html>
+  </html>
