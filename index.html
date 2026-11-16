@@ -2,374 +2,455 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APACHI | دنیای داستان‌های تعاملی</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+<style>
 :root {
-  --bg:#081126;
-  --panel:#111f3e;
-  --panel2:#192d51;
-  --blue:#397cff;
-  --cyan:#24d9e9;
-  --purple:#a16bff;
-  --pink:#ff6cba;
-  --white:#fff;
-  --muted:#a7b5d2;
+  --bg:#080b18;
+  --panel:#11172b;
+  --panel2:#171f38;
+  --text:#f4f6ff;
+  --muted:#9ba8c5;
+  --blue:#00cfff;
+  --purple:#9b72ff;
+  --pink:#ec65c8;
 }
 
-*{box-sizing:border-box}
+* {
+  box-sizing:border-box;
+}
 
 body {
   margin:0;
-  background:var(--bg);
-  color:white;
   font-family:'Vazirmatn',sans-serif;
+  background:
+    radial-gradient(ellipse at 10% 0%,#17265a 0%,transparent 40%),
+    radial-gradient(ellipse at 90% 30%,#29144b 0%,transparent 35%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
 }
 
-button,input,textarea{font-family:inherit}
-button{cursor:pointer}
+button,input {
+  font-family:inherit;
+}
+
+button {
+  cursor:pointer;
+}
 
 header {
   position:sticky;
   top:0;
-  z-index:10;
-  padding:15px 5%;
-  background:#09142bf5;
-  border-bottom:1px solid #ffffff18;
+  z-index:20;
+  background:#080b18eF;
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid #ffffff12;
+}
+
+.nav {
+  max-width:1250px;
+  margin:auto;
+  padding:15px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
+  gap:15px;
 }
 
-.logo {
-  font-size:29px;
+.brand {
+  font-size:28px;
   font-weight:900;
-  color:var(--cyan);
-  letter-spacing:2px;
+  letter-spacing:3px;
+  color:var(--blue);
+  text-shadow:0 0 20px #00cfff80;
 }
 
-nav {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-nav button,.secondary {
+.brand span {
   color:white;
-  background:#17294c;
-  border:1px solid #ffffff19;
+}
+
+.nav button {
+  background:#ffffff10;
+  color:white;
+  border:1px solid #ffffff20;
+  padding:10px 16px;
   border-radius:12px;
-  padding:10px 15px;
 }
-
-nav button:hover,.secondary:hover {
-  background:#284477;
-}
-
-.container {
-  width:92%;
-  max-width:1250px;
-  margin:auto;
-}
-
-.page {
-  display:none;
-  padding:25px 0 55px;
-}
-
-.page.active{display:block}
 
 .hero {
-  margin:25px 0;
-  padding:45px;
+  max-width:1200px;
+  margin:45px auto;
+  padding:30px 22px;
+}
+
+.hero-box {
+  position:relative;
+  overflow:hidden;
+  border:1px solid #ffffff20;
   border-radius:28px;
+  padding:55px 35px;
   background:
-  radial-gradient(circle at 15% 20%,#24d9e966,transparent 35%),
-  radial-gradient(circle at 90% 80%,#a16bff88,transparent 40%),
-  linear-gradient(120deg,#163d75,#281b55);
-  border:1px solid #ffffff19;
+    radial-gradient(circle at 80% 30%,#7c3aed55,transparent 40%),
+    linear-gradient(120deg,#101a39,#15102d);
+  box-shadow:0 25px 90px #0008;
 }
 
 .hero h1 {
-  font-size:clamp(30px,5vw,55px);
-  margin:0;
+  font-size:clamp(32px,6vw,62px);
+  line-height:1.4;
+  margin:0 0 15px;
+}
+
+.hero h1 span {
+  color:var(--blue);
 }
 
 .hero p {
-  line-height:2.2;
-  color:#e0ebff;
-  max-width:650px;
+  color:#bdc9e8;
+  max-width:600px;
+  line-height:2;
 }
 
-.primary {
-  background:linear-gradient(100deg,var(--blue),var(--purple));
-  color:white;
+.hero button {
+  margin-top:15px;
   border:0;
-  padding:13px 23px;
+  padding:14px 24px;
   border-radius:13px;
-  font-weight:800;
-  font-size:15px;
+  color:#07101e;
+  font-weight:900;
+  background:linear-gradient(100deg,var(--blue),#8b7cff);
 }
 
-.primary:hover{filter:brightness(1.15)}
+.hero-art {
+  position:absolute;
+  left:35px;
+  top:20px;
+  width:200px;
+  height:230px;
+  opacity:.9;
+  pointer-events:none;
+}
 
-.title {
-  margin:30px 0 18px;
+@media(max-width:700px) {
+  .hero-art {display:none}
+  .hero-box {padding:35px 22px}
+}
+
+.container {
+  max-width:1250px;
+  margin:auto;
+  padding:0 20px 70px;
+}
+
+.section-title {
   font-size:23px;
+  font-weight:900;
+  margin:35px 0 18px;
 }
 
 .search {
-  width:100%;
-  background:#101e3b;
-  border:1px solid #ffffff22;
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.search input {
+  flex:1;
+  min-width:0;
+  background:var(--panel);
+  border:1px solid #ffffff20;
   color:white;
-  padding:15px;
   border-radius:13px;
-  margin:12px 0;
+  padding:14px;
   outline:none;
 }
 
-.categories {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin:15px 0 22px;
-}
-
-.categories button {
-  border:1px solid #ffffff18;
-  padding:9px 15px;
-  border-radius:25px;
-  background:#17294c;
-  color:white;
-}
-
-.categories button.active {
-  background:var(--blue);
+.search input:focus {
   border-color:var(--blue);
+}
+
+.filters {
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  padding-bottom:12px;
+}
+
+.filter {
+  flex-shrink:0;
+  background:var(--panel);
+  color:#cbd5ed;
+  border:1px solid #ffffff15;
+  border-radius:30px;
+  padding:9px 16px;
+}
+
+.filter.active {
+  color:#06111c;
+  background:var(--blue);
+  font-weight:900;
 }
 
 .grid {
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
-  gap:17px;
+  grid-template-columns:repeat(auto-fill,minmax(235px,1fr));
+  gap:19px;
 }
 
 .card {
-  background:var(--panel);
-  border:1px solid #ffffff12;
-  border-radius:19px;
+  position:relative;
+  background:linear-gradient(150deg,#18213b,#101528);
+  border:1px solid #ffffff15;
+  border-radius:21px;
   overflow:hidden;
+  transition:.25s;
   cursor:pointer;
-  transition:.2s;
 }
 
 .card:hover {
-  transform:translateY(-5px);
-  border-color:var(--cyan);
+  transform:translateY(-7px);
+  border-color:var(--blue);
+  box-shadow:0 15px 40px #00cfff20;
 }
 
-.cover {
-  height:145px;
+.card-cover {
+  height:175px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,var(--glow),transparent 70%),
+    linear-gradient(145deg,var(--color),#101329);
+}
+
+.story-logo {
+  position:absolute;
+  top:12px;
+  right:13px;
+  width:47px;
+  height:47px;
   display:grid;
   place-items:center;
-  font-size:65px;
-  background:linear-gradient(130deg,#174c85,#59377e);
+  border-radius:15px;
+  background:#080b18b8;
+  border:1px solid #ffffff40;
+  font-size:25px;
+  box-shadow:0 0 20px var(--glow);
 }
 
-.card-content{padding:15px}
+.story-character {
+  width:145px;
+  height:165px;
+  margin-top:25px;
+  filter:drop-shadow(0 10px 15px #0008);
+}
 
-.card h3{margin:8px 0}
+.card-info {
+  padding:15px;
+}
 
-.card p {
+.card-info h3 {
+  margin:0 0 8px;
+  font-size:17px;
+}
+
+.card-info p {
   color:var(--muted);
-  font-size:13px;
-  line-height:1.9;
-}
-
-.badge {
-  color:var(--cyan);
   font-size:12px;
+  line-height:1.9;
+  min-height:45px;
 }
 
 .meta {
   display:flex;
   justify-content:space-between;
-  color:var(--muted);
+  align-items:center;
+  color:#aebbd8;
   font-size:12px;
+  margin-top:12px;
 }
 
-.status {
-  background:#14294c;
-  border:1px solid #ffffff20;
-  border-radius:15px;
-  padding:17px;
-  margin:15px 0;
-  line-height:2;
+.badge {
+  background:#ffffff12;
+  border-radius:30px;
+  padding:5px 10px;
 }
 
-.error{color:#ff9a9a}
-.success{color:#64e8c1}
+.loading {
+  text-align:center;
+  color:var(--muted);
+  padding:45px;
+}
 
-.cinema {
-  background:
-  radial-gradient(circle at 50% 15%,#3c70b3 0%,transparent 45%),
-  linear-gradient(#152c51,#080e20);
-  min-height:400px;
+.empty {
+  text-align:center;
+  color:var(--muted);
+  padding:35px;
+  grid-column:1/-1;
+}
+
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#050714ed;
+  overflow-y:auto;
+  padding:20px;
+}
+
+.modal.show {
+  display:block;
+}
+
+.modal-content {
+  max-width:850px;
+  margin:25px auto;
+  background:#10172b;
   border:1px solid #ffffff20;
   border-radius:25px;
-  padding:20px;
   overflow:hidden;
 }
 
-.scene {
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  gap:65px;
-  height:190px;
-  margin:20px 0;
-}
-
-.character {
-  width:90px;
-  height:160px;
+.modal-head {
   position:relative;
-  animation:idle 1.5s infinite ease-in-out;
+  min-height:250px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle,var(--glow),transparent 65%),
+    linear-gradient(130deg,var(--color),#11152b);
 }
 
-.character.two{animation-delay:.3s}
+.modal-head .story-character {
+  width:205px;
+  height:225px;
+}
 
-.head {
-  width:48px;
-  height:48px;
-  background:#f1bb91;
-  border-radius:50%;
+.close {
   position:absolute;
-  top:0;
-  left:21px;
-  border:3px solid #202d49;
+  top:15px;
+  left:15px;
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:12px;
+  color:white;
+  background:#0008;
+  font-size:22px;
 }
 
-.hair {
-  position:absolute;
-  top:-5px;
-  left:20px;
-  width:50px;
-  height:24px;
-  background:#202337;
-  border-radius:50% 50% 25% 25%;
-  z-index:2;
+.modal-body {
+  padding:24px;
 }
 
-.body {
-  position:absolute;
-  top:48px;
-  left:13px;
-  width:65px;
-  height:70px;
-  background:#3988ff;
-  border-radius:18px 18px 8px 8px;
+.modal-body h2 {
+  font-size:27px;
 }
 
-.two .body{background:#a16bff}
-
-.arm {
-  position:absolute;
-  top:58px;
-  width:13px;
-  height:55px;
-  background:#f1bb91;
-  border-radius:10px;
-}
-
-.arm.left{left:4px;transform:rotate(18deg)}
-.arm.right{right:3px;transform:rotate(-18deg)}
-
-.leg {
-  position:absolute;
-  top:110px;
-  width:17px;
-  height:48px;
-  background:#263d68;
-  border-radius:8px;
-}
-
-.leg.left{left:22px}
-.leg.right{right:22px}
-
-@keyframes idle {
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-7px)}
-}
-
-.dialogue {
-  background:#ffffff14;
-  border:1px solid #ffffff25;
-  padding:17px;
+.story-text {
+  color:#d5def3;
+  line-height:2.4;
+  background:#ffffff08;
+  padding:18px;
   border-radius:15px;
-  line-height:2;
+  margin:18px 0;
+}
+
+.scene {
+  color:#9caed5;
+  font-size:13px;
 }
 
 .choices {
   display:grid;
-  grid-template-columns:1fr 1fr;
   gap:12px;
-  margin:20px 0;
+  margin-top:20px;
 }
 
 .choice {
-  background:#172e55;
-  border:1px solid #24d9e966;
+  background:#192442;
   color:white;
+  border:1px solid #ffffff20;
   border-radius:13px;
-  padding:15px;
+  padding:14px;
   text-align:right;
+  transition:.2s;
+}
+
+.choice:hover {
+  border-color:var(--blue);
+  background:#20345a;
+}
+
+.action-row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.action-row button {
+  border:1px solid #ffffff20;
+  background:#ffffff10;
+  color:white;
+  padding:11px 16px;
+  border-radius:12px;
+}
+
+.action-row button.liked {
+  background:#5d2448;
+  border-color:#ed68b8;
+}
+
+.comments {
+  border-top:1px solid #ffffff20;
+  padding-top:20px;
+}
+
+.comments input {
+  width:100%;
+  background:#080d1d;
+  color:white;
+  border:1px solid #ffffff20;
+  border-radius:12px;
+  padding:13px;
+  margin-bottom:10px;
+}
+
+.comments button {
+  border:0;
+  color:#07101e;
+  background:var(--blue);
+  padding:11px 20px;
+  border-radius:11px;
+  font-weight:900;
 }
 
 .comment {
-  background:#152749;
+  background:#ffffff09;
+  border-radius:12px;
   padding:13px;
-  border-radius:12px;
-  margin:10px 0;
-  line-height:1.9;
-}
-
-textarea {
-  width:100%;
-  background:#101e3b;
-  border:1px solid #ffffff22;
-  color:white;
-  padding:14px;
-  border-radius:12px;
-  margin:10px 0;
+  margin-top:10px;
+  font-size:13px;
+  line-height:2;
+  overflow-wrap:anywhere;
 }
 
 footer {
   text-align:center;
-  padding:35px;
-  color:var(--muted);
-  border-top:1px solid #ffffff15;
-  margin-top:50px;
-}
-
-@media(max-width:650px) {
-  header{align-items:flex-start;flex-direction:column}
-  nav{overflow-x:auto;flex-wrap:nowrap;width:100%}
-  nav button{white-space:nowrap}
-  .hero{padding:25px}
-  .choices{grid-template-columns:1fr}
-  .scene{gap:30px}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .cover{height:115px;font-size:48px}
-  .card-content{padding:10px}
+  color:#7885a5;
+  padding:30px 15px;
+  border-top:1px solid #ffffff12;
 }
 </style>
 </head>
@@ -377,815 +458,748 @@ footer {
 <body>
 
 <header>
-  <div class="logo">✦ APACHI</div>
-  <nav>
-    <button onclick="goHome()">خانه</button>
-    <button onclick="openLibrary()">داستان‌ها</button>
-    <button onclick="openPopular()">محبوب‌ها</button>
-    <button onclick="openProfile()">پروفایل</button>
-  </nav>
+  <div class="nav">
+    <div class="brand">APA<span>CHI</span></div>
+    <button onclick="scrollToStories()">ورود به داستان‌ها ↓</button>
+  </div>
 </header>
 
-<main class="container">
+<section class="hero">
+  <div class="hero-box">
+    <div class="hero-art" id="heroArt"></div>
 
-<section id="home" class="page active">
-
-  <div class="hero">
-    <h1>تو قهرمان داستانی! 🎬</h1>
+    <h1>وارد دنیای <span>APACHI</span> شو!</h1>
     <p>
-      به دنیای APACHI خوش آمدی.
-      شخصیت‌ها را ببین، به دیالوگ‌هایشان گوش بده
-      و مسیر ماجرا را با انتخاب‌هایت تغییر بده.
+      اینجا تو فقط تماشاگر نیستی.
+      انتخاب می‌کنی، ماجراجویی می‌کنی و سرنوشت
+      شخصیت‌ها را تغییر می‌دهی.
     </p>
-    <button class="primary" onclick="openLibrary()">
-      ورود به دنیای داستان‌ها ←
-    </button>
+
+    <button onclick="scrollToStories()">شروع ماجراجویی</button>
+  </div>
+</section>
+
+<main class="container" id="storiesSection">
+
+  <h2 class="section-title">🔥 محبوب‌ترین داستان‌ها</h2>
+  <div class="grid" id="popularGrid">
+    <div class="loading">در حال دریافت داستان‌ها...</div>
   </div>
 
-  <h2 class="title">✨ داستان‌های منتخب</h2>
-  <div id="featured" class="grid">
-    <p>در حال دریافت داستان‌ها...</p>
+  <h2 class="section-title">🌌 دنیای داستان‌ها</h2>
+
+  <div class="search">
+    <input id="searchInput" placeholder="نام داستان یا موضوع را جست‌وجو کن...">
   </div>
 
-</section>
+  <div class="filters" id="filters"></div>
 
-<section id="library" class="page">
-
-  <h2 class="title">📚 کتابخانه داستان‌ها</h2>
-
-  <div id="loadStatus" class="status">
-    در حال دریافت داستان‌ها از سرور...
+  <div class="grid" id="storiesGrid">
+    <div class="loading">در حال بارگذاری APACHI...</div>
   </div>
-
-  <input
-    class="search"
-    id="search"
-    placeholder="نام داستان یا ژانر را جست‌وجو کن..."
-    oninput="renderStories()"
-  >
-
-  <div class="categories" id="categories"></div>
-
-  <div class="grid" id="stories"></div>
-
-</section>
-
-<section id="popular" class="page">
-  <h2 class="title">🏆 داستان‌های محبوب</h2>
-  <div class="grid" id="popularStories"></div>
-</section>
-
-<section id="profile" class="page">
-
-  <h2 class="title">👤 پروفایل</h2>
-
-  <input id="email" type="email" placeholder="ایمیل">
-  <input id="password" type="password" placeholder="رمز عبور">
-
-  <button class="primary" onclick="signup()">ثبت‌نام</button>
-  <button class="secondary" onclick="login()">ورود</button>
-  <button class="secondary" onclick="logout()">خروج</button>
-
-  <p id="account"></p>
-
-  <h3>🏆 داستان‌های تکمیل‌شده</h3>
-  <div id="completed"></div>
-
-</section>
-
-<section id="reader" class="page">
-
-  <button class="secondary" onclick="openLibrary()">← بازگشت</button>
-
-  <h1 id="storyTitle"></h1>
-
-  <div class="cinema">
-
-    <h3 id="sceneTitle">صحنه اول</h3>
-
-    <div class="scene">
-
-      <div class="character">
-        <div class="hair"></div>
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="arm left"></div>
-        <div class="arm right"></div>
-        <div class="leg left"></div>
-        <div class="leg right"></div>
-      </div>
-
-      <div class="character two">
-        <div class="hair"></div>
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="arm left"></div>
-        <div class="arm right"></div>
-        <div class="leg left"></div>
-        <div class="leg right"></div>
-      </div>
-
-    </div>
-
-    <div class="dialogue">
-      <strong id="speaker">آراد:</strong>
-      <p id="dialogueText"></p>
-
-      <button class="secondary" onclick="speak()">🔊 پخش صدا</button>
-      <button class="secondary" onclick="stopVoice()">⏹ توقف</button>
-    </div>
-
-  </div>
-
-  <h3>تصمیم بعدی تو چیست؟</h3>
-  <div class="choices" id="choices"></div>
-
-  <button class="primary" onclick="finish()">🏁 پایان داستان</button>
-
-  <h3>❤️ لایک داستان</h3>
-  <button class="primary" onclick="likeStory()">
-    ❤️ <span id="likes">0</span>
-  </button>
-
-  <h3>💬 دیدگاه کاربران</h3>
-  <div id="comments"></div>
-
-  <textarea id="commentInput" placeholder="دیدگاهت را بنویس..."></textarea>
-
-  <button class="primary" onclick="sendComment()">ارسال دیدگاه</button>
-
-</section>
 
 </main>
 
+<div class="modal" id="storyModal">
+  <div class="modal-content">
+
+    <div class="modal-head" id="modalHead">
+      <button class="close" onclick="closeStory()">×</button>
+      <div id="modalCharacter"></div>
+    </div>
+
+    <div class="modal-body">
+
+      <div id="modalCategory" class="badge"></div>
+      <h2 id="modalTitle"></h2>
+
+      <div class="story-text">
+        <div id="storyScene" class="scene"></div>
+        <div id="storyNarrative"></div>
+      </div>
+
+      <div id="choices" class="choices"></div>
+
+      <div class="action-row">
+        <button id="likeButton" onclick="toggleLike()">❤️ لایک</button>
+        <span id="likeCount">۰ لایک</span>
+      </div>
+
+      <div class="comments">
+        <h3>💬 نظرات ماجراجویان</h3>
+
+        <input id="commentInput"
+          maxlength="500"
+          placeholder="نظر خودت را بنویس...">
+
+        <button onclick="sendComment()">ارسال نظر</button>
+
+        <div id="commentsList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <footer>
-  <div class="logo">✦ APACHI</div>
-  <p>هر انتخاب، یک ماجراجویی تازه است.</p>
-  <p>© 2026 APACHI</p>
+  APACHI © 2026 — دنیای انتخاب‌های تو
 </footer>
 
 <script>
+// =======================================
+// SUPABASE CONFIGURATION
+// =======================================
 
-// تنظیمات اتصال
 const SUPABASE_URL =
-"https://dqykeqtibspeajxdpsuk.supabase.co";
+  "https://dqykeqtibspeajxdpsuk.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
+  "sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
 
 const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
+const STORIES_TABLE = "apachi_stories_v2";
+const LIKES_TABLE = "apachi_likes_v2";
+const COMMENTS_TABLE = "apachi_comments_v2";
+
+// =======================================
+// VISITOR ID
+// =======================================
+
+function getVisitorId() {
+  let id = localStorage.getItem("apachi_visitor");
+
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("apachi_visitor",id);
+  }
+
+  return id;
+}
+
+const visitorId = getVisitorId();
+
+// =======================================
+// STATE
+// =======================================
+
 let stories = [];
 let currentStory = null;
+let activeCategory = "همه";
 let currentScene = 0;
-let selectedCategory = "همه";
-let loading = false;
+let storyChoices = [];
 
-const genres = [
-  "همه",
-  "ماجراجویی",
-  "علمی‌تخیلی",
-  "معمایی",
-  "ترسناک",
-  "بقا",
-  "فانتزی",
-  "سرقت و راز",
-  "جزیره‌ای",
-  "فضایی",
-  "کارآگاهی"
-];
+// =======================================
+// HELPERS
+// =======================================
 
-const scenes = [
-  {
-    title:"شروع ماجرا",
-    speaker:"آراد",
-    text:"سلام! من آراد هستم. امروز اتفاق عجیبی افتاده. باید تصمیم بگیریم از کجا شروع کنیم.",
-    choices:[
-      "به ساختمان مرموز برویم.",
-      "اول محیط را بررسی کنیم."
-    ]
-  },
-  {
-    title:"اولین سرنخ",
-    speaker:"کیان",
-    text:"آراد! من یک نشانه پیدا کردم. فکر کنم به حقیقت نزدیک شده‌ایم. باید با دقت جلو برویم.",
-    choices:[
-      "سرنخ را دنبال کنیم.",
-      "از مسیر دیگری برویم."
-    ]
-  },
-  {
-    title:"اتفاق غیرمنتظره",
-    speaker:"آراد",
-    text:"وای! اینجا چیزی پیدا کردم. حالا باید تصمیم بگیریم. شاید این انتخاب همه‌چیز را عوض کند.",
-    choices:[
-      "جلو برویم.",
-      "کمی صبر کنیم."
-    ]
-  },
-  {
-    title:"پایان فصل",
-    speaker:"کیان",
-    text:"بالاخره به جواب رسیدیم! اما هنوز رازهای زیادی باقی مانده. این پایان ماجرا نیست!",
-    choices:[
-      "پایان داستان"
-    ]
-  }
-];
-
-// تغییر صفحه
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => {
-    p.classList.remove("active");
-  });
-
-  document.getElementById(id).classList.add("active");
-
-  window.scrollTo(0,0);
-}
-
-function goHome() {
-  showPage("home");
-}
-
-async function openLibrary() {
-  showPage("library");
-
-  if (!stories.length) {
-    await loadStories();
-  }
-
-  renderStories();
-}
-
-async function openPopular() {
-  showPage("popular");
-
-  if (!stories.length) {
-    await loadStories();
-  }
-
-  renderPopularStories();
-}
-
-async function openProfile() {
-  showPage("profile");
-  await loadProfile();
-}
-
-// امن‌سازی متن
-function safeText(text) {
-  return String(text ?? "").replace(/[&<>"']/g, c => ({
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
     "&":"&amp;",
     "<":"&lt;",
     ">":"&gt;",
     '"':"&quot;",
     "'":"&#39;"
-  }[c]));
+  })[c]);
 }
 
-// کارت داستان
-function createCard(story) {
+function scrollToStories() {
+  document.getElementById("storiesSection")
+    .scrollIntoView({behavior:"smooth"});
+}
+
+function closeStory() {
+  document.getElementById("storyModal").classList.remove("show");
+  currentStory = null;
+}
+
+document.getElementById("storyModal").addEventListener("click",e=>{
+  if(e.target.id==="storyModal") closeStory();
+});
+
+// =======================================
+// UNIQUE CHARACTER GENERATOR
+// =======================================
+
+function characterSVG(story) {
+  const hash = [...story.slug].reduce(
+    (a,c)=>a+c.charCodeAt(0),0
+  );
+
+  const hue = hash % 360;
+  const skin = ["#d9a27d","#efbd9a","#bd815f","#e5ad85"][hash%4];
+  const hair = ["#171522","#34211b","#17283c","#50352b"][hash%4];
+  const jacket = `hsl(${hue},65%,48%)`;
+  const hairStyle = hash%3;
+
   return `
-  <article class="card" onclick="openStory('${story.id}')">
+  <svg class="story-character" viewBox="0 0 180 210"
+       xmlns="http://www.w3.org/2000/svg">
 
-    <div class="cover">
-      ${safeText(story.emoji || "🎬")}
-    </div>
+    <defs>
+      <linearGradient id="j${hash}" x1="0" y1="0" x2="1" y2="1">
+        <stop stop-color="${jacket}"/>
+        <stop offset="1" stop-color="#16172e"/>
+      </linearGradient>
+      <filter id="g${hash}">
+        <feGaussianBlur stdDeviation="8"/>
+      </filter>
+    </defs>
 
-    <div class="card-content">
+    <ellipse cx="90" cy="192" rx="55" ry="9"
+      fill="#000" opacity=".35"/>
 
-      <span class="badge">
-        ${safeText(story.category)}
-      </span>
+    <circle cx="90" cy="88" r="58"
+      fill="#fff" opacity=".09"
+      filter="url(#g${hash})"/>
 
-      <h3>${safeText(story.title)}</h3>
+    <!-- BODY -->
+    <path d="M34 207 Q35 135 65 130
+      L90 145 L115 130
+      Q145 135 146 207Z"
+      fill="url(#j${hash})"
+      stroke="#ffffff55" stroke-width="2"/>
 
-      <p>
-        ${safeText(story.description || "یک ماجراجویی تعاملی جذاب.")}
-      </p>
+    <!-- NECK -->
+    <path d="M76 115 L75 143 Q90 157 105 143
+      L104 115Z" fill="${skin}"/>
 
-      <div class="meta">
-        <span>🎬 داستان تعاملی</span>
-        <span>❤️ ${story.like_count || 0}</span>
-      </div>
+    <!-- FACE -->
+    <ellipse cx="90" cy="87" rx="38" ry="46"
+      fill="${skin}"/>
 
-    </div>
-  </article>`;
+    <!-- EARS -->
+    <ellipse cx="52" cy="91" rx="7" ry="11" fill="${skin}"/>
+    <ellipse cx="128" cy="91" rx="7" ry="11" fill="${skin}"/>
+
+    <!-- HAIR -->
+    ${
+      hairStyle===0
+      ? `<path d="M51 83 Q42 28 89 31
+         Q139 25 130 85
+         L117 65 Q99 78 85 60
+         Q69 82 51 83Z" fill="${hair}"/>`
+      : hairStyle===1
+      ? `<path d="M51 86 Q43 32 90 31
+         Q135 31 129 87 L119 73
+         Q100 80 90 66
+         Q73 77 51 86Z" fill="${hair}"/>`
+      : `<path d="M52 87 Q45 28 90 29
+         Q139 28 130 87
+         Q110 58 98 51
+         Q80 73 52 87Z" fill="${hair}"/>`
+    }
+
+    <!-- EYES -->
+    <ellipse cx="76" cy="90" rx="4" ry="5" fill="#171522"/>
+    <ellipse cx="104" cy="90" rx="4" ry="5" fill="#171522"/>
+
+    <path d="M81 111 Q90 118 99 111"
+      fill="none" stroke="#824c43"
+      stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- JACKET DETAILS -->
+    <path d="M90 145 L90 207"
+      stroke="#ffffff65" stroke-width="2"/>
+
+    <path d="M65 144 L78 164 L90 151 L102 164 L116 144"
+      fill="none" stroke="#ffffff60" stroke-width="3"/>
+
+    <circle cx="90" cy="173" r="5" fill="#fff" opacity=".7"/>
+
+  </svg>`;
 }
 
-// دریافت همه داستان‌ها
+// =======================================
+// UNIQUE LOGO
+// =======================================
+
+function storyLogo(story) {
+  const hash = [...story.slug].reduce(
+    (a,c)=>a+c.charCodeAt(0),0
+  );
+
+  const icons = ["⚡","🌌","🔥","💎","🚀","🌀","🌙","🐉","🔮","🛸"];
+
+  return icons[hash % icons.length];
+}
+
+function storyColor(story) {
+  return story.accent_color || "#00cfff";
+}
+
+function storyGlow(story) {
+  return storyColor(story) + "88";
+}
+
+// =======================================
+// LOAD STORIES
+// =======================================
+
 async function loadStories() {
 
-  if (loading) return;
+  const {data,error} = await db
+    .from(STORIES_TABLE)
+    .select("*")
+    .order("created_at",{ascending:false});
 
-  loading = true;
-
-  const status = document.getElementById("loadStatus");
-  const box = document.getElementById("stories");
-
-  if (status) {
-    status.innerHTML = "⏳ در حال دریافت داستان‌ها...";
-  }
-
-  if (box) {
-    box.innerHTML = "<p>در حال بارگذاری...</p>";
-  }
-
-  try {
-
-    const { data, error } = await db
-      .from("stories")
-      .select("*")
-      .order("created_at", {ascending:true});
-
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      stories = [];
-
-      if (status) {
-        status.innerHTML =
-          "⚠️ هنوز داستانی در جدول Supabase ثبت نشده است.";
-      }
-
-      if (box) {
-        box.innerHTML =
-          "<p>هنوز داستانی برای نمایش وجود ندارد.</p>";
-      }
-
-      if (document.getElementById("featured")) {
-        document.getElementById("featured").innerHTML =
-          "<p>هنوز داستانی ثبت نشده است.</p>";
-      }
-
-      return;
-    }
-
-    const { data: likes, error: likesError } = await db
-      .from("likes")
-      .select("story_id");
-
-    if (likesError) {
-      console.warn("خطای دریافت لایک‌ها:", likesError);
-    }
-
-    const counts = {};
-
-    (likes || []).forEach(item => {
-      counts[item.story_id] =
-        (counts[item.story_id] || 0) + 1;
-    });
-
-    stories = data.map(story => ({
-      ...story,
-      like_count: counts[story.id] || 0
-    }));
-
-    if (status) {
-      status.innerHTML =
-        `<span class="success">✅ ${stories.length} داستان دریافت شد.</span>`;
-    }
-
-    document.getElementById("featured").innerHTML =
-      stories.slice(0,6).map(createCard).join("");
-
-    renderCategories();
-    renderStories();
-
-  } catch(error) {
-
-    console.error(error);
-
-    const message = safeText(error.message);
-
-    if (status) {
-      status.innerHTML =
-        `<span class="error">❌ خطا در دریافت داستان‌ها: ${message}</span>`;
-    }
-
-    if (box) {
-      box.innerHTML =
-        `<p class="error">دریافت داستان‌ها ناموفق بود: ${message}</p>`;
-    }
-
-  } finally {
-    loading = false;
-  }
-}
-
-// نمایش دسته‌ها
-function renderCategories() {
-
-  const box = document.getElementById("categories");
-
-  box.innerHTML = genres.map(g => `
-    <button
-      class="${selectedCategory === g ? "active" : ""}"
-      onclick="chooseCategory('${g}')">
-      ${g}
-    </button>
-  `).join("");
-}
-
-function chooseCategory(g) {
-  selectedCategory = g;
-  renderCategories();
-  renderStories();
-}
-
-// نمایش داستان‌ها
-function renderStories() {
-
-  const box = document.getElementById("stories");
-
-  const search =
-    document.getElementById("search").value.trim().toLowerCase();
-
-  const filtered = stories.filter(story => {
-
-    const title =
-      (story.title || "").toLowerCase();
-
-    const genre =
-      (story.category || "").toLowerCase();
-
-    const categoryMatch =
-      selectedCategory === "همه" ||
-      story.category === selectedCategory;
-
-    const searchMatch =
-      title.includes(search) ||
-      genre.includes(search);
-
-    return categoryMatch && searchMatch;
-  });
-
-  if (!filtered.length) {
-    box.innerHTML =
-      "<p>داستانی با این مشخصات پیدا نشد.</p>";
+  if(error) {
+    document.getElementById("storiesGrid").innerHTML =
+      `<div class="empty">
+        خطا در اتصال به دیتابیس:
+        ${escapeHTML(error.message)}
+      </div>`;
     return;
   }
 
-  box.innerHTML = filtered.map(createCard).join("");
-}
+  stories = data || [];
 
-// داستان‌های محبوب
-function renderPopularStories() {
-
-  const sorted = [...stories].sort(
-    (a,b) => b.like_count - a.like_count
-  );
-
-  document.getElementById("popularStories").innerHTML =
-    sorted.map(createCard).join("");
-}
-
-// باز کردن داستان
-async function openStory(id) {
-
-  currentStory = stories.find(s => s.id === id);
-
-  if (!currentStory) return;
-
-  currentScene = 0;
-
-  document.getElementById("storyTitle").textContent =
-    currentStory.title;
-
-  showPage("reader");
-
-  await showScene();
   await loadLikes();
-  await loadComments();
+  buildFilters();
+  renderStories();
 }
 
-// نمایش صحنه
-async function showScene() {
+// =======================================
+// LOAD LIKE COUNTS
+// =======================================
 
-  const scene = scenes[currentScene];
+let likeCounts = {};
 
-  document.getElementById("sceneTitle").textContent =
-    scene.title;
+async function loadLikes() {
 
-  document.getElementById("speaker").textContent =
-    scene.speaker + ":";
+  likeCounts = {};
 
-  document.getElementById("dialogueText").textContent =
-    scene.text;
+  const {data,error} = await db
+    .from(LIKES_TABLE)
+    .select("story_id");
 
-  document.getElementById("choices").innerHTML =
-    scene.choices.map((choice,index) => `
-      <button class="choice" onclick="nextScene(${index})">
-        ${choice} ←
+  if(error) {
+    console.error(error);
+    return;
+  }
+
+  (data || []).forEach(item=>{
+    likeCounts[item.story_id] =
+      (likeCounts[item.story_id] || 0) + 1;
+  });
+}
+
+// =======================================
+// FILTERS
+// =======================================
+
+function buildFilters() {
+
+  const categories = [
+    "همه",
+    ...new Set(stories.map(s=>s.category))
+  ];
+
+  document.getElementById("filters").innerHTML =
+    categories.map(category=>`
+      <button
+        class="filter ${category===activeCategory?'active':''}"
+        onclick="setCategory('${escapeHTML(category)}')">
+        ${escapeHTML(category)}
       </button>
     `).join("");
 }
 
-// انتخاب کاربر
-async function nextScene(index) {
+function setCategory(category) {
+  activeCategory = category;
+  buildFilters();
+  renderStories();
+}
 
-  stopVoice();
+// =======================================
+// STORY CARDS
+// =======================================
 
-  if (currentScene < scenes.length - 1) {
-    currentScene++;
+function makeCard(story) {
 
-    await saveProgress();
-    showScene();
+  const color = storyColor(story);
+  const glow = storyGlow(story);
+  const logo = storyLogo(story);
+
+  return `
+  <article class="card"
+    style="--color:${color};--glow:${glow}"
+    onclick="openStory('${story.id}')">
+
+    <div class="card-cover">
+
+      <div class="story-logo">${logo}</div>
+
+      ${characterSVG(story)}
+
+    </div>
+
+    <div class="card-info">
+      <h3>${escapeHTML(story.title)}</h3>
+
+      <p>${escapeHTML(story.summary || "یک ماجراجویی تازه در APACHI منتظر توست.")}</p>
+
+      <div class="meta">
+        <span class="badge">${escapeHTML(story.category)}</span>
+        <span>❤️ ${likeCounts[story.id] || 0}</span>
+      </div>
+    </div>
+
+  </article>`;
+}
+
+function renderStories() {
+
+  const query = document
+    .getElementById("searchInput").value
+    .trim()
+    .toLowerCase();
+
+  const filtered = stories.filter(story=>{
+    const matchCategory =
+      activeCategory==="همه" ||
+      story.category===activeCategory;
+
+    const matchSearch =
+      story.title.toLowerCase().includes(query) ||
+      (story.summary || "").toLowerCase().includes(query) ||
+      story.category.toLowerCase().includes(query);
+
+    return matchCategory && matchSearch;
+  });
+
+  document.getElementById("storiesGrid").innerHTML =
+    filtered.length
+    ? filtered.map(makeCard).join("")
+    : `<div class="empty">داستانی پیدا نشد.</div>`;
+
+  const popular = [...stories]
+    .sort((a,b)=>
+      (likeCounts[b.id]||0)-(likeCounts[a.id]||0)
+    )
+    .slice(0,4);
+
+  document.getElementById("popularGrid").innerHTML =
+    popular.length
+    ? popular.map(makeCard).join("")
+    : `<div class="empty">هنوز داستانی وجود ندارد.</div>`;
+}
+
+document.getElementById("searchInput")
+  .addEventListener("input",renderStories);
+
+// =======================================
+// STORY EXPERIENCE
+// =======================================
+
+function openStory(id) {
+
+  currentStory = stories.find(s=>s.id===id);
+
+  if(!currentStory) return;
+
+  currentScene = 0;
+  storyChoices = [];
+
+  const color = storyColor(currentStory);
+
+  document.getElementById("modalHead").style
+    .setProperty("--color",color);
+
+  document.getElementById("modalHead").style
+    .setProperty("--glow",storyGlow(currentStory));
+
+  document.getElementById("modalCharacter").innerHTML =
+    characterSVG(currentStory);
+
+  document.getElementById("modalTitle").textContent =
+    currentStory.title;
+
+  document.getElementById("modalCategory").textContent =
+    currentStory.category;
+
+  document.getElementById("storyModal").classList.add("show");
+
+  loadStoryLikes();
+  loadComments();
+
+  renderScene();
+}
+
+function renderScene() {
+
+  const story = currentStory;
+
+  const scenes = [
+    {
+      title:"فصل اول — شروع ماجرا",
+      text:`هوا آرام است، اما اتفاق عجیبی در راه است.
+
+${story.summary || "ماجرایی ناشناخته در انتظار توست."}
+
+شخصیت اصلی داستان به اطراف نگاه می‌کند. صدای عجیبی از دور شنیده می‌شود.
+
+او می‌گوید: «این اتفاق نمی‌تواند تصادفی باشد... باید بفهمم چه خبر است.»`,
+      choices:[
+        "به سمت صدای عجیب حرکت کن.",
+        "اول محیط اطراف را بررسی کن.",
+        "از یک دوست کمک بگیر."
+      ]
+    },
+    {
+      title:"فصل دوم — انتخاب سرنوشت‌ساز",
+      text:`شخصیت داستان به یک مکان ناشناخته می‌رسد.
+
+در مقابلش چند مسیر متفاوت وجود دارد.
+
+او کمی فکر می‌کند و می‌گوید:
+«هر تصمیمی بگیرم، ممکن است همه‌چیز تغییر کند.»`,
+      choices:[
+        "مسیر ناشناخته را انتخاب کن.",
+        "دنبال نشانه‌های پنهان بگرد.",
+        "با شخصیت مرموز صحبت کن."
+      ]
+    },
+    {
+      title:"فصل سوم — لحظه تصمیم",
+      text:`حالا راز اصلی کم‌کم آشکار می‌شود.
+
+شخصیت داستان متوجه می‌شود که تصمیم‌های قبلی او بی‌تأثیر نبوده‌اند.
+
+او می‌گوید:
+«وقتشه تصمیم نهایی رو بگیرم!»`,
+      choices:[
+        "راه شجاعانه را انتخاب کن.",
+        "با هوش و برنامه‌ریزی جلو برو.",
+        "به کمک دوستانت اعتماد کن."
+      ]
+    }
+  ];
+
+  const scene = scenes[Math.min(currentScene,2)];
+
+  document.getElementById("storyScene").textContent =
+    scene.title;
+
+  document.getElementById("storyNarrative").textContent =
+    scene.text;
+
+  const choices = document.getElementById("choices");
+
+  if(currentScene<3) {
+
+    choices.innerHTML = scene.choices.map((choice,index)=>`
+      <button class="choice"
+        onclick="chooseStory(${index})">
+        ${index+1}. ${choice}
+      </button>
+    `).join("");
+
   } else {
-    finishStory();
+
+    const ending = [
+      "پایان شجاعانه: شخصیت داستان با تصمیم جسورانه‌اش به یک قهرمان تبدیل شد.",
+      "پایان هوشمندانه: شخصیت داستان با فکر و برنامه‌ریزی راز ماجرا را حل کرد.",
+      "پایان دوستانه: شخصیت داستان با کمک همراهانش به موفقیت رسید."
+    ];
+
+    choices.innerHTML = `
+      <h3>🏆 پایان ماجراجویی</h3>
+      <p class="story-text">
+        ${ending[storyChoices[2] || 0]}
+      </p>
+      <button class="choice" onclick="restartStory()">
+        🔄 تجربه دوباره داستان
+      </button>
+    `;
   }
 }
 
-// صدا
-function speak() {
+function chooseStory(index) {
 
-  if (!("speechSynthesis" in window)) {
-    alert("مرورگر از پخش صدا پشتیبانی نمی‌کند.");
-    return;
-  }
+  storyChoices[currentScene] = index;
 
-  stopVoice();
+  currentScene++;
 
-  const utterance = new SpeechSynthesisUtterance(
-    document.getElementById("dialogueText").textContent
-  );
-
-  utterance.lang = "fa-IR";
-  utterance.rate = .9;
-
-  speechSynthesis.speak(utterance);
+  renderScene();
 }
 
-function stopVoice() {
-  if ("speechSynthesis" in window) {
-    speechSynthesis.cancel();
-  }
+function restartStory() {
+  currentScene = 0;
+  storyChoices = [];
+  renderScene();
 }
 
-// ذخیره پیشرفت
-async function saveProgress() {
+// =======================================
+// LIKES
+// =======================================
 
-  const {data:{user}} = await db.auth.getUser();
+async function loadStoryLikes() {
 
-  if (!user || !currentStory) return;
+  if(!currentStory) return;
 
-  const {error} = await db.from("progress").upsert({
-    user_id:user.id,
-    story_id:currentStory.id,
-    scene_number:currentScene,
-    completed:false,
-    updated_at:new Date().toISOString()
-  }, {
-    onConflict:"user_id,story_id"
-  });
-
-  if (error) console.error(error);
-}
-
-// پایان داستان
-async function finishStory() {
-
-  const {data:{user}} = await db.auth.getUser();
-
-  if (!user) {
-    alert("برای ذخیره داستان وارد حساب شو.");
-    return;
-  }
-
-  const {error} = await db.from("progress").upsert({
-    user_id:user.id,
-    story_id:currentStory.id,
-    scene_number:scenes.length-1,
-    completed:true,
-    updated_at:new Date().toISOString()
-  }, {
-    onConflict:"user_id,story_id"
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  alert("داستان با موفقیت تکمیل شد! 🏆");
-  openProfile();
-}
-
-// لایک
-async function loadLikes() {
-
-  const {count,error} = await db
-    .from("likes")
-    .select("*",{count:"exact",head:true})
+  const {data,error} = await db
+    .from(LIKES_TABLE)
+    .select("id,visitor_id")
     .eq("story_id",currentStory.id);
 
-  if (!error) {
-    document.getElementById("likes").textContent = count || 0;
+  if(error) {
+    console.error(error);
+    return;
   }
+
+  const count = data.length;
+
+  const liked = data.some(
+    item=>item.visitor_id===visitorId
+  );
+
+  document.getElementById("likeCount").textContent =
+    count + " لایک";
+
+  document.getElementById("likeButton").classList
+    .toggle("liked",liked);
+
+  document.getElementById("likeButton").textContent =
+    liked ? "❤️ لایک شده" : "🤍 لایک";
 }
 
-async function likeStory() {
+async function toggleLike() {
 
-  const {data:{user}} = await db.auth.getUser();
+  if(!currentStory) return;
 
-  if (!user) {
-    alert("برای لایک باید وارد حساب شوی.");
-    return;
-  }
+  const button = document.getElementById("likeButton");
+  button.disabled = true;
 
-  const {data:existing,error:findError} = await db
-    .from("likes")
+  const {data,error} = await db
+    .from(LIKES_TABLE)
     .select("id")
     .eq("story_id",currentStory.id)
-    .eq("user_id",user.id)
+    .eq("visitor_id",visitorId)
     .maybeSingle();
 
-  if (findError) {
-    alert(findError.message);
+  if(error) {
+    alert("خطا در بررسی لایک.");
+    button.disabled = false;
     return;
   }
 
-  let result;
+  if(data) {
 
-  if (existing) {
-    result = await db.from("likes")
+    const result = await db
+      .from(LIKES_TABLE)
       .delete()
-      .eq("id",existing.id);
-  } else {
-    result = await db.from("likes").insert({
-      story_id:currentStory.id,
-      user_id:user.id
-    });
-  }
+      .eq("id",data.id);
 
-  if (result.error) {
-    alert(result.error.message);
+    if(result.error) {
+      alert("حذف لایک انجام نشد.");
+    }
+
+  } else {
+
+    const result = await db
+      .from(LIKES_TABLE)
+      .insert({
+        story_id:currentStory.id,
+        visitor_id:visitorId
+      });
+
+    if(result.error) {
+      alert("ثبت لایک انجام نشد.");
+    }
   }
 
   await loadLikes();
+  await loadStoryLikes();
+  renderStories();
+
+  button.disabled = false;
 }
 
-// دیدگاه‌ها
+// =======================================
+// COMMENTS
+// =======================================
+
 async function loadComments() {
 
-  const box = document.getElementById("comments");
+  if(!currentStory) return;
 
   const {data,error} = await db
-    .from("comments")
-    .select("content,created_at")
+    .from(COMMENTS_TABLE)
+    .select("id,comment,created_at")
     .eq("story_id",currentStory.id)
-    .order("created_at",{ascending:false});
+    .order("created_at",{ascending:false})
+    .limit(50);
 
-  if (error) {
-    box.innerHTML =
-      "<p>دریافت دیدگاه‌ها ناموفق بود.</p>";
+  if(error) {
+    document.getElementById("commentsList").textContent =
+      "دریافت نظرات ممکن نشد.";
     return;
   }
 
-  box.innerHTML = (data || []).map(comment => `
+  const list = document.getElementById("commentsList");
+
+  if(!data.length) {
+    list.innerHTML = '<p class="scene">هنوز نظری ثبت نشده است.</p>';
+    return;
+  }
+
+  list.innerHTML = data.map(item=>`
     <div class="comment">
-      <p>${safeText(comment.content)}</p>
-      <small>
-        ${new Date(comment.created_at).toLocaleDateString("fa-IR")}
-      </small>
+      ${escapeHTML(item.comment)}
     </div>
-  `).join("") || "<p>هنوز دیدگاهی ثبت نشده است.</p>";
+  `).join("");
 }
 
 async function sendComment() {
 
-  const content =
-    document.getElementById("commentInput").value.trim();
+  if(!currentStory) return;
 
-  if (!content) {
-    alert("اول دیدگاهت را بنویس.");
+  const input = document.getElementById("commentInput");
+  const comment = input.value.trim();
+
+  if(comment.length<2) {
+    alert("نظر باید حداقل ۲ حرف داشته باشد.");
     return;
   }
 
-  if (content.length > 1000) {
-    alert("دیدگاه نباید بیشتر از ۱۰۰۰ حرف باشد.");
+  if(comment.length>500) {
+    alert("نظر بیش از حد طولانی است.");
     return;
   }
 
-  const {data:{user}} = await db.auth.getUser();
+  const button = document.querySelector(".comments button");
+  button.disabled = true;
 
-  if (!user) {
-    alert("برای ارسال دیدگاه باید وارد حساب شوی.");
+  const {error} = await db
+    .from(COMMENTS_TABLE)
+    .insert({
+      story_id:currentStory.id,
+      visitor_id:visitorId,
+      comment:comment
+    });
+
+  button.disabled = false;
+
+  if(error) {
+    alert("ارسال نظر انجام نشد: "+error.message);
     return;
   }
 
-  const {error} = await db.from("comments").insert({
-    user_id:user.id,
-    story_id:currentStory.id,
-    content:content
-  });
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  document.getElementById("commentInput").value = "";
+  input.value = "";
 
   await loadComments();
-
-  alert("دیدگاه ثبت شد!");
 }
 
-// ثبت‌نام
-async function signup() {
+// =======================================
+// START
+// =======================================
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || password.length < 6) {
-    alert("ایمیل معتبر و رمز حداقل ۶ حرفی وارد کن.");
-    return;
-  }
-
-  const {error} = await db.auth.signUp({
-    email,
-    password
-  });
-
-  alert(error ? error.message :
-    "ثبت‌نام انجام شد. ایمیلت را برای تأیید بررسی کن.");
-}
-
-// ورود
-async function login() {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  const {error} = await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    alert(error.message);
-  } else {
-    alert("خوش آمدی!");
-    loadProfile();
-  }
-}
-
-// خروج
-async function logout() {
-
-  const {error} = await db.auth.signOut();
-
-  if (error) alert(error.message);
-  else loadProfile();
-}
-
-// پروفایل
-async function loadProfile() {
-
-  const {data:{user}} = await db.auth.getUser();
-
-  document.getElementById("account").textContent =
-    user ? "وارد شده‌ای: " + user.email :
-    "هنوز وارد حساب نشده‌ای.";
-
-  if (!user) {
-    document.getElementById("completed").textContent =
-      "برای دیدن پیشرفت وارد حساب شو.";
-    return;
-  }
-
-  const {data,error} = await db.from("progress")
-    .select("story_id")
-    .eq("user_id",user.id)
-    .eq("completed",true);
-
-  if (error) {
-    document.getElementById("completed").textContent =
-      "دریافت اطلاعات ناموفق بود.";
-    return;
-  }
-
-  document.getElementById("completed").innerHTML =
-    (data || []).map(item => {
-      const story = stories.find(s => s.id === item.story_id);
-      return story ? `<p>${safeText(story.title)} 🏆</p>` : "";
-    }).join("") || "هنوز داستانی تکمیل نکرده‌ای.";
-}
-
-// شروع برنامه
-renderCategories();
 loadStories();
 
-db.auth.onAuthStateChange(() => {
-  loadProfile();
-});
-
 </script>
-
 </body>
-   </html>
+  </html>
