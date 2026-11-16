@@ -2,1204 +2,546 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APACHI | دنیای داستان‌های تعاملی</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APACHI | دنیای داستان‌ها</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg:#080b18;
-  --panel:#11172b;
-  --panel2:#171f38;
-  --text:#f4f6ff;
-  --muted:#9ba8c5;
-  --blue:#00cfff;
-  --purple:#9b72ff;
-  --pink:#ec65c8;
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080b18;color:white;
+ font-family:Vazirmatn,sans-serif;
 }
-
-* {
-  box-sizing:border-box;
+header{
+ padding:18px 5%;background:#10162b;
+ border-bottom:1px solid #263451;
+ display:flex;justify-content:space-between;
+ align-items:center;position:sticky;top:0;z-index:5;
 }
-
-body {
-  margin:0;
-  font-family:'Vazirmatn',sans-serif;
-  background:
-    radial-gradient(ellipse at 10% 0%,#17265a 0%,transparent 40%),
-    radial-gradient(ellipse at 90% 30%,#29144b 0%,transparent 35%),
-    var(--bg);
-  color:var(--text);
-  min-height:100vh;
+.logo{font-size:29px;font-weight:900;color:#00d5ff}
+.logo span{color:white}
+button,input{font-family:inherit}
+button{cursor:pointer}
+.hero{
+ margin:25px auto;padding:35px 25px;
+ max-width:1100px;border-radius:25px;
+ background:linear-gradient(120deg,#142b58,#402064);
 }
-
-button,input {
-  font-family:inherit;
+.hero h1{font-size:clamp(27px,6vw,48px);margin:0}
+.hero h1 span{color:#00e0ff}
+.hero p{line-height:2;color:#d4dcf4}
+.hero button{
+ background:#00d5ff;border:0;border-radius:12px;
+ padding:12px 22px;font-weight:bold;
 }
-
-button {
-  cursor:pointer;
+.container{max-width:1100px;margin:auto;padding:15px 18px}
+.search{
+ width:100%;padding:15px;border-radius:13px;
+ border:1px solid #33415f;background:#131c32;
+ color:white;margin:15px 0;
 }
-
-header {
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#080b18eF;
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid #ffffff12;
+.filters{display:flex;gap:8px;overflow:auto;padding:10px 0}
+.filters button{
+ white-space:nowrap;padding:9px 15px;
+ border:1px solid #34415e;border-radius:30px;
+ background:#17223d;color:white;
 }
-
-.nav {
-  max-width:1250px;
-  margin:auto;
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
+.filters button.active{background:#00cfff;color:#07111d}
+h2{margin-top:30px}
+.grid{
+ display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+ gap:16px;margin:20px 0 40px;
 }
-
-.brand {
-  font-size:28px;
-  font-weight:900;
-  letter-spacing:3px;
-  color:var(--blue);
-  text-shadow:0 0 20px #00cfff80;
+.card{
+ overflow:hidden;border-radius:19px;
+ background:#141d34;border:1px solid #293653;
+ cursor:pointer;transition:.2s;
 }
-
-.brand span {
-  color:white;
+.card:hover{transform:translateY(-5px);border-color:#00d5ff}
+.cover{
+ height:175px;display:flex;align-items:center;
+ justify-content:center;position:relative;
+ background:radial-gradient(circle,var(--glow),transparent 70%),linear-gradient(140deg,var(--color),#101329);
 }
-
-.nav button {
-  background:#ffffff10;
-  color:white;
-  border:1px solid #ffffff20;
-  padding:10px 16px;
-  border-radius:12px;
+.character{width:135px;height:155px;filter:drop-shadow(0 8px 12px #0008)}
+.story-logo{
+ position:absolute;top:12px;right:12px;
+ font-size:25px;background:#080d20c9;
+ border:1px solid #ffffff40;border-radius:13px;
+ width:45px;height:45px;display:grid;place-items:center;
 }
-
-.hero {
-  max-width:1200px;
-  margin:45px auto;
-  padding:30px 22px;
+.info{padding:14px}
+.info h3{margin:0 0 8px}
+.info p{font-size:12px;line-height:1.9;color:#aebbd7;min-height:40px}
+.meta{display:flex;justify-content:space-between;color:#b9c7e3;font-size:12px}
+.badge{background:#263453;padding:5px 10px;border-radius:20px}
+.status{
+ padding:25px;text-align:center;color:#9eb1d7;
+ background:#121b30;border-radius:15px;margin:15px 0;
+ line-height:2;
 }
-
-.hero-box {
-  position:relative;
-  overflow:hidden;
-  border:1px solid #ffffff20;
-  border-radius:28px;
-  padding:55px 35px;
-  background:
-    radial-gradient(circle at 80% 30%,#7c3aed55,transparent 40%),
-    linear-gradient(120deg,#101a39,#15102d);
-  box-shadow:0 25px 90px #0008;
+.status.error{color:#ffb4b4;border:1px solid #a33}
+.modal{
+ display:none;position:fixed;inset:0;background:#030611ed;
+ z-index:20;overflow:auto;padding:15px;
 }
-
-.hero h1 {
-  font-size:clamp(32px,6vw,62px);
-  line-height:1.4;
-  margin:0 0 15px;
+.modal.show{display:block}
+.dialog{
+ max-width:750px;margin:20px auto;
+ background:#111a30;border:1px solid #34415e;
+ border-radius:22px;overflow:hidden;
 }
-
-.hero h1 span {
-  color:var(--blue);
+.modal-cover{
+ min-height:220px;display:flex;justify-content:center;
+ align-items:center;position:relative;
+ background:radial-gradient(circle,var(--glow),transparent 70%),linear-gradient(140deg,var(--color),#101329);
 }
-
-.hero p {
-  color:#bdc9e8;
-  max-width:600px;
-  line-height:2;
+.modal-cover .character{width:190px;height:210px}
+.close{
+ position:absolute;top:12px;left:12px;
+ background:#0009;color:white;border:0;
+ border-radius:12px;padding:9px 15px;font-size:22px;
 }
-
-.hero button {
-  margin-top:15px;
-  border:0;
-  padding:14px 24px;
-  border-radius:13px;
-  color:#07101e;
-  font-weight:900;
-  background:linear-gradient(100deg,var(--blue),#8b7cff);
+.modal-body{padding:22px}
+.story-text{
+ line-height:2.4;background:#1a2742;
+ padding:17px;border-radius:14px;color:#e0e9ff;
+ margin:18px 0;
 }
-
-.hero-art {
-  position:absolute;
-  left:35px;
-  top:20px;
-  width:200px;
-  height:230px;
-  opacity:.9;
-  pointer-events:none;
+.choices{display:grid;gap:10px}
+.choice{
+ padding:14px;text-align:right;color:white;
+ background:#1c2c4e;border:1px solid #354b70;
+ border-radius:12px;
 }
-
-@media(max-width:700px) {
-  .hero-art {display:none}
-  .hero-box {padding:35px 22px}
+.choice:hover{border-color:#00d5ff}
+.actions{display:flex;gap:12px;align-items:center;margin:20px 0}
+.actions button{
+ background:#41223d;color:white;border:0;
+ border-radius:12px;padding:12px 18px;
 }
-
-.container {
-  max-width:1250px;
-  margin:auto;
-  padding:0 20px 70px;
+.comments{border-top:1px solid #34415e;padding-top:18px}
+.comments input{
+ width:100%;padding:13px;border-radius:12px;
+ background:#080e20;color:white;border:1px solid #34415e;
+ margin:8px 0;
 }
-
-.section-title {
-  font-size:23px;
-  font-weight:900;
-  margin:35px 0 18px;
+.comments button{
+ background:#00d5ff;border:0;border-radius:10px;padding:11px 20px;
 }
-
-.search {
-  display:flex;
-  gap:10px;
-  margin-bottom:18px;
+.comment{
+ background:#1b2944;padding:12px;
+ border-radius:12px;margin:10px 0;line-height:2;
+ overflow-wrap:anywhere;
 }
-
-.search input {
-  flex:1;
-  min-width:0;
-  background:var(--panel);
-  border:1px solid #ffffff20;
-  color:white;
-  border-radius:13px;
-  padding:14px;
-  outline:none;
-}
-
-.search input:focus {
-  border-color:var(--blue);
-}
-
-.filters {
-  display:flex;
-  gap:9px;
-  overflow-x:auto;
-  padding-bottom:12px;
-}
-
-.filter {
-  flex-shrink:0;
-  background:var(--panel);
-  color:#cbd5ed;
-  border:1px solid #ffffff15;
-  border-radius:30px;
-  padding:9px 16px;
-}
-
-.filter.active {
-  color:#06111c;
-  background:var(--blue);
-  font-weight:900;
-}
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(235px,1fr));
-  gap:19px;
-}
-
-.card {
-  position:relative;
-  background:linear-gradient(150deg,#18213b,#101528);
-  border:1px solid #ffffff15;
-  border-radius:21px;
-  overflow:hidden;
-  transition:.25s;
-  cursor:pointer;
-}
-
-.card:hover {
-  transform:translateY(-7px);
-  border-color:var(--blue);
-  box-shadow:0 15px 40px #00cfff20;
-}
-
-.card-cover {
-  height:175px;
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 45%,var(--glow),transparent 70%),
-    linear-gradient(145deg,var(--color),#101329);
-}
-
-.story-logo {
-  position:absolute;
-  top:12px;
-  right:13px;
-  width:47px;
-  height:47px;
-  display:grid;
-  place-items:center;
-  border-radius:15px;
-  background:#080b18b8;
-  border:1px solid #ffffff40;
-  font-size:25px;
-  box-shadow:0 0 20px var(--glow);
-}
-
-.story-character {
-  width:145px;
-  height:165px;
-  margin-top:25px;
-  filter:drop-shadow(0 10px 15px #0008);
-}
-
-.card-info {
-  padding:15px;
-}
-
-.card-info h3 {
-  margin:0 0 8px;
-  font-size:17px;
-}
-
-.card-info p {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.9;
-  min-height:45px;
-}
-
-.meta {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  color:#aebbd8;
-  font-size:12px;
-  margin-top:12px;
-}
-
-.badge {
-  background:#ffffff12;
-  border-radius:30px;
-  padding:5px 10px;
-}
-
-.loading {
-  text-align:center;
-  color:var(--muted);
-  padding:45px;
-}
-
-.empty {
-  text-align:center;
-  color:var(--muted);
-  padding:35px;
-  grid-column:1/-1;
-}
-
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:100;
-  background:#050714ed;
-  overflow-y:auto;
-  padding:20px;
-}
-
-.modal.show {
-  display:block;
-}
-
-.modal-content {
-  max-width:850px;
-  margin:25px auto;
-  background:#10172b;
-  border:1px solid #ffffff20;
-  border-radius:25px;
-  overflow:hidden;
-}
-
-.modal-head {
-  position:relative;
-  min-height:250px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    radial-gradient(circle,var(--glow),transparent 65%),
-    linear-gradient(130deg,var(--color),#11152b);
-}
-
-.modal-head .story-character {
-  width:205px;
-  height:225px;
-}
-
-.close {
-  position:absolute;
-  top:15px;
-  left:15px;
-  width:40px;
-  height:40px;
-  border:0;
-  border-radius:12px;
-  color:white;
-  background:#0008;
-  font-size:22px;
-}
-
-.modal-body {
-  padding:24px;
-}
-
-.modal-body h2 {
-  font-size:27px;
-}
-
-.story-text {
-  color:#d5def3;
-  line-height:2.4;
-  background:#ffffff08;
-  padding:18px;
-  border-radius:15px;
-  margin:18px 0;
-}
-
-.scene {
-  color:#9caed5;
-  font-size:13px;
-}
-
-.choices {
-  display:grid;
-  gap:12px;
-  margin-top:20px;
-}
-
-.choice {
-  background:#192442;
-  color:white;
-  border:1px solid #ffffff20;
-  border-radius:13px;
-  padding:14px;
-  text-align:right;
-  transition:.2s;
-}
-
-.choice:hover {
-  border-color:var(--blue);
-  background:#20345a;
-}
-
-.action-row {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:20px 0;
-}
-
-.action-row button {
-  border:1px solid #ffffff20;
-  background:#ffffff10;
-  color:white;
-  padding:11px 16px;
-  border-radius:12px;
-}
-
-.action-row button.liked {
-  background:#5d2448;
-  border-color:#ed68b8;
-}
-
-.comments {
-  border-top:1px solid #ffffff20;
-  padding-top:20px;
-}
-
-.comments input {
-  width:100%;
-  background:#080d1d;
-  color:white;
-  border:1px solid #ffffff20;
-  border-radius:12px;
-  padding:13px;
-  margin-bottom:10px;
-}
-
-.comments button {
-  border:0;
-  color:#07101e;
-  background:var(--blue);
-  padding:11px 20px;
-  border-radius:11px;
-  font-weight:900;
-}
-
-.comment {
-  background:#ffffff09;
-  border-radius:12px;
-  padding:13px;
-  margin-top:10px;
-  font-size:13px;
-  line-height:2;
-  overflow-wrap:anywhere;
-}
-
-footer {
-  text-align:center;
-  color:#7885a5;
-  padding:30px 15px;
-  border-top:1px solid #ffffff12;
-}
+footer{text-align:center;padding:30px;color:#8290ad}
 </style>
 </head>
 
 <body>
 
 <header>
-  <div class="nav">
-    <div class="brand">APA<span>CHI</span></div>
-    <button onclick="scrollToStories()">ورود به داستان‌ها ↓</button>
-  </div>
+ <div class="logo">APA<span>CHI</span></div>
+ <button onclick="document.getElementById('stories').scrollIntoView({behavior:'smooth'})">
+ داستان‌ها ↓
+ </button>
 </header>
 
 <section class="hero">
-  <div class="hero-box">
-    <div class="hero-art" id="heroArt"></div>
-
-    <h1>وارد دنیای <span>APACHI</span> شو!</h1>
-    <p>
-      اینجا تو فقط تماشاگر نیستی.
-      انتخاب می‌کنی، ماجراجویی می‌کنی و سرنوشت
-      شخصیت‌ها را تغییر می‌دهی.
-    </p>
-
-    <button onclick="scrollToStories()">شروع ماجراجویی</button>
-  </div>
+ <h1>به دنیای <span>APACHI</span> خوش آمدی!</h1>
+ <p>داستان انتخاب کن، وارد ماجراجویی شو و سرنوشت قهرمان‌ها را تغییر بده.</p>
+ <button onclick="document.getElementById('stories').scrollIntoView({behavior:'smooth'})">
+ شروع ماجراجویی
+ </button>
 </section>
 
-<main class="container" id="storiesSection">
+<main class="container" id="stories">
+ <h2>🔥 محبوب‌ترین داستان‌ها</h2>
+ <div id="popular" class="grid">
+  <div class="status">در حال اتصال...</div>
+ </div>
 
-  <h2 class="section-title">🔥 محبوب‌ترین داستان‌ها</h2>
-  <div class="grid" id="popularGrid">
-    <div class="loading">در حال دریافت داستان‌ها...</div>
-  </div>
-
-  <h2 class="section-title">🌌 دنیای داستان‌ها</h2>
-
-  <div class="search">
-    <input id="searchInput" placeholder="نام داستان یا موضوع را جست‌وجو کن...">
-  </div>
-
-  <div class="filters" id="filters"></div>
-
-  <div class="grid" id="storiesGrid">
-    <div class="loading">در حال بارگذاری APACHI...</div>
-  </div>
-
+ <h2>🌌 همه داستان‌ها</h2>
+ <input id="search" class="search" placeholder="جست‌وجوی داستان...">
+ <div id="filters" class="filters"></div>
+ <div id="grid" class="grid">
+  <div class="status">در حال دریافت داستان‌ها...</div>
+ </div>
 </main>
 
-<div class="modal" id="storyModal">
-  <div class="modal-content">
-
-    <div class="modal-head" id="modalHead">
-      <button class="close" onclick="closeStory()">×</button>
-      <div id="modalCharacter"></div>
-    </div>
-
-    <div class="modal-body">
-
-      <div id="modalCategory" class="badge"></div>
-      <h2 id="modalTitle"></h2>
-
-      <div class="story-text">
-        <div id="storyScene" class="scene"></div>
-        <div id="storyNarrative"></div>
-      </div>
-
-      <div id="choices" class="choices"></div>
-
-      <div class="action-row">
-        <button id="likeButton" onclick="toggleLike()">❤️ لایک</button>
-        <span id="likeCount">۰ لایک</span>
-      </div>
-
-      <div class="comments">
-        <h3>💬 نظرات ماجراجویان</h3>
-
-        <input id="commentInput"
-          maxlength="500"
-          placeholder="نظر خودت را بنویس...">
-
-        <button onclick="sendComment()">ارسال نظر</button>
-
-        <div id="commentsList"></div>
-      </div>
-
-    </div>
+<div class="modal" id="modal">
+ <div class="dialog">
+  <div class="modal-cover" id="modalCover">
+   <button class="close" onclick="closeStory()">×</button>
+   <div id="modalCharacter"></div>
   </div>
+  <div class="modal-body">
+   <span id="category" class="badge"></span>
+   <h2 id="title"></h2>
+   <div class="story-text">
+    <strong id="sceneTitle"></strong>
+    <p id="narrative"></p>
+   </div>
+   <div id="choices" class="choices"></div>
+
+   <div class="actions">
+    <button id="likeButton" onclick="toggleLike()">🤍 لایک</button>
+    <span id="likeCount">۰</span>
+   </div>
+
+   <div class="comments">
+    <h3>💬 نظرات</h3>
+    <input id="commentInput" maxlength="500" placeholder="نظرت را بنویس...">
+    <button id="sendButton" onclick="sendComment()">ارسال نظر</button>
+    <div id="commentList"></div>
+   </div>
+  </div>
+ </div>
 </div>
 
-<footer>
-  APACHI © 2026 — دنیای انتخاب‌های تو
-</footer>
+<footer>APACHI © 2026</footer>
 
 <script>
-// =======================================
-// SUPABASE CONFIGURATION
-// =======================================
+(async function(){
 
-const SUPABASE_URL =
-  "https://dqykeqtibspeajxdpsuk.supabase.co";
+"use strict";
 
-const SUPABASE_KEY =
-  "sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
+// تنظیمات اتصال
+const URL = "https://dqykeqtibspeajxdpsuk.supabase.co";
+const KEY = "sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const grid = document.getElementById("grid");
+const popular = document.getElementById("popular");
 
-const STORIES_TABLE = "apachi_stories_v2";
-const LIKES_TABLE = "apachi_likes_v2";
-const COMMENTS_TABLE = "apachi_comments_v2";
-
-// =======================================
-// VISITOR ID
-// =======================================
-
-function getVisitorId() {
-  let id = localStorage.getItem("apachi_visitor");
-
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem("apachi_visitor",id);
-  }
-
-  return id;
+function showError(message){
+ const html = `<div class="status error">⚠️ ${esc(message)}</div>`;
+ grid.innerHTML = html;
+ popular.innerHTML = html;
 }
 
-const visitorId = getVisitorId();
-
-// =======================================
-// STATE
-// =======================================
-
-let stories = [];
-let currentStory = null;
-let activeCategory = "همه";
-let currentScene = 0;
-let storyChoices = [];
-
-// =======================================
-// HELPERS
-// =======================================
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  })[c]);
+function esc(value){
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
 }
 
-function scrollToStories() {
-  document.getElementById("storiesSection")
-    .scrollIntoView({behavior:"smooth"});
+// ساخت UUID معتبر
+function uuid(){
+ let id=localStorage.getItem("apachi_visitor");
+ const valid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!id || !valid.test(id)){
+  id=crypto.randomUUID();
+  localStorage.setItem("apachi_visitor",id);
+ }
+ return id;
 }
 
-function closeStory() {
-  document.getElementById("storyModal").classList.remove("show");
-  currentStory = null;
+let visitor;
+try{
+ visitor=uuid();
+}catch(e){
+ showError("مرورگر امکان ساخت شناسه را فراهم نکرده است. صفحه را در Chrome باز کن.");
+ return;
 }
 
-document.getElementById("storyModal").addEventListener("click",e=>{
-  if(e.target.id==="storyModal") closeStory();
+// بررسی کتابخانه
+if(!window.supabase || !window.supabase.createClient){
+ showError("کتابخانه اتصال بارگذاری نشد. اینترنت را بررسی و صفحه را دوباره باز کن.");
+ return;
+}
+
+const db=window.supabase.createClient(URL,KEY);
+
+let stories=[];
+let likes={};
+let category="همه";
+let current=null;
+let scene=0;
+let decisions=[];
+
+// لوگوهای متنوع
+const icons=["⚡","🌌","🔥","💎","🚀","🌀","🌙","🐉","🔮","🛸","👑","🗝️","🌊","🏆","🧭","🌠"];
+
+function logo(s){
+ let n=0;
+ for(const c of s.slug)n+=c.charCodeAt(0);
+ return icons[n%icons.length];
+}
+
+// شخصیت SVG متفاوت برای هر داستان
+function character(s){
+ let n=0;
+ for(const c of s.slug)n+=c.charCodeAt(0);
+ let hue=n%360;
+ let skin=["#dba984","#efbd99","#bd815f","#e5ad85"][n%4];
+ let hair=["#171522","#34211b","#17283c","#50352b"][n%4];
+ let jacket=`hsl(${hue},65%,48%)`;
+
+ return `<svg class="character" viewBox="0 0 180 210" xmlns="http://www.w3.org/2000/svg">
+ <ellipse cx="90" cy="195" rx="53" ry="8" fill="#000" opacity=".4"/>
+ <path d="M30 207 Q35 137 65 130 L90 146 115 130 Q145 137 150 207Z" fill="${jacket}" stroke="#ffffff66" stroke-width="2"/>
+ <path d="M76 117 L75 143 Q90 155 105 143 L104 117Z" fill="${skin}"/>
+ <ellipse cx="90" cy="87" rx="38" ry="46" fill="${skin}"/>
+ <ellipse cx="52" cy="91" rx="7" ry="11" fill="${skin}"/>
+ <ellipse cx="128" cy="91" rx="7" ry="11" fill="${skin}"/>
+ <path d="${n%3===0?'M51 85 Q42 28 90 31 Q140 25 130 85 L117 65 Q99 78 85 60 Q69 82 51 85Z':n%3===1?'M51 86 Q43 32 90 31 Q135 31 129 87 L119 73 Q100 80 90 66 Q73 77 51 86Z':'M52 87 Q45 28 90 29 Q139 28 130 87 Q110 58 98 51 Q80 73 52 87Z'}" fill="${hair}"/>
+ <ellipse cx="76" cy="90" rx="4" ry="5" fill="#171522"/>
+ <ellipse cx="104" cy="90" rx="4" ry="5" fill="#171522"/>
+ <path d="M81 111 Q90 118 99 111" fill="none" stroke="#824c43" stroke-width="2.5" stroke-linecap="round"/>
+ <path d="M90 145 L90 207" stroke="#ffffff70" stroke-width="2"/>
+ <path d="M65 144 L78 164 L90 151 L102 164 L116 144" fill="none" stroke="#ffffff70" stroke-width="3"/>
+ <circle cx="90" cy="174" r="5" fill="white"/>
+ </svg>`;
+}
+
+function color(s){return s.accent_color||"#00cfff"}
+function glow(s){return color(s)+"88"}
+
+function card(s){
+ return `<article class="card" data-id="${esc(s.id)}">
+ <div class="cover" style="--color:${color(s)};--glow:${glow(s)}">
+ <div class="story-logo">${logo(s)}</div>
+ ${character(s)}
+ </div>
+ <div class="info">
+ <h3>${esc(s.title)}</h3>
+ <p>${esc(s.summary||"یک ماجراجویی تازه در انتظار توست.")}</p>
+ <div class="meta">
+ <span class="badge">${esc(s.category)}</span>
+ <span>❤️ ${likes[s.id]||0}</span>
+ </div>
+ </div></article>`;
+}
+
+function render(){
+ const q=document.getElementById("search").value.trim().toLowerCase();
+ const list=stories.filter(s=>
+  (category==="همه"||s.category===category)&&
+  (s.title.toLowerCase().includes(q)||
+   (s.summary||"").toLowerCase().includes(q)||
+   s.category.toLowerCase().includes(q))
+ );
+ grid.innerHTML=list.length?list.map(card).join(""):'<div class="status">داستانی پیدا نشد.</div>';
+
+ const top=[...stories].sort((a,b)=>(likes[b.id]||0)-(likes[a.id]||0)).slice(0,4);
+ popular.innerHTML=top.length?top.map(card).join(""):'<div class="status">داستانی وجود ندارد.</div>';
+}
+
+function buildFilters(){
+ const cats=["همه",...new Set(stories.map(s=>s.category))];
+ document.getElementById("filters").innerHTML=cats.map(c=>
+ `<button class="${c===category?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`
+ ).join("");
+}
+
+document.getElementById("filters").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-category]");
+ if(!b)return;
+ category=b.dataset.category;
+ buildFilters();
+ render();
 });
 
-// =======================================
-// UNIQUE CHARACTER GENERATOR
-// =======================================
-
-function characterSVG(story) {
-  const hash = [...story.slug].reduce(
-    (a,c)=>a+c.charCodeAt(0),0
-  );
-
-  const hue = hash % 360;
-  const skin = ["#d9a27d","#efbd9a","#bd815f","#e5ad85"][hash%4];
-  const hair = ["#171522","#34211b","#17283c","#50352b"][hash%4];
-  const jacket = `hsl(${hue},65%,48%)`;
-  const hairStyle = hash%3;
-
-  return `
-  <svg class="story-character" viewBox="0 0 180 210"
-       xmlns="http://www.w3.org/2000/svg">
-
-    <defs>
-      <linearGradient id="j${hash}" x1="0" y1="0" x2="1" y2="1">
-        <stop stop-color="${jacket}"/>
-        <stop offset="1" stop-color="#16172e"/>
-      </linearGradient>
-      <filter id="g${hash}">
-        <feGaussianBlur stdDeviation="8"/>
-      </filter>
-    </defs>
-
-    <ellipse cx="90" cy="192" rx="55" ry="9"
-      fill="#000" opacity=".35"/>
-
-    <circle cx="90" cy="88" r="58"
-      fill="#fff" opacity=".09"
-      filter="url(#g${hash})"/>
-
-    <!-- BODY -->
-    <path d="M34 207 Q35 135 65 130
-      L90 145 L115 130
-      Q145 135 146 207Z"
-      fill="url(#j${hash})"
-      stroke="#ffffff55" stroke-width="2"/>
-
-    <!-- NECK -->
-    <path d="M76 115 L75 143 Q90 157 105 143
-      L104 115Z" fill="${skin}"/>
-
-    <!-- FACE -->
-    <ellipse cx="90" cy="87" rx="38" ry="46"
-      fill="${skin}"/>
-
-    <!-- EARS -->
-    <ellipse cx="52" cy="91" rx="7" ry="11" fill="${skin}"/>
-    <ellipse cx="128" cy="91" rx="7" ry="11" fill="${skin}"/>
-
-    <!-- HAIR -->
-    ${
-      hairStyle===0
-      ? `<path d="M51 83 Q42 28 89 31
-         Q139 25 130 85
-         L117 65 Q99 78 85 60
-         Q69 82 51 83Z" fill="${hair}"/>`
-      : hairStyle===1
-      ? `<path d="M51 86 Q43 32 90 31
-         Q135 31 129 87 L119 73
-         Q100 80 90 66
-         Q73 77 51 86Z" fill="${hair}"/>`
-      : `<path d="M52 87 Q45 28 90 29
-         Q139 28 130 87
-         Q110 58 98 51
-         Q80 73 52 87Z" fill="${hair}"/>`
-    }
-
-    <!-- EYES -->
-    <ellipse cx="76" cy="90" rx="4" ry="5" fill="#171522"/>
-    <ellipse cx="104" cy="90" rx="4" ry="5" fill="#171522"/>
-
-    <path d="M81 111 Q90 118 99 111"
-      fill="none" stroke="#824c43"
-      stroke-width="2.5" stroke-linecap="round"/>
-
-    <!-- JACKET DETAILS -->
-    <path d="M90 145 L90 207"
-      stroke="#ffffff65" stroke-width="2"/>
-
-    <path d="M65 144 L78 164 L90 151 L102 164 L116 144"
-      fill="none" stroke="#ffffff60" stroke-width="3"/>
-
-    <circle cx="90" cy="173" r="5" fill="#fff" opacity=".7"/>
-
-  </svg>`;
-}
-
-// =======================================
-// UNIQUE LOGO
-// =======================================
-
-function storyLogo(story) {
-  const hash = [...story.slug].reduce(
-    (a,c)=>a+c.charCodeAt(0),0
-  );
-
-  const icons = ["⚡","🌌","🔥","💎","🚀","🌀","🌙","🐉","🔮","🛸"];
-
-  return icons[hash % icons.length];
-}
-
-function storyColor(story) {
-  return story.accent_color || "#00cfff";
-}
-
-function storyGlow(story) {
-  return storyColor(story) + "88";
-}
-
-// =======================================
-// LOAD STORIES
-// =======================================
-
-async function loadStories() {
-
-  const {data,error} = await db
-    .from(STORIES_TABLE)
-    .select("*")
-    .order("created_at",{ascending:false});
-
-  if(error) {
-    document.getElementById("storiesGrid").innerHTML =
-      `<div class="empty">
-        خطا در اتصال به دیتابیس:
-        ${escapeHTML(error.message)}
-      </div>`;
-    return;
-  }
-
-  stories = data || [];
-
-  await loadLikes();
-  buildFilters();
-  renderStories();
-}
-
-// =======================================
-// LOAD LIKE COUNTS
-// =======================================
-
-let likeCounts = {};
-
-async function loadLikes() {
-
-  likeCounts = {};
-
-  const {data,error} = await db
-    .from(LIKES_TABLE)
-    .select("story_id");
-
-  if(error) {
-    console.error(error);
-    return;
-  }
-
-  (data || []).forEach(item=>{
-    likeCounts[item.story_id] =
-      (likeCounts[item.story_id] || 0) + 1;
-  });
-}
-
-// =======================================
-// FILTERS
-// =======================================
-
-function buildFilters() {
-
-  const categories = [
-    "همه",
-    ...new Set(stories.map(s=>s.category))
-  ];
-
-  document.getElementById("filters").innerHTML =
-    categories.map(category=>`
-      <button
-        class="filter ${category===activeCategory?'active':''}"
-        onclick="setCategory('${escapeHTML(category)}')">
-        ${escapeHTML(category)}
-      </button>
-    `).join("");
-}
-
-function setCategory(category) {
-  activeCategory = category;
-  buildFilters();
-  renderStories();
-}
-
-// =======================================
-// STORY CARDS
-// =======================================
-
-function makeCard(story) {
-
-  const color = storyColor(story);
-  const glow = storyGlow(story);
-  const logo = storyLogo(story);
-
-  return `
-  <article class="card"
-    style="--color:${color};--glow:${glow}"
-    onclick="openStory('${story.id}')">
-
-    <div class="card-cover">
-
-      <div class="story-logo">${logo}</div>
-
-      ${characterSVG(story)}
-
-    </div>
-
-    <div class="card-info">
-      <h3>${escapeHTML(story.title)}</h3>
-
-      <p>${escapeHTML(story.summary || "یک ماجراجویی تازه در APACHI منتظر توست.")}</p>
-
-      <div class="meta">
-        <span class="badge">${escapeHTML(story.category)}</span>
-        <span>❤️ ${likeCounts[story.id] || 0}</span>
-      </div>
-    </div>
-
-  </article>`;
-}
-
-function renderStories() {
-
-  const query = document
-    .getElementById("searchInput").value
-    .trim()
-    .toLowerCase();
-
-  const filtered = stories.filter(story=>{
-    const matchCategory =
-      activeCategory==="همه" ||
-      story.category===activeCategory;
-
-    const matchSearch =
-      story.title.toLowerCase().includes(query) ||
-      (story.summary || "").toLowerCase().includes(query) ||
-      story.category.toLowerCase().includes(query);
-
-    return matchCategory && matchSearch;
-  });
-
-  document.getElementById("storiesGrid").innerHTML =
-    filtered.length
-    ? filtered.map(makeCard).join("")
-    : `<div class="empty">داستانی پیدا نشد.</div>`;
-
-  const popular = [...stories]
-    .sort((a,b)=>
-      (likeCounts[b.id]||0)-(likeCounts[a.id]||0)
-    )
-    .slice(0,4);
-
-  document.getElementById("popularGrid").innerHTML =
-    popular.length
-    ? popular.map(makeCard).join("")
-    : `<div class="empty">هنوز داستانی وجود ندارد.</div>`;
-}
-
-document.getElementById("searchInput")
-  .addEventListener("input",renderStories);
-
-// =======================================
-// STORY EXPERIENCE
-// =======================================
-
-function openStory(id) {
-
-  currentStory = stories.find(s=>s.id===id);
-
-  if(!currentStory) return;
-
-  currentScene = 0;
-  storyChoices = [];
-
-  const color = storyColor(currentStory);
-
-  document.getElementById("modalHead").style
-    .setProperty("--color",color);
-
-  document.getElementById("modalHead").style
-    .setProperty("--glow",storyGlow(currentStory));
-
-  document.getElementById("modalCharacter").innerHTML =
-    characterSVG(currentStory);
-
-  document.getElementById("modalTitle").textContent =
-    currentStory.title;
-
-  document.getElementById("modalCategory").textContent =
-    currentStory.category;
-
-  document.getElementById("storyModal").classList.add("show");
-
-  loadStoryLikes();
-  loadComments();
-
-  renderScene();
-}
-
-function renderScene() {
-
-  const story = currentStory;
-
-  const scenes = [
-    {
-      title:"فصل اول — شروع ماجرا",
-      text:`هوا آرام است، اما اتفاق عجیبی در راه است.
-
-${story.summary || "ماجرایی ناشناخته در انتظار توست."}
-
-شخصیت اصلی داستان به اطراف نگاه می‌کند. صدای عجیبی از دور شنیده می‌شود.
-
-او می‌گوید: «این اتفاق نمی‌تواند تصادفی باشد... باید بفهمم چه خبر است.»`,
-      choices:[
-        "به سمت صدای عجیب حرکت کن.",
-        "اول محیط اطراف را بررسی کن.",
-        "از یک دوست کمک بگیر."
-      ]
-    },
-    {
-      title:"فصل دوم — انتخاب سرنوشت‌ساز",
-      text:`شخصیت داستان به یک مکان ناشناخته می‌رسد.
-
-در مقابلش چند مسیر متفاوت وجود دارد.
-
-او کمی فکر می‌کند و می‌گوید:
-«هر تصمیمی بگیرم، ممکن است همه‌چیز تغییر کند.»`,
-      choices:[
-        "مسیر ناشناخته را انتخاب کن.",
-        "دنبال نشانه‌های پنهان بگرد.",
-        "با شخصیت مرموز صحبت کن."
-      ]
-    },
-    {
-      title:"فصل سوم — لحظه تصمیم",
-      text:`حالا راز اصلی کم‌کم آشکار می‌شود.
-
-شخصیت داستان متوجه می‌شود که تصمیم‌های قبلی او بی‌تأثیر نبوده‌اند.
-
-او می‌گوید:
-«وقتشه تصمیم نهایی رو بگیرم!»`,
-      choices:[
-        "راه شجاعانه را انتخاب کن.",
-        "با هوش و برنامه‌ریزی جلو برو.",
-        "به کمک دوستانت اعتماد کن."
-      ]
-    }
-  ];
-
-  const scene = scenes[Math.min(currentScene,2)];
-
-  document.getElementById("storyScene").textContent =
-    scene.title;
-
-  document.getElementById("storyNarrative").textContent =
-    scene.text;
-
-  const choices = document.getElementById("choices");
-
-  if(currentScene<3) {
-
-    choices.innerHTML = scene.choices.map((choice,index)=>`
-      <button class="choice"
-        onclick="chooseStory(${index})">
-        ${index+1}. ${choice}
-      </button>
-    `).join("");
-
-  } else {
-
-    const ending = [
-      "پایان شجاعانه: شخصیت داستان با تصمیم جسورانه‌اش به یک قهرمان تبدیل شد.",
-      "پایان هوشمندانه: شخصیت داستان با فکر و برنامه‌ریزی راز ماجرا را حل کرد.",
-      "پایان دوستانه: شخصیت داستان با کمک همراهانش به موفقیت رسید."
-    ];
-
-    choices.innerHTML = `
-      <h3>🏆 پایان ماجراجویی</h3>
-      <p class="story-text">
-        ${ending[storyChoices[2] || 0]}
-      </p>
-      <button class="choice" onclick="restartStory()">
-        🔄 تجربه دوباره داستان
-      </button>
-    `;
-  }
-}
-
-function chooseStory(index) {
-
-  storyChoices[currentScene] = index;
-
-  currentScene++;
-
-  renderScene();
-}
-
-function restartStory() {
-  currentScene = 0;
-  storyChoices = [];
-  renderScene();
-}
-
-// =======================================
-// LIKES
-// =======================================
-
-async function loadStoryLikes() {
-
-  if(!currentStory) return;
-
-  const {data,error} = await db
-    .from(LIKES_TABLE)
-    .select("id,visitor_id")
-    .eq("story_id",currentStory.id);
-
-  if(error) {
-    console.error(error);
-    return;
-  }
-
-  const count = data.length;
-
-  const liked = data.some(
-    item=>item.visitor_id===visitorId
-  );
-
-  document.getElementById("likeCount").textContent =
-    count + " لایک";
-
-  document.getElementById("likeButton").classList
-    .toggle("liked",liked);
-
-  document.getElementById("likeButton").textContent =
-    liked ? "❤️ لایک شده" : "🤍 لایک";
-}
-
-async function toggleLike() {
-
-  if(!currentStory) return;
-
-  const button = document.getElementById("likeButton");
-  button.disabled = true;
-
-  const {data,error} = await db
-    .from(LIKES_TABLE)
-    .select("id")
-    .eq("story_id",currentStory.id)
-    .eq("visitor_id",visitorId)
-    .maybeSingle();
-
-  if(error) {
-    alert("خطا در بررسی لایک.");
-    button.disabled = false;
-    return;
-  }
-
-  if(data) {
-
-    const result = await db
-      .from(LIKES_TABLE)
-      .delete()
-      .eq("id",data.id);
-
-    if(result.error) {
-      alert("حذف لایک انجام نشد.");
-    }
-
-  } else {
-
-    const result = await db
-      .from(LIKES_TABLE)
-      .insert({
-        story_id:currentStory.id,
-        visitor_id:visitorId
-      });
-
-    if(result.error) {
-      alert("ثبت لایک انجام نشد.");
-    }
+document.getElementById("search").addEventListener("input",render);
+
+document.body.addEventListener("click",e=>{
+ const c=e.target.closest(".card");
+ if(c)openStory(c.dataset.id);
+});
+
+// دریافت داستان‌ها
+async function load(){
+ grid.innerHTML='<div class="status">در حال اتصال به دیتابیس...</div>';
+
+ try{
+  const result=await Promise.race([
+   db.from("apachi_stories_v2").select("*").order("created_at",{ascending:false}),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("زمان اتصال تمام شد. اینترنت یا تنظیمات Supabase را بررسی کن.")),12000))
+  ]);
+
+  if(result.error)throw result.error;
+  stories=result.data||[];
+
+  if(!stories.length){
+   showError("اتصال برقرار شد اما هنوز داستانی در جدول پیدا نشد.");
+   return;
   }
 
   await loadLikes();
+  buildFilters();
+  render();
+
+ }catch(e){
+  console.error(e);
+  showError("مشکل دریافت داستان‌ها: "+(e.message||"خطای ناشناخته"));
+ }
+}
+
+async function loadLikes(){
+ const {data,error}=await db.from("apachi_likes_v2").select("story_id");
+ if(error){console.error("Likes:",error);return;}
+ likes={};
+ (data||[]).forEach(x=>likes[x.story_id]=(likes[x.story_id]||0)+1);
+}
+
+// تجربه داستان
+window.openStory=function(id){
+ current=stories.find(s=>s.id===id);
+ if(!current)return;
+ scene=0;decisions=[];
+
+ const cover=document.getElementById("modalCover");
+ cover.style.setProperty("--color",color(current));
+ cover.style.setProperty("--glow",glow(current));
+
+ document.getElementById("modalCharacter").innerHTML=character(current);
+ document.getElementById("title").textContent=current.title;
+ document.getElementById("category").textContent=current.category;
+ document.getElementById("modal").classList.add("show");
+
+ renderScene();
+ loadStoryLikes();
+ loadComments();
+};
+
+window.closeStory=function(){
+ document.getElementById("modal").classList.remove("show");
+ current=null;
+};
+
+function renderScene(){
+ const scenes=[
+  {
+   title:"فصل اول: شروع ماجرا",
+   text:`${current.summary||"یک ماجرای تازه آغاز شده است."}
+
+شخصیت اصلی اطرافش را نگاه می‌کند. ناگهان صدایی از دور شنیده می‌شود.
+
+او می‌گوید: «این اتفاق نمی‌تواند تصادفی باشد. باید بفهمم چه خبر است!»`,
+   choices:["به سمت صدا حرکت کن","محیط را بررسی کن","از یک دوست کمک بگیر"]
+  },
+  {
+   title:"فصل دوم: راز پنهان",
+   text:"شخصیت به مکانی ناشناخته می‌رسد. سه مسیر پیش روی اوست. او می‌گوید: «هر انتخابی می‌تواند همه‌چیز را تغییر بدهد.»",
+   choices:["مسیر ناشناخته را انتخاب کن","دنبال نشانه‌ها بگرد","با فرد مرموز صحبت کن"]
+  },
+  {
+   title:"فصل سوم: تصمیم نهایی",
+   text:"حالا راز ماجرا آشکارتر شده است. شخصیت باید تصمیم بگیرد که چطور ادامه دهد.",
+   choices:["شجاعانه جلو برو","با هوش و برنامه‌ریزی عمل کن","به دوستانت اعتماد کن"]
+  }
+ ];
+
+ if(scene>=3){
+  const endings=[
+   "پایان شجاعانه! قهرمان با شهامت خود مسیر تازه‌ای ساخت.",
+   "پایان هوشمندانه! قهرمان با فکر و برنامه راز ماجرا را کشف کرد.",
+   "پایان دوستانه! قهرمان با کمک همراهانش موفق شد."
+  ];
+  document.getElementById("sceneTitle").textContent="🏆 پایان ماجرا";
+  document.getElementById("narrative").textContent=endings[decisions[2]||0];
+  document.getElementById("choices").innerHTML='<button class="choice" id="restart">🔄 تجربه دوباره</button>';
+  return;
+ }
+
+ const s=scenes[scene];
+ document.getElementById("sceneTitle").textContent=s.title;
+ document.getElementById("narrative").textContent=s.text;
+ document.getElementById("choices").innerHTML=s.choices.map((x,i)=>
+ `<button class="choice" data-choice="${i}">${i+1}. ${x}</button>`
+ ).join("");
+}
+
+document.getElementById("choices").addEventListener("click",e=>{
+ if(e.target.id==="restart"){scene=0;decisions=[];renderScene();return;}
+ const b=e.target.closest("[data-choice]");
+ if(!b)return;
+ decisions[scene]=Number(b.dataset.choice);
+ scene++;
+ renderScene();
+});
+
+// لایک
+async function loadStoryLikes(){
+ if(!current)return;
+ const {data,error}=await db.from("apachi_likes_v2")
+ .select("id,visitor_id").eq("story_id",current.id);
+ if(error){console.error(error);return;}
+ const liked=(data||[]).some(x=>x.visitor_id===visitor);
+ document.getElementById("likeCount").textContent=(data||[]).length+" لایک";
+ document.getElementById("likeButton").textContent=liked?"❤️ لایک شده":"🤍 لایک";
+}
+
+window.toggleLike=async function(){
+ if(!current)return;
+ const b=document.getElementById("likeButton");
+ b.disabled=true;
+ try{
+  const {data,error}=await db.from("apachi_likes_v2")
+   .select("id").eq("story_id",current.id)
+   .eq("visitor_id",visitor).maybeSingle();
+  if(error)throw error;
+
+  if(data){
+   const r=await db.from("apachi_likes_v2").delete().eq("id",data.id);
+   if(r.error)throw r.error;
+  }else{
+   const r=await db.from("apachi_likes_v2").insert({
+    story_id:current.id,visitor_id:visitor
+   });
+   if(r.error)throw r.error;
+  }
   await loadStoryLikes();
-  renderStories();
+  await loadLikes();
+  render();
+ }catch(e){alert("خطای لایک: "+e.message);}
+ b.disabled=false;
+};
 
-  button.disabled = false;
+// نظرات
+async function loadComments(){
+ if(!current)return;
+ const list=document.getElementById("commentList");
+ list.textContent="در حال دریافت نظرات...";
+ const {data,error}=await db.from("apachi_comments_v2")
+ .select("id,comment,created_at").eq("story_id",current.id)
+ .order("created_at",{ascending:false}).limit(50);
+ if(error){
+  list.textContent="خطا در دریافت نظرات: "+error.message;
+  return;
+ }
+ list.innerHTML=data.length?data.map(x=>
+ `<div class="comment">${esc(x.comment)}</div>`
+ ).join():'<p>هنوز نظری ثبت نشده است.</p>';
 }
 
-// =======================================
-// COMMENTS
-// =======================================
+window.sendComment=async function(){
+ if(!current)return;
+ const input=document.getElementById("commentInput");
+ const text=input.value.trim();
+ if(text.length<2){alert("نظر باید حداقل دو حرف داشته باشد.");return;}
 
-async function loadComments() {
+ const b=document.getElementById("sendButton");
+ b.disabled=true;
+ const {error}=await db.from("apachi_comments_v2").insert({
+  story_id:current.id,
+  visitor_id:visitor,
+  comment:text
+ });
+ b.disabled=false;
 
-  if(!currentStory) return;
+ if(error){alert("خطای ارسال نظر: "+error.message);return;}
+ input.value="";
+ await loadComments();
+};
 
-  const {data,error} = await db
-    .from(COMMENTS_TABLE)
-    .select("id,comment,created_at")
-    .eq("story_id",currentStory.id)
-    .order("created_at",{ascending:false})
-    .limit(50);
+// آغاز
+await load();
 
-  if(error) {
-    document.getElementById("commentsList").textContent =
-      "دریافت نظرات ممکن نشد.";
-    return;
-  }
-
-  const list = document.getElementById("commentsList");
-
-  if(!data.length) {
-    list.innerHTML = '<p class="scene">هنوز نظری ثبت نشده است.</p>';
-    return;
-  }
-
-  list.innerHTML = data.map(item=>`
-    <div class="comment">
-      ${escapeHTML(item.comment)}
-    </div>
-  `).join("");
-}
-
-async function sendComment() {
-
-  if(!currentStory) return;
-
-  const input = document.getElementById("commentInput");
-  const comment = input.value.trim();
-
-  if(comment.length<2) {
-    alert("نظر باید حداقل ۲ حرف داشته باشد.");
-    return;
-  }
-
-  if(comment.length>500) {
-    alert("نظر بیش از حد طولانی است.");
-    return;
-  }
-
-  const button = document.querySelector(".comments button");
-  button.disabled = true;
-
-  const {error} = await db
-    .from(COMMENTS_TABLE)
-    .insert({
-      story_id:currentStory.id,
-      visitor_id:visitorId,
-      comment:comment
-    });
-
-  button.disabled = false;
-
-  if(error) {
-    alert("ارسال نظر انجام نشد: "+error.message);
-    return;
-  }
-
-  input.value = "";
-
-  await loadComments();
-}
-
-// =======================================
-// START
-// =======================================
-
-loadStories();
-
+})();
 </script>
 </body>
   </html>
