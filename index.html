@@ -1,547 +1,314 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>APACHI | دنیای داستان‌ها</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>علم با نیکان | ویدیوهای علمی</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff00ff;
+            --bg-dark: #0f0f13;
+            --card-bg: #1a1a20;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container { max-width: 900px; width: 100%; }
+        
+        /* هدر سایت */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        header h1 {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p { color: #aaa; }
 
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+        /* شبکه ویدیوها */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .video-card-list {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.1);
+        }
+        .video-card-list:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+            border-color: var(--neon-pink);
+        }
+        .video-card-list img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+        .video-card-list .info { padding: 15px; }
+        .video-card-list h3 { margin: 0 0 10px 0; font-size: 1.1rem; color: var(--neon-cyan); }
+        .video-card-list p { margin: 0; font-size: 0.9rem; color: #aaa; }
 
-<style>
-*{box-sizing:border-box}
-body{
- margin:0;background:#080b18;color:white;
- font-family:Vazirmatn,sans-serif;
-}
-header{
- padding:18px 5%;background:#10162b;
- border-bottom:1px solid #263451;
- display:flex;justify-content:space-between;
- align-items:center;position:sticky;top:0;z-index:5;
-}
-.logo{font-size:29px;font-weight:900;color:#00d5ff}
-.logo span{color:white}
-button,input{font-family:inherit}
-button{cursor:pointer}
-.hero{
- margin:25px auto;padding:35px 25px;
- max-width:1100px;border-radius:25px;
- background:linear-gradient(120deg,#142b58,#402064);
-}
-.hero h1{font-size:clamp(27px,6vw,48px);margin:0}
-.hero h1 span{color:#00e0ff}
-.hero p{line-height:2;color:#d4dcf4}
-.hero button{
- background:#00d5ff;border:0;border-radius:12px;
- padding:12px 22px;font-weight:bold;
-}
-.container{max-width:1100px;margin:auto;padding:15px 18px}
-.search{
- width:100%;padding:15px;border-radius:13px;
- border:1px solid #33415f;background:#131c32;
- color:white;margin:15px 0;
-}
-.filters{display:flex;gap:8px;overflow:auto;padding:10px 0}
-.filters button{
- white-space:nowrap;padding:9px 15px;
- border:1px solid #34415e;border-radius:30px;
- background:#17223d;color:white;
-}
-.filters button.active{background:#00cfff;color:#07111d}
-h2{margin-top:30px}
-.grid{
- display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
- gap:16px;margin:20px 0 40px;
-}
-.card{
- overflow:hidden;border-radius:19px;
- background:#141d34;border:1px solid #293653;
- cursor:pointer;transition:.2s;
-}
-.card:hover{transform:translateY(-5px);border-color:#00d5ff}
-.cover{
- height:175px;display:flex;align-items:center;
- justify-content:center;position:relative;
- background:radial-gradient(circle,var(--glow),transparent 70%),linear-gradient(140deg,var(--color),#101329);
-}
-.character{width:135px;height:155px;filter:drop-shadow(0 8px 12px #0008)}
-.story-logo{
- position:absolute;top:12px;right:12px;
- font-size:25px;background:#080d20c9;
- border:1px solid #ffffff40;border-radius:13px;
- width:45px;height:45px;display:grid;place-items:center;
-}
-.info{padding:14px}
-.info h3{margin:0 0 8px}
-.info p{font-size:12px;line-height:1.9;color:#aebbd7;min-height:40px}
-.meta{display:flex;justify-content:space-between;color:#b9c7e3;font-size:12px}
-.badge{background:#263453;padding:5px 10px;border-radius:20px}
-.status{
- padding:25px;text-align:center;color:#9eb1d7;
- background:#121b30;border-radius:15px;margin:15px 0;
- line-height:2;
-}
-.status.error{color:#ffb4b4;border:1px solid #a33}
-.modal{
- display:none;position:fixed;inset:0;background:#030611ed;
- z-index:20;overflow:auto;padding:15px;
-}
-.modal.show{display:block}
-.dialog{
- max-width:750px;margin:20px auto;
- background:#111a30;border:1px solid #34415e;
- border-radius:22px;overflow:hidden;
-}
-.modal-cover{
- min-height:220px;display:flex;justify-content:center;
- align-items:center;position:relative;
- background:radial-gradient(circle,var(--glow),transparent 70%),linear-gradient(140deg,var(--color),#101329);
-}
-.modal-cover .character{width:190px;height:210px}
-.close{
- position:absolute;top:12px;left:12px;
- background:#0009;color:white;border:0;
- border-radius:12px;padding:9px 15px;font-size:22px;
-}
-.modal-body{padding:22px}
-.story-text{
- line-height:2.4;background:#1a2742;
- padding:17px;border-radius:14px;color:#e0e9ff;
- margin:18px 0;
-}
-.choices{display:grid;gap:10px}
-.choice{
- padding:14px;text-align:right;color:white;
- background:#1c2c4e;border:1px solid #354b70;
- border-radius:12px;
-}
-.choice:hover{border-color:#00d5ff}
-.actions{display:flex;gap:12px;align-items:center;margin:20px 0}
-.actions button{
- background:#41223d;color:white;border:0;
- border-radius:12px;padding:12px 18px;
-}
-.comments{border-top:1px solid #34415e;padding-top:18px}
-.comments input{
- width:100%;padding:13px;border-radius:12px;
- background:#080e20;color:white;border:1px solid #34415e;
- margin:8px 0;
-}
-.comments button{
- background:#00d5ff;border:0;border-radius:10px;padding:11px 20px;
-}
-.comment{
- background:#1b2944;padding:12px;
- border-radius:12px;margin:10px 0;line-height:2;
- overflow-wrap:anywhere;
-}
-footer{text-align:center;padding:30px;color:#8290ad}
-</style>
+        /* صفحه تماشای ویدیو */
+        #watchSection { display: none; }
+        .back-btn {
+            background: transparent; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
+            padding: 8px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 20px;
+            font-family: inherit; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
+        
+        .video-player-card {
+            background: var(--card-bg); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2); border: 1px solid var(--neon-cyan);
+        }
+        video { width: 100%; display: block; }
+        .video-info { padding: 20px; }
+        .video-info h2 { margin-top: 0; color: var(--neon-pink); text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
+        .character-badge {
+            display: inline-block; background: #333; color: var(--neon-cyan);
+            padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px;
+            border: 1px solid var(--neon-cyan);
+        }
+
+        /* دکمه‌ها و کامنت‌ها */
+        .actions { display: flex; gap: 15px; margin-top: 15px; }
+        button.action-btn {
+            background: transparent; color: var(--neon-pink); border: 1px solid var(--neon-pink);
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: inherit;
+            font-size: 16px; transition: all 0.3s; box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+        }
+        button.action-btn:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); }
+        button.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .comments-section {
+            margin-top: 20px; background: var(--card-bg); padding: 20px;
+            border-radius: 15px; border: 1px solid #333;
+        }
+        .comment-input { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        input, textarea {
+            background: #2a2a30; border: 1px solid #444; color: #fff;
+            padding: 10px; border-radius: 8px; font-family: inherit;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--neon-cyan); }
+        .comment-item {
+            background: #2a2a30; padding: 15px; border-radius: 8px;
+            margin-bottom: 10px; border-right: 4px solid var(--neon-pink);
+        }
+        .comment-author { color: var(--neon-cyan); font-weight: bold; margin-bottom: 5px; }
+    </style>
 </head>
-
 <body>
 
-<header>
- <div class="logo">APA<span>CHI</span></div>
- <button onclick="document.getElementById('stories').scrollIntoView({behavior:'smooth'})">
- داستان‌ها ↓
- </button>
-</header>
+<div class="container">
+    <header>
+        <h1>علم با نیکان</h1>
+        <p>ویدیوهای کوتاه علمی با گرافیک نئونی و انیمیشن‌های پرانرژی</p>
+    </header>
 
-<section class="hero">
- <h1>به دنیای <span>APACHI</span> خوش آمدی!</h1>
- <p>داستان انتخاب کن، وارد ماجراجویی شو و سرنوشت قهرمان‌ها را تغییر بده.</p>
- <button onclick="document.getElementById('stories').scrollIntoView({behavior:'smooth'})">
- شروع ماجراجویی
- </button>
-</section>
+    <!-- بخش لیست ویدیوها -->
+    <div id="listSection">
+        <h2 style="color: var(--neon-cyan); margin-bottom: 20px;">آرشیو ویدیوها</h2>
+        <div class="video-grid" id="videoGrid">
+            <p>در حال بارگذاری ویدیوها...</p>
+        </div>
+    </div>
 
-<main class="container" id="stories">
- <h2>🔥 محبوب‌ترین داستان‌ها</h2>
- <div id="popular" class="grid">
-  <div class="status">در حال اتصال...</div>
- </div>
+    <!-- بخش پخش ویدیو و کامنت -->
+    <div id="watchSection">
+        <button class="back-btn" onclick="goBack()">← بازگشت به لیست ویدیوها</button>
+        
+        <div class="video-player-card">
+            <video id="mainVideo" controls>
+                <source src="" type="video/mp4">
+            </video>
+            <div class="video-info">
+                <span class="character-badge" id="videoCharacter">شخصیت: نیکان</span>
+                <h2 id="videoTitle">عنوان ویدیو</h2>
+                <p id="videoDesc">توضیحات ویدیو...</p>
+                <div class="actions">
+                    <button class="action-btn" id="likeBtn">❤️ لایک (<span id="likeCount">0</span>)</button>
+                </div>
+            </div>
+        </div>
 
- <h2>🌌 همه داستان‌ها</h2>
- <input id="search" class="search" placeholder="جست‌وجوی داستان...">
- <div id="filters" class="filters"></div>
- <div id="grid" class="grid">
-  <div class="status">در حال دریافت داستان‌ها...</div>
- </div>
-</main>
-
-<div class="modal" id="modal">
- <div class="dialog">
-  <div class="modal-cover" id="modalCover">
-   <button class="close" onclick="closeStory()">×</button>
-   <div id="modalCharacter"></div>
-  </div>
-  <div class="modal-body">
-   <span id="category" class="badge"></span>
-   <h2 id="title"></h2>
-   <div class="story-text">
-    <strong id="sceneTitle"></strong>
-    <p id="narrative"></p>
-   </div>
-   <div id="choices" class="choices"></div>
-
-   <div class="actions">
-    <button id="likeButton" onclick="toggleLike()">🤍 لایک</button>
-    <span id="likeCount">۰</span>
-   </div>
-
-   <div class="comments">
-    <h3>💬 نظرات</h3>
-    <input id="commentInput" maxlength="500" placeholder="نظرت را بنویس...">
-    <button id="sendButton" onclick="sendComment()">ارسال نظر</button>
-    <div id="commentList"></div>
-   </div>
-  </div>
- </div>
+        <div class="comments-section">
+            <h3>نظرات (<span id="commentCount">0</span>)</h3>
+            <div class="comment-input">
+                <input type="text" id="authorName" placeholder="نام شما...">
+                <textarea id="commentContent" rows="3" placeholder="نظر خود را بنویسید..."></textarea>
+                <button class="action-btn" id="submitComment">ارسال نظر</button>
+            </div>
+            <div id="commentsList"></div>
+        </div>
+    </div>
 </div>
 
-<footer>APACHI © 2026</footer>
-
 <script>
-(async function(){
+    // --- تنظیمات Supabase (اطلاعات شما) ---
+    const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-"use strict";
+    let currentVideoId = null;
 
-// تنظیمات اتصال
-const URL = "https://dqykeqtibspeajxdpsuk.supabase.co";
-const KEY = "sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
+    // بارگذاری لیست ویدیوها
+    async function loadVideos() {
+        const { data, error } = await supabaseClient.from('videos').select('*');
+        
+        if (error) {
+            console.error('خطا در دریافت ویدیوها:', error);
+            document.getElementById('videoGrid').innerHTML = '<p>خطا در بارگذاری ویدیوها. لطفا کدهای SQL را در دیتابیس اجرا کنید.</p>';
+            return;
+        }
 
-const grid = document.getElementById("grid");
-const popular = document.getElementById("popular");
+        const grid = document.getElementById('videoGrid');
+        grid.innerHTML = '';
 
-function showError(message){
- const html = `<div class="status error">⚠️ ${esc(message)}</div>`;
- grid.innerHTML = html;
- popular.innerHTML = html;
-}
+        if(data.length === 0) {
+             grid.innerHTML = '<p>هیچ ویدیویی در دیتابیس یافت نشد.</p>';
+             return;
+        }
 
-function esc(value){
- return String(value ?? "").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- })[c]);
-}
+        data.forEach(video => {
+            const card = document.createElement('div');
+            card.className = 'video-card-list';
+            const coverImg = 'https://via.placeholder.com/400x200/1a1a20/00ffff?text=Science+Video';
+            card.innerHTML = `
+                <img src="${coverImg}" alt="کاور">
+                <div class="info">
+                    <h3>${video.title}</h3>
+                    <p>${video.description.substring(0, 60)}...</p>
+                </div>
+            `;
+            card.onclick = () => openVideo(video);
+            grid.appendChild(card);
+        });
+    }
 
-// ساخت UUID معتبر
-function uuid(){
- let id=localStorage.getItem("apachi_visitor");
- const valid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- if(!id || !valid.test(id)){
-  id=crypto.randomUUID();
-  localStorage.setItem("apachi_visitor",id);
- }
- return id;
-}
+    // باز کردن ویدیو
+    function openVideo(video) {
+        currentVideoId = video.id;
+        
+        document.getElementById('listSection').style.display = 'none';
+        document.getElementById('watchSection').style.display = 'block';
+        window.scrollTo(0, 0);
 
-let visitor;
-try{
- visitor=uuid();
-}catch(e){
- showError("مرورگر امکان ساخت شناسه را فراهم نکرده است. صفحه را در Chrome باز کن.");
- return;
-}
+        document.getElementById('mainVideo').src = video.video_url;
+        document.getElementById('videoTitle').innerText = video.title;
+        document.getElementById('videoDesc').innerText = video.description;
+        document.getElementById('videoCharacter').innerText = `شخصیت: ${video.character_name || 'نیکان'}`;
+        
+        const btn = document.getElementById('likeBtn');
+        btn.disabled = false;
 
-// بررسی کتابخانه
-if(!window.supabase || !window.supabase.createClient){
- showError("کتابخانه اتصال بارگذاری نشد. اینترنت را بررسی و صفحه را دوباره باز کن.");
- return;
-}
+        fetchLikes();
+        fetchComments();
+    }
 
-const db=window.supabase.createClient(URL,KEY);
+    // بازگشت به لیست
+    function goBack() {
+        document.getElementById('mainVideo').pause();
+        document.getElementById('mainVideo').src = '';
+        document.getElementById('watchSection').style.display = 'none';
+        document.getElementById('listSection').style.display = 'block';
+    }
 
-let stories=[];
-let likes={};
-let category="همه";
-let current=null;
-let scene=0;
-let decisions=[];
+    // لایک‌ها
+    async function fetchLikes() {
+        const { count } = await supabaseClient
+            .from('likes')
+            .select('*', { count: 'exact', head: true })
+            .eq('video_id', currentVideoId);
+        document.getElementById('likeCount').innerText = count || 0;
+    }
 
-// لوگوهای متنوع
-const icons=["⚡","🌌","🔥","💎","🚀","🌀","🌙","🐉","🔮","🛸","👑","🗝️","🌊","🏆","🧭","🌠"];
+    document.getElementById('likeBtn').addEventListener('click', async () => {
+        if (!currentVideoId) return;
+        const btn = document.getElementById('likeBtn');
+        btn.disabled = true;
 
-function logo(s){
- let n=0;
- for(const c of s.slug)n+=c.charCodeAt(0);
- return icons[n%icons.length];
-}
+        const { error } = await supabaseClient.from('likes').insert([{ video_id: currentVideoId }]);
+        if (!error) {
+            const currentCount = parseInt(document.getElementById('likeCount').innerText);
+            document.getElementById('likeCount').innerText = currentCount + 1;
+        }
+    });
 
-// شخصیت SVG متفاوت برای هر داستان
-function character(s){
- let n=0;
- for(const c of s.slug)n+=c.charCodeAt(0);
- let hue=n%360;
- let skin=["#dba984","#efbd99","#bd815f","#e5ad85"][n%4];
- let hair=["#171522","#34211b","#17283c","#50352b"][n%4];
- let jacket=`hsl(${hue},65%,48%)`;
+    // کامنت‌ها
+    async function fetchComments() {
+        const { data, error } = await supabaseClient
+            .from('comments')
+            .select('*')
+            .eq('video_id', currentVideoId)
+            .order('created_at', { ascending: false });
 
- return `<svg class="character" viewBox="0 0 180 210" xmlns="http://www.w3.org/2000/svg">
- <ellipse cx="90" cy="195" rx="53" ry="8" fill="#000" opacity=".4"/>
- <path d="M30 207 Q35 137 65 130 L90 146 115 130 Q145 137 150 207Z" fill="${jacket}" stroke="#ffffff66" stroke-width="2"/>
- <path d="M76 117 L75 143 Q90 155 105 143 L104 117Z" fill="${skin}"/>
- <ellipse cx="90" cy="87" rx="38" ry="46" fill="${skin}"/>
- <ellipse cx="52" cy="91" rx="7" ry="11" fill="${skin}"/>
- <ellipse cx="128" cy="91" rx="7" ry="11" fill="${skin}"/>
- <path d="${n%3===0?'M51 85 Q42 28 90 31 Q140 25 130 85 L117 65 Q99 78 85 60 Q69 82 51 85Z':n%3===1?'M51 86 Q43 32 90 31 Q135 31 129 87 L119 73 Q100 80 90 66 Q73 77 51 86Z':'M52 87 Q45 28 90 29 Q139 28 130 87 Q110 58 98 51 Q80 73 52 87Z'}" fill="${hair}"/>
- <ellipse cx="76" cy="90" rx="4" ry="5" fill="#171522"/>
- <ellipse cx="104" cy="90" rx="4" ry="5" fill="#171522"/>
- <path d="M81 111 Q90 118 99 111" fill="none" stroke="#824c43" stroke-width="2.5" stroke-linecap="round"/>
- <path d="M90 145 L90 207" stroke="#ffffff70" stroke-width="2"/>
- <path d="M65 144 L78 164 L90 151 L102 164 L116 144" fill="none" stroke="#ffffff70" stroke-width="3"/>
- <circle cx="90" cy="174" r="5" fill="white"/>
- </svg>`;
-}
+        if (error) return;
 
-function color(s){return s.accent_color||"#00cfff"}
-function glow(s){return color(s)+"88"}
+        document.getElementById('commentCount').innerText = data.length;
+        const commentsList = document.getElementById('commentsList');
+        commentsList.innerHTML = '';
 
-function card(s){
- return `<article class="card" data-id="${esc(s.id)}">
- <div class="cover" style="--color:${color(s)};--glow:${glow(s)}">
- <div class="story-logo">${logo(s)}</div>
- ${character(s)}
- </div>
- <div class="info">
- <h3>${esc(s.title)}</h3>
- <p>${esc(s.summary||"یک ماجراجویی تازه در انتظار توست.")}</p>
- <div class="meta">
- <span class="badge">${esc(s.category)}</span>
- <span>❤️ ${likes[s.id]||0}</span>
- </div>
- </div></article>`;
-}
+        if (data.length === 0) {
+            commentsList.innerHTML = '<p style="color:#888;">هنوز نظری ثبت نشده است. اولین نفر باشید!</p>';
+            return;
+        }
 
-function render(){
- const q=document.getElementById("search").value.trim().toLowerCase();
- const list=stories.filter(s=>
-  (category==="همه"||s.category===category)&&
-  (s.title.toLowerCase().includes(q)||
-   (s.summary||"").toLowerCase().includes(q)||
-   s.category.toLowerCase().includes(q))
- );
- grid.innerHTML=list.length?list.map(card).join(""):'<div class="status">داستانی پیدا نشد.</div>';
+        data.forEach(comment => {
+            const date = new Date(comment.created_at).toLocaleDateString('fa-IR');
+            commentsList.innerHTML += `
+                <div class="comment-item">
+                    <div class="comment-author">${comment.author_name} <span style="font-size:12px;color:#888;">(${date})</span></div>
+                    <div>${comment.content}</div>
+                </div>
+            `;
+        });
+    }
 
- const top=[...stories].sort((a,b)=>(likes[b.id]||0)-(likes[a.id]||0)).slice(0,4);
- popular.innerHTML=top.length?top.map(card).join(""):'<div class="status">داستانی وجود ندارد.</div>';
-}
+    // ارسال کامنت
+    document.getElementById('submitComment').addEventListener('click', async () => {
+        const name = document.getElementById('authorName').value.trim();
+        const content = document.getElementById('commentContent').value.trim();
 
-function buildFilters(){
- const cats=["همه",...new Set(stories.map(s=>s.category))];
- document.getElementById("filters").innerHTML=cats.map(c=>
- `<button class="${c===category?'active':''}" data-category="${esc(c)}">${esc(c)}</button>`
- ).join("");
-}
+        if (!name || !content) { alert('لطفا نام و متن نظر را وارد کنید.'); return; }
 
-document.getElementById("filters").addEventListener("click",e=>{
- const b=e.target.closest("button[data-category]");
- if(!b)return;
- category=b.dataset.category;
- buildFilters();
- render();
-});
+        const { error } = await supabaseClient.from('comments').insert([{ 
+            video_id: currentVideoId, author_name: name, content: content 
+        }]);
 
-document.getElementById("search").addEventListener("input",render);
+        if (!error) {
+            document.getElementById('commentContent').value = '';
+            fetchComments(); 
+        } else {
+            console.error(error);
+            alert('خطا در ارسال نظر');
+        }
+    });
 
-document.body.addEventListener("click",e=>{
- const c=e.target.closest(".card");
- if(c)openStory(c.dataset.id);
-});
-
-// دریافت داستان‌ها
-async function load(){
- grid.innerHTML='<div class="status">در حال اتصال به دیتابیس...</div>';
-
- try{
-  const result=await Promise.race([
-   db.from("apachi_stories_v2").select("*").order("created_at",{ascending:false}),
-   new Promise((_,reject)=>setTimeout(()=>reject(new Error("زمان اتصال تمام شد. اینترنت یا تنظیمات Supabase را بررسی کن.")),12000))
-  ]);
-
-  if(result.error)throw result.error;
-  stories=result.data||[];
-
-  if(!stories.length){
-   showError("اتصال برقرار شد اما هنوز داستانی در جدول پیدا نشد.");
-   return;
-  }
-
-  await loadLikes();
-  buildFilters();
-  render();
-
- }catch(e){
-  console.error(e);
-  showError("مشکل دریافت داستان‌ها: "+(e.message||"خطای ناشناخته"));
- }
-}
-
-async function loadLikes(){
- const {data,error}=await db.from("apachi_likes_v2").select("story_id");
- if(error){console.error("Likes:",error);return;}
- likes={};
- (data||[]).forEach(x=>likes[x.story_id]=(likes[x.story_id]||0)+1);
-}
-
-// تجربه داستان
-window.openStory=function(id){
- current=stories.find(s=>s.id===id);
- if(!current)return;
- scene=0;decisions=[];
-
- const cover=document.getElementById("modalCover");
- cover.style.setProperty("--color",color(current));
- cover.style.setProperty("--glow",glow(current));
-
- document.getElementById("modalCharacter").innerHTML=character(current);
- document.getElementById("title").textContent=current.title;
- document.getElementById("category").textContent=current.category;
- document.getElementById("modal").classList.add("show");
-
- renderScene();
- loadStoryLikes();
- loadComments();
-};
-
-window.closeStory=function(){
- document.getElementById("modal").classList.remove("show");
- current=null;
-};
-
-function renderScene(){
- const scenes=[
-  {
-   title:"فصل اول: شروع ماجرا",
-   text:`${current.summary||"یک ماجرای تازه آغاز شده است."}
-
-شخصیت اصلی اطرافش را نگاه می‌کند. ناگهان صدایی از دور شنیده می‌شود.
-
-او می‌گوید: «این اتفاق نمی‌تواند تصادفی باشد. باید بفهمم چه خبر است!»`,
-   choices:["به سمت صدا حرکت کن","محیط را بررسی کن","از یک دوست کمک بگیر"]
-  },
-  {
-   title:"فصل دوم: راز پنهان",
-   text:"شخصیت به مکانی ناشناخته می‌رسد. سه مسیر پیش روی اوست. او می‌گوید: «هر انتخابی می‌تواند همه‌چیز را تغییر بدهد.»",
-   choices:["مسیر ناشناخته را انتخاب کن","دنبال نشانه‌ها بگرد","با فرد مرموز صحبت کن"]
-  },
-  {
-   title:"فصل سوم: تصمیم نهایی",
-   text:"حالا راز ماجرا آشکارتر شده است. شخصیت باید تصمیم بگیرد که چطور ادامه دهد.",
-   choices:["شجاعانه جلو برو","با هوش و برنامه‌ریزی عمل کن","به دوستانت اعتماد کن"]
-  }
- ];
-
- if(scene>=3){
-  const endings=[
-   "پایان شجاعانه! قهرمان با شهامت خود مسیر تازه‌ای ساخت.",
-   "پایان هوشمندانه! قهرمان با فکر و برنامه راز ماجرا را کشف کرد.",
-   "پایان دوستانه! قهرمان با کمک همراهانش موفق شد."
-  ];
-  document.getElementById("sceneTitle").textContent="🏆 پایان ماجرا";
-  document.getElementById("narrative").textContent=endings[decisions[2]||0];
-  document.getElementById("choices").innerHTML='<button class="choice" id="restart">🔄 تجربه دوباره</button>';
-  return;
- }
-
- const s=scenes[scene];
- document.getElementById("sceneTitle").textContent=s.title;
- document.getElementById("narrative").textContent=s.text;
- document.getElementById("choices").innerHTML=s.choices.map((x,i)=>
- `<button class="choice" data-choice="${i}">${i+1}. ${x}</button>`
- ).join("");
-}
-
-document.getElementById("choices").addEventListener("click",e=>{
- if(e.target.id==="restart"){scene=0;decisions=[];renderScene();return;}
- const b=e.target.closest("[data-choice]");
- if(!b)return;
- decisions[scene]=Number(b.dataset.choice);
- scene++;
- renderScene();
-});
-
-// لایک
-async function loadStoryLikes(){
- if(!current)return;
- const {data,error}=await db.from("apachi_likes_v2")
- .select("id,visitor_id").eq("story_id",current.id);
- if(error){console.error(error);return;}
- const liked=(data||[]).some(x=>x.visitor_id===visitor);
- document.getElementById("likeCount").textContent=(data||[]).length+" لایک";
- document.getElementById("likeButton").textContent=liked?"❤️ لایک شده":"🤍 لایک";
-}
-
-window.toggleLike=async function(){
- if(!current)return;
- const b=document.getElementById("likeButton");
- b.disabled=true;
- try{
-  const {data,error}=await db.from("apachi_likes_v2")
-   .select("id").eq("story_id",current.id)
-   .eq("visitor_id",visitor).maybeSingle();
-  if(error)throw error;
-
-  if(data){
-   const r=await db.from("apachi_likes_v2").delete().eq("id",data.id);
-   if(r.error)throw r.error;
-  }else{
-   const r=await db.from("apachi_likes_v2").insert({
-    story_id:current.id,visitor_id:visitor
-   });
-   if(r.error)throw r.error;
-  }
-  await loadStoryLikes();
-  await loadLikes();
-  render();
- }catch(e){alert("خطای لایک: "+e.message);}
- b.disabled=false;
-};
-
-// نظرات
-async function loadComments(){
- if(!current)return;
- const list=document.getElementById("commentList");
- list.textContent="در حال دریافت نظرات...";
- const {data,error}=await db.from("apachi_comments_v2")
- .select("id,comment,created_at").eq("story_id",current.id)
- .order("created_at",{ascending:false}).limit(50);
- if(error){
-  list.textContent="خطا در دریافت نظرات: "+error.message;
-  return;
- }
- list.innerHTML=data.length?data.map(x=>
- `<div class="comment">${esc(x.comment)}</div>`
- ).join():'<p>هنوز نظری ثبت نشده است.</p>';
-}
-
-window.sendComment=async function(){
- if(!current)return;
- const input=document.getElementById("commentInput");
- const text=input.value.trim();
- if(text.length<2){alert("نظر باید حداقل دو حرف داشته باشد.");return;}
-
- const b=document.getElementById("sendButton");
- b.disabled=true;
- const {error}=await db.from("apachi_comments_v2").insert({
-  story_id:current.id,
-  visitor_id:visitor,
-  comment:text
- });
- b.disabled=false;
-
- if(error){alert("خطای ارسال نظر: "+error.message);return;}
- input.value="";
- await loadComments();
-};
-
-// آغاز
-await load();
-
-})();
+    // اجرای اولیه
+    loadVideos();
 </script>
 </body>
-  </html>
+</html>
