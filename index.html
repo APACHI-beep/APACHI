@@ -1,424 +1,306 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>آپاچی - هفته‌های تو</title>
-  
-  <!-- فونت‌ها -->
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
-  
-  <!-- کتابخانه Three.js (برای شخصیت سه بعدی) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  
-  <!-- سوپابیس SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مبین 💃🐱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Vazirmatn',Tahoma,sans-serif;cursor:pointer}
 
-  <style>
-    :root {
-      --bg: #0b0716;
-      --panel: #16102a;
-      --panel-light: #20163b;
-      --accent: #ffd60a;
-      --pink: #ff2e7e;
-      --cyan: #19e3ff;
-      --text: #ffffff;
-      --text-dim: #a49cb5;
-      --radius: 20px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; }
-    
-    .app-container { width: 100%; max-width: 480px; padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; }
-    
-    /* هدر */
-    header { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-family: 'Lalezar', cursive; font-size: 32px; color: var(--pink); text-shadow: 0 0 10px var(--pink); }
-    .badge { background: var(--cyan); color: #000; font-size: 12px; padding: 4px 12px; border-radius: 12px; font-weight: bold; }
-    .subtitle { font-size: 14px; color: var(--text-dim); text-align: center; margin-top: 8px; line-height: 1.6; }
+/* ---------- طبیعت ---------- */
+.sky{
+  position:fixed;inset:0;
+  background:linear-gradient(180deg,#4FC3F7 0%,#81D4FA 35%,#B3E5FC 60%,#E1F5FE 78%);
+}
+.sun{
+  position:fixed;top:5%;right:8%;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,#FFF59D,#FFD54F 60%,#FFB300);
+  box-shadow:0 0 60px 18px rgba(255,213,79,.55);
+  animation:sunPulse 4s infinite alternate ease-in-out;
+}
+@keyframes sunPulse{from{transform:scale(1)}to{transform:scale(1.09)}}
 
-    /* صحنه سه بعدی */
-    .scene-box {
-      background: linear-gradient(135deg, #1c1433, #2a1b4d, #4a2020);
-      border-radius: var(--radius);
-      height: 320px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #ffffff15;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    #apachi-container { width: 100%; height: 100%; }
-    .scene-overlay {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-      padding: 6px 12px; border-radius: 20px; font-size: 12px;
-    }
+.cloud{
+  position:fixed;left:0;width:120px;height:44px;background:#fff;border-radius:50px;
+  opacity:.9;animation:drift linear infinite;
+}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:62px;height:62px;left:14px;top:-30px}
+.cloud::after{width:46px;height:46px;right:16px;top:-20px}
+.c1{top:8%;animation-duration:38s}
+.c2{top:20%;animation-duration:52s;animation-delay:-12s;transform:scale(.8)}
+.c3{top:32%;animation-duration:45s;animation-delay:-25s;transform:scale(.6)}
+@keyframes drift{from{transform:translateX(110vw)}to{transform:translateX(-40vw)}}
 
-    /* کنترل‌ها */
-    .controls-section { display: flex; flex-direction: column; gap: 12px; }
-    .control-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .control-label { font-size: 13px; color: var(--text-dim); min-width: 40px; }
-    .btn-group { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; justify-content: flex-end; }
-    
-    .btn {
-      background: var(--panel-light); color: var(--text); border: none;
-      padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer;
-      transition: all 0.2s; font-family: 'Vazirmatn';
-    }
-    .btn.active { background: var(--accent); color: #000; font-weight: bold; box-shadow: 0 0 12px #ffd60a88; }
-    .btn:active { transform: scale(0.95); }
+.hill{position:fixed;bottom:24%;border-radius:50% 50% 0 0;z-index:1}
+.h1{left:-10vw;width:75vw;height:24vh;background:#9CCC65}
+.h2{right:-15vw;width:85vw;height:20vh;background:#AED581}
 
-    /* ویجت هفته‌های زندگی */
-    .week-widget {
-      background: var(--panel);
-      border-radius: var(--radius);
-      padding: 20px;
-      border: 1px solid #ffffff10;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .week-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .week-title { color: var(--cyan); font-size: 18px; font-weight: bold; }
-    .week-age { font-family: 'Lalezar', cursive; font-size: 28px; color: var(--accent); }
-    
-    input[type=range] { width: 100%; -webkit-appearance: none; background: transparent; margin-bottom: 16px; }
-    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #ffffff20; border-radius: 4px; }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
-      background: var(--accent); box-shadow: 0 0 10px var(--accent); margin-top: -8px; cursor: pointer;
-    }
-    
-    .progress-bar { width: 100%; height: 8px; background: #ffffff10; border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--accent)); width: 30%; border-radius: 4px; transition: width 0.3s; }
-    
-    .week-stats { font-size: 14px; line-height: 1.8; color: var(--text-dim); }
-    .week-stats b { color: var(--text); }
+.ground{
+  position:fixed;bottom:0;left:0;width:100%;height:30%;z-index:2;
+  background:linear-gradient(180deg,#7CB342,#33691E);
+  border-radius:50% 50% 0 0/10% 10% 0 0;
+}
 
-    /* دکمه‌های تعاملی (لایک و اشتراک) */
-    .action-bar { display: flex; gap: 12px; margin-top: 16px; }
-    .action-btn {
-      flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px;
-      padding: 14px; border-radius: 16px; border: none; font-size: 15px; font-weight: bold;
-      cursor: pointer; transition: 0.2s; font-family: 'Vazirmatn';
-    }
-    .action-btn:active { transform: scale(0.96); }
-    .btn-share { background: var(--cyan); color: #000; }
-    .btn-like { background: var(--panel-light); color: #fff; border: 1px solid var(--pink); }
-    .btn-like.active { background: var(--pink); color: #fff; box-shadow: 0 0 15px var(--pink); }
+.tree{position:fixed;bottom:26%;z-index:1;transform-origin:bottom center;animation:sway 3.5s infinite alternate ease-in-out}
+.trunk{width:16px;height:70px;background:#6D4C41;margin:0 auto;border-radius:4px}
+.leaves{width:100px;height:100px;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);
+  background:radial-gradient(circle at 35% 30%,#81C784,#2E7D32);border-radius:50%}
+@keyframes sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
 
-    /* بخش کامنت‌ها */
-    .comments-section {
-      background: var(--panel); border-radius: var(--radius); padding: 20px;
-      border: 1px solid #ffffff10;
-    }
-    .comments-title { font-size: 16px; font-weight: bold; margin-bottom: 16px; color: var(--text); }
-    .comment-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; max-height: 250px; overflow-y: auto; }
-    .comment-item { background: var(--panel-light); padding: 12px; border-radius: 12px; font-size: 13px; }
-    .comment-name { color: var(--accent); font-weight: bold; margin-bottom: 4px; font-size: 12px; }
-    
-    .comment-form { display: flex; flex-direction: column; gap: 8px; }
-    .comment-form input, .comment-form textarea {
-      width: 100%; background: #0b0716; border: 1px solid #ffffff20; color: #fff;
-      padding: 10px; border-radius: 10px; font-family: 'Vazirmatn'; font-size: 13px; outline: none;
-    }
-    .comment-form input:focus, .comment-form textarea:focus { border-color: var(--cyan); }
-    .comment-submit {
-      background: var(--panel-light); color: var(--text); border: 1px solid var(--cyan);
-      padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;
-    }
-    .comment-submit:hover { background: var(--cyan); color: #000; }
-  </style>
+.flower{position:fixed;bottom:2%;font-size:34px;z-index:3;animation:sway 2.5s infinite alternate ease-in-out}
+.butterfly{position:fixed;font-size:30px;z-index:4;animation:fly 7s infinite ease-in-out}
+@keyframes fly{
+  0%{transform:translate(0,0) rotate(0)}
+  25%{transform:translate(80px,-70px) rotate(15deg)}
+  50%{transform:translate(160px,-20px) rotate(-10deg)}
+  75%{transform:translate(60px,-110px) rotate(20deg)}
+  100%{transform:translate(0,0) rotate(0)}
+}
+
+/* ---------- گربه ---------- */
+.cat-stage{
+  position:fixed;left:50%;bottom:11%;width:260px;height:300px;
+  transform:translateX(-50%);z-index:10;
+}
+.shadow{
+  position:absolute;bottom:-14px;left:50%;width:180px;height:28px;
+  background:rgba(0,0,0,.2);border-radius:50%;filter:blur(5px);
+  animation:shadowPulse .8s infinite alternate ease-in-out;
+}
+@keyframes shadowPulse{from{transform:translateX(-50%) scaleX(1)}to{transform:translateX(-50%) scaleX(.72)}}
+
+.cat{
+  position:relative;width:100%;height:100%;
+  transform-origin:bottom center;
+  animation:dance .8s infinite ease-in-out;
+}
+@keyframes dance{
+  0%  {transform:translateY(0) rotate(-6deg)}
+  25% {transform:translateY(-24px) rotate(0deg) scaleY(1.04)}
+  50% {transform:translateY(0) rotate(6deg)}
+  75% {transform:translateY(-24px) rotate(0deg) scaleY(1.04)}
+  100%{transform:translateY(0) rotate(-6deg)}
+}
+
+.head{
+  position:absolute;left:55px;top:15px;width:150px;height:125px;z-index:4;
+  background:radial-gradient(circle at 35% 30%,#FFB74D,#F57C00);
+  border-radius:50% 50% 46% 46%;
+}
+.ear{position:absolute;width:60px;height:60px;background:#F57C00;
+  clip-path:polygon(50% 0%,0% 100%,100% 100%);top:-6px;z-index:3}
+.ear::after{content:'';position:absolute;left:50%;top:13px;transform:translateX(-50%);
+  width:30px;height:34px;background:#FF8A80;clip-path:polygon(50% 0%,0% 100%,100% 100%)}
+.ear.left{left:60px;transform:rotate(-10deg)}
+.ear.right{right:60px;transform:rotate(10deg)}
+
+.eye{position:absolute;width:26px;height:30px;background:#2E1A0F;border-radius:50%;top:50px;
+  animation:blink 3.2s infinite}
+.eye.left{left:78px}
+.eye.right{right:78px}
+.eye::after{content:'';position:absolute;width:9px;height:9px;background:#fff;border-radius:50%;top:5px;left:5px}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+
+.cheek{position:absolute;width:32px;height:20px;background:#FF8A80;opacity:.65;border-radius:50%;top:80px}
+.cheek.left{left:52px}
+.cheek.right{right:52px}
+
+.nose{position:absolute;left:50%;transform:translateX(-50%);top:80px;width:18px;height:13px;
+  background:#FF8A80;border-radius:50% 50% 50% 50%/30% 30% 70% 70%}
+
+.mouth{position:absolute;left:50%;transform:translateX(-50%);top:96px;width:42px;height:16px;z-index:5}
+.mouth::before,.mouth::after{content:'';position:absolute;width:21px;height:16px;
+  border-bottom:3px solid #4E342E;border-radius:50%;bottom:0}
+.mouth::before{left:0}
+.mouth::after{right:0}
+
+.whisker{position:absolute;width:46px;height:3px;background:#4E342E;border-radius:3px;opacity:.65;z-index:6}
+.w1{left:10px;top:76px;transform:rotate(-9deg)}
+.w2{left:6px;top:92px}
+.w3{left:10px;top:108px;transform:rotate(9deg)}
+.w4{right:10px;top:76px;transform:rotate(9deg)}
+.w5{right:6px;top:92px}
+.w6{right:10px;top:108px;transform:rotate(-9deg)}
+
+.body{
+  position:absolute;left:47px;top:125px;width:166px;height:135px;z-index:2;
+  background:radial-gradient(circle at 40% 25%,#FFB74D,#EF6C00);
+  border-radius:48% 48% 42% 42%;
+}
+.belly{position:absolute;left:50%;transform:translateX(-50%);top:155px;width:90px;height:95px;
+  background:#FFE0B2;border-radius:50%;z-index:3;opacity:.92}
+
+.arm{position:absolute;width:44px;height:90px;top:135px;z-index:1;
+  background:linear-gradient(#FFB74D,#EF6C00);border-radius:45%;transform-origin:top center}
+.arm.left{left:4px;animation:armL .5s infinite alternate ease-in-out}
+.arm.right{right:4px;animation:armR .5s infinite alternate ease-in-out}
+@keyframes armL{from{transform:rotate(28deg)}to{transform:rotate(-28deg)}}
+@keyframes armR{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+
+.leg{position:absolute;width:50px;height:60px;bottom:0;z-index:1;
+  background:linear-gradient(#FFB74D,#EF6C00);border-radius:45% 45% 40% 40%}
+.leg.left{left:60px;animation:legL .5s infinite alternate ease-in-out}
+.leg.right{right:60px;animation:legR .5s infinite alternate ease-in-out}
+@keyframes legL{from{transform:rotate(-10deg) translateY(0)}to{transform:rotate(12deg) translateY(-8px)}}
+@keyframes legR{from{transform:rotate(10deg) translateY(-8px)}to{transform:rotate(-12deg) translateY(0)}}
+
+.tail{position:absolute;right:6px;top:158px;width:22px;height:115px;z-index:1;
+  background:linear-gradient(#EF6C00,#FFB74D);border-radius:11px;
+  transform-origin:bottom center;animation:tailWag .5s infinite alternate ease-in-out}
+@keyframes tailWag{from{transform:rotate(-32deg)}to{transform:rotate(26deg)}}
+
+/* ---------- نوشته‌ها ---------- */
+.name{
+  position:absolute;top:-105px;left:50%;z-index:20;
+  font-size:clamp(3.2rem,13vw,7rem);font-weight:900;color:#fff;line-height:1;
+  text-shadow:0 0 8px #fff,0 0 22px #ff0,0 0 42px #f0f,0 0 70px #0ff,4px 5px 0 #ff4081;
+  animation:nameBounce .6s infinite alternate ease-in-out;
+  white-space:nowrap;
+}
+@keyframes nameBounce{
+  from{transform:translateX(-50%) translateY(0) rotate(-4deg) scale(1)}
+  to{transform:translateX(-50%) translateY(-16px) rotate(4deg) scale(1.09)}
+}
+
+.silent-badge{
+  position:absolute;top:-142px;left:50%;transform:translateX(-50%);
+  background:#111;color:#fff;font-weight:900;font-size:1rem;
+  padding:6px 18px;border-radius:30px;white-space:nowrap;z-index:20;
+  box-shadow:0 0 0 3px #fff,0 6px 18px rgba(0,0,0,.35);
+  animation:badgePulse 1.2s infinite alternate ease-in-out;
+}
+@keyframes badgePulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.08)}}
+
+.caption{
+  position:fixed;bottom:2.5%;left:50%;transform:translateX(-50%);z-index:30;
+  max-width:92vw;text-align:center;
+  font-size:clamp(.95rem,3.4vw,1.5rem);font-weight:900;color:#fff;
+  background:rgba(0,0,0,.3);padding:10px 24px;border-radius:40px;
+  backdrop-filter:blur(6px);text-shadow:0 2px 8px rgba(0,0,0,.6);
+  transition:opacity .3s;
+}
+
+/* ---------- افکت کلیک ---------- */
+.pop{position:fixed;font-size:30px;pointer-events:none;z-index:99;
+  animation:popUp 1.2s ease-out forwards}
+@keyframes popUp{
+  from{transform:translate(-50%,-50%) scale(.3);opacity:1}
+  to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.5) rotate(200deg);opacity:0}
+}
+
+@media (max-width:600px){
+  .cat-stage{transform:translateX(-50%) scale(.72);transform-origin:bottom center}
+  .sun{width:80px;height:80px}
+}
+</style>
 </head>
 <body>
 
-<div class="app-container">
-  <header>
-    <div class="logo">آپاچی</div>
-    <div class="badge">علم در ۲ دقیقه</div>
-  </header>
-  <p class="subtitle">با آپاچی دنیا رو کشف کن. هر قسمت به یه حدس، به شگفتی و یه عدد که یادت می‌مونه.</p>
+<div class="sky"></div>
+<div class="sun"></div>
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
 
-  <!-- صحنه 3D -->
-  <div class="scene-box">
-    <div id="apachi-container"></div>
-    <div class="scene-overlay">بکش و بچرخونش</div>
-  </div>
+<div class="hill h1"></div>
+<div class="hill h2"></div>
 
-  <!-- کنترل شخصیت -->
-  <div class="controls-section">
-    <div class="control-row">
-      <span class="control-label">زاویه</span>
-      <div class="btn-group" id="view-controls">
-        <button class="btn" onclick="setView('front')">جلو</button>
-        <button class="btn" onclick="setView('side')">پهلو</button>
-        <button class="btn" onclick="setView('back')">پشت</button>
-        <button class="btn active" onclick="apachi.spin()">بچرخ!</button>
-      </div>
-    </div>
-    <div class="control-row">
-      <span class="control-label">حرکت</span>
-      <div class="btn-group" id="pose-controls">
-        <button class="btn" onclick="setPose('wave')">سلام</button>
-        <button class="btn" onclick="setPose('dance')">رقص</button>
-        <button class="btn" onclick="setPose('think')">فکر</button>
-        <button class="btn" onclick="setPose('jump')">پرش</button>
-        <button class="btn" onclick="setPose('sleep')">خواب</button>
-      </div>
-    </div>
-    <div class="control-row">
-      <span class="control-label">حالت</span>
-      <div class="btn-group" id="mood-controls">
-        <button class="btn active" onclick="setMood('happy')">خوشحال</button>
-        <button class="btn" onclick="setMood('wow')">تعجب</button>
-        <button class="btn" onclick="setMood('laugh')">خنده</button>
-        <button class="btn" onclick="setMood('cool')">خونسرد</button>
-        <button class="btn" onclick="setMood('sad')">ناراحت</button>
-      </div>
-    </div>
-  </div>
+<div class="tree" style="left:6%;"><div class="trunk"></div><div class="leaves"></div></div>
+<div class="tree" style="right:8%;transform:scale(.8);animation-delay:-1s"><div class="trunk"></div><div class="leaves"></div></div>
 
-  <!-- ویجت محاسبه هفته‌ها -->
-  <div class="week-widget">
-    <div class="week-header">
-      <span class="week-title">هفته‌های تو</span>
-      <span class="week-age"><span id="age-display">۲۵</span> سال</span>
-    </div>
-    
-    <input type="range" id="age-slider" min="1" max="80" value="25">
-    
-    <div class="progress-bar">
-      <div class="progress-fill" id="life-progress"></div>
-    </div>
-    
-    <div class="week-stats" id="week-text"></div>
-    
-    <!-- دکمه‌های لایک و اشتراک -->
-    <div class="action-bar">
-      <button class="action-btn btn-like" id="like-btn" onclick="toggleLike()">
-        <span id="like-icon">🤍</span> <span id="like-count">0</span>
-      </button>
-      <button class="action-btn btn-share" onclick="shareResult()">کهن نتیجه برای دوستام</button>
-    </div>
-  </div>
+<div class="ground"></div>
 
-  <!-- بخش کامنت‌ها -->
-  <div class="comments-section">
-    <div class="comments-title">نظرت چیه؟ (کامنت‌ها)</div>
-    <div class="comment-list" id="comment-list">
-      <!-- کامنت‌ها اینجا لود می‌شن -->
+<div class="flower" style="left:12%">🌻</div>
+<div class="flower" style="left:28%;animation-delay:-.7s">🌼</div>
+<div class="flower" style="right:15%">🌷</div>
+<div class="flower" style="right:30%;animation-delay:-1.2s">🌺</div>
+
+<div class="butterfly" style="left:15%;top:45%">🦋</div>
+<div class="butterfly" style="right:18%;top:38%;animation-delay:-3s">🦋</div>
+
+<!-- ===== گربه ===== -->
+<div class="cat-stage">
+  <div class="silent-badge">🔇 بدون صدا</div>
+  <div class="name">مبین</div>
+  <div class="shadow"></div>
+
+  <div class="cat">
+    <div class="tail"></div>
+    <div class="arm left"></div>
+    <div class="arm right"></div>
+    <div class="leg left"></div>
+    <div class="leg right"></div>
+
+    <div class="ear left"></div>
+    <div class="ear right"></div>
+
+    <div class="head">
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="cheek left"></div>
+      <div class="cheek right"></div>
+      <div class="nose"></div>
+      <div class="mouth"></div>
+      <div class="whisker w1"></div>
+      <div class="whisker w2"></div>
+      <div class="whisker w3"></div>
+      <div class="whisker w4"></div>
+      <div class="whisker w5"></div>
+      <div class="whisker w6"></div>
     </div>
-    <div class="comment-form">
-      <input type="text" id="comment-name" placeholder="اسمت (اختیاری)" maxlength="24">
-      <textarea id="comment-body" placeholder="چی فکر می‌کنی؟..." maxlength="300" rows="2"></textarea>
-      <button class="comment-submit" onclick="submitComment()">ارسال کامنت</button>
-    </div>
+
+    <div class="body"></div>
+    <div class="belly"></div>
   </div>
 </div>
 
-<!-- فایل شخصیت آپاچی رو اینجا لود کن -->
-<!-- <script src="apachi.js"></script> -->
+<div class="caption" id="caption">مبین داره می‌رقصه... ولی موزیک قطع شده 😂</div>
 
 <script>
-  // ==========================================
-  // 1. راه‌اندازی سوپابیس (Supabase)
-  // ==========================================
-  const SUPABASE_URL = 'https://dqykeqtibspeajxdpsuk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM';
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const SCENE_KEY = 'ep:weeks'; // شناسه این صفحه
+/* ---- جمله‌های خنده‌دار که خودکار عوض می‌شن ---- */
+const captions = [
+  "مبین داره می‌رقصه... ولی موزیک قطع شده 😂",
+  "کسی به مبین نگفته صدا نداره 🤣",
+  "رقص بی‌صدا، حال بی‌نهایت 🕺",
+  "مبین! موزیکو وصل کن دیگه! 🔇",
+  "گربه‌ها هم می‌رقصن، باور کن 🐱",
+  "این رقص تا ابد ادامه داره... 😵‍💫",
+  "مبین فکر می‌کنه موزیک پخشه 🎧",
+  "دنیا بدون موزیک هم می‌رقصه 💃",
+  "هیشکی نمی‌دونه مبین چرا می‌رقصه 🤔",
+  "مبین: موزیک؟ چه موزیکی؟ 😎"
+];
+const capEl = document.getElementById('caption');
+let idx = 0;
+setInterval(() => {
+  idx = (idx + 1) % captions.length;
+  capEl.style.opacity = 0;
+  setTimeout(() => {
+    capEl.textContent = captions[idx];
+    capEl.style.opacity = 1;
+  }, 300);
+}, 3200);
 
-  // تولید یا خواندن شناسه یکتا برای کاربر (برای لایک کردن)
-  let clientId = localStorage.getItem('apachi_client_id');
-  if (!clientId) {
-    clientId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36);
-    localStorage.setItem('apachi_client_id', clientId);
+/* ---- ترکوندن ایموجی با کلیک ---- */
+const emojis = ['🎵','🎶','✨','💫','🤣','🐾','💃','🌟','🐟','😂'];
+document.addEventListener('click', e => {
+  for (let i = 0; i < 9; i++) {
+    const s = document.createElement('span');
+    s.className = 'pop';
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    s.style.left = e.clientX + 'px';
+    s.style.top  = e.clientY + 'px';
+    s.style.setProperty('--dx', (Math.random() * 360 - 180) + 'px');
+    s.style.setProperty('--dy', (-Math.random() * 280 - 60) + 'px');
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
   }
-
-  // ==========================================
-  // 2. راه‌اندازی شخصیت سه بعدی آپاچی
-  // ==========================================
-  let apachi = null;
-  const container = document.getElementById('apachi-container');
-  
-  if (window.Apachi) {
-    apachi = window.Apachi.create(container);
-  } else {
-    console.warn("کد Apachi.js لود نشده است.");
-  }
-
-  function setView(v) { if(apachi) apachi.view(v); updateActiveBtn('view-controls', event.target); }
-  function setPose(p) { if(apachi) apachi.pose(p); updateActiveBtn('pose-controls', event.target); }
-  function setMood(m) { if(apachi) apachi.mood(m); updateActiveBtn('mood-controls', event.target); }
-  function updateActiveBtn(groupId, btn) {
-    document.querySelectorAll(`#${groupId} .btn`).forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-  }
-
-  // ==========================================
-  // 3. منطق هفته‌های زندگی (UI)
-  // ==========================================
-  const slider = document.getElementById('age-slider');
-  const ageDisplay = document.getElementById('age-display');
-  const lifeProgress = document.getElementById('life-progress');
-  const weekText = document.getElementById('week-text');
-  
-  function faNum(num) { return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
-
-  function updateAge() {
-    const age = parseInt(slider.value);
-    const totalWeeks = 80 * 52;
-    const livedWeeks = age * 52;
-    const leftWeeks = totalWeeks - livedWeeks;
-    const percent = (livedWeeks / totalWeeks) * 100;
-
-    ageDisplay.innerText = faNum(age);
-    lifeProgress.style.width = percent + '%';
-    
-    weekText.innerHTML = `
-      حدود <b>${faNum(livedWeeks)}</b> هفته رو زندگی کردی و اگه <b>۸۰ سال</b> عمر کنی،<br>
-      حدود <b>${faNum(leftWeeks)}</b> هفته مونده.
-    `;
-  }
-  slider.addEventListener('input', updateAge);
-  updateAge();
-
-  // ==========================================
-  // 4. ارتباط با دیتابیس (لایک، کامنت، اشتراک)
-  // ==========================================
-
-  // آپدیت آمار (تعداد لایک و کامنت)
-  async function loadStats() {
-    try {
-      // آمار کلی از ویو
-      const { data: stats } = await supabaseClient
-        .from('scene_stats')
-        .select('*')
-        .eq('scene_key', SCENE_KEY)
-        .single();
-
-      if (stats) {
-        document.getElementById('like-count').innerText = faNum(stats.likes);
-      }
-
-      // بررسی اینکه آیا کاربر فعلی لایک کرده است یا خیر
-      const { data: myLike } = await supabaseClient
-        .from('likes')
-        .select('*')
-        .eq('scene_key', SCENE_KEY)
-        .eq('client_id', clientId)
-        .single();
-
-      if (myLike) {
-        document.getElementById('like-btn').classList.add('active');
-        document.getElementById('like-icon').innerText = '❤️';
-      }
-    } catch (err) {
-      console.error('خطا در دریافت آمار:', err);
-    }
-  }
-
-  // لایک / آنلایک
-  async function toggleLike() {
-    const btn = document.getElementById('like-btn');
-    const isLiked = btn.classList.contains('active');
-
-    if (isLiked) {
-      // حذف لایک
-      const { error } = await supabaseClient.from('likes').delete().match({ scene_key: SCENE_KEY, client_id: clientId });
-      if (!error) {
-        btn.classList.remove('active');
-        document.getElementById('like-icon').innerText = '🤍';
-        loadStats(); // آپدیت تعداد
-      }
-    } else {
-      // ثبت لایک
-      const { error } = await supabaseClient.from('likes').insert({ scene_key: SCENE_KEY, client_id: clientId });
-      if (!error) {
-        btn.classList.add('active');
-        document.getElementById('like-icon').innerText = '❤️';
-        loadStats();
-      }
-    }
-  }
-
-  // دریافت کامنت‌ها
-  async function loadComments() {
-    const { data, error } = await supabaseClient
-      .from('comments')
-      .select('*')
-      .eq('scene_key', SCENE_KEY)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (data && !error) {
-      const list = document.getElementById('comment-list');
-      list.innerHTML = '';
-      data.forEach(c => {
-        const item = document.createElement('div');
-        item.className = 'comment-item';
-        item.innerHTML = `
-          <div class="comment-name">${c.name}</div>
-          <div>${c.body}</div>
-        `;
-        list.appendChild(item);
-      });
-    }
-  }
-
-  // ارسال کامنت جدید
-  async function submitComment() {
-    const nameInput = document.getElementById('comment-name');
-    const bodyInput = document.getElementById('comment-body');
-    const name = nameInput.value.trim() || 'ناشناس';
-    const body = bodyInput.value.trim();
-
-    if (!body) return alert('متن کامنت نمی‌تواند خالی باشد.');
-
-    const btn = document.querySelector('.comment-submit');
-    btn.innerText = 'در حال ارسال...';
-    btn.disabled = true;
-
-    const { error } = await supabaseClient
-      .from('comments')
-      .insert({ scene_key: SCENE_KEY, name: name, body: body });
-
-    if (error) {
-      alert('خطا در ارسال کامنت!');
-      console.error(error);
-    } else {
-      bodyInput.value = '';
-      await loadComments();
-    }
-
-    btn.innerText = 'ارسال کامنت';
-    btn.disabled = false;
-  }
-
-  // اشتراک‌گذاری
-  async function shareResult() {
-    const age = parseInt(slider.value);
-    const text = `من ${faNum(age)} سالمه و تازه فهمیدم چقدر هفته برای زندگی کردن دارم! تو هم حساب کن.`;
-    
-    // ثبت آمار اشتراک‌گذاری در دیتابیس
-    await supabaseClient.from('shares').insert({ scene_key: SCENE_KEY });
-
-    if (navigator.share) {
-      navigator.share({
-        title: 'آپاچی - هفته‌های تو',
-        text: text,
-        url: window.location.href,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(text + ' ' + window.location.href);
-      alert('لینک کپی شد! می‌تونی برای دوستات بفرستی.');
-    }
-  }
-
-  // اجرای اولیه
-  loadStats();
-  loadComments();
-
+});
 </script>
-
 </body>
-                                                            </html>
+</html>
