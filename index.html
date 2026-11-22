@@ -2,783 +2,796 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>آپاچی | ماجراجویی علمی</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APACHI | آکادمی علمی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{
---bg:#101a14;--panel:#1b2b20;--panel2:#263b2b;
---green:#a5ce91;--gold:#e0bd7b;--cream:#f3ead7;
---muted:#b4c2b0;--brown:#765b3d;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-margin:0;background:
-radial-gradient(ellipse at 15% 0%,#668b442b,transparent 40%),
-radial-gradient(ellipse at 90% 20%,#c39a4820,transparent 35%),
-var(--bg);
-color:var(--cream);font-family:Vazirmatn,sans-serif;
-}
-button,input{font-family:inherit}
-button{cursor:pointer}
-.container{max-width:1450px;margin:auto;padding:22px}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 22px;border-bottom:1px solid #ffffff18}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:52px;height:52px;border-radius:17px;background:linear-gradient(140deg,#d3e8a7,#628b57);display:grid;place-items:center;color:#17251b;font-size:29px;font-weight:900;box-shadow:0 0 35px #a5ce9140}
-.brand h2{margin:0;font-size:24px}
-.brand small{color:var(--muted);font-size:12px}
-.header-tag{border:1px solid #ffffff25;padding:9px 16px;border-radius:30px;color:var(--gold);font-size:12px}
-.hero{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px;padding:45px 12px}
-.hero h1{font-size:clamp(34px,5vw,65px);line-height:1.4;margin:0}
-.hero h1 span{color:var(--green)}
-.hero p{line-height:2.2;color:var(--muted);max-width:650px}
-.badge{display:inline-block;padding:8px 15px;background:#d9b87918;color:var(--gold);border:1px solid #d9b87940;border-radius:30px;font-size:12px;margin-bottom:15px}
+  :root{
+    --bg:#0A1128;
+    --surface:#131E3A;
+    --surface-2:#1B2C6B;
+    --primary:#3D5AFE;
+    --gold:#FFC94A;
+    --text:#EAF0FF;
+    --muted:rgba(234,240,255,.55);
+    --muted-2:rgba(234,240,255,.28);
+    --border:rgba(255,255,255,.12);
+    --ease:cubic-bezier(.22,1,.36,1);
+    --shadow-3d:
+      0 1px 0 rgba(255,255,255,.08) inset,
+      0 4px 12px rgba(0,0,0,.35),
+      0 24px 48px -12px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Vazirmatn',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+    line-height:1.8;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
 
-/* شخصیت ثابت آپاچی */
-.mascot{width:120px;height:175px;position:relative;flex:none;animation:float 3s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-7px)}}
-.m-head{
-position:absolute;top:5px;left:12px;width:96px;height:98px;
-border-radius:46% 46% 44% 44%;
-background:linear-gradient(145deg,#f4d1a2,#dba978 60%,#a96e50);
-box-shadow:inset -9px -8px 15px #754b3555,inset 7px 8px 15px #fff7;
-z-index:3;
-}
-.m-hair{position:absolute;top:0;left:13px;width:94px;height:34px;background:#473426;border-radius:50% 50% 22% 22%;z-index:4}
-.m-hair:after{content:"";position:absolute;top:18px;left:-3px;width:25px;height:22px;background:#473426;border-radius:50%}
-.m-eye{position:absolute;top:47px;width:9px;height:13px;background:#30251e;border-radius:50%;z-index:5}
-.m-eye.left{left:36px}.m-eye.right{right:36px}
-.m-eye:after{content:"";position:absolute;top:2px;left:2px;width:3px;height:3px;background:white;border-radius:50%}
-.m-nose{position:absolute;top:61px;left:57px;width:7px;height:8px;border-right:2px solid #a56c4d;transform:rotate(15deg);z-index:5}
-.m-mouth{position:absolute;top:72px;left:47px;width:23px;height:10px;border-bottom:3px solid #854d43;border-radius:50%;z-index:5}
-.m-body{position:absolute;top:96px;left:26px;width:69px;height:67px;background:linear-gradient(145deg,#6d9660,#355b3e);border-radius:19px 19px 10px 10px;z-index:2;border:2px solid #ffffff18}
-.m-body:after{content:"";position:absolute;left:29px;top:0;height:60px;width:2px;background:#ffffff30}
-.m-arm{position:absolute;top:108px;width:17px;height:51px;background:#e1b68b;border-radius:15px;z-index:1}
-.m-arm.left{left:10px;transform:rotate(15deg)}
-.m-arm.right{right:10px;transform:rotate(-15deg)}
-.m-leg{position:absolute;top:151px;width:21px;height:24px;background:#453c31;border-radius:5px;z-index:1}
-.m-leg.left{left:36px}.m-leg.right{right:36px}
-.mascot.talking{animation:talk .35s infinite alternate}
-@keyframes talk{to{transform:translateY(-4px) rotate(1deg)}}
-.mascot.pointing .m-arm.right{transform:rotate(-65deg);top:92px}
-.mascot.surprised .m-eye{height:17px;width:12px}
-.mascot.surprised .m-mouth{height:14px;width:13px;border:3px solid #854d43;border-radius:50%}
+  /* ============ BACKGROUND ============ */
+  .bg-layer{
+    position:fixed;inset:0;z-index:-1;overflow:hidden;
+    background:
+      radial-gradient(60% 50% at 15% 10%, rgba(61,90,254,.35), transparent 70%),
+      radial-gradient(50% 45% at 90% 85%, rgba(255,201,74,.14), transparent 70%),
+      linear-gradient(135deg,#0A1128 0%,#131E3A 50%,#0A1128 100%);
+  }
+  .bg-layer::before{ /* dot grid */
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(234,240,255,.5) 1px, transparent 1px);
+    background-size:28px 28px;
+    opacity:.06;
+    mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 75%);
+    -webkit-mask-image:radial-gradient(circle at 50% 40%, #000 0%, transparent 75%);
+  }
+  .bg-layer::after{ /* noise */
+    content:"";position:absolute;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.03;
+    pointer-events:none;
+  }
+  .blob{
+    position:absolute;border-radius:50%;filter:blur(120px);opacity:.35;
+    animation:float 22s ease-in-out infinite;
+  }
+  .blob-1{width:520px;height:520px;background:#3D5AFE;top:-10%;right:-10%}
+  .blob-2{width:420px;height:420px;background:#FFC94A;bottom:-10%;left:-10%;animation-delay:-11s;opacity:.2}
+  @keyframes float{
+    0%,100%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(40px,-40px) scale(1.08)}
+  }
 
-/* تغییر لباس بدون تغییر چهره */
-.mascot.scientist .m-body{background:linear-gradient(140deg,#e5e6d7,#9aab91)}
-.mascot.scientist .m-body:before{content:"";position:absolute;top:0;left:30px;width:9px;height:50px;background:#6b8d75;transform:skew(-15deg)}
-.mascot.space .m-body{background:linear-gradient(145deg,#d6d6c9,#87968d)}
-.mascot.space .m-body:before{content:"";position:absolute;top:10px;left:17px;width:34px;height:22px;border:3px solid #d3b879;border-radius:8px}
-.mascot.plant .m-body{background:linear-gradient(145deg,#6eaa61,#285c3b)}
-.mascot.plant .m-body:before{content:"";position:absolute;top:-8px;left:27px;width:14px;height:18px;background:#a4d18c;border-radius:100% 0}
-.mascot.ocean .m-body{background:linear-gradient(145deg,#5d9d9b,#285b64)}
-.mascot.sleep .m-body{background:linear-gradient(145deg,#7b78a5,#46456d)}
-.mascot.middle .m-body{background:linear-gradient(145deg,#92795c,#65503e)}
-.mascot.middle .m-hair{background:#aaa18d}
-.mascot.middle .m-hair:after{background:#aaa18d}
-.mascot.middle .m-head:after{content:"";position:absolute;top:79px;left:30px;width:36px;height:5px;border-radius:50%;background:#a6a18d}
+  /* ============ HEADER ============ */
+  header{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    background:rgba(10,17,40,.65);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    max-width:1360px;margin:0 auto;
+    padding:16px 32px;
+    display:flex;align-items:center;gap:32px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;
+    font-weight:800;font-size:22px;letter-spacing:.06em;
+    color:var(--text);text-decoration:none;
+  }
+  .brand-mark{
+    width:40px;height:40px;border-radius:12px;
+    background:linear-gradient(145deg,#1B2C6B,#3D5AFE);
+    border:1px solid rgba(255,201,74,.4);
+    display:grid;place-items:center;
+    box-shadow:0 0 20px rgba(61,90,254,.4);
+    overflow:hidden;
+  }
+  .brand-mark svg{width:100%;height:100%}
+  .brand-name span{color:var(--gold)}
 
-.hero-art{display:flex;justify-content:center;align-items:center;position:relative;height:230px}
-.hero-art:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:#9acb9140;filter:blur(45px)}
+  .header-search{
+    flex:1;max-width:520px;position:relative;
+  }
+  .header-search input{
+    width:100%;height:44px;padding:0 16px 0 48px;
+    border-radius:14px;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--border);
+    color:var(--text);font-family:inherit;font-size:15px;
+    transition:all .25s var(--ease);
+  }
+  .header-search input::placeholder{color:var(--muted-2)}
+  .header-search input:focus{
+    outline:none;
+    border-color:rgba(255,201,74,.5);
+    background:rgba(255,255,255,.09);
+    box-shadow:0 0 0 4px rgba(255,201,74,.1);
+  }
+  .header-search::after{
+    content:"🔍";position:absolute;left:16px;top:50%;
+    transform:translateY(-50%);font-size:16px;opacity:.5;
+  }
 
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 0 15px;gap:10px}
-.section-title h2{font-size:21px;margin:0}
-.section-title small{color:var(--muted);font-size:12px}
-.search{position:relative;margin:15px 0 20px}
-.search input{width:100%;height:59px;border-radius:17px;background:#203326;border:1px solid #ffffff22;color:white;padding:0 55px 0 20px;font-size:15px;outline:none;transition:.2s}
-.search input:focus{border-color:var(--green);box-shadow:0 0 0 3px #a5ce9120}
-.search span{position:absolute;right:20px;top:14px;font-size:23px;color:var(--green)}
-.films{display:flex;gap:16px;overflow-x:auto;padding:8px 2px 23px;scrollbar-width:thin;scrollbar-color:#77966b transparent}
-.card{flex:0 0 250px;background:linear-gradient(145deg,#283d2c,#18271e);border:1px solid #ffffff17;border-radius:19px;overflow:hidden;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s}
-.card:hover{transform:translateY(-5px);border-color:#a5ce9188;box-shadow:0 15px 35px #0005}
-.cover{height:145px;display:grid;place-items:center;position:relative;background:radial-gradient(circle,#65804e,#233b2a)}
-.cover:before,.cover:after{content:"";position:absolute;border:1px solid #d7e7a755;border-radius:50%;width:115px;height:115px;animation:spin 15s linear infinite}
-.cover:after{width:155px;height:155px;animation-direction:reverse}
-@keyframes spin{to{transform:rotate(360deg)}}
-.cover b{font-size:60px;z-index:2}
-.card-info{padding:14px}
-.card-info h3{margin:0 0 7px;font-size:15px}
-.card-info p{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
-.code{display:inline-block;margin-top:12px;padding:5px 9px;border-radius:8px;background:#d9b87920;color:var(--gold);font-size:11px;direction:ltr}
-.no-result{padding:30px;color:var(--muted)}
+  /* ============ HERO ============ */
+  .hero{
+    max-width:1360px;margin:0 auto;
+    padding:80px 32px 100px;
+    display:grid;grid-template-columns:1.2fr .8fr;
+    gap:60px;align-items:center;
+    min-height:70vh;
+  }
+  .hero-text h1{
+    font-size:clamp(34px,4.5vw,60px);
+    line-height:1.15;
+    font-weight:800;
+    letter-spacing:-.02em;
+    margin-bottom:24px;
+  }
+  .hero-text h1 .gold{color:var(--gold);position:relative}
+  .hero-text h1 .gold::after{
+    content:"";position:absolute;left:0;right:0;bottom:-4px;
+    height:3px;border-radius:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+  .hero-text p{
+    font-size:18px;color:var(--muted);
+    max-width:520px;margin-bottom:36px;
+  }
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    height:52px;padding:0 28px;
+    border-radius:14px;
+    font-family:inherit;font-size:15px;font-weight:700;
+    letter-spacing:.02em;
+    border:none;cursor:pointer;
+    transition:all .25s var(--ease);
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,#3D5AFE,#1B2C6B);
+    color:#fff;
+    box-shadow:0 8px 24px rgba(61,90,254,.4), 0 0 20px rgba(255,201,74,.15);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 32px rgba(61,90,254,.5), 0 0 28px rgba(255,201,74,.35);
+  }
+  .btn-primary:active{transform:scale(.97)}
+  .btn-ghost{
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover{
+    background:rgba(255,255,255,.1);
+    border-color:rgba(255,201,74,.4);
+    transform:translateY(-2px);
+  }
+  .btn-ghost:active{transform:scale(.97)}
 
-/* پلیر */
-.player{display:none;margin-top:30px;border:1px solid #ffffff24;border-radius:23px;overflow:hidden;background:#101b14;box-shadow:0 25px 80px #0007}
-.player.active{display:block}
-.player-head{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;background:#1e3023}
-.player-head h2{margin:0;font-size:16px}
-.close,.btn{border:1px solid #ffffff20;background:#2c4230;color:white;border-radius:11px;padding:9px 14px;transition:.18s}
-.close:hover,.btn:hover{background:#496548;transform:translateY(-2px)}
-.stage{height:clamp(400px,54vw,620px);position:relative;overflow:hidden;background:#14291b;isolation:isolate}
-#visual{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
-.scene-title{position:absolute;top:24px;right:25px;font-size:clamp(19px,3vw,32px);font-weight:900;text-shadow:0 3px 18px #000;max-width:70%}
-.scene-counter{position:absolute;top:31px;left:24px;font-size:12px;color:var(--gold)}
-.character{position:absolute;right:5%;bottom:80px;display:flex;align-items:flex-end;gap:10px;z-index:3}
-.character .mascot{transform:scale(1.05);transform-origin:bottom center}
-.speech{max-width:250px;padding:12px 15px;background:#1a3024ed;border:1px solid #b8d99b80;border-radius:17px 17px 17px 4px;font-size:12px;line-height:1.9;margin-bottom:60px;box-shadow:0 10px 30px #0005}
-.speech b{display:block;color:var(--green);margin-bottom:4px}
-.subtitle{position:absolute;bottom:18px;right:5%;left:5%;padding:12px 18px;border-radius:13px;background:#101b16eb;border:1px solid #ffffff2b;text-align:center;font-size:clamp(13px,2vw,17px);line-height:1.9;z-index:5;backdrop-filter:blur(8px);transition:opacity .2s}
-.fact{position:absolute;left:20px;bottom:115px;max-width:200px;background:#d9b879ed;color:#263222;padding:12px;border-radius:13px;font-size:12px;line-height:1.8;z-index:2;box-shadow:0 8px 20px #0005}
-.fact strong{display:block;font-size:11px;margin-bottom:4px}
-.controls{padding:17px 20px;background:#1a2a1f}
-.progress{height:6px;background:#ffffff20;border-radius:20px;overflow:hidden;cursor:pointer}
-.progress div{height:100%;width:0;background:linear-gradient(90deg,#a5ce91,#e0bd7b);transition:width .1s linear}
-.control-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
-.buttons{display:flex;gap:8px}
-.btn.main{background:linear-gradient(120deg,#c4df9f,#e0bd7b);color:#19271b;font-weight:900;border:0}
-.clock{direction:ltr;color:var(--muted);font-size:12px}
-.like{background:#53412d;color:#f3d9a5;border:1px solid #d9b87966;padding:9px 14px;border-radius:11px}
-.like.active{background:#85633e}
-.comments{margin-top:18px;background:#243829;border-radius:16px;padding:16px}
-.comments h3{margin:0 0 12px;font-size:16px}
-.comment-form{display:flex;gap:8px}
-.comment-form input{flex:1;min-width:0;background:#142219;border:1px solid #ffffff25;color:white;padding:12px;border-radius:10px;outline:none}
-.comment-form button{border:0;background:var(--green);color:#17251b;font-weight:900;border-radius:10px;padding:0 16px}
-.comment-list{display:grid;gap:8px;margin-top:13px}
-.comment-item{padding:10px;background:#324b35;border-radius:10px;font-size:13px}
-.comment-item small{display:block;color:var(--muted);margin-top:5px}
-footer{text-align:center;padding:35px;color:#9aab98;font-size:12px}
-@media(max-width:700px){
-.container{padding:13px}.hero{grid-template-columns:1fr;padding:30px 5px}.hero-art{display:none}
-.header-tag{font-size:10px}.character{right:0;bottom:95px;gap:0}
-.character .mascot{transform:scale(.76);transform-origin:bottom right}
-.speech{max-width:170px;font-size:11px;margin-bottom:35px}
-.stage{height:470px}.fact{max-width:135px;font-size:10px;left:8px;bottom:150px}
-}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important;transition:none!important}}
+  .hero-mascot{
+    position:relative;display:grid;place-items:center;
+    aspect-ratio:1;
+  }
+  .hero-mascot::before{
+    content:"";position:absolute;inset:15%;border-radius:50%;
+    background:radial-gradient(circle, rgba(61,90,254,.45), transparent 70%);
+    filter:blur(40px);
+    animation:pulse 5s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+  .hero-mascot svg{
+    position:relative;width:70%;height:auto;
+    filter:drop-shadow(0 30px 60px rgba(61,90,254,.5));
+    animation:bob 4s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-14px)}
+  }
+
+  /* ============ LIBRARY ============ */
+  .library{
+    max-width:1360px;margin:0 auto;
+    padding:60px 32px 120px;
+  }
+  .library-head{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:24px;margin-bottom:40px;flex-wrap:wrap;
+  }
+  .library-head h2{
+    font-size:clamp(24px,2.6vw,34px);font-weight:800;
+    letter-spacing:-.01em;
+  }
+  .library-head h2 span{color:var(--gold)}
+  .library-tools{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .shuffle-btn{
+    height:44px;padding:0 20px;
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--border);
+    border-radius:14px;
+    color:var(--text);font-family:inherit;font-size:14px;font-weight:700;
+    cursor:pointer;transition:all .25s var(--ease);
+  }
+  .shuffle-btn:hover{
+    background:rgba(255,201,74,.1);
+    border-color:rgba(255,201,74,.45);
+    color:var(--gold);
+  }
+  .shuffle-btn:active{transform:scale(.96)}
+
+  .video-block{margin-bottom:32px}
+  .block-row{display:grid;gap:24px}
+  .block-row-top{grid-template-columns:repeat(3,1fr)}
+  .block-row-bottom{grid-template-columns:repeat(2,1fr);margin-top:24px}
+
+  /* ============ VIDEO CARD ============ */
+  .video-card{
+    position:relative;
+    border-radius:20px;overflow:hidden;
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--border);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:var(--shadow-3d);
+    cursor:pointer;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s;
+    animation:cardIn .7s var(--ease) both;
+  }
+  @keyframes cardIn{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .video-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(255,201,74,.4);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.14) inset,
+      0 8px 20px rgba(0,0,0,.4),
+      0 32px 60px -16px rgba(0,0,0,.65),
+      0 0 40px rgba(255,201,74,.08);
+  }
+  .video-thumb{
+    position:relative;aspect-ratio:16/9;
+    background:linear-gradient(135deg,var(--g1),var(--g2));
+    overflow:hidden;
+    display:grid;place-items:center;
+  }
+  .video-thumb::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.4) 1px, transparent 1px);
+    background-size:22px 22px;opacity:.08;
+  }
+  .video-thumb::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 40%,rgba(10,17,40,.65) 100%);
+  }
+  .video-code{
+    position:absolute;top:14px;right:14px;z-index:2;
+    padding:5px 12px;border-radius:8px;
+    background:rgba(10,17,40,.75);
+    border:1px solid rgba(255,201,74,.4);
+    color:var(--gold);font-size:12px;font-weight:800;
+    letter-spacing:.08em;
+    backdrop-filter:blur(8px);
+  }
+  .video-duration{
+    position:absolute;bottom:12px;left:12px;z-index:2;
+    padding:4px 10px;border-radius:6px;
+    background:rgba(10,17,40,.75);
+    color:var(--text);font-size:12px;font-weight:600;
+    backdrop-filter:blur(8px);
+  }
+  .play-btn{
+    position:relative;z-index:2;
+    width:56px;height:56px;border-radius:50%;
+    background:rgba(255,255,255,.15);
+    border:1.5px solid rgba(255,255,255,.4);
+    display:grid;place-items:center;
+    font-size:20px;color:#fff;
+    backdrop-filter:blur(8px);
+    transition:all .3s var(--ease);
+  }
+  .play-btn::before{content:"▶";margin-right:-4px}
+  .video-card:hover .play-btn{
+    background:var(--gold);
+    color:#0A1128;
+    border-color:var(--gold);
+    transform:scale(1.1);
+    box-shadow:0 0 24px rgba(255,201,74,.6);
+  }
+  .video-body{padding:18px 20px 22px}
+  .video-body h3{
+    font-size:16px;font-weight:700;line-height:1.5;
+    margin-bottom:8px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .video-cat{
+    font-size:12px;color:var(--gold);font-weight:600;
+    letter-spacing:.04em;
+  }
+
+  .no-results{
+    text-align:center;padding:80px 20px;
+    color:var(--muted);
+  }
+  .no-results h3{font-size:22px;color:var(--text);margin-bottom:12px}
+
+  /* ============ MODAL ============ */
+  .modal{
+    position:fixed;inset:0;z-index:100;
+    display:grid;place-items:center;padding:24px;
+    background:rgba(5,8,20,.85);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    opacity:0;transition:opacity .3s var(--ease);
+  }
+  .modal[hidden]{display:none}
+  .modal.open{opacity:1}
+  .modal-inner{
+    max-width:880px;width:100%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 40px 100px -20px rgba(0,0,0,.8);
+    transform:scale(.95);opacity:0;
+    transition:transform .35s var(--ease),opacity .3s;
+    max-height:90vh;overflow-y:auto;
+  }
+  .modal.open .modal-inner{transform:scale(1);opacity:1}
+  .modal-player{
+    position:relative;aspect-ratio:16/9;
+    background:linear-gradient(135deg,var(--g1,#1B2C6B),var(--g2,#3D5AFE));
+    overflow:hidden;
+    display:grid;place-items:center;
+  }
+  .modal-player::before{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.35) 1px, transparent 1px);
+    background-size:26px 26px;opacity:.1;
+    animation:drift 30s linear infinite;
+  }
+  @keyframes drift{to{background-position:260px 260px}}
+  .modal-player .big-apache{width:38%;max-width:220px;opacity:.95;animation:bob 4s ease-in-out infinite}
+  .modal-close{
+    position:absolute;top:14px;left:14px;z-index:5;
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(10,17,40,.8);border:1px solid var(--border);
+    color:var(--text);font-size:18px;cursor:pointer;
+    display:grid;place-items:center;
+    transition:all .2s;
+  }
+  .modal-close:hover{background:#FF4D9D;border-color:#FF4D9D}
+
+  /* ============ KARAOKE SUBS ============ */
+  .karaoke{
+    position:absolute;left:0;right:0;bottom:20px;z-index:4;
+    padding:0 32px;text-align:center;
+    font-size:clamp(18px,2.4vw,26px);
+    font-weight:700;line-height:1.9;
+    direction:rtl;
+    white-space:pre-wrap;
+    pointer-events:none;
+  }
+  .karaoke::before{
+    content:"";position:absolute;inset:-16px 0 0;
+    background:linear-gradient(0deg,rgba(10,17,40,.7),transparent);
+    z-index:-1;
+  }
+  .word{
+    display:inline-block;
+    color:rgba(234,240,255,.35);
+    transition:color .15s linear, transform .15s var(--ease);
+    will-change:color,transform;
+  }
+  .word.past{color:#EAF0FF}
+  .word.now{
+    color:var(--gold);
+    font-weight:800;
+    transform:scale(1.08);
+    text-shadow:0 0 16px rgba(255,201,74,.7), 0 0 4px rgba(255,201,74,.9);
+  }
+
+  .modal-body{padding:28px 32px 32px}
+  .modal-body h2{font-size:22px;font-weight:800;margin-bottom:12px;line-height:1.4}
+  .modal-meta{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;
+  }
+  .chip{
+    padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;
+    background:rgba(255,201,74,.12);
+    color:var(--gold);
+    border:1px solid rgba(255,201,74,.3);
+  }
+  .chip.gray{
+    background:rgba(255,255,255,.06);
+    color:var(--muted);
+    border-color:var(--border);
+  }
+  .modal-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+
+  /* ============ FOOTER ============ */
+  footer{
+    max-width:1360px;margin:0 auto;
+    padding:40px 32px 60px;
+    border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;
+    gap:24px;flex-wrap:wrap;
+    color:var(--muted);font-size:14px;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1000px){
+    .hero{grid-template-columns:1fr;gap:40px;padding:60px 24px 80px;text-align:center}
+    .hero-text p{margin-inline:auto}
+    .hero-cta{justify-content:center}
+    .hero-mascot{max-width:320px;margin-inline:auto}
+    .block-row-top{grid-template-columns:repeat(2,1fr)}
+    .block-row-bottom{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:640px){
+    .header-inner{padding:12px 16px;gap:16px}
+    .brand-name{font-size:16px}
+    .brand-mark{width:34px;height:34px}
+    .library,.hero{padding-inline:20px}
+    .block-row-top,.block-row-bottom{grid-template-columns:1fr}
+    .block-row-bottom{margin-top:24px}
+    .modal-body{padding:20px}
+    .karaoke{padding:0 16px;bottom:12px}
+    footer{flex-direction:column;text-align:center}
+  }
 </style>
 </head>
-
 <body>
-<div class="container">
+
+<div class="bg-layer">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+</div>
 
 <header>
-<div class="brand">
-<div class="logo">✦</div>
-<div><h2>آپاچی</h2><small>ماجراجویی در دنیای علم</small></div>
-</div>
-<div class="header-tag">علم با چاشنی سرگرمی ✦</div>
+  <div class="header-inner">
+    <a href="#" class="brand">
+      <div class="brand-mark">
+        <!-- minimal apache mark -->
+        <svg viewBox="0 0 60 60">
+          <line x1="20" y1="14" x2="16" y2="6" stroke="#FFC94A" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="16" cy="6" r="3" fill="#FFC94A"/>
+          <line x1="40" y1="14" x2="44" y2="6" stroke="#FFC94A" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="44" cy="6" r="3" fill="#FFC94A"/>
+          <circle cx="30" cy="26" r="14" fill="#3D5AFE"/>
+          <ellipse cx="24" cy="25" rx="3" ry="4" fill="#FFC94A"/>
+          <ellipse cx="36" cy="25" rx="3" ry="4" fill="#FFC94A"/>
+          <ellipse cx="30" cy="46" rx="14" ry="11" fill="#3D5AFE"/>
+        </svg>
+      </div>
+      <div class="brand-name">APACH<span>I</span></div>
+    </a>
+    <div class="header-search">
+      <input id="search" type="text" placeholder="جستجو با کد (مثل AP-003) یا عنوان...">
+    </div>
+  </div>
 </header>
 
-<section class="hero">
-<div>
-<div class="badge">به دنیای آپاچی خوش آمدی</div>
-<h1>علم هیچ‌وقت <span>این‌قدر هیجان‌انگیز</span> نبوده!</h1>
-<p>هر فیلم یک ماجراجویی تازه است؛ با شخصیت آپاچی، فکت‌های شگفت‌انگیز، نمودارهای متحرک و سؤال‌هایی که ذهنت را به چالش می‌کشند.</p>
-</div>
-<div class="hero-art">
-<div class="mascot">
-<div class="m-head"></div><div class="m-hair"></div>
-<div class="m-eye left"></div><div class="m-eye right"></div>
-<div class="m-nose"></div><div class="m-mouth"></div>
-<div class="m-arm left"></div><div class="m-arm right"></div>
-<div class="m-body"></div><div class="m-leg left"></div><div class="m-leg right"></div>
-</div>
-</div>
-</section>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>علم را با <span class="gold">آپاچی</span><br>تماشا کن</h1>
+      <p>مجموعه‌ای از فیلم‌های علمی کوتاه، پرانرژی و سرگرم‌کننده — با زیرنویس کارائوکه‌ای و روایت آپاچی.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" onclick="document.getElementById('library').scrollIntoView()">شروع تماشا →</button>
+        <button class="btn btn-ghost" id="heroShuffle">بُر زدن فیلم‌ها</button>
+      </div>
+    </div>
+    <div class="hero-mascot" id="heroMascot"></div>
+  </section>
 
-<div class="section-title"><h2>جست‌وجوی فیلم</h2><small>نام فیلم یا کد اختصاصی را بنویس</small></div>
-<div class="search"><span>⌕</span><input id="search" placeholder="مثلاً مغز، خورشید یا AP-003"></div>
+  <!-- LIBRARY -->
+  <section class="library" id="library">
+    <div class="library-head">
+      <h2>کتابخانه <span>فیلم‌ها</span></h2>
+      <div class="library-tools">
+        <button class="shuffle-btn" id="shuffleBtn">🔀 بُر زدن</button>
+      </div>
+    </div>
+    <div id="grid"></div>
+    <div class="no-results" id="noResults" hidden>
+      <h3>چیزی پیدا نشد</h3>
+      <p>کد یا عنوان دیگری را امتحان کنید — مثلاً AP-003</p>
+    </div>
+  </section>
+</main>
 
-<div class="section-title"><h2>همه فیلم‌ها</h2><small id="count"></small></div>
-<div class="films" id="films"></div>
+<footer>
+  <div>© APACHI — آکادمی علمی</div>
+  <div>ساخته‌شده با ❤️ و کمی علم</div>
+</footer>
 
-<section class="player" id="player">
-<div class="player-head">
-<h2 id="filmTitle"></h2>
-<button class="close" onclick="closeFilm()">✕ بستن</button>
-</div>
-
-<div class="stage">
-<canvas id="visual"></canvas>
-<div class="scene-title" id="sceneTitle"></div>
-<div class="scene-counter" id="sceneCounter"></div>
-
-<div class="fact" id="fact"><strong>فکت جالب ✦</strong><span id="factText"></span></div>
-
-<div class="character">
-<div class="mascot" id="apache">
-<div class="m-head"></div><div class="m-hair"></div>
-<div class="m-eye left"></div><div class="m-eye right"></div>
-<div class="m-nose"></div><div class="m-mouth"></div>
-<div class="m-arm left"></div><div class="m-arm right"></div>
-<div class="m-body"></div><div class="m-leg left"></div><div class="m-leg right"></div>
-</div>
-<div class="speech"><b>آپاچی می‌گه:</b><span id="speechText"></span></div>
-</div>
-
-<div class="subtitle" id="subtitle"></div>
-</div>
-
-<div class="controls">
-<div class="progress" id="progress"><div id="bar"></div></div>
-<div class="control-row">
-<div class="buttons">
-<button class="btn" onclick="previousScene()">قبلی</button>
-<button class="btn main" id="play" onclick="togglePlay()">▶ شروع ماجراجویی</button>
-<button class="btn" onclick="nextScene()">بعدی</button>
-</div>
-<div class="clock" id="clock">00:00 / 05:00</div>
-</div>
-<div style="margin-top:16px">
-<button class="like" id="like" onclick="toggleLike()">♡ لایک <b id="likeCount">0</b></button>
-<span id="status" style="font-size:11px;color:var(--muted);margin-right:10px"></span>
-</div>
-<div class="comments">
-<h3>نظرت درباره این فیلم چیه؟</h3>
-<form class="comment-form" id="commentForm">
-<input id="commentInput" maxlength="500" placeholder="نظرت رو بنویس..." required>
-<button>ارسال</button>
-</form>
-<div class="comment-list" id="commentList"></div>
-</div>
-</div>
-</section>
-
-<footer>آپاچی | کنجکاوی، شروع همه کشف‌هاست ✦</footer>
+<!-- MODAL -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-inner" id="modalInner">
+    <div class="modal-player" id="modalPlayer">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="big-apache" id="modalApache"></div>
+      <div class="karaoke" id="karaoke"></div>
+    </div>
+    <div class="modal-body">
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta">
+        <span class="chip" id="modalCode"></span>
+        <span class="chip gray" id="modalCat"></span>
+        <span class="chip gray" id="modalDur"></span>
+      </div>
+      <p style="color:var(--muted);font-size:15px" id="modalDesc"></p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="replayBtn">🔁 پخش دوباره زیرنویس</button>
+        <button class="btn btn-ghost" id="anotherBtn">🎲 فیلم بعدی</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-// اتصال به Supabase
-const SUPABASE_URL="https://dqykeqtibspeajxdpsuk.supabase.co";
-const SUPABASE_KEY="sb_publishable_4eLhQiDjFiWpTZn-P5w0dw_Q4xJgLLM";
-const db=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+/* =============== APACHE SVG =============== */
+const APACHE_SVG = `
+<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3D5AFE" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#3D5AFE" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4A68FF"/>
+      <stop offset="100%" stop-color="#2A42C9"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="110" cy="140" rx="110" ry="120" fill="url(#glowGrad)"/>
+  <!-- antennae -->
+  <line x1="76" y1="40" x2="62" y2="14" stroke="#FFC94A" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="62" cy="14" r="7" fill="#FFC94A"/>
+  <line x1="144" y1="40" x2="158" y2="14" stroke="#FFC94A" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="158" cy="14" r="7" fill="#FFC94A"/>
+  <!-- head -->
+  <circle cx="110" cy="80" r="58" fill="url(#bodyGrad)"/>
+  <!-- face -->
+  <ellipse cx="110" cy="88" rx="42" ry="36" fill="#EAF0FF"/>
+  <!-- eyes -->
+  <ellipse cx="90" cy="80" rx="11" ry="14" fill="#FFC94A"/>
+  <ellipse cx="130" cy="80" rx="11" ry="14" fill="#FFC94A"/>
+  <circle cx="93" cy="76" r="4" fill="#fff"/>
+  <circle cx="133" cy="76" r="4" fill="#fff"/>
+  <!-- smile -->
+  <path d="M 92 100 Q 110 114 128 100" stroke="#0A1128" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- body -->
+  <ellipse cx="110" cy="190" rx="58" ry="52" fill="url(#bodyGrad)"/>
+  <!-- arms -->
+  <ellipse cx="46" cy="190" rx="15" ry="24" fill="#2A42C9"/>
+  <ellipse cx="174" cy="190" rx="15" ry="24" fill="#2A42C9"/>
+  <!-- chest plate -->
+  <ellipse cx="110" cy="180" rx="36" ry="22" fill="#1B2C6B" stroke="#FFC94A" stroke-width="1.8"/>
+  <text x="110" y="186" text-anchor="middle" fill="#FFC94A" font-family="Arial,sans-serif" font-size="13" font-weight="900" letter-spacing="2">APACHI</text>
+</svg>`;
 
-let visitor=localStorage.getItem("apache_visitor");
-if(!visitor){visitor=crypto.randomUUID();localStorage.setItem("apache_visitor",visitor)}
+document.getElementById('heroMascot').innerHTML = APACHE_SVG;
+document.getElementById('modalApache').innerHTML = APACHE_SVG;
 
-// هر صحنه ۶ ثانیه است؛ فیلم با ۵۰ صحنه دقیقاً ۵ دقیقه می‌شود.
-const SCENE_TIME=6;
-const TOTAL_TIME=300;
-
-// محتوای علمی فیلم‌ها
-const films=[
-{
-id:"time",code:"AP-001",title:"راز زمان و عمر انسان",icon:"⌛",desc:"چرا زمان گاهی سریع‌تر می‌گذرد؟",theme:"time",
-facts:[
-["فکت جالب","یک سال زمینی تقریباً ۳۶۵ روز و ۶ ساعت است."],
-["دانشمند معروف","آلبرت اینشتین نشان داد زمان برای ناظرهای مختلف می‌تواند متفاوت اندازه‌گیری شود."],
-["باورکردنی نیست!","نور خورشید حدود ۸ دقیقه و ۲۰ ثانیه طول می‌کشد تا به زمین برسد."],
-["یک مقایسه","۸۰ سال زندگی با فرض ۵۲ هفته در هر سال، حدود ۴۱۶۰ هفته است."],
-["ساعت بدن","بدن ما چرخه‌های زیستی دارد که به تنظیم خواب و بیداری کمک می‌کنند."],
-["آزمایش ذهنی","یک دقیقه وقتی منتظر هستی ممکن است طولانی‌تر از یک دقیقه سرگرمی احساس شود."]
-],
-scenes:[
-["یک سؤال عجیب","اگر ۸۰ سال عمر کنیم، چند هفته از زندگی‌مان می‌شود؟","time"],
-["حدس بزن!","فکر می‌کنی جواب ۸۰۰ هفته است یا ۴۰۰۰ هفته؟","quiz"],
-["حساب کنیم","۸۰ را در ۵۲ ضرب می‌کنیم؛ جواب حدود ۴۱۶۰ هفته است.","chart"],
-["اما یک نکته","این عدد یک تخمین ریاضی است؛ عمر واقعی همه یکسان نیست.","time"],
-["زمان در مغز","مغز ما زمان را فقط با ساعت اندازه نمی‌گیرد؛ توجه هم مهم است.","brain"],
-["یک تجربه","وقتی سرگرم بازی هستی، شاید متوجه گذشت زمان نشوی.","quiz"],
-["آزمایش ذهنی","بدون نگاه کردن به ساعت، ۳۰ ثانیه را حدس بزن.","clock"],
-["زمان و حافظه","تجربه‌های تازه ممکن است خاطرات متمایزتری ایجاد کنند.","brain"],
-["اینشتین چه گفت؟","نظریه نسبیت نشان می‌دهد اندازه‌گیری زمان به حرکت و گرانش وابسته است.","scientist"],
-["یک واقعیت عجیب","زمان در نزدیکی میدان گرانشی قوی‌تر، نسبت به جای دورتر کمی متفاوت می‌گذرد.","chart"],
-["ساعت اتمی","ساعت‌های اتمی از ارتعاش‌های بسیار منظم اتم‌ها برای اندازه‌گیری زمان استفاده می‌کنند.","clock"],
-["زمان در فضا","ماهواره‌های GPS باید اثرهای نسبیتی را در محاسباتشان در نظر بگیرند.","space"],
-["سن زمین","سن زمین حدود ۴٫۵۴ میلیارد سال برآورد می‌شود.","earth"],
-["یک مقایسه بزرگ","اگر تاریخ زمین را یک سال فرض کنیم، تاریخ انسان بسیار کوتاه خواهد بود.","chart"],
-["ساعت زیستی","نور روز به تنظیم ساعت زیستی بدن کمک می‌کند.","sun"],
-["خواب و زمان","خواب کافی در عملکرد مغز و حافظه نقش دارد.","sleep"],
-["زمان‌سنجی","ساعت‌های آفتابی از سایه برای تخمین زمان استفاده می‌کردند.","sun"],
-["دانشمند معروف","گالیله در مطالعه حرکت اجسام و زمان‌سنجی نقش مهمی داشت.","scientist"],
-["فکر کن!","چرا وقتی منتظری، زمان گاهی کندتر احساس می‌شود؟","quiz"],
-["توجه مهم است","توجه و شرایط ذهنی می‌توانند تجربه ما از زمان را تغییر دهند.","brain"],
-["سفر در زمان؟","سفر به آینده در چارچوب نسبیت از نظر فیزیکی معنا دارد؛ اما ماشین زمان سینمایی نداریم.","space"],
-["سرعت نور","نور در هر ثانیه تقریباً ۳۰۰ هزار کیلومتر حرکت می‌کند.","sun"],
-["یک رکورد","یک شبانه‌روز روی زمین تقریباً ۲۴ ساعت است.","earth"],
-["تقویم","سال کبیسه برای هماهنگ نگه داشتن تقویم با گردش زمین به کار می‌رود.","chart"],
-["آپاچی می‌پرسد","اگر می‌توانستی یک روز را دوباره تجربه کنی، کدام روز بود؟","quiz"]
-]
-},
-{
-id:"brain",code:"AP-002",title:"مغز انسان؛ شگفتی بی‌پایان",icon:"🧠",desc:"نورون‌ها و رازهای حافظه",theme:"brain",
-facts:[
-["فکت شگفت‌انگیز","مغز انسان تقریباً ۸۶ میلیارد نورون دارد."],
-["دانشمند معروف","سانتیاگو رامون ای کاخال از پیشگامان شناخت ساختار نورون‌ها بود."],
-["یک واقعیت","مغز در خواب هم فعالیت دارد."],
-["آزمایش جالب","بستن چشم‌ها می‌تواند کمک کند توجهت را روی صداها متمرکز کنی."],
-["فکت علمی","مغز از انرژی زیادی استفاده می‌کند؛ با اینکه بخش کوچکی از وزن بدن است."]
-],
-scenes:[
-["مغز؛ فرمانده بدن","مغز اطلاعات را پردازش می‌کند و فعالیت‌های زیادی را هماهنگ می‌کند.","brain"],
-["حدس بزن!","فکر می‌کنی چند نورون در مغز وجود دارد؟","quiz"],
-["عدد شگفت‌انگیز","برآورد رایج حدود ۸۶ میلیارد نورون است.","chart"],
-["نورون چیست؟","نورون سلولی است که اطلاعات را دریافت و منتقل می‌کند.","neuron"],
-["شبکه عظیم","نورون‌ها با ارتباط‌های پیچیده به هم متصل‌اند.","neuron"],
-["پیام الکتریکی","بسیاری از نورون‌ها پیام‌های الکتریکی تولید می‌کنند.","electric"],
-["سیناپس","محل ارتباط نورون‌ها را سیناپس می‌نامند.","neuron"],
-["دانشمند مهم","رامون ای کاخال با نقاشی‌های دقیق خود ساختار نورون‌ها را بررسی کرد.","scientist"],
-["حافظه","یادگیری با تغییر در ارتباط‌های عصبی همراه است.","brain"],
-["آزمایش کوچک","یک فهرست کوتاه از کلمات را بخوان و بعد بدون نگاه کردن تکرار کن.","quiz"],
-["چرا فراموش می‌کنیم؟","فراموشی می‌تواند به توجه، تداخل اطلاعات و شیوه ذخیره‌سازی مربوط باشد.","brain"],
-["خواب","خواب در تثبیت برخی خاطرات نقش دارد.","sleep"],
-["مغز و موسیقی","شنیدن موسیقی شبکه‌های مختلف مغز را درگیر می‌کند.","sound"],
-["توهم دیداری","گاهی مغز تصویر را طوری تفسیر می‌کند که با واقعیت فرق دارد.","illusion"],
-["نیم‌کره‌ها","دو نیم‌کره مغز از راه ساختارهای عصبی با هم ارتباط دارند.","brain"],
-["مغز و حرکت","مغز با نخاع و اعصاب در کنترل حرکت همکاری می‌کند.","body"],
-["انعطاف‌پذیری","ارتباط‌های عصبی می‌توانند با تجربه و یادگیری تغییر کنند.","neuron"],
-["یک نکته مهم","مغز مانند یک حافظه رایانه‌ای ساده عمل نمی‌کند.","brain"],
-["توجه","وقتی حواست جای دیگری است، ممکن است جزئیات مهم را نبینی.","quiz"],
-["آزمایش تمرکز","به اطراف نگاه کن و تعداد اشیای سبز را به خاطر بسپار.","quiz"],
-["مغز و احساسات","شبکه‌های گوناگون مغز در پردازش احساسات نقش دارند.","brain"],
-["دانشمند دیگر","برندا میلner در پژوهش‌های مهم درباره حافظه نقش داشت.","scientist"],
-["حافظه کوتاه‌مدت","برخی اطلاعات برای مدت کوتاهی در ذهن فعال می‌مانند.","chart"],
-["حافظه بلندمدت","تمرین و مرور می‌تواند به یادگیری پایدارتر کمک کند.","chart"],
-["پایان","مغز با هر تجربه و یادگیری فرصت تغییر دارد.","brain"]
-]
-},
-{
-id:"sun",code:"AP-003",title:"سفر نور خورشید",icon:"☀️",desc:"چرا نور خورشید با تأخیر می‌رسد؟",theme:"sun",
-facts:[
-["فکت شگفت‌انگیز","نور خورشید حدود ۸ دقیقه و ۲۰ ثانیه تا زمین در راه است."],
-["دانشمند معروف","اولاف رومر در قرن هفدهم شواهدی برای محدود بودن سرعت نور ارائه کرد."],
-["عدد عجیب","سرعت نور در خلأ حدود ۲۹۹٬۷۹۲ کیلومتر بر ثانیه است."],
-["فکت فضایی","نور بعضی ستاره‌ها سال‌ها یا قرن‌ها در راه بوده است."]
-],
-scenes:[
-["سفر نور","نوری که از خورشید می‌بینی، مسافتی عظیم را طی کرده است.","sun"],
-["سرعت نور","نور در خلأ تقریباً ۳۰۰ هزار کیلومتر در ثانیه حرکت می‌کند.","chart"],
-["فاصله خورشید","میانگین فاصله زمین تا خورشید حدود ۱۵۰ میلیون کیلومتر است.","space"],
-["حساب کنیم","فاصله را بر سرعت تقسیم می‌کنیم تا زمان سفر نور را بیابیم.","chart"],
-["جواب!","نور خورشید حدود ۸ دقیقه و ۲۰ ثانیه در راه است.","sun"],
-["پس یک تأخیر داریم","خورشید را دقیقاً همان لحظه‌ای که نورش خارج می‌شود نمی‌بینیم.","space"],
-["دانشمند کنجکاو","اولاف رومر با بررسی قمرهای مشتری به مطالعه سرعت نور کمک کرد.","scientist"],
-["نور سفید","نور خورشید از رنگ‌های مختلف تشکیل شده است.","rainbow"],
-["رنگین‌کمان","قطرات آب می‌توانند نور را به رنگ‌های گوناگون تجزیه کنند.","rainbow"],
-["خورشید چه می‌کند؟","در هسته خورشید واکنش‌های همجوشی هسته‌ای رخ می‌دهد.","sun"],
-["همجوشی","هسته‌های سبک در شرایط بسیار داغ و پرفشار به هم می‌پیوندند.","atom"],
-["نور و گیاه","گیاهان از انرژی نور در فتوسنتز استفاده می‌کنند.","plant"],
-["نور و زمین","انرژی خورشید یکی از عوامل اصلی آب‌وهواست.","earth"],
-["سایه","وقتی جسمی جلوی نور را بگیرد، سایه تشکیل می‌شود.","sun"],
-["فصل‌ها","کج بودن محور زمین در ایجاد فصل‌ها نقش دارد.","earth"],
-["نور و رنگ","مواد مختلف نور را جذب یا بازتاب می‌کنند.","rainbow"],
-["آسمان آبی","پراکندگی نور در جو در آبی دیده شدن آسمان نقش دارد.","sky"],
-["پنل خورشیدی","پنل‌ها نور را به انرژی الکتریکی تبدیل می‌کنند.","solar"],
-["ستاره‌ها","نور ستاره‌های دوردست اطلاعاتی از گذشته آن‌ها به ما می‌دهد.","space"],
-["واحد نجومی","فاصله متوسط زمین تا خورشید را یک واحد نجومی می‌نامند.","chart"],
-["یک سؤال","اگر خورشید خاموش شود، آیا ما همان لحظه متوجه می‌شویم؟","quiz"],
-["جواب علمی","نه؛ نور خورشید حدود ۸ دقیقه بعد به زمین می‌رسد.","sun"],
-["نور در آب","نور هنگام ورود به آب تغییر مسیر می‌دهد؛ به این پدیده شکست می‌گویند.","water"],
-["فکت نهایی","نور در یک ثانیه می‌تواند بیش از هفت بار دور زمین بچرخد.","chart"],
-["پایان","خورشید هر روز یک ماجرای نوری تازه برای زمین می‌سازد.","sun"]
-]
-},
-{
-id:"plant",code:"AP-004",title:"کارخانه شگفت‌انگیز گیاهان",icon:"🌿",desc:"فتوسنتز و راز برگ‌های سبز",theme:"plant",
-facts:[
-["فکت علمی","بسیاری از گیاهان با فتوسنتز انرژی نور را به انرژی شیمیایی تبدیل می‌کنند."],
-["دانشمند معروف","یان اینگنهاوس نقش نور و بخش‌های سبز گیاه را در فتوسنتز بررسی کرد."],
-["یک حقیقت","کلروفیل بخشی از نور را جذب می‌کند و در سبز دیده شدن برگ نقش دارد."],
-["فکت جالب","بخش بزرگی از اکسیژن زمین با فعالیت موجودات فتوسنتزکننده تولید می‌شود."]
-],
-scenes:[
-["کارخانه سبز","برگ‌ها در بسیاری از گیاهان محل اصلی فتوسنتز هستند.","plant"],
-["فتوسنتز چیست؟","گیاه با کمک انرژی نور، مواد اولیه را به قند تبدیل می‌کند.","plant"],
-["سه ورودی","نور، آب و دی‌اکسیدکربن در این فرایند نقش دارند.","chart"],
-["ریشه‌ها","ریشه آب و مواد معدنی را از خاک جذب می‌کند.","roots"],
-["روزنه برگ","گازها از منافذ کوچکی به نام روزنه جابه‌جا می‌شوند.","leaf"],
-["کلروفیل","رنگیزه سبز در جذب انرژی نور نقش دارد.","leaf"],
-["دانشمند مهم","یان اینگنهاوس نقش نور در آزاد شدن اکسیژن از گیاهان را بررسی کرد.","scientist"],
-["کلروپلاست","فتوسنتز در ساختارهایی به نام کلروپلاست انجام می‌شود.","cell"],
-["قند ساخته می‌شود","گیاه از مواد قندی برای رشد و فعالیت استفاده می‌کند.","chart"],
-["اکسیژن","در فتوسنتز اکسیژن نیز آزاد می‌شود.","oxygen"],
-["نور بیشتر؟","شدت نور می‌تواند بر سرعت فتوسنتز اثر بگذارد.","chart"],
-["آب کافی","کمبود آب می‌تواند فتوسنتز را محدود کند.","water"],
-["دمای مناسب","دما بر عملکرد آنزیم‌های فتوسنتزی اثر دارد.","thermometer"],
-["رگبرگ‌ها","رگبرگ‌ها در انتقال آب و مواد نقش دارند.","leaf"],
-["جنگل‌ها","جنگل‌ها زیستگاه گونه‌های فراوانی هستند.","forest"],
-["زنجیره غذایی","بسیاری از زنجیره‌های غذایی با تولیدکنندگان آغاز می‌شوند.","food"],
-["چرخه کربن","فتوسنتز یکی از مسیرهای مهم ورود کربن به گیاهان است.","chart"],
-["گیاهان هم تنفس می‌کنند","گیاهان علاوه بر فتوسنتز، تنفس سلولی هم انجام می‌دهند.","cell"],
-["آزمایش ساده","برگ گیاه را در نور و سایه مقایسه کن؛ شرایط رشد اهمیت دارد.","quiz"],
-["گیاهان آبزی","برخی جلبک‌ها و گیاهان آبزی نیز فتوسنتز می‌کنند.","ocean"],
-["فکت شگفت‌انگیز","بزرگ‌ترین درختان جهان از دانه‌هایی بسیار کوچک آغاز می‌شوند.","forest"],
-["دانشمند دیگر","ملوین کالوین در شناخت مسیرهای تثبیت کربن نقش مهمی داشت.","scientist"],
-["رنگ برگ","در پاییز با کاهش کلروفیل، رنگیزه‌های دیگر بیشتر دیده می‌شوند.","leaf"],
-["یک پرسش","اگر گیاه نور نداشته باشد چه تغییری در فتوسنتز رخ می‌دهد؟","quiz"],
-["پایان","برگ کوچک، یک آزمایشگاه شیمیایی زنده است.","plant"]
-]
-},
-{
-id:"ocean",code:"AP-005",title:"راز آبی بودن اقیانوس",icon:"🌊",desc:"نور، آب و دنیای زیر دریا",theme:"ocean",
-facts:[
-["فکت علمی","آب خالص در حجم زیاد ته‌رنگ آبی ملایمی دارد."],
-["دانشمند معروف","رامان در مطالعه پراکندگی نور نقش مهمی داشت."],
-["فکت جالب","اقیانوس‌ها بیش از ۷۰ درصد سطح زمین را پوشانده‌اند."],
-["راز طبیعت","فیتوپلانکتون‌ها در چرخه کربن و شبکه غذایی دریایی نقش دارند."]
-],
-scenes:[
-["اقیانوس آبی","چرا وقتی از بالا به دریا نگاه می‌کنیم، آبی می‌بینیم؟","ocean"],
-["نور سفید","نور خورشید ترکیبی از طول موج‌های مختلف است.","rainbow"],
-["آب و نور","آب طول موج‌های مختلف را به یک اندازه جذب نمی‌کند.","water"],
-["قرمز ناپدید می‌شود","نور قرمز معمولاً در آب سریع‌تر جذب می‌شود.","chart"],
-["آبی بیشتر می‌ماند","نور آبی در آب بیشتر پراکنده می‌شود.","ocean"],
-["عمق دریا","هرچه عمق بیشتر شود، نور کمتری به آن می‌رسد.","depth"],
-["کف دریا","کف روشن در آب کم‌عمق می‌تواند رنگ فیروزه‌ای ایجاد کند.","ocean"],
-["ذرات معلق","ذرات ریز می‌توانند ظاهر آب را تغییر دهند.","water"],
-["بازتاب آسمان","بازتاب آسمان نیز در ظاهر سطح آب نقش دارد.","sky"],
-["دانشمند مهم","رامان در شناخت پراکندگی نور پژوهش‌های مهمی انجام داد.","scientist"],
-["دریای سبز","جلبک‌ها و مواد معلق می‌توانند رنگ آب را تغییر دهند.","algae"],
-["فیتوپلانکتون","موجودات میکروسکوپی دریایی پایه مهمی از شبکه غذایی هستند.","plankton"],
-["جریان‌های دریایی","جریان‌ها گرما و مواد را جابه‌جا می‌کنند.","ocean"],
-["اقیانوس و آب‌وهوا","اقیانوس‌ها گرمای زیادی ذخیره می‌کنند.","earth"],
-["چرخه آب","تبخیر از سطح اقیانوس‌ها در چرخه آب نقش دارد.","water"],
-["مرجان‌ها","صخره‌های مرجانی زیستگاه گونه‌های زیادی هستند.","coral"],
-["آلودگی","آلودگی می‌تواند سلامت اکوسیستم‌های دریایی را تهدید کند.","pollution"],
-["موج‌ها","باد یکی از عوامل مهم ایجاد موج‌های سطح دریاست.","wave"],
-["فشار آب","فشار آب با افزایش عمق بیشتر می‌شود.","depth"],
-["جانوران دریایی","بسیاری از جانوران دریایی برای زندگی در محیط خود سازگاری دارند.","fish"],
-["نور در اعماق","در عمق زیاد، نور خورشید بسیار کم می‌شود.","depth"],
-["یک پرسش","چرا بعضی دریاها سبز و بعضی فیروزه‌ای دیده می‌شوند؟","quiz"],
-["جواب","عمق، مواد معلق، جلبک‌ها و نور در رنگ آب اثر دارند.","ocean"],
-["یک حقیقت","اقیانوس‌ها در تنظیم آب‌وهوای زمین نقش بزرگی دارند.","earth"],
-["پایان","دریا فقط آب نیست؛ یک جهان زنده است.","ocean"]
-]
-},
-{
-id:"space",code:"AP-006",title:"آیا در فضا صدا وجود دارد؟",icon:"🪐",desc:"راز سکوت فضا و امواج رادیویی",theme:"space",
-facts:[
-["فکت علمی","صدا برای انتقال به محیط مادی مانند هوا یا آب نیاز دارد."],
-["دانشمند معروف","کریستیان هویگنس در مطالعه ماهیت موجی نور نقش داشت."],
-["فکت فضایی","فضاپیماها برای ارتباط از امواج رادیویی استفاده می‌کنند."],
-["یک نکته","نور می‌تواند در خلأ حرکت کند، اما صدای معمولی نه."]
-],
-scenes:[
-["سکوت فضا","چرا در فیلم‌های فضایی صدای انفجار می‌شنویم؟","space"],
-["صدا چیست؟","صدا نوعی موج مکانیکی است که از ارتعاش به وجود می‌آید.","sound"],
-["ذرات لازم‌اند","صدا برای انتقال به محیطی مانند هوا یا آب نیاز دارد.","particles"],
-["خلأ","در فضای تقریباً خالی ذرات بسیار کمی وجود دارند.","space"],
-["پس چه می‌شود؟","صدای معمولی در خلأ نمی‌تواند مثل هوا منتقل شود.","sound"],
-["فیلم‌ها","صدای انفجار فضایی در سینما معمولاً برای هیجان اضافه می‌شود.","quiz"],
-["امواج رادیویی","امواج رادیویی از نوع الکترومغناطیسی هستند.","radio"],
-["ارتباط فضایی","فضاپیماها از امواج رادیویی برای ارسال اطلاعات استفاده می‌کنند.","space"],
-["نور","نور هم موج الکترومغناطیسی است و در خلأ حرکت می‌کند.","light"],
-["تفاوت مهم","صدا به ماده نیاز دارد؛ نور چنین نیازی ندارد.","chart"],
-["زیر آب","صدا در آب نیز حرکت می‌کند و ویژگی‌هایش با هوا متفاوت است.","water"],
-["در جامدات","صدا می‌تواند در مواد جامد هم منتقل شود.","particles"],
-["فضانوردان","فضانوردان از سامانه‌های ارتباطی داخل لباس استفاده می‌کنند.","astronaut"],
-["ماه","ماه جو بسیار رقیقی دارد و صدای معمولی به شکل زمینی منتقل نمی‌شود.","moon"],
-["رادار","رادار از امواج رادیویی برای شناسایی و اندازه‌گیری استفاده می‌کند.","radio"],
-["تلسکوپ","تلسکوپ‌ها نور و دیگر امواج الکترومغناطیسی را دریافت می‌کنند.","telescope"],
-["موج گرانشی","موج گرانشی با موج صوتی فرق دارد.","wave"],
-["سیاره‌ها","جو بعضی سیاره‌ها می‌تواند موج صوتی را منتقل کند.","planet"],
-["یک آزمایش","وقتی صدایی در خلأ باشد، شنونده بیرونی آن را نمی‌شنود.","quiz"],
-["فضا کاملاً خالی؟","فضا می‌تواند ذرات بسیار رقیق و میدان‌های گوناگون داشته باشد.","space"],
-["دانشمندان","پژوهشگران از داده‌های رادیویی برای بررسی اجرام آسمانی استفاده می‌کنند.","scientist"],
-["سرعت نور","نور در خلأ حدود ۳۰۰ هزار کیلومتر بر ثانیه حرکت می‌کند.","light"],
-["یک حقیقت عجیب","برخی داده‌های فضایی را دانشمندان به صدا تبدیل می‌کنند تا بهتر بررسی شوند.","radio"],
-["فکر کن","اگر در فضا فریاد بزنی، آیا دوستت آن را می‌شنود؟","quiz"],
-["پایان","فضا از نظر صدا ساکت است، اما از نظر اطلاعات بسیار پرماجراست.","space"]
-]
-},
-{
-id:"sleep",code:"AP-007",title:"رازهای خواب و رویا",icon:"🌙",desc:"مغز در خواب چه کار می‌کند؟",theme:"sleep",
-facts:[
-["فکت علمی","خواب از چند مرحله تشکیل شده که در طول شب تکرار می‌شوند."],
-["دانشمند معروف","ویلیام دمنت از پژوهشگران مهم علم خواب بود."],
-["فکت جالب","مغز هنگام خواب کاملاً خاموش نمی‌شود."],
-["یک حقیقت","خواب در یادگیری، حافظه و سلامت نقش دارد."]
-],
-scenes:[
-["خواب؛ راز شب","وقتی می‌خوابی، مغزت چه می‌کند؟","sleep"],
-["مغز خاموش نیست","مغز در خواب هم فعالیت‌های مهمی دارد.","brain"],
-["چرخه خواب","خواب از چند مرحله تشکیل شده است.","chart"],
-["خواب REM","در این مرحله حرکات سریع چشم رخ می‌دهد.","sleep"],
-["رویا","رویاها در مرحله‌های مختلف خواب ممکن است رخ دهند.","dream"],
-["خواب عمیق","خواب عمیق در عملکرد طبیعی بدن اهمیت دارد.","sleep"],
-["حافظه","خواب در تثبیت بعضی خاطرات نقش دارد.","brain"],
-["دانشمند مهم","ویلیام دمنت از پیشگامان پژوهش علمی خواب بود.","scientist"],
-["ساعت زیستی","بدن چرخه‌های روزانه برای تنظیم خواب و بیداری دارد.","clock"],
-["نور صبح","نور طبیعی روز به تنظیم ساعت زیستی کمک می‌کند.","sun"],
-["تاریکی شب","تاریکی به آماده شدن بدن برای خواب کمک می‌کند.","moon"],
-["ملاتونین","این هورمون در تنظیم چرخه خواب و بیداری نقش دارد.","chart"],
-["تمرکز","کمبود خواب می‌تواند توجه و تمرکز را دشوارتر کند.","brain"],
-["یادگیری","استراحت کافی به عملکرد یادگیری کمک می‌کند.","brain"],
-["رویاهای عجیب","دانشمندان هنوز همه رازهای رویا را نمی‌دانند.","dream"],
-["خواب و احساسات","خواب با تنظیم هیجان‌ها ارتباط دارد.","brain"],
-["مراحل تکراری","چرخه‌های خواب در طول شب چند بار تکرار می‌شوند.","chart"],
-["همه یکسان نیستند","نیاز به خواب با سن و شرایط فرد تغییر می‌کند.","people"],
-["بدن در خواب","بدن در خواب نیز فرایندهای مهمی را ادامه می‌دهد.","body"],
-["آزمایش ذهنی","یک رویا را بعد از بیدار شدن به خاطر بیاور؛ آیا جزئیاتش تغییر می‌کند؟","quiz"],
-["خواب و حافظه","خواب بخشی از فرایندهای یادگیری و تثبیت حافظه است.","brain"],
-["دانشمندان خواب","پژوهشگران با ابزارهای ویژه فعالیت مغز را هنگام خواب بررسی می‌کنند.","scientist"],
-["یک نکته","خواب فقط استراحت عضلات نیست.","body"],
-["جمع‌بندی","خواب برای سلامت بدن و عملکرد مغز مهم است.","sleep"],
-["پایان","مغز در خواب هم یک ماجراجویی علمی را ادامه می‌دهد.","dream"]
-]
-}
+/* =============== DATA =============== */
+const VIDEOS = [
+  { code:'AP-000', title:'چرا زمان با بالا رفتن سن سریع‌تر می‌گذرد؟', cat:'زمان و مغز', dur:'۶۰ ثانیه', g:['#1B2C6B','#3D5AFE'], desc:'سفری به درون مغز برای فهمیدن اینکه چرا کودکی بی‌پایان بود و امروز یک سال مثل یک پلک زدن می‌گذرد.' },
+  { code:'AP-001', title:'چرا خمیازه مسری است؟', cat:'رفتار انسانی', dur:'۴۵ ثانیه', g:['#2A1F4A','#8B5CF6'], desc:'نورون‌های آینه‌ای، نظریه خنک‌سازی مغز و ارتباط خمیازه با همدلی — همه در یک فیلم بامزه.' },
+  { code:'AP-002', title:'کرم گوش: چرا آهنگ‌ها در ذهن گیر می‌کنند؟', cat:'موسیقی و مغز', dur:'۵۰ ثانیه', g:['#3A1F1F','#FF8A5B'], desc:'اثر زایگارنیک و شبکه حالت پیش‌فرض مغز توضیح می‌دهند چرا یک آهنگ ساده تمام روز در ذهنت تکرار می‌شود.' },
+  { code:'AP-003', title:'چرا خواب‌های عجیب می‌بینیم؟', cat:'خواب و مغز', dur:'۵۵ ثانیه', g:['#0F2A2A','#00C48C'], desc:'در مرحله REM، مغز خاطرات را مثل یک تدوین‌گر آشفته ترکیب می‌کند — و خواب‌های عجیب متولد می‌شوند.' },
+  { code:'AP-004', title:'هنگری: چرا گرسنه عصبانی می‌شویم؟', cat:'تغذیه و خلق', dur:'۴۵ ثانیه', g:['#3A1F0F','#FFC94A'], desc:'افت قند خون، هورمون غرلین و کورتیزول — سه عامل ساده پشت عصبانیت گرسنگی.' },
+  { code:'AP-005', title:'دژاوو: چرا حس می‌کنیم این لحظه را قبلاً دیدیم؟', cat:'حافظه', dur:'۵۰ ثانیه', g:['#2A0F2A','#FF4D9D'], desc:'وقتی حس آشنایی فعال می‌شود اما یادآوری نه — یک باگ کوچک و بی‌خطر در مغز.' },
+  { code:'AP-006', title:'چرا رویاهایمان را فراموش می‌کنیم؟', cat:'خواب و مغز', dur:'۵۰ ثانیه', g:['#0F1F3A','#5EC2FF'], desc:'نقش هیپوکامپ و انتقال حافظه از خواب به بیداری — و اینکه چرا بیشترشان را از دست می‌دهیم.' },
+  { code:'AP-007', title:'چرا صدای خودمان در ضبط غریبه؟', cat:'حواس', dur:'۴۵ ثانیه', g:['#1A1F3A','#6E7BFF'], desc:'استخوان‌رسانی صدا در برابر هوارسانی — دلیل اینکه ضبط صدایمان برای خودمان عجیب است.' },
+  { code:'AP-008', title:'چرا وقتی بیکاریم زمان کندتر می‌گذرد؟', cat:'زمان و مغز', dur:'۴۵ ثانیه', g:['#1F1A2A','#A66EFF'], desc:'مغز زمان را با تعداد رویدادها می‌سنجد — و بیکاری این معادله را به هم می‌زند.' },
+  { code:'AP-009', title:'چرا در آب سرد می‌لرزیم؟', cat:'فیزیولوژی', dur:'۴۰ ثانیه', g:['#0F2A3A','#4DB8FF'], desc:'لرزش یک واکنش دفاعی برای تولید گرماست — بدن در برابر سرما چه می‌کند.' }
 ];
 
-// ساخت کارت‌های فیلم
-const filmBox=document.getElementById("films");
-function renderFilms(q=""){
-let list=films.filter(f=>f.title.includes(q)||f.desc.includes(q)||f.code.toLowerCase().includes(q.toLowerCase()));
-filmBox.innerHTML="";
-document.getElementById("count").textContent=list.length+" فیلم";
-if(!list.length){filmBox.innerHTML='<div class="no-result">فیلمی پیدا نشد.</div>';return}
-list.forEach(f=>{
-let c=document.createElement("div");c.className="card";
-c.innerHTML=`<div class="cover"><b>${f.icon}</b></div><div class="card-info"><h3>${f.title}</h3><p>${f.desc}</p><span class="code">${f.code}</span></div>`;
-c.onclick=()=>openFilm(f.id);
-filmBox.appendChild(c);
+/* =============== STATE =============== */
+let currentVideos = [...VIDEOS];
+let karaokeRAF = null;
+
+/* =============== SHUFFLE =============== */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* =============== RENDER GRID =============== */
+function createCard(v){
+  const card = document.createElement('article');
+  card.className = 'video-card';
+  card.innerHTML = `
+    <div class="video-thumb" style="--g1:${v.g[0]};--g2:${v.g[1]}">
+      <span class="video-code">${v.code}</span>
+      <div class="play-btn"></div>
+      <span class="video-duration">${v.dur}</span>
+    </div>
+    <div class="video-body">
+      <h3>${v.title}</h3>
+      <p class="video-cat">${v.cat}</p>
+    </div>`;
+  card.addEventListener('click', () => openModal(v));
+  return card;
+}
+
+function renderGrid(list){
+  const grid = document.getElementById('grid');
+  const noRes = document.getElementById('noResults');
+  grid.innerHTML = '';
+  if(list.length === 0){
+    noRes.hidden = false;
+    return;
+  }
+  noRes.hidden = true;
+
+  for(let i = 0; i < list.length; i += 5){
+    const slice = list.slice(i, i + 5);
+    const block = document.createElement('div');
+    block.className = 'video-block';
+
+    const top = document.createElement('div');
+    top.className = 'block-row block-row-top';
+    slice.slice(0, 3).forEach(v => top.appendChild(createCard(v)));
+    block.appendChild(top);
+
+    if(slice.length > 3){
+      const bottom = document.createElement('div');
+      bottom.className = 'block-row block-row-bottom';
+      slice.slice(3, 5).forEach(v => bottom.appendChild(createCard(v)));
+      block.appendChild(bottom);
+    }
+
+    grid.appendChild(block);
+  }
+}
+
+/* =============== SEARCH =============== */
+function filterVideos(q){
+  const s = q.trim().toLowerCase();
+  if(!s) return shuffle(VIDEOS);
+  return VIDEOS.filter(v =>
+    v.code.toLowerCase().includes(s) ||
+    v.title.toLowerCase().includes(s) ||
+    v.cat.toLowerCase().includes(s)
+  );
+}
+
+let searchTimer;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    currentVideos = filterVideos(e.target.value);
+    renderGrid(currentVideos);
+  }, 180);
 });
-}
-document.getElementById("search").addEventListener("input",e=>renderFilms(e.target.value.trim()));
-renderFilms();
 
-// کنترل پخش
-let current=null,scene=0,elapsed=0,playing=false,startTime=0,raf=0;
-const canvas=document.getElementById("visual"),ctx=canvas.getContext("2d");
-let width=0,height=0,lastDraw=0;
-const $=id=>document.getElementById(id);
+/* =============== SHUFFLE BUTTONS =============== */
+function doShuffle(){
+  currentVideos = shuffle(currentVideos);
+  renderGrid(currentVideos);
+  document.getElementById('library').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('shuffleBtn').addEventListener('click', doShuffle);
+document.getElementById('heroShuffle').addEventListener('click', doShuffle);
 
-function openFilm(id){
-pause();
-current=films.find(f=>f.id===id);
-scene=0;elapsed=0;
-$("player").classList.add("active");
-$("filmTitle").textContent=current.title+" · "+current.code;
-$("play").textContent="▶ شروع ماجراجویی";
-updateScene();
-resize();
-loadSocial();
-$("player").scrollIntoView({behavior:"smooth",block:"start"});
-}
-function closeFilm(){pause();$("player").classList.remove("active")}
-function pause(){playing=false;cancelAnimationFrame(raf);$("play").textContent="▶ ادامه"}
-function togglePlay(){playing?pause():play()}
-function play(){
-if(!current)return;
-if(elapsed>=TOTAL_TIME)elapsed=0;
-playing=true;startTime=performance.now()-elapsed*1000;
-$("play").textContent="Ⅱ مکث";
-tick();
-}
-function tick(){
-if(!playing)return;
-const now=performance.now();
-elapsed=(now-startTime)/1000;
-if(elapsed>=TOTAL_TIME){elapsed=TOTAL_TIME;pause()}
-const next=Math.min(24,Math.floor(elapsed/SCENE_TIME));
-if(next!==scene){scene=next;updateScene()}
-$("bar").style.width=(elapsed/TOTAL_TIME*100)+"%";
-$("clock").textContent=fmt(elapsed)+" / 05:00";
-if(now-lastDraw>55){drawScene();lastDraw=now}
-if(playing)raf=requestAnimationFrame(tick);
-}
-function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0")}
-function nextScene(){
-if(!current)return;
-scene=Math.min(24,scene+1);elapsed=scene*SCENE_TIME;
-if(playing)startTime=performance.now()-elapsed*1000;
-updateScene();updateProgress();
-}
-function previousScene(){
-if(!current)return;
-scene=Math.max(0,scene-1);elapsed=scene*SCENE_TIME;
-if(playing)startTime=performance.now()-elapsed*1000;
-updateScene();updateProgress();
-}
-function updateProgress(){
-$("bar").style.width=(elapsed/TOTAL_TIME*100)+"%";
-$("clock").textContent=fmt(elapsed)+" / 05:00";
-}
-$("progress").onclick=e=>{
-if(!current)return;
-const r=e.currentTarget.getBoundingClientRect();
-elapsed=Math.max(0,Math.min(TOTAL_TIME,(e.clientX-r.left)/r.width*TOTAL_TIME));
-scene=Math.min(24,Math.floor(elapsed/SCENE_TIME));
-if(playing)startTime=performance.now()-elapsed*1000;
-updateScene();updateProgress();
-};
+/* =============== KARAOKE DATA =============== */
+const KARAOKE = [
+  { w:'یادت', s:0.0, e:0.4 },
+  { w:'هست', s:0.4, e:0.75 },
+  { w:'تابستون‌های', s:0.75, e:1.5 },
+  { w:'کودکی', s:1.5, e:2.0 },
+  { w:'چقدر', s:2.0, e:2.4 },
+  { w:'طولانی', s:2.4, e:3.0 },
+  { w:'بود؟', s:3.0, e:3.4 },
+  { w:'حالا', s:3.8, e:4.15 },
+  { w:'یه', s:4.15, e:4.35 },
+  { w:'سال', s:4.35, e:4.65 },
+  { w:'کامل', s:4.65, e:5.0 },
+  { w:'مثل', s:5.0, e:5.3 },
+  { w:'یه', s:5.3, e:5.5 },
+  { w:'پلک', s:5.5, e:5.9 },
+  { w:'زدن', s:5.9, e:6.3 },
+  { w:'می‌گذره', s:6.3, e:6.9 },
+  { w:'چرا؟', s:7.2, e:7.8 }
+];
 
-function updateScene(){
-const s=current.scenes[scene];
-$("sceneTitle").textContent=s[0];
-$("subtitle").textContent=s[1];
-$("speechText").textContent=s[1];
-$("sceneCounter").textContent=`صحنه ${scene+1} از ۲۵`;
-const apache=$("apache");
-apache.className="mascot "+(current.theme==="brain"?"scientist":current.theme)+" talking";
-if(s[2]==="scientist")apache.className="mascot scientist talking";
-if(s[2]==="space")apache.className="mascot space talking";
-if(s[2]==="plant")apache.className="mascot plant pointing talking";
-if(s[2]==="ocean")apache.className="mascot ocean talking";
-if(s[2]==="sleep")apache.className="mascot sleep talking";
-if(s[2]==="quiz")apache.classList.add("surprised");
-if(s[2]==="scientist"||s[2]==="middle")apache.classList.add("middle");
-if(s[2]==="scientist")apache.classList.add("scientist");
-const fact=current.facts[scene%current.facts.length];
-$("fact").querySelector("strong").textContent=fact[0]+" ✦";
-$("factText").textContent=fact[1];
-drawScene();
+/* =============== KARAOKE PLAYER =============== */
+function buildKaraoke(){
+  const k = document.getElementById('karaoke');
+  k.innerHTML = '';
+  KARAOKE.forEach(o => {
+    const el = document.createElement('span');
+    el.className = 'word';
+    el.textContent = o.w + ' ';
+    k.appendChild(el);
+  });
 }
 
-// صحنه‌های متحرک و اختصاصی
-function resize(){
-const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;
-width=r.width;height=r.height;
-canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);
-ctx.setTransform(d,0,0,d,0,0);
-drawScene();
+function playKaraoke(){
+  cancelAnimationFrame(karaokeRAF);
+  const words = document.querySelectorAll('#karaoke .word');
+  words.forEach(w => w.className = 'word');
+  const start = performance.now();
+  function tick(now){
+    const t = (now - start) / 1000;
+    KARAOKE.forEach((k, i) => {
+      const el = words[i];
+      if(!el) return;
+      if(t >= k.e) el.className = 'word past';
+      else if(t >= k.s && t < k.e) el.className = 'word now';
+      else el.className = 'word';
+    });
+    if(t < 8.5) karaokeRAF = requestAnimationFrame(tick);
+  }
+  karaokeRAF = requestAnimationFrame(tick);
 }
-window.addEventListener("resize",resize,{passive:true});
 
-function drawScene(){
-if(!current||!width||!height)return;
-const w=width,h=height,t=elapsed;
-ctx.clearRect(0,0,w,h);
-let colors={
-time:["#526c3c","#14271b"],brain:["#67503c","#201c24"],
-sun:["#a17a3e","#26391f"],plant:["#4b7844","#122b1b"],
-ocean:["#3d8177","#102c32"],space:["#4d506d","#101b2d"],
-sleep:["#545178","#171b30"]
-}[current.theme];
-let bg=ctx.createLinearGradient(0,0,w,h);
-bg.addColorStop(0,colors[0]);bg.addColorStop(1,colors[1]);
-ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+/* =============== MODAL =============== */
+const modal = document.getElementById('modal');
+const modalInner = document.getElementById('modalInner');
+let currentIdx = 0;
 
-// ذرات شناور
-for(let i=0;i<38;i++){
-const x=(i*149+t*8)%w;
-const y=(i*79+Math.sin(t*.8+i)*17)%h;
-ctx.fillStyle="rgba(241,224,170,.32)";
-ctx.beginPath();ctx.arc(x,y,1.2+i%2,0,Math.PI*2);ctx.fill();
+function openModal(v){
+  currentIdx = VIDEOS.findIndex(x => x.code === v.code);
+  const player = document.getElementById('modalPlayer');
+  player.style.setProperty('--g1', v.g[0]);
+  player.style.setProperty('--g2', v.g[1]);
+  document.getElementById('modalTitle').textContent = v.title;
+  document.getElementById('modalCode').textContent = v.code;
+  document.getElementById('modalCat').textContent = v.cat;
+  document.getElementById('modalDur').textContent = v.dur;
+  document.getElementById('modalDesc').textContent = v.desc;
+
+  modal.hidden = false;
+  requestAnimationFrame(() => modal.classList.add('open'));
+
+  buildKaraoke();
+  setTimeout(playKaraoke, 500);
 }
-ctx.save();
-ctx.translate(w*.56,h*.46);
-if(current.theme==="time")drawClock(t);
-if(current.theme==="brain")drawNeurons(t);
-if(current.theme==="sun")drawSolar(t);
-if(current.theme==="plant")drawLeaves(t);
-if(current.theme==="ocean")drawWaves(t);
-if(current.theme==="space")drawPlanet(t);
-if(current.theme==="sleep")drawMoon(t);
-ctx.restore();
+
+function closeModal(){
+  cancelAnimationFrame(karaokeRAF);
+  modal.classList.remove('open');
+  setTimeout(() => { modal.hidden = true; }, 300);
 }
-function circ(x,y,r,c){
-ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();
-}
-function stroke(x1,y1,x2,y2,c,l=3){
-ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=c;ctx.lineWidth=l;ctx.stroke();
-}
-function label(s,x,y,size=14){
-ctx.font=`bold ${size}px Vazirmatn`;ctx.textAlign="center";ctx.fillStyle="#f3ead7";ctx.fillText(s,x,y);
-}
-function drawClock(t){
-circ(0,0,90,"#e0bd7b");circ(0,0,80,"#263b2b");
-for(let i=0;i<12;i++){let a=i*Math.PI/6;circ(Math.cos(a)*65,Math.sin(a)*65,3,"#fff0c9")}
-stroke(0,0,Math.cos(t)*44,Math.sin(t)*44,"#f1d7a2",5);
-stroke(0,0,Math.cos(t*.15)*60,Math.sin(t*.15)*60,"#a5ce91",3);
-circ(0,0,6,"white");
-for(let i=0;i<5;i++){ctx.fillStyle="#a5ce91";ctx.fillRect(-175+i*70,125-i*19,38,20+i*19)}
-label("زمان",0,165,17);
-}
-function drawNeurons(t){
-let nodes=[];
-for(let i=0;i<17;i++){let a=i*Math.PI*2/17;nodes.push([Math.cos(a)*120,Math.sin(a)*80])}
-nodes.forEach((p,i)=>{
-let q=nodes[(i+1)%nodes.length];stroke(p[0],p[1],q[0],q[1],"#e0bd7b88",2);
-stroke(0,0,p[0],p[1],"#a5ce9177",1.5);circ(p[0],p[1],8,"#e7c18d");
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e => {
+  if(e.target === modal) closeModal();
 });
-circ(0,0,35,"#ce9670");
-for(let i=0;i<7;i++){let a=t*1.4+i;circ(Math.cos(a)*95,Math.sin(a)*65,5,"#fff0bb")}
-label("شبکه نورون‌ها",0,155);
-}
-function drawSolar(t){
-circ(-115,-20,52,"#ffda80");
-for(let i=0;i<12;i++){let a=i*Math.PI/6;stroke(-115+Math.cos(a)*62,-20+Math.sin(a)*62,-115+Math.cos(a)*84,-20+Math.sin(a)*84,"#ffda80",4)}
-circ(150,20,27,"#85b8d2");
-for(let i=0;i<9;i++)circ(-20+i*23,Math.sin(t*2+i)*13,3,"#fff1b0");
-stroke(-55,-20,120,20,"#fff0ba",2);
-label("مسیر نور",30,-75);
-}
-function drawLeaves(t){
-stroke(0,130,0,-100,"#a6cc83",8);
-for(let i=0;i<7;i++){
-let y=65-i*30,side=i%2?1:-1;
-ctx.save();ctx.translate(0,y);ctx.rotate(side*.5+Math.sin(t+i)*.08);
-ctx.fillStyle=i%2?"#a5d18e":"#5c9c60";
-ctx.beginPath();ctx.ellipse(side*42,0,45,17,0,0,Math.PI*2);ctx.fill();ctx.restore();
-}
-circ(0,-120,21,"#e7c77c");label("فتوسنتز",0,165);
-}
-function drawWaves(t){
-for(let j=0;j<7;j++){
-ctx.beginPath();
-for(let x=-300;x<300;x+=5){
-let y=-70+j*27+Math.sin(x*.022+t*1.4+j)*13;
-if(x===-300)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-}
-ctx.strokeStyle=["#b3c98c","#8cbba1","#5f9e8c","#477d77","#315f64","#234a52","#183b49"][j];
-ctx.lineWidth=12;ctx.stroke();
-}
-circ(0,-140,24,"#f2d68e");label("اقیانوس",0,160);
-}
-function drawPlanet(t){
-circ(0,0,76,"#b4a079");circ(-20,-15,27,"#d0b68b");
-ctx.strokeStyle="#e0c68e";ctx.lineWidth=4;
-ctx.beginPath();ctx.ellipse(0,0,130,38,-.3,0,Math.PI*2);ctx.stroke();
-for(let i=0;i<24;i++)circ(Math.sin(i*9+t*.1)*220,Math.cos(i*4)*145,1.5,"#f7e7c6");
-label("فضای بی‌کران",0,150);
-}
-function drawMoon(t){
-circ(0,0,83,"#e8d3a3");circ(40,-27,73,"#292e48");
-for(let i=0;i<8;i++)circ(Math.sin(i*8)*140,Math.cos(i*3)*110,3,"#fff1c8");
-label("چرخه خواب",0,155);
-}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && !modal.hidden) closeModal();
+});
+document.getElementById('replayBtn').addEventListener('click', playKaraoke);
+document.getElementById('anotherBtn').addEventListener('click', () => {
+  const next = VIDEOS[(currentIdx + 1 + Math.floor(Math.random() * (VIDEOS.length - 1))) % VIDEOS.length];
+  openModal(next);
+});
 
-// Supabase
-async function loadSocial(){
-$("likeCount").textContent="0";$("commentList").innerHTML="";
-if(!db){$("status").textContent="اتصال آنلاین در دسترس نیست";return}
-const id=current.id;
-const [likes,comments,mine]=await Promise.all([
-db.from("apache_likes").select("id",{count:"exact",head:true}).eq("film_id",id),
-db.from("apache_comments").select("id,body,created_at").eq("film_id",id).order("created_at",{ascending:false}).limit(30),
-db.from("apache_likes").select("id").eq("film_id",id).eq("visitor_id",visitor).maybeSingle()
-]);
-if(likes.error||comments.error){$("status").textContent="جدول‌های Supabase را ایجاد کن";return}
-$("likeCount").textContent=likes.count||0;
-$("like").classList.toggle("active",!!mine.data);
-$("status").textContent="اتصال آنلاین فعال است";
-showComments(comments.data||[]);
-}
-function showComments(list){
-const box=$("commentList");box.innerHTML="";
-if(!list.length){box.textContent="هنوز نظری ثبت نشده است.";return}
-list.forEach(c=>{
-let el=document.createElement("div"),body=document.createElement("div"),date=document.createElement("small");
-el.className="comment-item";body.textContent=c.body;
-date.textContent=new Date(c.created_at).toLocaleString("fa-IR");
-el.append(body,date);box.append(el);
-});
-}
-async function toggleLike(){
-if(!db)return alert("اتصال Supabase برقرار نیست.");
-const {data}=await db.from("apache_likes").select("id").eq("film_id",current.id).eq("visitor_id",visitor).maybeSingle();
-if(data){
-const {error}=await db.from("apache_likes").delete().eq("id",data.id);
-if(error)return alert("ثبت تغییر ممکن نشد.");
-}else{
-const {error}=await db.from("apache_likes").insert({film_id:current.id,visitor_id:visitor});
-if(error)return alert("لایک ثبت نشد.");
-}
-loadSocial();
-}
-$("commentForm").addEventListener("submit",async e=>{
-e.preventDefault();
-if(!db)return alert("اتصال Supabase برقرار نیست.");
-const input=$("commentInput"),body=input.value.trim();
-if(!body)return;
-const {error}=await db.from("apache_comments").insert({film_id:current.id,visitor_id:visitor,body});
-if(error)return alert("نظر ثبت نشد.");
-input.value="";loadSocial();
-});
+/* =============== INIT =============== */
+currentVideos = shuffle(VIDEOS);
+renderGrid(currentVideos);
 </script>
 </body>
-                                           </html>
+  </html>
